@@ -1,0 +1,21 @@
+version: '3.4'
+
+volumes:
+  db_data:
+  uploads:
+
+services:
+  nexpo:
+    image: ${DOCKER_REGISTRY-}nexpo
+    build:
+      context: .
+      dockerfile: Nexpo/Dockerfile
+    volumes:
+      - uploads:/app/uploads
+    environment:
+      - ConnectionString=Host=db;Port=5432;Database=nexpo;User ID=nexpo;Password=nexpo;Pooling=true;Connection Lifetime=0;
+  db:
+    image: postgres:14
+    environment:
+      - POSTGRES_USER=nexpo
+      - POSTGRES_PASSWORD=nexpo
