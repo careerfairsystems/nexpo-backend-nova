@@ -54,14 +54,21 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> GetCompany(int id)
         {
             var company = await _companyRepo.Get(id);
-            if (company != null) 
-            {
-                return Ok(company);
-            }
-            else 
+            if (company == null) 
             {
                 return NotFound();
             }
+
+            var publicCompany = new PublicCompanyDto
+            {
+                Id = company.Id.Value,
+                Name = company.Name,
+                Description = company.Description,
+                Website = company.Website,
+                LogoUrl = company.LogoUrl
+
+            };
+            return Ok(publicCompany);
         }
         
         /// <summary>
