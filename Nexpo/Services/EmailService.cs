@@ -28,7 +28,8 @@ namespace Nexpo.Services
                 UserId = user.Id.Value
             };
             var signedToken = _tokenService.SignToken(signUpDto, DateTime.Now.AddDays(1)); // SignUp link is valid for one day
-            var content = $"Verify your email by clicking on this link: https://baseurl/api/signup/verify?token={signedToken}"; // FIXME Correct url
+            var tokenString = Uri.EscapeDataString(signedToken);
+            var content = $"Verify your email by clicking on this link: {_config.BaseUrl}/finalize_signup/{tokenString}";
             return SendEmail(user.Email, "Complete the signup", content, content);
         }
 
@@ -39,7 +40,8 @@ namespace Nexpo.Services
                 UserId = user.Id.Value
             }; 
             var signedToken = _tokenService.SignToken(signUpDto, DateTime.Now.AddDays(7)); // SignUp link is valid for a week
-            var content = $"Join your company account by clicking on this link: https://baseurl/api/signup/verify?token={signedToken}";
+            var tokenString = Uri.EscapeDataString(signedToken);
+            var content = $"Join your company account by clicking on this link: {_config.BaseUrl}/finalize_signup/{tokenString}";
             return SendEmail(user.Email, "Join your company workspace", content, content);
         }
 
@@ -50,7 +52,8 @@ namespace Nexpo.Services
                 UserId = user.Id.Value
             };
             var signedToken = _tokenService.SignToken(passwordResetDto, DateTime.Now.AddHours(1)); // Password reset link valid for an hour
-            var content = $"Join your company account by clicking on this link: https://baseurl/api/signup/verify?token={signedToken}";
+            var tokenString = Uri.EscapeDataString(signedToken);
+            var content = $"Join your company account by clicking on this link: {_config.BaseUrl}/reset_password/{tokenString}";
             return SendEmail(user.Email, "Reset your password", content, content);
         }
     }
