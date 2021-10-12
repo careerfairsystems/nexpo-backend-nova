@@ -11,6 +11,11 @@ namespace Nexpo.Services
         }
         public bool ValidatePassword(string password, string hash)
         {
+            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(hash))
+            {
+                return false;
+            }
+
             return BCryptNet.Verify(password, hash);
         }
 

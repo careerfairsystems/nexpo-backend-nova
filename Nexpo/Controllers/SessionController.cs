@@ -52,9 +52,10 @@ namespace Nexpo.Controllers
             }
 
             if (!_passwordService.ValidatePassword(credentials.Password, user.PasswordHash))
-                return BadRequest();
             {
-                            }
+                return BadRequest();
+            }
+
             // Common claims
             var claims = new List<Claim>
             {
