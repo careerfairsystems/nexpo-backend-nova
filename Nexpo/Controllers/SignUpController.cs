@@ -81,7 +81,7 @@ namespace Nexpo.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> PostFinalizedSignUp(FinalizeSignUpDto dto)
         {
-            var token = _tokenService.ValidateToken<FinalizeSignUpDto.FinalizeSignUpTokenDto>(dto.SignUpToken);
+            var token = _tokenService.ValidateToken<FinalizeSignUpDto.FinalizeSignUpTokenDto>(dto.Token);
             if (!token.IsValid)
             {
                 return Forbid();

@@ -9,7 +9,7 @@ namespace Nexpo.DTO
     public class FinalizeSignUpDto
     {
         [Required]
-        public string SignUpToken { get; set; }
+        public string Token { get; set; }
         [Required]
         public string Password { get; set; }
 
