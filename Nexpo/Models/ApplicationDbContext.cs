@@ -65,7 +65,7 @@ namespace Nexpo.Models
             SaveChanges();
 
             // Students
-            var student1 = new Student { /*Id = 1,*/ Guild = Guild.D, Year = 2018, MasterTitle = "Project management in software systems", UserId = user1.Id.Value };
+            var student1 = new Student { /*Id = 1,*/ Guild = Guild.D, Year = 2018, MasterTitle = "Project management in software systems", UserId = user2.Id.Value };
             var student2 = new Student { /*Id = 2,*/ Guild = Guild.I, Year = 2020, UserId = user3.Id.Value };
             var student3 = new Student { /*Id = 3,*/ Guild = Guild.V, Year = 2021, UserId = user4.Id.Value };
             Students.AddRange(student1, student2, student3);
