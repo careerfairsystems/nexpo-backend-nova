@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Nexpo.DTO
 {
-    public class StudentConnectionDto
+    public class StudentCompanyConnectionDto
     {
         [Required]
         public int Id { get; set; }

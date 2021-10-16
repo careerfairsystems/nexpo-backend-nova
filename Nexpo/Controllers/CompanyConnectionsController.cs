@@ -30,8 +30,8 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpPost]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
-        [ProducesResponseType(typeof(CompanyConnection), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PutConnection(CompanyConnectionDto dto)
+        [ProducesResponseType(typeof(CompanyCompanyConnectionDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult> PutConnection(CreateCompanyConnectionDto dto)
         {
             var companyId = HttpContext.User.GetCompanyId().Value;
 
@@ -50,7 +50,15 @@ namespace Nexpo.Controllers
 
             await _connectionRepo.Add(connection);
 
-            return Ok(connection);
+            var companyConnection = new CompanyCompanyConnectionDto
+            {
+                Id = connection.Id.Value,
+                Rating = connection.Rating,
+                Comment = connection.Comment,
+                StudentId = connection.StudentId
+            };
+
+            return Ok(companyConnection);
         }
 
         /// <summary>
@@ -59,12 +67,12 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("student")]
         [Authorize(Roles = nameof(Role.Student))]
-        [ProducesResponseType(typeof(IEnumerable<StudentConnectionDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<StudentCompanyConnectionDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetStudentConnections()
         {
             var studentId = HttpContext.User.GetStudentId().Value;
             var connections = await _connectionRepo.GetAllForStudent(studentId);
-            var studentConnections = connections.Select(c => new StudentConnectionDto
+            var studentConnections = connections.Select(c => new StudentCompanyConnectionDto
             {
                 Id = c.Id.Value,
                 CompanyId = c.CompanyId
@@ -78,12 +86,12 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("company")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
-        [ProducesResponseType(typeof(IEnumerable<CompanyConnectionDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<CompanyCompanyConnectionDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetCompanyConnections()
         {
             var companyId = HttpContext.User.GetCompanyId().Value;
             var connections = await _connectionRepo.GetAllForCompany(companyId);
-            var companyConnections = connections.Select(c => new CompanyConnectionDto
+            var companyConnections = connections.Select(c => new CompanyCompanyConnectionDto
             {
                 Id = c.Id.Value,
                 Rating = c.Rating,
@@ -99,8 +107,8 @@ namespace Nexpo.Controllers
         [HttpPut]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
-        [ProducesResponseType(typeof(CompanyConnectionDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PutConnection(int id, CompanyConnectionDto dto)
+        [ProducesResponseType(typeof(CompanyCompanyConnectionDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult> PutConnection(int id, UpdateCompanyConnectionDto dto)
         {
             var companyId = HttpContext.User.GetCompanyId().Value;
             var companyConnection = await _connectionRepo.Get(id);
