@@ -88,7 +88,7 @@ namespace Nexpo.Controllers
             }
             if (!string.IsNullOrEmpty(dto.Website))
             {
-                company.Description = dto.Website;
+                company.Website = dto.Website;
             }
             if (!string.IsNullOrEmpty(dto.HostEmail))
             {
@@ -139,7 +139,7 @@ namespace Nexpo.Controllers
             }
             if (!string.IsNullOrEmpty(dto.Website))
             {
-                company.Description = dto.Website;
+                company.Website = dto.Website;
             }
             await _companyRepo.Update(company);
 
