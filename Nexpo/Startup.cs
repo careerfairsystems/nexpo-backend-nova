@@ -105,6 +105,7 @@ namespace Nexpo
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nexpo v1"));
 
+                dbContext.Database.Migrate();
                 dbContext.Seed();
             }
 
