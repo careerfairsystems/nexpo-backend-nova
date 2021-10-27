@@ -9,6 +9,7 @@ using Nexpo.Repositories;
 using Nexpo.Services;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Collections.Generic;
+using Nexpo.DTO;
 
 namespace Nexpo.Controllers
 {
@@ -53,7 +54,7 @@ namespace Nexpo.Controllers
         [Route("profile_picture")]
         [Consumes("multipart/form-data")]
         [Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(FileCreatedDto), StatusCodes.Status200OK)]
         public async Task<ActionResult> PostProfilePicture(IFormFile file)
         {
             var maxAllowedFileSize = 2 * 1024 * 1024; // 2 MiB
@@ -79,7 +80,9 @@ namespace Nexpo.Controllers
             user.ProfilePictureUrl = fileUrl;
             await _userRepo.Update(user);
 
-            return NoContent();
+            var response = new FileCreatedDto { Url = fileUrl };
+
+            return Ok(response);
         }
 
         [HttpDelete]
@@ -104,7 +107,7 @@ namespace Nexpo.Controllers
         [Route("company_logo")]
         [Consumes("multipart/form-data")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(FileCreatedDto), StatusCodes.Status200OK)]
         public async Task<ActionResult> PostCompanyLogo(IFormFile file)
         {
             var maxAllowedFileSize = 2 * 1024 * 1024; // 2 MiB
@@ -130,7 +133,9 @@ namespace Nexpo.Controllers
             company.LogoUrl = fileUrl;
             await _companyRepo.Update(company);
 
-            return NoContent();
+            var response = new FileCreatedDto { Url = fileUrl };
+
+            return Ok(response);
         }
         
         [HttpDelete]
@@ -155,7 +160,7 @@ namespace Nexpo.Controllers
         [Route("resume_english")]
         [Consumes("multipart/form-data")]
         [Authorize(Roles = nameof(Role.Student))]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(FileCreatedDto), StatusCodes.Status200OK)]
         public async Task<ActionResult> PostResumeEnglish(IFormFile file)
         {
             var maxAllowedFileSize = 4 * 1024 * 1024; // 4 MiB
@@ -181,7 +186,9 @@ namespace Nexpo.Controllers
             student.ResumeEnUrl = fileUrl;
             await _studentRepo.Update(student);
 
-            return NoContent();
+            var response = new FileCreatedDto { Url = fileUrl };
+
+            return Ok(response);
         }
         
         [HttpDelete]
@@ -206,7 +213,7 @@ namespace Nexpo.Controllers
         [Route("resume_swedish")]
         [Consumes("multipart/form-data")]
         [Authorize(Roles = nameof(Role.Student))]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(FileCreatedDto), StatusCodes.Status200OK)]
         public async Task<ActionResult> PostResumeSwedish(IFormFile file)
         {
             var maxAllowedFileSize = 4 * 1024 * 1024; // 4 MiB
@@ -233,7 +240,9 @@ namespace Nexpo.Controllers
             student.ResumeSvUrl = fileUrl;
             await _studentRepo.Update(student);
 
-            return NoContent();
+            var response = new FileCreatedDto { Url = fileUrl };
+
+            return Ok(response);
         }
 
         [HttpDelete]
