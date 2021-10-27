@@ -35,20 +35,26 @@ namespace Nexpo.Controllers
         {
             var companyId = HttpContext.User.GetCompanyId().Value;
 
+            CompanyConnection connection;
+
             if (await _connectionRepo.ConnectionExists(dto.StudentId, companyId))
             {
-                return Conflict();
+                connection = await _connectionRepo.GetForStudentAndCompany(dto.StudentId, companyId);
+                connection.Comment = dto.Comment;
+                connection.Rating = dto.Rating;
+                await _connectionRepo.Update(connection);
             }
-
-            var connection = new CompanyConnection
+            else
             {
-                Rating = dto.Rating,
-                Comment = dto.Comment,
-                StudentId = dto.StudentId,
-                CompanyId = companyId
-            };
-
-            await _connectionRepo.Add(connection);
+                connection = new CompanyConnection
+                {
+                    Rating = dto.Rating,
+                    Comment = dto.Comment,
+                    StudentId = dto.StudentId,
+                    CompanyId = companyId
+                };
+                await _connectionRepo.Add(connection);
+            }
 
             var companyConnection = new CompanyCompanyConnectionDto
             {

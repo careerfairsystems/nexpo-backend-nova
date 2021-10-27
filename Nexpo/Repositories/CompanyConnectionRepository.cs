@@ -10,6 +10,7 @@ namespace Nexpo.Repositories
     public interface ICompanyConnectionRepository
     {
         public Task<bool> ConnectionExists(int studentId, int companyId);
+        public Task<CompanyConnection> GetForStudentAndCompany(int studentId, int companyId);
         public Task<IEnumerable<CompanyConnection>> GetAllForStudent(int studentId);
         public Task<IEnumerable<CompanyConnection>> GetAllForCompany(int companyId);
         public Task<CompanyConnection> Get(int id);
@@ -31,6 +32,11 @@ namespace Nexpo.Repositories
         public async Task<bool> ConnectionExists(int studentId, int companyId)
         {
             return await _context.CompanyConnections.AnyAsync(c => c.StudentId == studentId && c.CompanyId == companyId);
+        }
+
+        public async Task<CompanyConnection> GetForStudentAndCompany(int studentId, int companyId)
+        {
+            return await _context.CompanyConnections.FirstOrDefaultAsync(c => c.StudentId == studentId && c.CompanyId == companyId);
         }
 
         public async Task<IEnumerable<CompanyConnection>> GetAllForStudent(int studentId)
