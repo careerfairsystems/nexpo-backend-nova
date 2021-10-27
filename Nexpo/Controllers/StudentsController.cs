@@ -85,7 +85,7 @@ namespace Nexpo.Controllers
                 student.Year = dto.Year.Value;
             }
 
-            _studentRepo.Update(student);
+            await _studentRepo.Update(student);
 
             return Ok(student);
         }
