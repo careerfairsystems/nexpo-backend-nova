@@ -35,17 +35,17 @@ namespace Nexpo.Repositories
 
         public async Task<IEnumerable<Ticket>> GetAllForUser(int userId)
         {
-            return await _context.Tickets.Where(t => t.UserId == userId).ToListAsync();
+            return await _context.Tickets.Include(t => t.Event).Where(t => t.UserId == userId).ToListAsync();
         }
 
         public async Task<Ticket> Get(int id)
         {
-            return await _context.Tickets.Where(t => t.Id == id).FirstOrDefaultAsync();
+            return await _context.Tickets.Include(t => t.Event).Where(t => t.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<Ticket> GetByCode(Guid code)
         {
-            return await _context.Tickets.Where(t => t.Code == code).FirstOrDefaultAsync();
+            return await _context.Tickets.Include(t => t.Event).Where(t => t.Code == code).FirstOrDefaultAsync();
         }
 
         public async Task Add(Ticket ticket)

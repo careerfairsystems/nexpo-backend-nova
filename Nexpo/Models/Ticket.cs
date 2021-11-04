@@ -18,7 +18,6 @@ namespace Nexpo.Models
         public bool PhotoOk { get; set; }
 
         public int EventId { get; set; }
-        [JsonIgnore]
         public Event Event { get; set; }
         public int UserId { get; set; }
         [JsonIgnore]
