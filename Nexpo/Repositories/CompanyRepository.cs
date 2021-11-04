@@ -30,12 +30,12 @@ namespace Nexpo.Repositories
 
         public async Task<IEnumerable<Company>> GetAll()
         {
-            return await _context.Companies.ToListAsync();
+            return await _context.Companies.OrderBy(c => c.Name).ToListAsync();
         }
 
         public async Task<IEnumerable<Company>> GetAllWithTimeslots()
         {
-            return await _context.Companies.Where(c => c.StudentSessionTimeslots.Count() != 0).ToListAsync();
+            return await _context.Companies.Where(c => c.StudentSessionTimeslots.Any()).OrderBy(c => c.Name).ToListAsync();
         }
 
         public async Task<Company> Get(int id)
@@ -46,7 +46,7 @@ namespace Nexpo.Repositories
         public async Task<Company> GetWithChildren(int id)
         {
             return await _context.Companies.Include(c => c.Representatives).Include(c => c.StudentSessionTimeslots)
-                .Where(c => c.Id == id).FirstOrDefaultAsync();
+                .Where(c => c.Id == id).OrderBy(c => c.Name).FirstOrDefaultAsync();
         }
 
         public async Task<Company> FindByUser(int userId)

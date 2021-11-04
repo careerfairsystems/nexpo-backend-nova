@@ -34,7 +34,7 @@ namespace Nexpo.Repositories
 
         public async Task<IEnumerable<User>> GetAll()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.OrderBy(u => u.FirstName).ThenBy(u => u.LastName).ToListAsync();
         }
 
 

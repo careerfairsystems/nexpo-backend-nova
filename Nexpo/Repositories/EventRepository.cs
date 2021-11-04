@@ -24,7 +24,7 @@ namespace Nexpo.Repositories
         
         public async Task<IEnumerable<Event>> GetAll()
         {
-            return await _context.Events.Select(e => new Event
+            return await _context.Events.OrderBy(e => e.Date).ThenBy(e => e.Start).Select(e => new Event
             {
                 Id = e.Id,
                 Name = e.Name,
