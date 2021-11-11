@@ -11,6 +11,7 @@ namespace Nexpo.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? Id { get; set; }
         [Required]
+        // Unique set in DbContext
         public string Email { get; set; }
         [JsonIgnore]
         public string PasswordHash { get; set; }

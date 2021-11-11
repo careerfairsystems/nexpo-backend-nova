@@ -26,6 +26,14 @@ namespace Nexpo.Models
             _passwordService = passwordService;
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<User>(entity =>
+            {
+                entity.HasIndex(u => u.Email).IsUnique();
+            });
+        }
+
         /// <summary>
         /// Seed the database with mock data
         /// </summary>
