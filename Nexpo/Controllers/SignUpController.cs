@@ -47,6 +47,9 @@ namespace Nexpo.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> PostInitialSignUp(SignUpUserDto dto)
         {
+            // Force lowercase email
+            dto.Email = dto.Email.ToLower();
+
             var user = await _userRepo.FindByEmail(dto.Email);
             if (user != null)
             {
