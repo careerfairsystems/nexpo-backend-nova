@@ -53,7 +53,7 @@ namespace Nexpo.Services
             };
             var signedToken = _tokenService.SignToken(passwordResetDto, DateTime.Now.AddHours(1)); // Password reset link valid for an hour
             var tokenString = Uri.EscapeDataString(signedToken);
-            var content = $"Join your company account by clicking on this link: {_config.BaseUrl}/reset_password/{tokenString}";
+            var content = $"Reset your password by following this link: {_config.BaseUrl}/reset_password/{tokenString} The link is valid for an hour.";
             return SendEmail(user.Email, "Reset your password", content, content);
         }
     }
