@@ -138,7 +138,8 @@ namespace Nexpo.Controllers
                 Role = Role.CompanyRepresentative,
                 Email = dto.Email,
                 FirstName = dto.FirstName,
-                LastName = dto.LastName
+                LastName = dto.LastName,
+                CompanyId = company.Id.Value
             };
             await _userRepo.Add(user);
 
