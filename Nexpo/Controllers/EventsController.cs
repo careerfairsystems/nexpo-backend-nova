@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
@@ -18,10 +19,12 @@ namespace Nexpo.Controllers
     public class EventsController : ControllerBase
     {
         private readonly IEventRepository _eventRepo;
+        private readonly ITicketRepository _ticketRepo;
 
-        public EventsController(IEventRepository iEventRepo)
+        public EventsController(IEventRepository iEventRepo, ITicketRepository iTicketRepo)
         {
             _eventRepo = iEventRepo;
+            _ticketRepo = iTicketRepo;
         }
 
         /// <summary>
@@ -43,15 +46,34 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> GetEvent(int id)
         {
             var e = await _eventRepo.Get(id);
-            if (e != null) 
-            {
-                return Ok(e);
-            }
-            else 
+            if (e == null) 
             {
                 return NotFound();
             }
+
+            return Ok(e);
         }
+
+        /// <summary>
+        /// Get all tickets for 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{id}/tickets")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(IEnumerable<Ticket>), StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetTicketsForEvent(int id)
+        {
+            var e = await _eventRepo.Get(id);
+            if (e == null) {
+                return NotFound();
+            }
+
+            var tickets = await _ticketRepo.GetAllForEvent(e.Id.Value);
+            return Ok(tickets);
+        }
+
     }
 }
 

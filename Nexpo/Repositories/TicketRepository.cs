@@ -11,6 +11,7 @@ namespace Nexpo.Repositories
     {
         public Task<bool> TicketExists(int eventId, int userId);
         public Task<IEnumerable<Ticket>> GetAllForUser(int userId);
+        public Task<IEnumerable<Ticket>> GetAllForEvent(int eventId);
         public Task<Ticket> Get(int id);
         public Task<Ticket> GetByCode(Guid code);
         public Task Add(Ticket ticket);
@@ -35,7 +36,14 @@ namespace Nexpo.Repositories
 
         public async Task<IEnumerable<Ticket>> GetAllForUser(int userId)
         {
-            return await _context.Tickets.Include(t => t.Event).Where(t => t.UserId == userId).ToListAsync();
+            return await _context.Tickets.Include(t => t.Event).Where(t => t.UserId == userId)
+                .OrderBy(t => t.Event.Date).ThenBy(t => t.Event.Start).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Ticket>> GetAllForEvent(int eventId)
+        {
+            return await _context.Tickets.Where(t => t.EventId == eventId)
+                .OrderBy(t => t.User.FirstName).ThenBy(t => t.User.LastName).ToListAsync();
         }
 
         public async Task<Ticket> Get(int id)
