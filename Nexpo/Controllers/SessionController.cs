@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -104,6 +105,7 @@ namespace Nexpo.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> PostResetPassword(ResetPasswordDto dto)
         {
+            dto.Token = Uri.UnescapeDataString(dto.Token);
             var token = _tokenService.ValidateToken<ResetPasswordDto.ResetPasswordTokenDto>(dto.Token);
             if (!token.IsValid)
             {
