@@ -22,7 +22,7 @@ namespace Nexpo.Models
     }
     public enum Guild
     {
-        A, D, E, F, I, ING, K, M, V
+        A, D, E, F, I, ING, K, M, V, W
     }
 }
 
