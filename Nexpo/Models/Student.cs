@@ -20,9 +20,5 @@ namespace Nexpo.Models
         [JsonIgnore]
         public User User { get; set; }
     }
-    public enum Guild
-    {
-        A, D, E, F, I, ING, K, M, V, W
-    }
 }
 

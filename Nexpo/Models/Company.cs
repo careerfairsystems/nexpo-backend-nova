@@ -20,6 +20,7 @@ namespace Nexpo.Models
         public string HostPhone { get; set; }
 
         public IEnumerable<User> Representatives { get; set; }
+        public IEnumerable<Guild> DesiredGuilds { get; set; }
         public IEnumerable<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
     }
 }
