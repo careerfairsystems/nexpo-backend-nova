@@ -365,6 +365,20 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
+        /// Get all timeslots by company id
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("timeslots/company/{id}")]
+        [Authorize(Roles = nameof(Role.Student))]
+        [ProducesResponseType(typeof(IEnumerable<StudentSessionTimeslot>), StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetAllTimeslots(int companyId)
+        {
+            var timeslots = await _timeslotRepo.GetAllForCompany(companyId);
+            return Ok(timeslots);
+        }
+
+        /// <summary>
         /// Create a new timeslot for a company
         /// </summary>
         [HttpPost]
