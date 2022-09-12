@@ -13,7 +13,7 @@ namespace Nexpo.Tests.Controllers
     public class TestDatabaseFixture
     {
         //For use with .useSqlServer, need to find correct string
-        private const string ConnectionString = @"Server=(localdb)\mssqllocaldb;Database=EFTestSample;Trusted_Connection=True";
+        private const string ConnectionString = "Host=localhost;Port=5432;Database=nexpo;User ID=nexpo;Password=nexpo;Pooling=true;Connection Lifetime=0;";
 
         private static readonly object _lock = new();
         private static bool _databaseInitialized;
