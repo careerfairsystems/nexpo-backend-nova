@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Nexpo.Tests": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:63778;http://localhost:63779"
+    }
+  }
+}
