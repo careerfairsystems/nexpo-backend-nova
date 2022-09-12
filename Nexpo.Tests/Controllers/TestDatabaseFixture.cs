@@ -1,12 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.SqlServer;
 using Nexpo.Models;
 using Nexpo.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nexpo.Tests.Controllers
 {
@@ -114,13 +110,9 @@ namespace Nexpo.Tests.Controllers
         }
 
         public ApplicationDbContext CreateContext() {
-            //new ApplicationDbContext(
-            //new DbContextOptionsBuilder<ApplicationDbContext>()
-            //    .UseSqlServer(ConnectionString)
-            //    .Options);
-
-            DbContextOptions<ApplicationDbContext> dbContextOptions = new DbContextOptions<ApplicationDbContext>();
-            return new ApplicationDbContext(dbContextOptions, _passwordService);
+            return new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseSqlServer(ConnectionString)
+                .Options, new PasswordService());
         }
     }
 }
