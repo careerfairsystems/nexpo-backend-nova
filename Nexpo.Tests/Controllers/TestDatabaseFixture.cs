@@ -12,6 +12,7 @@ namespace Nexpo.Tests.Controllers
 {
     public class TestDatabaseFixture
     {
+        //For use with .useSqlServer, need to find correct string
         private const string ConnectionString = @"Server=(localdb)\mssqllocaldb;Database=EFTestSample;Trusted_Connection=True";
 
         private static readonly object _lock = new();
@@ -113,6 +114,10 @@ namespace Nexpo.Tests.Controllers
         }
 
         public ApplicationDbContext CreateContext() {
+            new ApplicationDbContext(
+            new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseSqlServer(ConnectionString)
+                .Options);
             DbContextOptions<ApplicationDbContext> dbContextOptions = new DbContextOptions<ApplicationDbContext>();
             return new ApplicationDbContext(dbContextOptions, _passwordService);
         }
