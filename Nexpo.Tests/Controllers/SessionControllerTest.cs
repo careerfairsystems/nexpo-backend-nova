@@ -155,11 +155,12 @@ namespace Nexpo.Tests.Controllers
             client.DefaultRequestHeaders.Add("Authorization", token);
 
             var json2 = new JsonObject();
-            json2.Add("password", "test");
+            json2.Add("token", token);
+            json2.Add("password", "newP");
 
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
-            var response2 = await client.PostAsync("/api/session/reset_password", payload);
-            Assert.True(response2.StatusCode.Equals(HttpStatusCode.BadRequest), "Unvalid response, returned: " + response2.ToString());
+            var response2 = await client.PostAsync("/api/session/reset_password", payload2);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.Forbidden), "Unvalid response, returned: " + response2.ToString());
         }
     }
 }
