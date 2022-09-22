@@ -54,15 +54,16 @@ namespace Nexpo.Tests.Controllers
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
             var response = await client.GetAsync("/api/events");
+
             string responseText = await response.Content.ReadAsStringAsync();
             var responseList = JsonConvert.DeserializeObject<List<Event>>(responseText);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
             Assert.True(responseList.Count == 4, responseText.ToString());
 
-            //Insertion to DB undeterministic, i.e id and order unknown
-            var firstEvent = responseList.Find(r => r.Name == "Breakfast Mingle");
-            var secondEvent = responseList.Find(r => r.Name == "Bounce with Uber");
-            var thirdEvent = responseList.Find(r => r.Name == "CV Workshop with Randstad");
-            var fourthEvent = responseList.Find(r => r.Name == "Inspirational lunch lecture");
+            var firstEvent = responseList.Find(r => r.Id == 1);
+            var secondEvent = responseList.Find(r => r.Id == 2);
+            var thirdEvent = responseList.Find(r => r.Id == 3);
+            var fourthEvent = responseList.Find(r => r.Id == 4);
 
             Assert.True(firstEvent.Description == "Breakfast with SEB", firstEvent.Description);
             Assert.True(secondEvent.Date == "2021-11-13", secondEvent.Date);
