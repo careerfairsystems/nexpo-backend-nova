@@ -370,11 +370,10 @@ namespace Nexpo.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("timeslots/company/{id}")]
-        [Authorize(Roles = nameof(Role.Student))]
         [ProducesResponseType(typeof(IEnumerable<StudentSessionTimeslot>), StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetAllTimeslots(int companyId)
+        public async Task<ActionResult> GetAllTimeslots(int id)
         {
-            var timeslots = await _timeslotRepo.GetAllForCompany(companyId);
+            var timeslots = await _timeslotRepo.GetAllForCompany(id);
             return Ok(timeslots);
         }
 
@@ -405,7 +404,6 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpGet]
         [Route("timeslots/{id}")]
-        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetTimeslot(int id)
         {
@@ -414,17 +412,6 @@ namespace Nexpo.Controllers
             {
                 return NotFound();
             }
-
-            var userRole = HttpContext.User.GetRole();
-            if (userRole == Role.CompanyRepresentative)
-            {
-                var companyId = HttpContext.User.GetCompanyId().Value;
-                if (timeslot.CompanyId != companyId)
-                {
-                    return Forbid();
-                }
-            }
-
             return Ok(timeslot);
         }
 

@@ -122,6 +122,11 @@ namespace Nexpo.Models
             StudentSessionApplications.AddRange(application1, application2, application3, application4, application5, application6, application7);
             SaveChanges();
 
+            //Student sessions
+            var studentSession1 = new StudentSession { /*Id = 1, */ StudentId = student1.Id.Value, Student = student1, StudentSessionTimeslot = session1, StudentSessionApplication = application1, StudentSessionApplicationId = application1.Id.Value, StudentSessionTimeslotId = session1.Id.Value};
+            StudentSessions.AddRange(studentSession1);
+            SaveChanges();
+            
             // CompanyConnections
             var connection1 = new CompanyConnection { Id = 1, Comment = "Someone that is very passionate about what they are doing", Rating = 4, StudentId = student1.Id.Value, CompanyId = company1.Id.Value };
             var connection2 = new CompanyConnection { Id = 2, Comment = "Seems like a interesting guy, contact him later about internship", Rating = 5, StudentId = company3.Id.Value, CompanyId = company4.Id.Value };
