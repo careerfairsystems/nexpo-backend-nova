@@ -8,12 +8,9 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
 using System.IO;
-using SendGrid;
-using static System.Net.Mime.MediaTypeNames;
 using Newtonsoft.Json;
 using Nexpo.Models;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 
 namespace Nexpo.Tests.Controllers
 {
