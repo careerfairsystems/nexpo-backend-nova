@@ -70,5 +70,85 @@ namespace Nexpo.Tests.Controllers
             Assert.True(thirdEvent.Host == "Randstad", thirdEvent.Host);
             Assert.True(fourthEvent.Capacity == 10, fourthEvent.Capacity.ToString());
         }
+
+        [Fact]
+        public async Task GetSpecificEventNotLoggedIn()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var response = await client.GetAsync("/api/events/3");
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<Event>(responseText);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
+
+            Assert.True(responseObject.Name == "CV Workshop with Randstad", responseText);
+            Assert.True(responseObject.Date == "2021-11-14", responseText);
+            Assert.True(responseObject.End == "15:00", responseText);
+            Assert.True(responseObject.Language == "Swedish", responseText);
+        }
+
+        [Fact]
+        public async Task GetEventWithIncorrectIdNotLoggedIn()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var response = await client.GetAsync("/api/events/123");
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task GetAllTicketsNotLoggedIn()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var response = await client.GetAsync("/api/events/2/tickets");
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task GetAllTicketsAsCompRep()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = Login("company", client);
+
+            var response = await client.GetAsync("/api/events/2/tickets");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task GetAllTicketsAsAdmin()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+
+            var response = await client.GetAsync("/api/events/1/tickets");
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseList = JsonConvert.DeserializeObject<List<Ticket>>(responseText);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(responseList.Count == 5, responseText.ToString());
+
+            var firstTicket = responseList.Find(r => r.Id == 1);
+            var seventhTicket = responseList.Find(r => r.Id == 7);
+
+            Assert.True(firstTicket.EventId == 1, firstTicket.EventId.ToString());
+            Assert.True(firstTicket.UserId == 2, firstTicket.UserId.ToString());
+            Assert.True(seventhTicket.UserId == 4, seventhTicket.UserId.ToString());
+        }
+
+        [Fact]
+        public async Task GetAllTicketsAsAdminWithWrongId()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+
+            var response = await client.GetAsync("/api/events/55/tickets");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.StatusCode.ToString());
+        }
     }
 }
