@@ -10,6 +10,6 @@ namespace Nexpo.DTO
     public class UpdateSessionDto
     {
         [Required]
-        public StudentSessionStatus Status { get; set; }
+        public StudentSessionApplicationStatus Status { get; set; }
     }
 }

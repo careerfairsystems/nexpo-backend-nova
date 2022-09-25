@@ -18,14 +18,13 @@ namespace Nexpo.Models
         public DateTime End { get; set; }
         [Required]
         public string Location { get; set; }
-
-        [ForeignKey(nameof(StudentSession))]
-        public int? StudentSessionId { get; set; }
-        [JsonIgnore]
-        public StudentSession StudentSession { get; set; }
         public int CompanyId { get; set; }
         [JsonIgnore]
         public Company Company { get; set; }
+
+        [JsonIgnore]
+        public StudentSessionApplication StudentSessionApplication { get; set; }
+        public bool booked { get; set; } = false;
     }
 }
 

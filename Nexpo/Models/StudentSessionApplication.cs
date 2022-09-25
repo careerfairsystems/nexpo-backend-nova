@@ -12,18 +12,22 @@ namespace Nexpo.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? Id { get; set; }
         public string Motivation { get; set; }
-        public int Rating { get; set; } = 0;
-
+        public StudentSessionApplicationStatus Status { get; set; } = StudentSessionApplicationStatus.NoResponse;
         public int StudentId { get; set; }
         [JsonIgnore]
         public Student Student { get; set; }
         public int CompanyId { get; set; }
         [JsonIgnore]
         public Company Company { get; set; }
-        [ForeignKey(nameof(StudentSession))]
-        public int? StudentSessionId { get; set; }
-        [JsonIgnore]
-        public StudentSession StudentSession { get; set; }
+        public Boolean booked { get; set; } = false;
+
+    }
+
+    public enum StudentSessionApplicationStatus
+    {
+        NoResponse,
+        Accepted,
+        Declined
     }
 }
 
