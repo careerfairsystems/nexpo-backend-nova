@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Nexpo.Models
 {
@@ -21,9 +18,6 @@ namespace Nexpo.Models
         public int CompanyId { get; set; }
         [JsonIgnore]
         public Company Company { get; set; }
-
-        [JsonIgnore]
-        public StudentSessionApplication StudentSessionApplication { get; set; }
         public bool booked { get; set; } = false;
     }
 }

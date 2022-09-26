@@ -11,6 +11,8 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Nexpo.Controllers
 {
+    [Route("api/timeslots")]
+    [ApiController]
     public class StudentSessionTimeslotController : ControllerBase
     {
         private readonly ICompanyRepository _companyRepo;
@@ -31,7 +33,7 @@ namespace Nexpo.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("timeslots/company/{id}")]
+        [Route("company/{id}")]
         [ProducesResponseType(typeof(IEnumerable<StudentSessionTimeslot>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetAllTimeslots(int id)
         {
@@ -43,7 +45,6 @@ namespace Nexpo.Controllers
         /// Create a new timeslot for a company
         /// </summary>
         [HttpPost]
-        [Route("timeslots")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostTimeslot(CreateStudentSessionTimeslotDto dto)
@@ -65,7 +66,7 @@ namespace Nexpo.Controllers
         /// Get a single timeslot
         /// </summary>
         [HttpGet]
-        [Route("timeslots/{id}")]
+        [Route("{id}")]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetTimeslot(int id)
         {
@@ -81,7 +82,7 @@ namespace Nexpo.Controllers
         /// Delete a timeslot
         /// </summary>
         [HttpDelete]
-        [Route("timeslots/{id}")]
+        [Route("{id}")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteTimeslot(int id)
@@ -107,7 +108,7 @@ namespace Nexpo.Controllers
         /// Book a timeslot
         /// </summary>
         [HttpPut]
-        [Route("timeslots/{id}")]
+        [Route("{id}")]
         [Authorize(Roles = nameof(Role.Student))]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status200OK)]
         public async Task<ActionResult> PutTimeslot(int id)
@@ -135,7 +136,6 @@ namespace Nexpo.Controllers
 
             application.booked = true;
             timeslot.booked = true;
-            timeslot.StudentSessionApplication = application;
 
             await _applicationRepo.Update(application);
             await _timeslotRepo.Update(timeslot);

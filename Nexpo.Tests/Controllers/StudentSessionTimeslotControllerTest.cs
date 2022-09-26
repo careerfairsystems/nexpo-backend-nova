@@ -10,6 +10,8 @@ using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
+using Newtonsoft.Json;
+using Nexpo.Models;
 
 namespace Nexpo.Tests.Controllers
 {
@@ -51,6 +53,42 @@ namespace Nexpo.Tests.Controllers
             token = "Bearer " + parser.Value<string>("token");
             client.DefaultRequestHeaders.Add("Authorization", token);
             return client;
+        }
+
+        [Fact]
+        public async Task GetAllTimeslotsByCompanyId()
+        {
+            var client = await StudentClient();
+            var response = await client.GetAsync("/api/timeslots/company/1");
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseList = JsonConvert.DeserializeObject<List<StudentSessionTimeslot>>(responseText);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
+            Assert.True(responseList.Count == 3, responseText.ToString());
+
+            var timeslot1 = responseList.Find(r => r.Id == 1);
+            var timeslot2 = responseList.Find(r => r.Id == 2);
+            var timeslot3 = responseList.Find(r => r.Id == 3);
+
+
+            Assert.True(timeslot1.Start == DateTime.Parse("2021-11-21 10:00"), timeslot1.Start.ToString());
+            Assert.True(timeslot2.End == DateTime.Parse("2021-11-21 10:30"), timeslot2.End.ToString());
+            Assert.True(timeslot3.Location == "Zoom", timeslot3.Location);
+        }
+
+        [Fact]
+        public async Task GetSingleTimeslotsById()
+        {
+            var client = await StudentClient();
+            var response = await client.GetAsync("/api/timeslots/4");
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var timeslot = JsonConvert.DeserializeObject<StudentSessionTimeslot>(responseText);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
+
+            Assert.True(timeslot.Start == DateTime.Parse("2021-11-22 11:00"), timeslot.Start.ToString());
+            Assert.True(timeslot.End == DateTime.Parse("2021-11-22 11:15"), timeslot.End.ToString());
+            Assert.True(timeslot.Location == "Zoom", timeslot.Location);
         }
     }
 }

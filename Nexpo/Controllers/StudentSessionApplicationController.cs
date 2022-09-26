@@ -11,7 +11,7 @@ using Nexpo.Repositories;
 
 namespace Nexpo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/applications")]
     [ApiController]
     public class StudentSessionsApplicationController : ControllerBase
     {
@@ -59,7 +59,6 @@ namespace Nexpo.Controllers
         /// Create a new application for a student session
         /// </summary>
         [HttpPost]
-        [Route("applications")]
         [Authorize(Roles = nameof(Role.Student))]
         [ProducesResponseType(typeof(StudentSessionApplicationDto), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostApplication(CreateStudentSessionApplicationDto dto)
@@ -95,7 +94,7 @@ namespace Nexpo.Controllers
         /// Get information about an application as company or student
         /// </summary>
         [HttpGet]
-        [Route("applications/{id}")]
+        [Route("{id}")]
         [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(StudentSessionApplicationDto), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetApplicationStudent(int id)
@@ -137,7 +136,7 @@ namespace Nexpo.Controllers
         /// Get all applications made to the signed in company
         /// </summary>
         [HttpGet]
-        [Route("applications/my/company")]
+        [Route("my/company")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(IEnumerable<StudentSessionApplication>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetApplicationsForCompany()
@@ -152,7 +151,7 @@ namespace Nexpo.Controllers
         /// Delete a student session application
         /// </summary>
         [HttpDelete]
-        [Route("applications/{id}")]
+        [Route("{id}")]
         [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteApplication(int id)
