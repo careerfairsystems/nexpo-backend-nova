@@ -127,7 +127,7 @@ namespace Nexpo.Tests.Controllers
             string responseText = await response.Content.ReadAsStringAsync();
             var responseList = JsonConvert.DeserializeObject<List<Ticket>>(responseText);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-            Assert.True(responseList.Count == 5, responseText.ToString());
+            Assert.True(responseList.Count == 3, responseText.ToString());
 
             var firstTicket = responseList.Find(r => r.Id == 1);
             var seventhTicket = responseList.Find(r => r.Id == 7);
