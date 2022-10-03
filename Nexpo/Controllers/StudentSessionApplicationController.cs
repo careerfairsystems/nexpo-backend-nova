@@ -59,12 +59,13 @@ namespace Nexpo.Controllers
         /// Create a new application for a student session
         /// </summary>
         [HttpPost]
+        [Route("company/{id}")]
         [Authorize(Roles = nameof(Role.Student))]
         [ProducesResponseType(typeof(StudentSessionApplicationDto), StatusCodes.Status201Created)]
-        public async Task<ActionResult> PostApplication(CreateStudentSessionApplicationDto dto)
+        public async Task<ActionResult> PostApplication(int id, string motivation)
         {
             // Check that the company accepts applications
-            var company = await _companyRepo.GetWithChildren(dto.CompanyId);
+            var company = await _companyRepo.GetWithChildren(id);
             if (company.StudentSessionTimeslots.Count() == 0)
             {
                 return BadRequest();
@@ -73,8 +74,8 @@ namespace Nexpo.Controllers
             var studentId = HttpContext.User.GetStudentId().Value;
             var application = new StudentSessionApplication
             {
-                Motivation = dto.Motivation,
-                CompanyId = dto.CompanyId,
+                Motivation = motivation,
+                CompanyId = id,
                 StudentId = studentId
             };
 

@@ -10,7 +10,7 @@ namespace Nexpo.Repositories
     public interface IStudentSessionApplicationRepository
     {
         public Task<bool> ApplicationExists(int studentId, int companyId);
-        public Task<IEnumerable<StudentSessionApplication>> GetByCompanyAndStudent(int studentId, int companyId);
+        public Task<StudentSessionApplication> GetByCompanyAndStudent(int studentId, int companyId);
         public Task<IEnumerable<StudentSessionApplication>> GetAllForStudent(int studentId);
         public Task<IEnumerable<StudentSessionApplication>> GetAllForCompany(int companyId);
         public Task<StudentSessionApplication> Get(int id);
@@ -33,9 +33,9 @@ namespace Nexpo.Repositories
             return await _context.StudentSessionApplications.AnyAsync(a => a.StudentId == studentId && a.CompanyId == companyId);
         }
 
-        public async Task<IEnumerable<StudentSessionApplication>> GetByCompanyAndStudent(int studentId, int companyId)
+        public async Task<StudentSessionApplication> GetByCompanyAndStudent(int studentId, int companyId)
         {
-            return await _context.StudentSessionApplications.Where(a => a.StudentId == studentId && a.CompanyId == companyId).ToListAsync();
+            return await _context.StudentSessionApplications.Where(a => a.StudentId == studentId && a.CompanyId == companyId).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<StudentSessionApplication>> GetAllForStudent(int studentId)

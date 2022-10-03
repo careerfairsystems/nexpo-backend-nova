@@ -5,6 +5,7 @@ using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
@@ -121,15 +122,20 @@ namespace Nexpo.Controllers
             var companyId = timeslot.CompanyId;
             var studentId = HttpContext.User.GetStudentId().Value;
 
-            if(!await _applicationRepo.ApplicationExists(studentId, companyId))
+            var test = await _applicationRepo.GetByCompanyAndStudent(studentId,companyId);
+            Console.WriteLine(test);
+            var application = await _applicationRepo.GetByCompanyAndStudent(studentId, companyId);
+            
+            if(application == null)
             {
                 return BadRequest();
-                
             }
 
-            var applicationList = await _applicationRepo.GetByCompanyAndStudent(studentId, companyId);
-            var application = applicationList.GetEnumerator().Current;
-            if (application.booked == true || application.Status != StudentSessionApplicationStatus.Accepted)
+            if(application.Status != StudentSessionApplicationStatus.Accepted)
+            {
+                return BadRequest();
+            }
+            if (application.booked == true)
             {
                 return BadRequest();
             }
