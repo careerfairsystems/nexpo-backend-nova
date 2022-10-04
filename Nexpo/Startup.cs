@@ -11,6 +11,10 @@ using Nexpo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using ITfoxtec.Identity.Saml2;
+using ITfoxtec.Identity.Saml2.Schemas.Metadata;
+using ITfoxtec.Identity.Saml2.MvcCore.Configuration;
+using System.Linq;
 
 namespace Nexpo
 {
@@ -94,6 +98,29 @@ namespace Nexpo
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Nexpo", Version = "v1" });
             });
 
+            services.AddRazorPages();
+
+            services.Configure<Saml2Configuration>(Config.Saml2);
+
+            services.Configure<Saml2Configuration>(saml2Configuration =>
+            {
+                saml2Configuration.AllowedAudienceUris.Add(saml2Configuration.Issuer);
+
+                var entityDescriptor = new EntityDescriptor();
+                entityDescriptor.ReadIdPSsoDescriptorFromUrl(new Uri(Config.IdPMetadata));
+                if (entityDescriptor.IdPSsoDescriptor != null)
+                {
+                    saml2Configuration.SingleSignOnDestination = entityDescriptor.IdPSsoDescriptor.SingleSignOnServices.First().Location;
+                    saml2Configuration.SignatureValidationCertificates.AddRange(entityDescriptor.IdPSsoDescriptor.SigningCertificates);
+                }
+                else
+                {
+                    throw new Exception("IdPSsoDescriptor not loaded from metadata.");
+                }
+            });
+
+            services.AddSaml2();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -110,7 +137,7 @@ namespace Nexpo
             }
 
             app.UseRouting();
-
+            app.UseSaml2();
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -119,7 +146,14 @@ namespace Nexpo
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                // for SSO
+                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }

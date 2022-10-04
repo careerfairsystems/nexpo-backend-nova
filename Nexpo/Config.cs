@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using ITfoxtec.Identity.Saml2;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace Nexpo
         public string JWTAudience { get; set; }
         public string JWTExpires { get; set; }
         public string ConnectionString { get; set; }
+        public Saml2Configuration Saml2 { get; set; }
+        public string IdPMetadata { get; set; }
     }
 
     public class Config : IConfig
@@ -29,6 +32,9 @@ namespace Nexpo
             JWTAudience = config["JWT:Audience"];
             JWTExpires = config["JWT:Expires"];
             ConnectionString = config["ConnectionString"];
+            Saml2 = new Saml2Configuration { config["Saml2"]. }
+            IdPMetadata = config["Saml2:IdPMetadata"];
+
         }
 
         public string BaseUrl { get; set; }
@@ -38,6 +44,8 @@ namespace Nexpo
         public string JWTAudience { get; set; }
         public string JWTExpires { get; set; }
         public string ConnectionString { get; set; }
+        public Saml2Configuration Saml2 { get; set; }
+        public string IdPMetadata { get; set; }
 
     }
 }
