@@ -45,14 +45,14 @@ namespace Nexpo.Tests.Controllers
             content = content.Replace("[", " ").Replace("]", " ").Trim();
             var parsedContent = JObject.Parse(content);
             var stringContent = parsedContent.Value<string>("id");
-            Assert.Equal("1", stringContent);
+            Assert.Equal("-1", stringContent);
         }
 
         [Fact]
         public async Task TestGetSingleStudentSessions()
         {
             var client = await StudentClient();
-            var response = await client.GetAsync("/api/studentsessions/1");
+            var response = await client.GetAsync("/api/studentsessions/-1");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode + "Token didn't work");
             string content = new StreamReader(response.Content.ReadAsStream()).ReadToEnd();
             var parsedContent = JObject.Parse(content);
