@@ -65,7 +65,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(firstEvent.Description == "Breakfast with SEB", firstEvent.Description);
             Assert.True(secondEvent.Date == "2021-11-13", secondEvent.Date);
             Assert.True(thirdEvent.Host == "Randstad", thirdEvent.Host);
-            Assert.True(fourthEvent.Capacity == 10, fourthEvent.Capacity.ToString());
+            Assert.True(fourthEvent.Capacity == 2, fourthEvent.Capacity.ToString());
         }
 
         [Fact]
