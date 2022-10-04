@@ -15,7 +15,7 @@ namespace Nexpo.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]
-    public class AuthController : Controller
+    public class AuthController : ControllerBase
     {
         const string relayStateReturnUrl = "ReturnUrl";
         private readonly Saml2Configuration config;

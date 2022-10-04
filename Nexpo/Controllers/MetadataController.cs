@@ -13,7 +13,7 @@ namespace Nexpo.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]
-    public class MetadataController : Controller
+    public class MetadataController : ControllerBase
     {
         private readonly Saml2Configuration config;
 
