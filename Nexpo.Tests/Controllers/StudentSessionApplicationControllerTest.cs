@@ -12,99 +12,92 @@ using System.Threading.Tasks;
 using Xunit;
 using Newtonsoft.Json;
 using Nexpo.Models;
+using Nexpo.DTO;
 
 namespace Nexpo.Tests.Controllers
 {
     public class StudentSessionApplicationControllerTest
     {
-        public static async Task<HttpClient> StudentClient()
+        private async Task<String> Login(string role, HttpClient client)
         {
-            //Create client and login
-            var application = new WebApplicationFactory<Program>();
-            var client = application.CreateClient();
-            var response = await client.GetAsync("/api/studentsessions");
             var json = new JsonObject();
-            json.Add("email", "student1@example.com");
-            json.Add("password", "password");
+            switch (role)
+            {
+                case "company":
+                    json.Add("email", "rep1@company1.example.com");
+                    json.Add("password", "password");
+                    break;
+                case "admin":
+                    json.Add("email", "admin@example.com");
+                    json.Add("password", "password");
+                    break;
+                default:
+                    json.Add("email", "student1@example.com");
+                    json.Add("password", "password");
+                    break;
+            }
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            response = await client.PostAsync("/api/session/signin", payload);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Login failed");
+            var response = await client.PostAsync("/api/session/signin", payload);
             string token = new StreamReader(response.Content.ReadAsStream()).ReadToEnd();
             var parser = JObject.Parse(token);
-            token = "Bearer " + parser.Value<string>("token");
+            token = "Bearer " + parser.Value<String>("token");
             client.DefaultRequestHeaders.Add("Authorization", token);
-            return client;
+            return token;
         }
 
-        public static async Task<HttpClient> CompanyClient()
+        [Fact]
+        public async Task GetAllApplicationsAsCompany()
         {
-            //Create client and login
-            var application = new WebApplicationFactory<Program>();
+            var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var response = await client.GetAsync("/api/studentsessions");
-            var json = new JsonObject();
-            json.Add("email", "rep1@company1.example.com");
-            json.Add("password", "password");
-            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            response = await client.PostAsync("/api/session/signin", payload);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Login failed");
-            string token = new StreamReader(response.Content.ReadAsStream()).ReadToEnd();
-            var parser = JObject.Parse(token);
-            token = "Bearer " + parser.Value<string>("token");
-            client.DefaultRequestHeaders.Add("Authorization", token);
-            return client;
+            var token = await Login("company", client);
+
+            var response = await client.GetAsync("/api/applications/my/company");
+            var responseList = JsonConvert.DeserializeObject<List<StudentSessionApplication>>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(responseList.Count == 3, "Number of applications: " + responseList.Count.ToString());
+
+            var app1 = responseList.Find(r => r.Id == -1);
+            var app3 = responseList.Find(r => r.Id == -3);
+
+            Assert.True(app1.Motivation == "I think you are an interesting company", "Wrong motivation: " + app1.Motivation);
+            Assert.True(app3.Motivation == "User experience is very important for me", app3.Motivation);
         }
 
         [Fact]
         public async Task GetApplicationAsStudent()
         {
-            var client = await StudentClient();
-            var response = await client.GetAsync("/api/applications/1");
-
-            string responseText = await response.Content.ReadAsStringAsync();
-            var application = JsonConvert.DeserializeObject<StudentSessionApplication>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
-
-            Assert.True(application.Motivation == "I think you are an interesting company", application.Motivation);
-
-            response = await client.GetAsync("/api/applications/5");
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden));
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("", client);
+            //Get students own application
+            var response = await client.GetAsync("/api/applications/-1");
+            var app = JsonConvert.DeserializeObject<StudentSessionApplication>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(app.Motivation == "I think you are an interesting company", "Wrong motivation: " + app.Motivation);
+            //Get someone elses application
+            response = await client.GetAsync("/api/applications/-3");
+            Assert.True(!response.StatusCode.Equals(HttpStatusCode.OK), "Inproper access");
         }
 
         [Fact]
-        public async Task GetApplicationAsCompany()
+        public async Task RespondToApplicationAsCompany()
         {
-            var client = await CompanyClient();
-            var response = await client.GetAsync("/api/applications/1");
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("company", client);
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var application = JsonConvert.DeserializeObject<StudentSessionApplication>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
-            Assert.True(application.Motivation == "I think you are an interesting company", application.Motivation);
+            var json = new JsonObject();
+            json.Add("status", 1);
 
-            response = await client.GetAsync("/api/applications/7");
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden));
-        }
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/applications/-1", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
 
-        [Fact]
-        public async Task GetAllApplicationAsCompany()
-        {
-            var client = await CompanyClient();
-            var response = await client.GetAsync("/api/applications/my/company");
+            response = await client.GetAsync("/api/applications/-1");
+            var app = JsonConvert.DeserializeObject<StudentSessionApplication>((await response.Content.ReadAsStringAsync()));
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseList = JsonConvert.DeserializeObject<List<StudentSessionApplication>>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
-            Assert.True(responseList.Count == 3, responseText.ToString());
-
-            var application1 = responseList.Find(r => r.Id == 1);
-            var application2 = responseList.Find(r => r.Id == 2);
-            var application3 = responseList.Find(r => r.Id == 3);
-
-
-            Assert.True(application1.Motivation == "I think you are an interesting company", application1.Motivation);
-            Assert.True(application2.Motivation == "I love my MacBook", application2.Motivation);
-            Assert.True(application3.Motivation == "User experience is very important for me", application3.Motivation);
         }
     }
 }

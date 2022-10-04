@@ -57,15 +57,15 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
             Assert.True(responseList.Count == 4, responseText.ToString());
 
-            var firstEvent = responseList.Find(r => r.Id == 1);
-            var secondEvent = responseList.Find(r => r.Id == 2);
-            var thirdEvent = responseList.Find(r => r.Id == 3);
-            var fourthEvent = responseList.Find(r => r.Id == 4);
+            var firstEvent = responseList.Find(r => r.Id == -1);
+            var secondEvent = responseList.Find(r => r.Id == -2);
+            var thirdEvent = responseList.Find(r => r.Id == -3);
+            var fourthEvent = responseList.Find(r => r.Id == -4);
 
             Assert.True(firstEvent.Description == "Breakfast with SEB", firstEvent.Description);
             Assert.True(secondEvent.Date == "2021-11-13", secondEvent.Date);
             Assert.True(thirdEvent.Host == "Randstad", thirdEvent.Host);
-            Assert.True(fourthEvent.Capacity == 10, fourthEvent.Capacity.ToString());
+            Assert.True(fourthEvent.Capacity == 2, fourthEvent.Capacity.ToString());
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var response = await client.GetAsync("/api/events/3");
+            var response = await client.GetAsync("/api/events/-3");
 
             string responseText = await response.Content.ReadAsStringAsync();
             var responseObject = JsonConvert.DeserializeObject<Event>(responseText);
@@ -123,18 +123,18 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             var token = await Login("admin", client);
 
-            var response = await client.GetAsync("/api/events/1/tickets");
+            var response = await client.GetAsync("/api/events/-1/tickets");
             string responseText = await response.Content.ReadAsStringAsync();
             var responseList = JsonConvert.DeserializeObject<List<Ticket>>(responseText);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-            Assert.True(responseList.Count == 5, responseText.ToString());
+            Assert.True(responseList.Count == 3, responseText.ToString());
 
-            var firstTicket = responseList.Find(r => r.Id == 1);
-            var seventhTicket = responseList.Find(r => r.Id == 7);
+            var firstTicket = responseList.Find(r => r.Id == -1);
+            var seventhTicket = responseList.Find(r => r.Id == -7);
 
-            Assert.True(firstTicket.EventId == 1, firstTicket.EventId.ToString());
-            Assert.True(firstTicket.UserId == 2, firstTicket.UserId.ToString());
-            Assert.True(seventhTicket.UserId == 4, seventhTicket.UserId.ToString());
+            Assert.True(firstTicket.EventId == -1, firstTicket.EventId.ToString());
+            Assert.True(firstTicket.UserId == -2, firstTicket.UserId.ToString());
+            Assert.True(seventhTicket.UserId == -4, seventhTicket.UserId.ToString());
         }
 
         [Fact]
