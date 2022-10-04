@@ -61,7 +61,7 @@ namespace Nexpo.Tests.Controllers
             string responseText = await response.Content.ReadAsStringAsync();
             var responseList = JsonConvert.DeserializeObject<List<User>>(responseText);
          
-            Assert.True(responseText == "Test", responseText.ToString());
+            Assert.True(responseList.Count == 9, responseText.ToString());
 
         }
     }
