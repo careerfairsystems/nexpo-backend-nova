@@ -1,36 +1,50 @@
 ﻿using ITfoxtec.Identity.Saml2;
 using ITfoxtec.Identity.Saml2.Schemas;
 using ITfoxtec.Identity.Saml2.MvcCore;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System.Security.Authentication;
 using Nexpo.Helpers;
+
 namespace Nexpo.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     [AllowAnonymous]
-    [Route("Auth")]
     public class AuthController : Controller
     {
         const string relayStateReturnUrl = "ReturnUrl";
         private readonly Saml2Configuration config;
 
-        public AuthController(IOptions<Saml2Configuration> configAccessor)
+        public AuthController(Saml2Configuration config)
         {
-            config = configAccessor.Value;
+            this.config = config;
         }
-
+        [HttpGet]
         [Route("Login")]
         public IActionResult Login(string returnUrl = null)
         {
             var binding = new Saml2RedirectBinding();
             binding.SetRelayStateQuery(new Dictionary<string, string> { { relayStateReturnUrl, returnUrl ?? Url.Content("~/") } });
 
-            return binding.Bind(new Saml2AuthnRequest(config)).ToActionResult();
+            return binding.Bind(new Saml2AuthnRequest(config)
+            {
+                //ForceAuthn = true,
+                Subject = new Subject { NameID = new NameID { ID = "abcd" } },
+                //NameIdPolicy = new NameIdPolicy { AllowCreate = true, Format = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" },
+                //RequestedAuthnContext = new RequestedAuthnContext
+                //{
+                //    Comparison = AuthnContextComparisonTypes.Exact,
+                //    AuthnContextClassRef = new string[] { AuthnContextClassTypes.PasswordProtectedTransport.OriginalString },
+                //},
+            }).ToActionResult();
         }
 
+        [HttpGet]
         [Route("AssertionConsumerService")]
         public async Task<IActionResult> AssertionConsumerService()
         {
@@ -50,7 +64,8 @@ namespace Nexpo.Controllers
             return Redirect(returnUrl);
         }
 
-        [HttpPost("Logout")]
+        [HttpPost]
+        [Route("Logout")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
@@ -61,7 +76,47 @@ namespace Nexpo.Controllers
 
             var binding = new Saml2PostBinding();
             var saml2LogoutRequest = await new Saml2LogoutRequest(config, User).DeleteSession(HttpContext);
-            return Redirect("~/");
+            return binding.Bind(saml2LogoutRequest).ToActionResult();
+        }
+
+        [HttpGet]
+        [Route("LoggedOut")]
+        public IActionResult LoggedOut()
+        {
+            var binding = new Saml2PostBinding();
+            binding.Unbind(Request.ToGenericHttpRequest(), new Saml2LogoutResponse(config));
+
+            return Redirect(Url.Content("~/"));
+        }
+
+        [HttpGet]
+        [Route("SingleLogout")]
+        public async Task<IActionResult> SingleLogout()
+        {
+            Saml2StatusCodes status;
+            var requestBinding = new Saml2PostBinding();
+            var logoutRequest = new Saml2LogoutRequest(config, User);
+            try
+            {
+                requestBinding.Unbind(Request.ToGenericHttpRequest(), logoutRequest);
+                status = Saml2StatusCodes.Success;
+                await logoutRequest.DeleteSession(HttpContext);
+            }
+            catch (Exception exc)
+            {
+                // log exception
+                Debug.WriteLine("SingleLogout error: " + exc.ToString());
+                status = Saml2StatusCodes.RequestDenied;
+            }
+
+            var responsebinding = new Saml2PostBinding();
+            responsebinding.RelayState = requestBinding.RelayState;
+            var saml2LogoutResponse = new Saml2LogoutResponse(config)
+            {
+                InResponseToAsString = logoutRequest.IdAsString,
+                Status = status,
+            };
+            return responsebinding.Bind(saml2LogoutResponse).ToActionResult();
         }
     }
 }

@@ -32,7 +32,6 @@ namespace Nexpo
             JWTAudience = config["JWT:Audience"];
             JWTExpires = config["JWT:Expires"];
             ConnectionString = config["ConnectionString"];
-            Saml2 = new Saml2Configuration { config["Saml2"]. }
             IdPMetadata = config["Saml2:IdPMetadata"];
 
         }

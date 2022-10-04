@@ -16,6 +16,26 @@ using ITfoxtec.Identity.Saml2.Schemas.Metadata;
 using ITfoxtec.Identity.Saml2.MvcCore.Configuration;
 using System.Linq;
 
+// maybe dublicated imports
+using ITfoxtec.Identity.Saml2;
+using ITfoxtec.Identity.Saml2.Util;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System;
+using System.Linq;
+using ITfoxtec.Identity.Saml2.MvcCore.Configuration;
+using ITfoxtec.Identity.Saml2.MvcCore;
+using ITfoxtec.Identity.Saml2.Schemas.Metadata;
+using Microsoft.AspNetCore.Authentication;
+using ITfoxtec.Identity.Saml2.Schemas;
+using System.Net;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
+
 namespace Nexpo
 {
     public class Startup
@@ -74,9 +94,11 @@ namespace Nexpo
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
+            services.AddHttpContextAccessor();
             if (Environment.IsDevelopment())
             {
                 services.AddScoped<IEmailService, DevEmailService>();
+
             }
             else
             {
@@ -98,28 +120,31 @@ namespace Nexpo
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Nexpo", Version = "v1" });
             });
 
-            services.AddRazorPages();
-
-            services.Configure<Saml2Configuration>(Config.Saml2);
-
             services.Configure<Saml2Configuration>(saml2Configuration =>
             {
+                //saml2Configuration.SignAuthnRequest = true;
+                //saml2Configuration.SigningCertificate = CertificateUtil.Load(AppEnvironment.MapToPhysicalFilePath(Config["Saml2:SigningCertificateFile"]), Configuration["Saml2:SigningCertificatePassword"], X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet);
+
+                //saml2Configuration.SignatureValidationCertificates.Add(CertificateUtil.Load(AppEnvironment.MapToPhysicalFilePath(Configuration["Saml2:SignatureValidationCertificateFile"])));
                 saml2Configuration.AllowedAudienceUris.Add(saml2Configuration.Issuer);
 
                 var entityDescriptor = new EntityDescriptor();
                 entityDescriptor.ReadIdPSsoDescriptorFromUrl(new Uri(Config.IdPMetadata));
                 if (entityDescriptor.IdPSsoDescriptor != null)
                 {
+                    saml2Configuration.AllowedIssuer = entityDescriptor.EntityId;
                     saml2Configuration.SingleSignOnDestination = entityDescriptor.IdPSsoDescriptor.SingleSignOnServices.First().Location;
+                    saml2Configuration.SingleLogoutDestination = entityDescriptor.IdPSsoDescriptor.SingleLogoutServices.First().Location;
                     saml2Configuration.SignatureValidationCertificates.AddRange(entityDescriptor.IdPSsoDescriptor.SigningCertificates);
                 }
                 else
                 {
                     throw new Exception("IdPSsoDescriptor not loaded from metadata.");
                 }
+
             });
 
-            services.AddSaml2();
+            services.AddSaml2(slidingExpiration: true);
 
         }
 
@@ -129,6 +154,7 @@ namespace Nexpo
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nexpo v1"));
 
@@ -147,12 +173,21 @@ namespace Nexpo
             {
                 endpoints.MapControllers();
 
-                // for SSO
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            //Require SAML 2.0 authorization before SPA load.
+            app.Use(async (context, next) =>
+            {
+                if (!context.User.Identity.IsAuthenticated)
+                {
+                    await context.ChallengeAsync(Saml2Constants.AuthenticationScheme);
+                }
+                else
+                {
+                    await next();
+                }
+            });
+
 
         }
     }
