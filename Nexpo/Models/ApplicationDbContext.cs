@@ -109,15 +109,15 @@ namespace Nexpo.Models
             SaveChanges();
 
             // StudentSessionApplications
-            var application1 = new StudentSessionApplication { /*Id = 1*/, Motivation = "I think you are an interesting company", StudentId = student1.Id.Value, CompanyId = company1.Id.Value };
-            var application2 = new StudentSessionApplication { /*Id = 2*/, Motivation = "I love my MacBook", StudentId = student2.Id.Value, CompanyId = company1.Id.Value };
-            var application3 = new StudentSessionApplication { /*Id = 3*/, Motivation = "User experience is very important for me", StudentId = student3.Id.Value, CompanyId = company1.Id.Value };
+            var application1 = new StudentSessionApplication { /*Id = 1,*/ Motivation = "I think you are an interesting company", StudentId = student1.Id.Value, CompanyId = company1.Id.Value };
+            var application2 = new StudentSessionApplication { /*Id = 2,*/ Motivation = "I love my MacBook", StudentId = student2.Id.Value, CompanyId = company1.Id.Value };
+            var application3 = new StudentSessionApplication { /*Id = 3,*/ Motivation = "User experience is very important for me", StudentId = student3.Id.Value, CompanyId = company1.Id.Value };
 
-            var application4 = new StudentSessionApplication { /*Id = 4*/, Motivation = "I would like to learn more about searching", StudentId = student1.Id.Value, CompanyId = company2.Id.Value };
-            var application5 = new StudentSessionApplication { /*Id = 5*/, Motivation = "I am applying for everything", StudentId = student2.Id.Value, CompanyId = company2.Id.Value };
-            var application6 = new StudentSessionApplication { /*Id = 6*/, Motivation = "Search algrorithms are very cool", StudentId = student3.Id.Value, CompanyId = company2.Id.Value };
+            var application4 = new StudentSessionApplication { /*Id = 4,*/ Motivation = "I would like to learn more about searching", StudentId = student1.Id.Value, CompanyId = company2.Id.Value };
+            var application5 = new StudentSessionApplication { /*Id = 5,*/ Motivation = "I am applying for everything", StudentId = student2.Id.Value, CompanyId = company2.Id.Value };
+            var application6 = new StudentSessionApplication { /*Id = 6,*/ Motivation = "Search algrorithms are very cool", StudentId = student3.Id.Value, CompanyId = company2.Id.Value };
 
-            var application7 = new StudentSessionApplication { /*Id = 7*/, Motivation = "Music is a big passion of mine", StudentId = student2.Id.Value, CompanyId = company3.Id.Value };
+            var application7 = new StudentSessionApplication { /*Id = 7,*/ Motivation = "Music is a big passion of mine", StudentId = student2.Id.Value, CompanyId = company3.Id.Value };
             StudentSessionApplications.AddRange(application1, application2, application3, application4, application5, application6, application7);
             SaveChanges();
             
