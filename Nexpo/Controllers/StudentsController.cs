@@ -29,21 +29,10 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}")]
-        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.CompanyRepresentative))]
+        [Authorize(nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(Student), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetStudent(int id)
         {
-            // Only allow connected companies to access user information
-            var userRole = HttpContext.User.GetRole();
-            if (userRole == Role.CompanyRepresentative)
-            {
-                var companyId = HttpContext.User.GetCompanyId().Value;
-                if (!await _connectionRepo.ConnectionExists(id, companyId) || !await _applicationRepo.ApplicationExists(id, companyId))
-                {
-                    return Forbid();
-                }
-            }
-
             var student = await _studentRepo.Get(id);
             if (student == null) 
             {
