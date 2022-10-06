@@ -12,9 +12,9 @@ using Nexpo.Helpers;
 
 namespace Nexpo.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class AuthController : ControllerBase
     {
         const string relayStateReturnUrl = "ReturnUrl";
@@ -44,7 +44,7 @@ namespace Nexpo.Controllers
             }).ToActionResult();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("AssertionConsumerService")]
         public async Task<IActionResult> AssertionConsumerService()
         {
@@ -64,7 +64,7 @@ namespace Nexpo.Controllers
             return Redirect(returnUrl);
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("Logout")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -79,7 +79,7 @@ namespace Nexpo.Controllers
             return binding.Bind(saml2LogoutRequest).ToActionResult();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("LoggedOut")]
         public IActionResult LoggedOut()
         {

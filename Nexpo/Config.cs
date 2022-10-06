@@ -33,8 +33,13 @@ namespace Nexpo
             JWTExpires = config["JWT:Expires"];
             ConnectionString = config["ConnectionString"];
             IdPMetadata = config["Saml2:IdPMetadata"];
-
-        }
+            Saml2 = new Saml2Configuration
+            {
+                
+                Issuer = config["Saml2:Issuer"],
+                SignatureAlgorithm = config["Saml2:SignatureAlgorithm"],
+                //SigningCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(config["Saml2:SigningCertificate"]),
+            };}
 
         public string BaseUrl { get; set; }
         public string SendGridApiKey { get; set; }

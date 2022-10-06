@@ -10,9 +10,9 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Nexpo.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
-    [AllowAnonymous]
     public class MetadataController : ControllerBase
     {
         private readonly Saml2Configuration config;
