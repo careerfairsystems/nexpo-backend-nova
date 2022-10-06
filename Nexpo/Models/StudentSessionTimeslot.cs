@@ -18,7 +18,7 @@ namespace Nexpo.Models
         public int CompanyId { get; set; }
         [JsonIgnore]
         public Company Company { get; set; }
-        public bool booked { get; set; } = false;
+        public int? StudentId { get; set; }
     }
 }
 

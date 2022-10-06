@@ -61,8 +61,8 @@ namespace Nexpo.Controllers
         [HttpPost]
         [Route("company/{id}")]
         [Authorize(Roles = nameof(Role.Student))]
-        [ProducesResponseType(typeof(StudentSessionApplicationDto), StatusCodes.Status201Created)]
-        public async Task<ActionResult> PostApplication(int id, string motivation)
+        [ProducesResponseType(typeof(StudentSessionApplication), StatusCodes.Status201Created)]
+        public async Task<ActionResult> PostApplication(int id, UpdateStudentSessionApplicationStudentDto dto)
         {
             // Check that the company accepts applications
             var company = await _companyRepo.GetWithChildren(id);
@@ -74,21 +74,14 @@ namespace Nexpo.Controllers
             var studentId = HttpContext.User.GetStudentId().Value;
             var application = new StudentSessionApplication
             {
-                Motivation = motivation,
+                Motivation = dto.Motivation,
                 CompanyId = id,
                 StudentId = studentId
             };
 
             await _applicationRepo.Add(application);
 
-            var studentApplication = new StudentSessionApplicationDto
-            {
-                Id = application.Id.Value,
-                Motivation = application.Motivation,
-                CompanyId = application.CompanyId
-            };
-
-            return CreatedAtAction(nameof(GetApplicationStudent), new { id = studentApplication.Id }, studentApplication);
+            return CreatedAtAction(nameof(GetApplicationStudent), new { id = application.Id }, application);
         }
 
         /// <summary>
@@ -97,7 +90,7 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
-        [ProducesResponseType(typeof(StudentSessionApplicationDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(StudentSessionApplication), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetApplicationStudent(int id)
         {
             var application = await _applicationRepo.Get(id);
@@ -124,13 +117,8 @@ namespace Nexpo.Controllers
                 }
             }
 
-            var studentApplication = new StudentSessionApplicationDto
-            {
-                Id = application.Id.Value,
-                Motivation = application.Motivation,
-                CompanyId = application.CompanyId
-            };
-            return Ok(studentApplication);
+          
+            return Ok(application);
         }
 
         /// <summary>

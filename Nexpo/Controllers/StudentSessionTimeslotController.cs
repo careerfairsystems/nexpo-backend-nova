@@ -6,7 +6,9 @@ using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -80,6 +82,41 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
+        /// Get all companies that have timeslots
+        /// </summary>
+        [HttpGet]
+        [Route("companies")]
+        [ProducesResponseType(typeof(IEnumerable<PublicCompanyDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetCompaniesWithTimeslot()
+        {
+            var allCompanies = await _companyRepo.GetAll();
+
+            var companiesWithTimeslots = new List<Company>();
+            foreach (var company in allCompanies)
+            {
+                if (company.Id.HasValue)
+                {
+                    var timeslots = await _timeslotRepo.GetAllForCompany(company.Id.GetValueOrDefault());
+                    if (timeslots.Count() > 0)
+                    {
+                       companiesWithTimeslots.Add(company);
+                    }
+                }
+            }
+
+            var publicCompanies = companiesWithTimeslots.Select(c => new PublicCompanyDto
+            {
+                Id = c.Id.Value,
+                Name = c.Name,
+                Description = c.Description,
+                Website = c.Website,
+                LogoUrl = c.LogoUrl
+            });
+
+            return Ok(companiesWithTimeslots);
+        }
+
+        /// <summary>
         /// Delete a timeslot
         /// </summary>
         [HttpDelete]
@@ -121,9 +158,6 @@ namespace Nexpo.Controllers
             }
             var companyId = timeslot.CompanyId;
             var studentId = HttpContext.User.GetStudentId().Value;
-
-            var test = await _applicationRepo.GetByCompanyAndStudent(studentId,companyId);
-            Console.WriteLine(test);
             var application = await _applicationRepo.GetByCompanyAndStudent(studentId, companyId);
             
             if(application == null)
@@ -135,15 +169,14 @@ namespace Nexpo.Controllers
             {
                 return BadRequest();
             }
-            if (application.booked == true)
+
+            if(timeslot.StudentId != null)
             {
                 return BadRequest();
             }
 
-            application.booked = true;
-            timeslot.booked = true;
+            timeslot.StudentId = studentId;
 
-            await _applicationRepo.Update(application);
             await _timeslotRepo.Update(timeslot);
 
             return Ok(timeslot);
