@@ -19,13 +19,13 @@ namespace Nexpo.Models
         public string HostEmail { get; set; }
         public string HostPhone { get; set; }
 
-        public IEnumerable<Degree> desiredDegrees { get; set;}
+        public List<Degree> DesiredDegrees { get; set;}
 
-        public IEnumerable<Guild> desiredGuilds { get; set;}
+        public List<Guild> DesiredGuilds { get; set;}
 
-        public IEnumerable<Position> positions { get; set;}
+        public List<Position> Positions { get; set;}
 
-        public IEnumerable<Industry> Industries { get; set;}
+        public List<Industry> Industries { get; set;}
         public IEnumerable<User> Representatives { get; set; }
         public IEnumerable<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
     }
