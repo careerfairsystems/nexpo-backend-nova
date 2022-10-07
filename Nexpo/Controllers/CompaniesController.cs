@@ -40,7 +40,11 @@ namespace Nexpo.Controllers
                 Description = c.Description,
                 DidYouKnow = c.DidYouKnow,
                 Website = c.Website,
-                LogoUrl = c.LogoUrl
+                LogoUrl = c.LogoUrl,
+                DesiredDegrees = c.DesiredDegrees,
+                DesiredGuilds = c.DesiredGuilds,
+                Positions = c.Positions,
+                Industries = c.Industries
             });
 
             return Ok(publicCompanies);
@@ -67,7 +71,11 @@ namespace Nexpo.Controllers
                 Description = company.Description,
                 DidYouKnow = company.DidYouKnow,
                 Website = company.Website,
-                LogoUrl = company.LogoUrl
+                LogoUrl = company.LogoUrl,
+                DesiredDegrees = company.DesiredDegrees,
+                DesiredGuilds = company.DesiredGuilds,
+                Positions = company.Positions,
+                Industries = company.Industries
 
             };
             return Ok(publicCompany);
