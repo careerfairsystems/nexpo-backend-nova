@@ -144,10 +144,10 @@ namespace Nexpo.Controllers
         /// Book a timeslot
         /// </summary>
         [HttpPut]
-        [Route("{id}")]
+        [Route("book/{id}")]
         [Authorize(Roles = nameof(Role.Student))]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PutTimeslot(int id)
+        public async Task<ActionResult> BookTimeslot(int id)
         {
             var timeslot = await _timeslotRepo.Get(id);
             if (timeslot == null)
@@ -179,6 +179,53 @@ namespace Nexpo.Controllers
             }
 
             timeslot.StudentId = studentId;
+            application.Booked = true;
+
+            await _applicationRepo.Update(application);
+            await _timeslotRepo.Update(timeslot);
+
+            return Ok(timeslot);
+        }
+
+        /// <summary>
+        /// Book a timeslot
+        /// </summary>
+        [HttpPut]
+        [Route("unbook/{id}")]
+        [Authorize(Roles = nameof(Role.Student))]
+        [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status200OK)]
+        public async Task<ActionResult> UnbookTimeslot(int id)
+        {
+            var timeslot = await _timeslotRepo.Get(id);
+            if (timeslot == null)
+            {
+                return NotFound();
+            }
+            var companyId = timeslot.CompanyId;
+            var studentId = HttpContext.User.GetStudentId().Value;
+            var application = await _applicationRepo.GetByCompanyAndStudent(studentId, companyId);
+
+            if (application == null)
+            {
+                return BadRequest();
+            }
+
+            if (application.Status != StudentSessionApplicationStatus.Accepted)
+            {
+                return BadRequest();
+            }
+
+            if (timeslot.StudentId == null)
+            {
+                return BadRequest();
+            }
+
+            if (!application.Booked)
+            {
+                return BadRequest();
+            }
+
+            timeslot.StudentId = null;
             application.Booked = false;
 
             await _applicationRepo.Update(application);
