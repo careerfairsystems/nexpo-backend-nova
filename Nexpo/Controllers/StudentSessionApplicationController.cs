@@ -74,16 +74,25 @@ namespace Nexpo.Controllers
             }
 
             var studentId = HttpContext.User.GetStudentId().Value;
-            var application = new StudentSessionApplication
+
+            if (await _applicationRepo.ApplicationExists(studentId, id))
             {
-                Motivation = dto.Motivation,
-                CompanyId = id,
-                StudentId = studentId
-            };
-
-            await _applicationRepo.Add(application);
-
-            return CreatedAtAction(nameof(GetApplicationStudent), new { id = application.Id }, application);
+                var current = await _applicationRepo.GetByCompanyAndStudent(studentId, id);
+                current.Motivation = dto.Motivation;
+                await _applicationRepo.Update(current);
+                return CreatedAtAction(nameof(GetApplicationStudent), new { id = current.Id }, current);
+            }
+            else
+            {
+                var application = new StudentSessionApplication
+                {
+                    Motivation = dto.Motivation,
+                    CompanyId = id,
+                    StudentId = studentId
+                };
+                await _applicationRepo.Add(application);
+                return CreatedAtAction(nameof(GetApplicationStudent), new { id = application.Id }, application);
+            }
         }
 
         /// <summary>
@@ -166,11 +175,7 @@ namespace Nexpo.Controllers
             var exists = await _applicationRepo.ApplicationExists(studentId, id);
             if (!exists)
             {
-                return Ok(new ApplicationStatusDto
-                {
-                    accepted = false,
-                    booked = false
-                });
+                return BadRequest();
             }
             var application = await _applicationRepo.GetByCompanyAndStudent(studentId, id);
             
