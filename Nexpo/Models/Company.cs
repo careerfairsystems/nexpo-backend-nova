@@ -19,8 +19,30 @@ namespace Nexpo.Models
         public string HostEmail { get; set; }
         public string HostPhone { get; set; }
 
+        public IEnumerable<Degree> desiredDegrees { get; set;}
+
+        public IEnumerable<Guild> desiredGuilds { get; set;}
+
+        public IEnumerable<Position> positions { get; set;}
+
+        public IEnumerable<Industry> Industries { get; set;}
         public IEnumerable<User> Representatives { get; set; }
         public IEnumerable<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
+    }
+
+    public enum Degree {
+        Bachelor, Master, PhD
+    }
+
+    public enum Position {
+        Thesis, TraineeEmployment, Internship, SummerJob, ForeignOppurtunity, PartTime 
+    }
+
+    public enum Industry {
+        
+        ElectricityEnergyPower, Environment, BankingFinance, Union, Investment, Insurance, Recruitment, Construction, Architecture, 
+        GraphicDesign, DataIT, FinanceConsultancy, Telecommunication, Consulting, Management, Media, Industry, NuclearPower, LifeScience, 
+        MedicalTechniques, PropertyInfrastructure, Research, Coaching
     }
 }
 
