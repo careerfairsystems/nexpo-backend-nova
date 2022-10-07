@@ -52,10 +52,10 @@ namespace Nexpo.Models
             }
 
             // Companies
-            var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" };
-            var company2 = new Company { Id = -2, Name = "Google", Description = "You can find more about us by searching the web" };
-            var company3 = new Company { Id = -3, Name = "Spotify", Description = "We like music" };
-            var company4 = new Company { Id = -4, Name = "Facebook", Description = "We have friends in common" };
+            var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples"};
+            var company2 = new Company { Id = -2, Name = "Google", Description = "You can find more about us by searching the web"  , DidYouKnow = "we are big"};
+            var company3 = new Company { Id = -3, Name = "Spotify", Description = "We like music" ,  DidYouKnow = "we love music"};
+            var company4 = new Company { Id = -4, Name = "Facebook", Description = "We have friends in common" , DidYouKnow = "Mark zuckerburg is an Alien" };
             Companies.AddRange(company1, company2, company3, company4);
             SaveChanges();
 

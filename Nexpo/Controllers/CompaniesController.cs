@@ -38,6 +38,7 @@ namespace Nexpo.Controllers
                 Id = c.Id.Value,
                 Name = c.Name,
                 Description = c.Description,
+                DidYouKnow = c.DidYouKnow,
                 Website = c.Website,
                 LogoUrl = c.LogoUrl
             });
@@ -64,6 +65,7 @@ namespace Nexpo.Controllers
                 Id = company.Id.Value,
                 Name = company.Name,
                 Description = company.Description,
+                DidYouKnow = company.DidYouKnow,
                 Website = company.Website,
                 LogoUrl = company.LogoUrl
 
@@ -85,6 +87,10 @@ namespace Nexpo.Controllers
             if (!string.IsNullOrEmpty(dto.Description))
             {
                 company.Description = dto.Description;
+            }
+            if (!string.IsNullOrEmpty(dto.DidYouKnow))
+            {
+                company.DidYouKnow = dto.DidYouKnow;
             }
             if (!string.IsNullOrEmpty(dto.Website))
             {
@@ -136,6 +142,10 @@ namespace Nexpo.Controllers
             if (!string.IsNullOrEmpty(dto.Description))
             {
                 company.Description = dto.Description;
+            }
+            if (!string.IsNullOrEmpty(dto.DidYouKnow))
+            {
+                company.DidYouKnow = dto.DidYouKnow;
             }
             if (!string.IsNullOrEmpty(dto.Website))
             {
