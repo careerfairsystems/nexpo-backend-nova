@@ -112,6 +112,7 @@ namespace Nexpo.Controllers
                 Id = c.Id.Value,
                 Name = c.Name,
                 Description = c.Description,
+                DidYouKnow = c.DidYouKnow,
                 Website = c.Website,
                 LogoUrl = c.LogoUrl
             });
