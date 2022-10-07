@@ -51,6 +51,7 @@ namespace Nexpo.Controllers
             }
 
             application.Status = dto.Status;
+            await _applicationRepo.Update(application);
 
             return Ok(application);
         }
@@ -68,7 +69,7 @@ namespace Nexpo.Controllers
             var company = await _companyRepo.GetWithChildren(id);
             if (company.StudentSessionTimeslots.Count() == 0)
             {
-                return BadRequest();
+                return Conflict();
             }
 
             var studentId = HttpContext.User.GetStudentId().Value;
