@@ -19,7 +19,7 @@ namespace Nexpo.Models
         public int CompanyId { get; set; }
         [JsonIgnore]
         public Company Company { get; set; }
-
+        public bool Booked { get; set; } = false;
     }
 
     public enum StudentSessionApplicationStatus

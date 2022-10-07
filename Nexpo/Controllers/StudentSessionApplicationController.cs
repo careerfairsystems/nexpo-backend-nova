@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -135,6 +136,57 @@ namespace Nexpo.Controllers
             var applications = await _applicationRepo.GetAllForCompany(companyId);
 
             return Ok(applications);
+        }
+
+        /// <summary>
+        /// Get all applications made by the signed in Student
+        /// </summary>
+        [HttpGet]
+        [Route("my/student")]
+        [Authorize(Roles = nameof(Role.Student))]
+        [ProducesResponseType(typeof(IEnumerable<StudentSessionApplication>), StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetApplicationsFromStudent()
+        {
+            var studentId = HttpContext.User.GetStudentId().Value;
+            var applications = await _applicationRepo.GetAllForStudent(studentId);
+
+            return Ok(applications);
+        }
+
+        /// <summary>
+        /// Checks if application exists and is accepted and is booked
+        /// </summary>
+        [HttpGet]
+        [Route("accepted/{id}")]
+        [Authorize(Roles = nameof(Role.Student))]
+        [ProducesResponseType(typeof(ApplicationStatusDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult> applicationAccepted(int id)
+        {
+            var studentId = HttpContext.User.GetStudentId().Value;
+            var exists = await _applicationRepo.ApplicationExists(studentId, id);
+            if (!exists)
+            {
+                return Ok(new ApplicationStatusDto
+                {
+                    accepted = false,
+                    booked = false
+                });
+            }
+            var application = await _applicationRepo.GetByCompanyAndStudent(studentId, id);
+            
+            if(application.Status != StudentSessionApplicationStatus.Accepted)
+            {
+                return Ok(new ApplicationStatusDto
+                {
+                    accepted = false,
+                    booked = application.Booked
+                });
+            }
+            return Ok(new ApplicationStatusDto
+            {
+                accepted=true,
+                booked=application.Booked
+            });
         }
 
         /// <summary>

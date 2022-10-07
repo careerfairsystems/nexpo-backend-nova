@@ -92,10 +92,8 @@ namespace Nexpo.Controllers
             var allCompanies = await _companyRepo.GetAll();
 
             var companiesWithTimeslots = new List<Company>();
-            foreach (var company in allCompanies)
-            {
-                if (company.Id.HasValue)
-                {
+            foreach (var company in allCompanies){
+                if (company.Id.HasValue){
                     var timeslots = await _timeslotRepo.GetAllForCompany(company.Id.GetValueOrDefault());
                     if (timeslots.Count() > 0)
                     {
@@ -113,7 +111,7 @@ namespace Nexpo.Controllers
                 LogoUrl = c.LogoUrl
             });
 
-            return Ok(companiesWithTimeslots);
+            return Ok(publicCompanies);
         }
 
         /// <summary>
@@ -175,8 +173,15 @@ namespace Nexpo.Controllers
                 return BadRequest();
             }
 
-            timeslot.StudentId = studentId;
+            if (application.Booked) 
+            {
+                return BadRequest();
+            }
 
+            timeslot.StudentId = studentId;
+            application.Booked = false;
+
+            await _applicationRepo.Update(application);
             await _timeslotRepo.Update(timeslot);
 
             return Ok(timeslot);

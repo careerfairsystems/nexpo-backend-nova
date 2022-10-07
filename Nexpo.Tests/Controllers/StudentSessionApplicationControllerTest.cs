@@ -155,5 +155,18 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get as company error");
             Assert.True(appList.Count == 3, "Application list length should be 4, count:" + appList.Count.ToString());
         }
+
+        [Fact]
+        public async Task GetApplicationAccepted()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            await Login("", client);
+
+            var response = await client.GetAsync("/api/applications/accepted/-1");
+            var accepted = JsonConvert.DeserializeObject<bool>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get error code: ");
+            Assert.True(accepted, "content should be true");
+        }
     }
 }
