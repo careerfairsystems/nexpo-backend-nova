@@ -15,6 +15,13 @@ namespace Nexpo
         public string JWTAudience { get; set; }
         public string JWTExpires { get; set; }
         public string ConnectionString { get; set; }
+
+        // ** ADDED for SSO feature **
+        public string SPEntityId { get; set; }
+        public string IDPEntityId { get; set; }
+        public string CertificatePath { get; set; }
+        public string CertificatePassword { get; set; }
+
     }
 
     public class Config : IConfig
@@ -29,6 +36,12 @@ namespace Nexpo
             JWTAudience = config["JWT:Audience"];
             JWTExpires = config["JWT:Expires"];
             ConnectionString = config["ConnectionString"];
+            SPEntityId = config["SAML:SPEntityId"];
+            IDPEntityId = config["SAML:IDPEntityId"];
+            CertificatePath = config["SAML:CertificatePath"];
+            CertificatePassword = config["SAML:CertificatePassword"];
+
+
         }
 
         public string BaseUrl { get; set; }
@@ -38,6 +51,11 @@ namespace Nexpo
         public string JWTAudience { get; set; }
         public string JWTExpires { get; set; }
         public string ConnectionString { get; set; }
+        public string SPEntityId { get; set; }
+        public string IDPEntityId { get; set; }
+        public string CertificatePath { get; set; }
+        public string CertificatePassword { get; set; }
+
 
     }
 }
