@@ -15,7 +15,6 @@ namespace Nexpo.Models
         public DbSet<CompanyConnection> CompanyConnections { get; set; }
         public DbSet<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
         public DbSet<StudentSessionApplication> StudentSessionApplications { get; set; }
-        public DbSet<StudentSession> StudentSessions { get; set; }
 
         private readonly PasswordService _passwordService;
 
@@ -110,22 +109,18 @@ namespace Nexpo.Models
             SaveChanges();
 
             // StudentSessionApplications
-            var application1 = new StudentSessionApplication { Id = -1, Motivation = "I think you are an interesting company", Rating = 3, StudentId = student1.Id.Value, CompanyId = company1.Id.Value };
-            var application2 = new StudentSessionApplication { Id = -2, Motivation = "I love my MacBook", Rating = 4, StudentId = student2.Id.Value, CompanyId = company1.Id.Value };
-            var application3 = new StudentSessionApplication { Id = -3, Motivation = "User experience is very important for me", Rating = 5, StudentId = student3.Id.Value, CompanyId = company1.Id.Value };
+            var application1 = new StudentSessionApplication { Id = -1, Motivation = "Hej, jag är jättebra och tror att ni vill träffa mig!", StudentId = student1.Id.Value, CompanyId = company1.Id.Value};
+            var application2 = new StudentSessionApplication { Id = -2, Motivation = "I love my MacBook", StudentId = student2.Id.Value, CompanyId = company1.Id.Value };
+            var application3 = new StudentSessionApplication { Id = -3, Motivation = "User experience is very important for me", StudentId = student3.Id.Value, CompanyId = company1.Id.Value };
 
-            var application4 = new StudentSessionApplication { Id = -4, Motivation = "I would like to learn more about searching", Rating = 3, StudentId = student1.Id.Value, CompanyId = company2.Id.Value };
-            var application5 = new StudentSessionApplication { Id = -5, Motivation = "I am applying for everything", Rating = 0, StudentId = student2.Id.Value, CompanyId = company2.Id.Value };
-            var application6 = new StudentSessionApplication { Id = -6, Motivation = "Search algrorithms are very cool", Rating = 4, StudentId = student3.Id.Value, CompanyId = company2.Id.Value };
+            var application4 = new StudentSessionApplication { Id = -4, Motivation = "I would like to learn more about searching", StudentId = student1.Id.Value, CompanyId = company2.Id.Value };
+            var application5 = new StudentSessionApplication { Id = -5, Motivation = "I am applying for everything", StudentId = student2.Id.Value, CompanyId = company2.Id.Value };
+            var application6 = new StudentSessionApplication { Id = -6, Motivation = "Search algrorithms are very cool", StudentId = student3.Id.Value, CompanyId = company2.Id.Value };
 
-            var application7 = new StudentSessionApplication { Id = -7, Motivation = "Music is a big passion of mine", Rating = 4, StudentId = student2.Id.Value, CompanyId = company3.Id.Value };
+            var application7 = new StudentSessionApplication { Id = -7, Motivation = "Music is a big passion of mine", StudentId = student2.Id.Value, CompanyId = company3.Id.Value };
             StudentSessionApplications.AddRange(application1, application2, application3, application4, application5, application6, application7);
             SaveChanges();
 
-            //Student sessions
-            var studentSession1 = new StudentSession { Id = -1, StudentId = student1.Id.Value, Student = student1, StudentSessionTimeslot = session1, StudentSessionApplication = application1, StudentSessionApplicationId = application1.Id.Value, StudentSessionTimeslotId = session1.Id.Value };
-            StudentSessions.AddRange(studentSession1);
-            SaveChanges();
 
             // CompanyConnections
             var connection1 = new CompanyConnection { Id = -1, Comment = "Someone that is very passionate about what they are doing", Rating = 4, StudentId = student1.Id.Value, CompanyId = company1.Id.Value };

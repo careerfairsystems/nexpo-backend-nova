@@ -9,7 +9,6 @@ namespace Nexpo.Repositories
 {
     public interface IStudentSessionTimeslotRepository
     {
-        public Task<IEnumerable<StudentSessionTimeslot>> GetAllUnassigned();
         public Task<IEnumerable<StudentSessionTimeslot>> GetAllForCompany(int companyId);
         public Task<StudentSessionTimeslot> Get(int id);
         public Task Add(StudentSessionTimeslot timeslot);
@@ -26,10 +25,6 @@ namespace Nexpo.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<StudentSessionTimeslot>> GetAllUnassigned()
-        {
-            return await _context.StudentSessionTimeslots.Where(t => t.StudentSession == null).ToListAsync();
-        }
 
         public async Task<IEnumerable<StudentSessionTimeslot>> GetAllForCompany(int companyId)
         {
