@@ -109,7 +109,7 @@ namespace Nexpo.Models
             SaveChanges();
 
             // StudentSessionApplications
-            var application1 = new StudentSessionApplication { Id = -1, Motivation = "I think you are an interesting company", StudentId = student1.Id.Value, CompanyId = company1.Id.Value, Status = StudentSessionApplicationStatus.Accepted};
+            var application1 = new StudentSessionApplication { Id = -1, Motivation = "Hej, jag är jättebra och tror att ni vill träffa mig!", StudentId = student1.Id.Value, CompanyId = company1.Id.Value};
             var application2 = new StudentSessionApplication { Id = -2, Motivation = "I love my MacBook", StudentId = student2.Id.Value, CompanyId = company1.Id.Value };
             var application3 = new StudentSessionApplication { Id = -3, Motivation = "User experience is very important for me", StudentId = student3.Id.Value, CompanyId = company1.Id.Value };
 

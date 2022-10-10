@@ -79,10 +79,10 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             await Login("", client);
 
-            var response = await client.GetAsync("/api/companies");
+            var response = await client.GetAsync("/api/timeslots/companies");
             var responseList = JsonConvert.DeserializeObject<List<PublicCompanyDto>>((await response.Content.ReadAsStringAsync()));
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-            Assert.True(responseList.Count == 3, "Wrong count, got: " + responseList[0].Name + responseList[1].Name + responseList[2].Name + responseList[3].Name);
+            Assert.True(responseList.Count == 3, "Wrong count, got: " + responseList.Count);
         }
     }
 }

@@ -58,10 +58,8 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
             Assert.True(responseList.Count == 3, "Number of applications: " + responseList.Count.ToString());
 
-            var app1 = responseList.Find(r => r.Id == -1);
             var app3 = responseList.Find(r => r.Id == -3);
 
-            Assert.True(app1.Motivation == "I think you are an interesting company", "Wrong motivation: " + app1.Motivation);
             Assert.True(app3.Motivation == "User experience is very important for me", app3.Motivation);
         }
 
@@ -75,7 +73,7 @@ namespace Nexpo.Tests.Controllers
             var response = await client.GetAsync("/api/applications/-1");
             var app = JsonConvert.DeserializeObject<StudentSessionApplication>((await response.Content.ReadAsStringAsync()));
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-            Assert.True(app.Motivation == "I think you are an interesting company", "Wrong motivation: " + app.Motivation);
+            Assert.True(app.Motivation == "Hej, jag är jättebra och tror att ni vill träffa mig!", "Wrong motivation: " + app.Motivation);
             //Get someone elses application
             response = await client.GetAsync("/api/applications/-3");
             Assert.True(!response.StatusCode.Equals(HttpStatusCode.OK), "Inproper access");
@@ -89,7 +87,7 @@ namespace Nexpo.Tests.Controllers
             var token = await Login("company", client);
 
             //Ensure seed data is correct
-            var response = await client.GetAsync("/api/applications/-1");
+            var response = await client.GetAsync("/api/applications/-2");
             var app = JsonConvert.DeserializeObject<StudentSessionApplication>((await response.Content.ReadAsStringAsync()));
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get application error code: " + response.StatusCode);
             Assert.True(app.Status == StudentSessionApplicationStatus.NoResponse, "Incorrect seed data");
@@ -141,19 +139,9 @@ namespace Nexpo.Tests.Controllers
             response = await companyClient.GetAsync("/api/applications/my/company");
             appList = JsonConvert.DeserializeObject<List<StudentSessionApplication>>((await response.Content.ReadAsStringAsync()));
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get as company error");
-            Assert.True(appList.Count == 4, "Application list length should be 4, count:" + appList.Count.ToString());
-            Assert.True(appList[3].Motivation == "Hej, jag är jättebra och tror att ni vill träffa mig!", "Wrong motivation, got: " + appList[3].Motivation);
-            int id = appList[3].Id.GetValueOrDefault();
-            
-            //Delete as company
-            response = await companyClient.DeleteAsync("/api/applications/" + id.ToString());
-            Assert.True(response.IsSuccessStatusCode, "Delete application error");
-            
-            //Check that delete works
-            response = await companyClient.GetAsync("/api/applications/my/company");
-            appList = JsonConvert.DeserializeObject<List<StudentSessionApplication>>((await response.Content.ReadAsStringAsync()));
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get as company error");
-            Assert.True(appList.Count == 3, "Application list length should be 4, count:" + appList.Count.ToString());
+            Assert.True(appList.Count == 3, "Application list length should be 3, count:" + appList.Count.ToString());
+            Assert.True(appList[2].Motivation == "Hej, jag är jättebra och tror att ni vill träffa mig!", "Wrong motivation, got: " + appList[2].Motivation);
+            int id = appList[2].Id.GetValueOrDefault();
         }
 
         [Fact]
@@ -164,9 +152,9 @@ namespace Nexpo.Tests.Controllers
             await Login("", client);
 
             var response = await client.GetAsync("/api/applications/accepted/-1");
-            var accepted = JsonConvert.DeserializeObject<bool>((await response.Content.ReadAsStringAsync()));
+            var status = JsonConvert.DeserializeObject<ApplicationStatusDto>((await response.Content.ReadAsStringAsync()));
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get error code: ");
-            Assert.True(accepted, "content should be true");
+            Assert.True(!status.accepted, "Accepted should be false");
         }
     }
 }

@@ -188,7 +188,7 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Book a timeslot
+        /// Unbook a timeslot
         /// </summary>
         [HttpPut]
         [Route("unbook/{id}")]
