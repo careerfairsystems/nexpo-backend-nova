@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nexpo.Migrations
 {
-    public partial class fixedMain : Migration
+    public partial class testing : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,6 +53,29 @@ namespace Nexpo.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Events", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StudentSessionTimeslots",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Start = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    End = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Location = table.Column<string>(type: "text", nullable: false),
+                    CompanyId = table.Column<int>(type: "integer", nullable: false),
+                    StudentId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StudentSessionTimeslots", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentSessionTimeslots_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -170,10 +193,10 @@ namespace Nexpo.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Motivation = table.Column<string>(type: "text", nullable: true),
-                    Rating = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
                     StudentId = table.Column<int>(type: "integer", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
-                    StudentSessionId = table.Column<int>(type: "integer", nullable: true)
+                    Booked = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -188,63 +211,6 @@ namespace Nexpo.Migrations
                         name: "FK_StudentSessionApplications_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "StudentSessionTimeslots",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Start = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    End = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Location = table.Column<string>(type: "text", nullable: false),
-                    StudentSessionId = table.Column<int>(type: "integer", nullable: true),
-                    CompanyId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StudentSessionTimeslots", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_StudentSessionTimeslots_Companies_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "StudentSessions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Status = table.Column<int>(type: "integer", nullable: false),
-                    StudentId = table.Column<int>(type: "integer", nullable: false),
-                    StudentSessionTimeslotId = table.Column<int>(type: "integer", nullable: false),
-                    StudentSessionApplicationId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_StudentSessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_StudentSessions_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StudentSessions_StudentSessionApplications_StudentSessionAp~",
-                        column: x => x.StudentSessionApplicationId,
-                        principalTable: "StudentSessionApplications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_StudentSessions_StudentSessionTimeslots_StudentSessionTimes~",
-                        column: x => x.StudentSessionTimeslotId,
-                        principalTable: "StudentSessionTimeslots",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -275,34 +241,9 @@ namespace Nexpo.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentSessionApplications_StudentSessionId",
-                table: "StudentSessionApplications",
-                column: "StudentSessionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StudentSessions_StudentId",
-                table: "StudentSessions",
-                column: "StudentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StudentSessions_StudentSessionApplicationId",
-                table: "StudentSessions",
-                column: "StudentSessionApplicationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StudentSessions_StudentSessionTimeslotId",
-                table: "StudentSessions",
-                column: "StudentSessionTimeslotId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_StudentSessionTimeslots_CompanyId",
                 table: "StudentSessionTimeslots",
                 column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StudentSessionTimeslots_StudentSessionId",
-                table: "StudentSessionTimeslots",
-                column: "StudentSessionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_EventId",
@@ -324,80 +265,33 @@ namespace Nexpo.Migrations
                 table: "Users",
                 column: "Email",
                 unique: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_StudentSessionApplications_StudentSessions_StudentSessionId",
-                table: "StudentSessionApplications",
-                column: "StudentSessionId",
-                principalTable: "StudentSessions",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_StudentSessionTimeslots_StudentSessions_StudentSessionId",
-                table: "StudentSessionTimeslots",
-                column: "StudentSessionId",
-                principalTable: "StudentSessions",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_StudentSessionApplications_Companies_CompanyId",
-                table: "StudentSessionApplications");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_StudentSessionTimeslots_Companies_CompanyId",
-                table: "StudentSessionTimeslots");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Users_Companies_CompanyId",
-                table: "Users");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_StudentSessionApplications_Students_StudentId",
-                table: "StudentSessionApplications");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_StudentSessions_Students_StudentId",
-                table: "StudentSessions");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_StudentSessionApplications_StudentSessions_StudentSessionId",
-                table: "StudentSessionApplications");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_StudentSessionTimeslots_StudentSessions_StudentSessionId",
-                table: "StudentSessionTimeslots");
-
             migrationBuilder.DropTable(
                 name: "CompanyConnections");
-
-            migrationBuilder.DropTable(
-                name: "Tickets");
-
-            migrationBuilder.DropTable(
-                name: "Events");
-
-            migrationBuilder.DropTable(
-                name: "Companies");
-
-            migrationBuilder.DropTable(
-                name: "Students");
-
-            migrationBuilder.DropTable(
-                name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "StudentSessions");
 
             migrationBuilder.DropTable(
                 name: "StudentSessionApplications");
 
             migrationBuilder.DropTable(
                 name: "StudentSessionTimeslots");
+
+            migrationBuilder.DropTable(
+                name: "Tickets");
+
+            migrationBuilder.DropTable(
+                name: "Students");
+
+            migrationBuilder.DropTable(
+                name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Companies");
         }
     }
 }
