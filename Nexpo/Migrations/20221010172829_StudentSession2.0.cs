@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Nexpo.Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nexpo.Migrations
 {
-    public partial class broken : Migration
+    public partial class StudentSession20 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,11 +18,16 @@ namespace Nexpo.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    DidYouKnow = table.Column<string>(type: "text", nullable: true),
                     LogoUrl = table.Column<string>(type: "text", nullable: true),
                     Website = table.Column<string>(type: "text", nullable: true),
                     HostName = table.Column<string>(type: "text", nullable: true),
                     HostEmail = table.Column<string>(type: "text", nullable: true),
-                    HostPhone = table.Column<string>(type: "text", nullable: true)
+                    HostPhone = table.Column<string>(type: "text", nullable: true),
+                    DesiredDegrees = table.Column<List<Degree>>(type: "integer[]", nullable: true),
+                    DesiredGuilds = table.Column<List<Guild>>(type: "integer[]", nullable: true),
+                    Positions = table.Column<List<Position>>(type: "integer[]", nullable: true),
+                    Industries = table.Column<List<Industry>>(type: "integer[]", nullable: true)
                 },
                 constraints: table =>
                 {
