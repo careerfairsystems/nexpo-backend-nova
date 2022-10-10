@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nexpo.Migrations
 {
-    public partial class StudentSession20 : Migration
+    public partial class testlocal : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221010172829_StudentSession2.0")]
-    partial class StudentSession20
+    [Migration("20221010194626_testlocal")]
+    partial class testlocal
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
