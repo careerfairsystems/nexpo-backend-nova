@@ -53,7 +53,13 @@ namespace Nexpo.Controllers
         public async Task<ActionResult<User>> GetUser(int id)
         {
             // Only allow connected companies to access user information
-            var userRole = HttpContext.User.GetRole();
+
+            // The code below does not work because id is a userId and ApplicationExists accepts a studentId
+            //!await _applicationRepo.ApplicationExists(id, companyId)
+
+            //TODO somehow get the studentId from the aquired userId and use it in ApplicationExists to only let companyRep see users wich have sent them an application
+
+            /*var userRole = HttpContext.User.GetRole();
             if (userRole == Role.CompanyRepresentative)
             {
                 var companyId = HttpContext.User.GetCompanyId().Value;
@@ -61,7 +67,7 @@ namespace Nexpo.Controllers
                 {
                     return Forbid();
                 }
-            }
+            }*/
 
             var user = await _userRepo.Get(id);
             if (user == null)
