@@ -177,9 +177,8 @@ namespace Nexpo.Controllers
         [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
         public async Task<ActionResult> AddNewCompany(AddCompanyDto dto)
         {
-            
-            var company = new Company {
-                Name = dto.Name,
+            var company = new Company{
+                Name =  dto.Name,
                 Description = dto.Description,
                 DidYouKnow = dto.DidYouKnow,
                 LogoUrl = dto.LogoUrl,
