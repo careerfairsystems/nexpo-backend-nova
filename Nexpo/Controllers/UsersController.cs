@@ -19,17 +19,20 @@ namespace Nexpo.Controllers
         private readonly IUserRepository _userRepo;
         private readonly ICompanyConnectionRepository _connectionRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
+        private readonly IStudentRepository _studentRepo;
         private readonly PasswordService _passwordService;
 
         public UsersController(
             IUserRepository iUserRepo, 
             ICompanyConnectionRepository iConnectionRepo, 
             IStudentSessionApplicationRepository iApplicationRepo,
+            IStudentRepository iStudentRepository,
             PasswordService passwordService)
         {
             _userRepo = iUserRepo;
             _connectionRepo = iConnectionRepo;
             _applicationRepo = iApplicationRepo;
+            _studentRepo = iStudentRepository;
             _passwordService = passwordService;
         }
 
@@ -52,22 +55,22 @@ namespace Nexpo.Controllers
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            // Only allow connected companies to access user information
-
-            // The code below does not work because id is a userId and ApplicationExists accepts a studentId
-            //!await _applicationRepo.ApplicationExists(id, companyId)
-
-            //TODO somehow get the studentId from the aquired userId and use it in ApplicationExists to only let companyRep see users wich have sent them an application
-
-            /*var userRole = HttpContext.User.GetRole();
+            //Only allow companies with an appliction from the student
+            var userRole = HttpContext.User.GetRole();
             if (userRole == Role.CompanyRepresentative)
             {
                 var companyId = HttpContext.User.GetCompanyId().Value;
-                if (!await _connectionRepo.ConnectionExists(id, companyId) || !await _applicationRepo.ApplicationExists(id, companyId))
+                var student = _studentRepo.FindByUser(id);
+                if(student == null)
                 {
                     return Forbid();
                 }
-            }*/
+                var studentId = student.Id;
+                if (!await _applicationRepo.ApplicationExists(studentId, companyId))
+                {
+                    return Forbid();
+                }
+            }
 
             var user = await _userRepo.Get(id);
             if (user == null)
