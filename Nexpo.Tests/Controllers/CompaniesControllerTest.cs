@@ -92,10 +92,10 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             var token = await Login("admin", client);
             var dto = new UpdateCompanyDto();
-            dto.Description = "None";
+            dto.Description = "New description";
             
             var json = new JsonObject();
-            json.Add("dto", JsonConvert.SerializeObject(dto));
+            json.Add("description", dto.Description);
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/-1", payload);
 
@@ -104,7 +104,48 @@ namespace Nexpo.Tests.Controllers
             string responseText = await response.Content.ReadAsStringAsync();
             var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
          
-            Assert.True(responseObject.Description == "A fruit company", response.StatusCode.ToString());
+            Assert.True(responseObject.Description == "New description", $"Description was actually ({responseObject.Description})");
+            //json.Add("description", "A fruit company");
+            //await client.PutAsync("/api/companies/-1", new StringContent(json.ToString(), Encoding.UTF8, "application/json"););
+        }
+
+        [Fact]
+        public async Task PutCompanyForbidden()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("company", client);
+            var dto = new UpdateCompanyDto();
+            dto.Description = "None";
+            
+            var json = new JsonObject();
+            json.Add("description", dto.Description);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("/api/companies/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
+         
+            Assert.True(responseObject == null, "Object was not null");
+        }
+
+        [Fact]
+        public async Task PutNonExistingCompany()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+            var dto = new UpdateCompanyDto();
+            dto.Description = "None";
+            
+            var json = new JsonObject();
+            json.Add("description", dto.Description);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("/api/companies/-5", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.InternalServerError), response.StatusCode.ToString());
         }
 
         [Fact]
@@ -112,9 +153,16 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var response = await client.GetAsync("/api/events/2/tickets");
+            var token = await Login("company", client);
+            var response = await client.GetAsync("/api/companies/me");
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.StatusCode.ToString());
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + response.StatusCode.ToString());
+            Assert.True(responseObject.Name == "Apple", responseText);
+            Assert.True(responseObject.Description == "A fruit company", responseText);
+            Assert.True(responseObject.DidYouKnow == "Apples", responseText);
         }
 
         [Fact]
