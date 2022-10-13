@@ -62,7 +62,7 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("{id}/tickets")]
         [Authorize(Roles = nameof(Role.Administrator))]
-        [ProducesResponseType(typeof(IEnumerable<Ticket>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<NamedTicketDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetTicketsForEvent(int id)
         {
             var e = await _eventRepo.Get(id);
@@ -71,7 +71,13 @@ namespace Nexpo.Controllers
             }
 
             var tickets = await _ticketRepo.GetAllForEvent(e.Id.Value);
-            return Ok(tickets);
+            IEnumerable<NamedTicketDto> namedTickets = tickets.Select(t => new NamedTicketDto
+            {
+                ticket = t,
+                userFirstName = t.User.FirstName,
+                userLastName = t.User.LastName
+            });
+            return Ok(namedTickets);
         }
 
     }
