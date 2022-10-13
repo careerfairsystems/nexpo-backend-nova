@@ -20,11 +20,17 @@ namespace Nexpo.Controllers
     {
         private readonly IEventRepository _eventRepo;
         private readonly ITicketRepository _ticketRepo;
+        private readonly IUserRepository _userRepository;
 
-        public EventsController(IEventRepository iEventRepo, ITicketRepository iTicketRepo)
+        public EventsController(
+            IEventRepository iEventRepo,
+            ITicketRepository iTicketRepo,
+            IUserRepository iUserRepository
+            )
         {
             _eventRepo = iEventRepo;
             _ticketRepo = iTicketRepo;
+            _userRepository = iUserRepository;
         }
 
         /// <summary>
@@ -71,12 +77,17 @@ namespace Nexpo.Controllers
             }
 
             var tickets = await _ticketRepo.GetAllForEvent(e.Id.Value);
-            IEnumerable<NamedTicketDto> namedTickets = tickets.Select(t => new NamedTicketDto
-            {
-                ticket = t,
-                userFirstName = t.User.FirstName,
-                userLastName = t.User.LastName
-            });
+            var namedTickets = new List<NamedTicketDto>();
+            foreach (var t in tickets){
+                var user = await _userRepository.Get(t.UserId);
+                var dto = new NamedTicketDto
+                {
+                    ticket = t,
+                    userFirstName = user.FirstName,
+                    userLastName = user.LastName
+                };
+                namedTickets.Add(dto);
+            }
             return Ok(namedTickets);
         }
 
