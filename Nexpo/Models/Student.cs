@@ -17,6 +17,7 @@ namespace Nexpo.Models
         public int? Year { get; set; }
 
         public int UserId { get; set; }
+        //TRAP!
         [JsonIgnore]
         public User User { get; set; }
     }

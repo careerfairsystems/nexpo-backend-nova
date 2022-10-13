@@ -54,13 +54,17 @@ namespace Nexpo.Tests.Controllers
             var token = await Login("company", client);
 
             var response = await client.GetAsync("/api/applications/my/company");
-            var responseList = JsonConvert.DeserializeObject<List<StudentSessionApplication>>((await response.Content.ReadAsStringAsync()));
+            var responseList = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>((await response.Content.ReadAsStringAsync()));
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
             Assert.True(responseList.Count == 3, "Number of applications: " + responseList.Count.ToString());
 
             var app3 = responseList.Find(r => r.Id == -3);
 
             Assert.True(app3.Motivation == "User experience is very important for me", app3.Motivation);
+            Assert.True(app3.StudentYear == 3, app3.StudentYear.ToString());
+            Assert.True(app3.StudentGuild == Guild.V, app3.StudentGuild.ToString());
+            Assert.True(app3.StudentFirstName == "Gamma", app3.StudentFirstName);
+            Assert.True(app3.StudentLastName == "Student", app3.StudentLastName);
         }
 
         [Fact]
@@ -124,7 +128,7 @@ namespace Nexpo.Tests.Controllers
             
             //Ensure seed data is correct
             var response = await companyClient.GetAsync("/api/applications/my/company");
-            var appList = JsonConvert.DeserializeObject<List<StudentSessionApplication>>((await response.Content.ReadAsStringAsync()));
+            var appList = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>(await response.Content.ReadAsStringAsync());
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
             Assert.True(appList.Count == 3, "Incorrect seed data");
 
@@ -137,7 +141,7 @@ namespace Nexpo.Tests.Controllers
 
             //Check application as company
             response = await companyClient.GetAsync("/api/applications/my/company");
-            appList = JsonConvert.DeserializeObject<List<StudentSessionApplication>>((await response.Content.ReadAsStringAsync()));
+            appList = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>((await response.Content.ReadAsStringAsync()));
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get as company error");
             Assert.True(appList.Count == 3, "Application list length should be 3, count:" + appList.Count.ToString());
             Assert.True(appList[2].Motivation == "Hej, jag är jättebra och tror att ni vill träffa mig!", "Wrong motivation, got: " + appList[2].Motivation);
