@@ -138,7 +138,7 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("my/company")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
-        [ProducesResponseType(typeof(IEnumerable<StudentSessionApplication>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<StudentSessionApplicationDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetApplicationsForCompany()
         {
             var companyId = HttpContext.User.GetCompanyId().Value;

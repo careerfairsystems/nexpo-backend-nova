@@ -13,7 +13,6 @@ namespace Nexpo.DTO
         public string Motivation { get; set; }
         public StudentSessionApplicationStatus Status { get; set; }
         public int StudentId { get; set; }
-        [Required]
         public int CompanyId { get; set; }
         public bool Booked { get; set; }
         public string StudentFirstName { get; set; }
