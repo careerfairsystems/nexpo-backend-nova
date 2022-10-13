@@ -105,8 +105,9 @@ namespace Nexpo.Tests.Controllers
             var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
          
             Assert.True(responseObject.Description == "New description", $"Description was actually ({responseObject.Description})");
-            //json.Add("description", "A fruit company");
-            //await client.PutAsync("/api/companies/-1", new StringContent(json.ToString(), Encoding.UTF8, "application/json"););
+            json.Remove("description");
+            json.Add("description", "A fruit company");
+            await client.PutAsync("/api/companies/-1", new StringContent(json.ToString(), Encoding.UTF8, "application/json"));
         }
 
         [Fact]
@@ -166,14 +167,65 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
+        public async Task GetIllegalMe()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+            var response = await client.GetAsync("/api/companies/me");
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Login failed, returned: " + response.StatusCode.ToString());
+            Assert.True(responseObject == null, "Object was not null");
+        }
+
+        [Fact]
         public async Task PutMe()
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var response = await client.GetAsync("/api/events/2/tickets");
+            var token = await Login("company", client);
+            var dto = new UpdateCompanyDto();
+            dto.Description = "New description";
+            
+            var json = new JsonObject();
+            json.Add("description", dto.Description);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("/api/companies/me", payload);
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
 
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
+         
+            Assert.True(responseObject.Description == "New description", $"Description was actually ({responseObject.Description})");
+            json.Remove("description");
+            json.Add("description", "A fruit company");
+            await client.PutAsync("/api/companies/me", new StringContent(json.ToString(), Encoding.UTF8, "application/json"));
+        }
+
+        [Fact]
+        public async Task PutMeForbidden()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+            var dto = new UpdateCompanyDto();
+            dto.Description = "None";
+            
+            var json = new JsonObject();
+            json.Add("description", dto.Description);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("/api/companies/me", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
+         
+            Assert.True(responseObject == null, "Object was not null");
         }
 
     }
