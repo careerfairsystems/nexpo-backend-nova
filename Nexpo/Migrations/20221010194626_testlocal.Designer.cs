@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221007172615_fixedMain")]
-    partial class fixedMain
+    [Migration("20221010194626_testlocal")]
+    partial class testlocal
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -181,36 +181,6 @@ namespace Nexpo.Migrations
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("Nexpo.Models.StudentSession", b =>
-                {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StudentSessionApplicationId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StudentSessionTimeslotId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("StudentSessionApplicationId");
-
-                    b.HasIndex("StudentSessionTimeslotId");
-
-                    b.ToTable("StudentSessions");
-                });
-
             modelBuilder.Entity("Nexpo.Models.StudentSessionApplication", b =>
                 {
                     b.Property<int?>("Id")
@@ -218,19 +188,19 @@ namespace Nexpo.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<bool>("Booked")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Motivation")
                         .HasColumnType("text");
 
-                    b.Property<int>("Rating")
+                    b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.Property<int>("StudentId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("StudentSessionId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -238,8 +208,6 @@ namespace Nexpo.Migrations
                     b.HasIndex("CompanyId");
 
                     b.HasIndex("StudentId");
-
-                    b.HasIndex("StudentSessionId");
 
                     b.ToTable("StudentSessionApplications");
                 });
@@ -264,14 +232,12 @@ namespace Nexpo.Migrations
                     b.Property<DateTime>("Start")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int?>("StudentSessionId")
+                    b.Property<int?>("StudentId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
-
-                    b.HasIndex("StudentSessionId");
 
                     b.ToTable("StudentSessionTimeslots");
                 });
@@ -381,33 +347,6 @@ namespace Nexpo.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Nexpo.Models.StudentSession", b =>
-                {
-                    b.HasOne("Nexpo.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Nexpo.Models.StudentSessionApplication", "StudentSessionApplication")
-                        .WithMany()
-                        .HasForeignKey("StudentSessionApplicationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Nexpo.Models.StudentSessionTimeslot", "StudentSessionTimeslot")
-                        .WithMany()
-                        .HasForeignKey("StudentSessionTimeslotId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-
-                    b.Navigation("StudentSessionApplication");
-
-                    b.Navigation("StudentSessionTimeslot");
-                });
-
             modelBuilder.Entity("Nexpo.Models.StudentSessionApplication", b =>
                 {
                     b.HasOne("Nexpo.Models.Company", "Company")
@@ -422,15 +361,9 @@ namespace Nexpo.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Nexpo.Models.StudentSession", "StudentSession")
-                        .WithMany()
-                        .HasForeignKey("StudentSessionId");
-
                     b.Navigation("Company");
 
                     b.Navigation("Student");
-
-                    b.Navigation("StudentSession");
                 });
 
             modelBuilder.Entity("Nexpo.Models.StudentSessionTimeslot", b =>
@@ -441,13 +374,7 @@ namespace Nexpo.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Nexpo.Models.StudentSession", "StudentSession")
-                        .WithMany()
-                        .HasForeignKey("StudentSessionId");
-
                     b.Navigation("Company");
-
-                    b.Navigation("StudentSession");
                 });
 
             modelBuilder.Entity("Nexpo.Models.Ticket", b =>

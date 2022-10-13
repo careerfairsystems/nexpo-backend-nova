@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Nexpo.Models
 {
@@ -18,14 +15,10 @@ namespace Nexpo.Models
         public DateTime End { get; set; }
         [Required]
         public string Location { get; set; }
-
-        [ForeignKey(nameof(StudentSession))]
-        public int? StudentSessionId { get; set; }
-        [JsonIgnore]
-        public StudentSession StudentSession { get; set; }
         public int CompanyId { get; set; }
         [JsonIgnore]
         public Company Company { get; set; }
+        public int? StudentId { get; set; }
     }
 }
 
