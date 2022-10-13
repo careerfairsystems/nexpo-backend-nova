@@ -5,9 +5,9 @@ import pandas as pd
 
 import requests
 
-jsonfile = 'ArkadIndent2.json'
+jsonfile = 'example.json'
 url = 'http://localhost/api/companies/add'
-s3BucketUrl = 'https://nexpo-bucket.s3.eu-north-1.amazonaws.com/'
+s3BucketUrl = 'example'
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)
