@@ -49,6 +49,14 @@ namespace Nexpo.Services
             return SendEmail(user.Email, "Join your company in the Arkad App", content, content);
         }
 
+        public Task SendApplicationAcceptedEmail(Company company, User user)
+        {
+            var content = "Congrats!<br>" + 
+                $"{company.Name} has just accepted your student session application!<br>" +
+                "Log in to the app to pick a timeslot";
+            return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
+        }
+
         public Task SendPasswordResetEmail(User user)
         {
             var passwordResetDto = new ResetPasswordDto.ResetPasswordTokenDto
