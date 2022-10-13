@@ -19,14 +19,22 @@ namespace Nexpo.Controllers
         private readonly ICompanyRepository _companyRepo;
         private readonly IStudentSessionTimeslotRepository _timeslotRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
+        private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _userRepository;
+
 
         public StudentSessionsApplicationController(ICompanyRepository iCompanyRepository,
             IStudentSessionTimeslotRepository iStudentSessionTimeslotRepository,
-            IStudentSessionApplicationRepository iStudentSessionApplicationRepository)
+            IStudentSessionApplicationRepository iStudentSessionApplicationRepository,
+            IStudentRepository iStudentRepository,
+            IUserRepository iUserRepository
+            )
         {
             _companyRepo = iCompanyRepository;
             _timeslotRepo = iStudentSessionTimeslotRepository;
             _applicationRepo = iStudentSessionApplicationRepository;
+            _studentRepository = iStudentRepository;
+            _userRepository = iUserRepository;
         }
 
 
@@ -143,20 +151,25 @@ namespace Nexpo.Controllers
         {
             var companyId = HttpContext.User.GetCompanyId().Value;
             var applications = await _applicationRepo.GetAllForCompany(companyId);
-            var studentApplications = applications.Select(a => new StudentSessionApplicationDto
-            {
-                Id = a.Id,
-                Motivation = a.Motivation,
-                Status = a.Status,
-                StudentId = a.StudentId,
-                CompanyId = a.CompanyId,
-                Booked = a.Booked,
-                StudentFirstName = a.Student.User.FirstName,
-                StudentLastName = a.Student.User.LastName,
-                StudentYear = a.Student.Year,
-                StudentGuild = a.Student.Guild
-            });
-
+            var studentApplications = new List<StudentSessionApplicationDto>();
+            foreach (var a in applications){
+                var student = await _studentRepository.Get(a.StudentId);
+                var user = await _userRepository.Get(student.UserId);
+                var dto = new StudentSessionApplicationDto
+                {
+                    Id = a.Id,
+                    Motivation = a.Motivation,
+                    Status = a.Status,
+                    StudentId = a.StudentId,
+                    CompanyId = a.CompanyId,
+                    Booked = a.Booked,
+                    StudentFirstName = user.FirstName,
+                    StudentLastName = user.LastName,
+                    StudentYear = student.Year,
+                    StudentGuild = student.Guild
+                };
+                studentApplications.Add(dto);
+            }
             return Ok(studentApplications);
         }
 
