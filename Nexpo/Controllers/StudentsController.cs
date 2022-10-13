@@ -29,7 +29,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}")]
-        [Authorize(Roles = nameof(Role.CompanyRepresentative))]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(Student), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetStudent(int id)
         {
