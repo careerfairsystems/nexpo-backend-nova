@@ -90,9 +90,21 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var response = await client.GetAsync("/api/events/2/tickets");
+            var token = await Login("admin", client);
+            var dto = new UpdateCompanyDto();
+            dto.Description = "None";
+            
+            var json = new JsonObject();
+            json.Add("dto", JsonConvert.SerializeObject(dto));
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("/api/companies/-1", payload);
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
+         
+            Assert.True(responseObject.Description == "A fruit company", response.StatusCode.ToString());
         }
 
         [Fact]
@@ -113,6 +125,7 @@ namespace Nexpo.Tests.Controllers
             var response = await client.GetAsync("/api/events/2/tickets");
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.StatusCode.ToString());
+
         }
 
     }
