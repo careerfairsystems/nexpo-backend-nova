@@ -143,8 +143,21 @@ namespace Nexpo.Controllers
         {
             var companyId = HttpContext.User.GetCompanyId().Value;
             var applications = await _applicationRepo.GetAllForCompany(companyId);
+            var studentApplications = applications.Select(a => new StudentSessionApplicationDto
+            {
+                Id = a.Id,
+                Motivation = a.Motivation,
+                Status = a.Status,
+                StudentId = a.StudentId,
+                CompanyId = a.CompanyId,
+                Booked = a.Booked,
+                StudentFirstName = a.Student.User.FirstName,
+                StudentLastName = a.Student.User.LastName,
+                StudentYear = a.Student.Year,
+                StudentGuild = a.Student.Guild
+            });
 
-            return Ok(applications);
+            return Ok(studentApplications);
         }
 
         /// <summary>

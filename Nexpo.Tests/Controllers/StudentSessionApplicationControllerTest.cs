@@ -54,13 +54,17 @@ namespace Nexpo.Tests.Controllers
             var token = await Login("company", client);
 
             var response = await client.GetAsync("/api/applications/my/company");
-            var responseList = JsonConvert.DeserializeObject<List<StudentSessionApplication>>((await response.Content.ReadAsStringAsync()));
+            var responseList = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>((await response.Content.ReadAsStringAsync()));
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
             Assert.True(responseList.Count == 3, "Number of applications: " + responseList.Count.ToString());
 
             var app3 = responseList.Find(r => r.Id == -3);
 
             Assert.True(app3.Motivation == "User experience is very important for me", app3.Motivation);
+            Assert.True(app3.StudentYear == 3, app3.StudentYear.ToString());
+            Assert.True(app3.StudentGuild == Guild.V, app3.StudentGuild.ToString());
+            Assert.True(app3.StudentFirstName == "Gamma", app3.StudentFirstName);
+            Assert.True(app3.StudentLastName == "Student", app3.StudentLastName);
         }
 
         [Fact]
