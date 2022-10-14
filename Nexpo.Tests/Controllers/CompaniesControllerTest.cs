@@ -146,7 +146,7 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/-5", payload);
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.InternalServerError), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.StatusCode.ToString());
         }
 
         [Fact]
