@@ -5,9 +5,9 @@ import pandas as pd
 
 import requests
 
-jsonfile = 'example.json'
+jsonfile = 'ArkadIndent2.json'
 url = 'http://localhost/api/companies/add'
-s3BucketUrl = 'example'
+s3BucketUrl = 'https://nexpo-bucket.s3.eu-north-1.amazonaws.com/'
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)
@@ -29,7 +29,10 @@ for row in range(len(df)):
             weOffer = '"' + "" + '"' 
 
         if 'desiredDegree' in prof:
-            desiredDegree: str = prof['desiredDegree']
+            des:str = str(prof['desiredDegree']).replace('Ph.D', 'Phd').replace('Master’s degree (300 ECTS)', 'Masters').replace('Bachelor’s degree (180 ECTS)', 'Bachelor')
+            desiredDegree = des.replace("'", '"')
+            desiredDegree = desiredDegree
+            
         else:
             desiredDegree = ""
 
@@ -76,6 +79,10 @@ for row in range(len(df)):
 
         
         data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ' }'
+
+        #desiredDegree in work
+        #data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ', "degrees":'+  desiredDegree +'  }'
+
         
         r = requests.put(url, data=data.encode('utf-8'), headers=headers)
         print(r)
