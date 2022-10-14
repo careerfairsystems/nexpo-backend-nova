@@ -117,30 +117,29 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.StatusCode.ToString());
         }
 
-        //On hold until Karl solves parsing lists of DTO's
 
-        //[Fact]
-        //public async Task GetAllTicketsAsAdmin()
-        //{
-        //    var application = new WebApplicationFactory<Nexpo.Program>();
-        //    var client = application.CreateClient();
-        //    var token = await Login("admin", client);
+        [Fact]
+        public async Task GetAllTicketsAsAdmin()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
 
-        //    var response = await client.GetAsync("/api/events/-1/tickets");
-        //    string responseText = await response.Content.ReadAsStringAsync();
-        //    var responseList = JsonConvert.DeserializeObject<List<NamedTicketDto>>(responseText);
-        //    Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-        //    Assert.True(responseList.Count == 3, responseText.ToString());
+            var response = await client.GetAsync("/api/events/-1/tickets");
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseList = JsonConvert.DeserializeObject<List<NamedTicketDto>>(responseText);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(responseList.Count == 3, responseText.ToString());
 
-        //    var firstTicket = responseList.Find(r => r.ticket.Id == -1);
-        //    var seventhTicket = responseList.Find(r => r.ticket.Id == -7);
+            var firstTicket = responseList.Find(r => r.ticket.Id == -1);
+            var seventhTicket = responseList.Find(r => r.ticket.Id == -7);
 
-        //    Assert.True(firstTicket.userFirstName == "Alpha", firstTicket.ticket.EventId.ToString());
-        //    Assert.True(firstTicket.userLastName == "Student", firstTicket.ticket.EventId.ToString());
-        //    Assert.True(firstTicket.ticket.EventId == -1, firstTicket.ticket.EventId.ToString());
-        //    Assert.True(firstTicket.ticket.UserId == -2, firstTicket.ticket.UserId.ToString());
-        //    Assert.True(seventhTicket.ticket.UserId == -4, seventhTicket.ticket.UserId.ToString());
-        //}
+            Assert.True(firstTicket.userFirstName == "Alpha", firstTicket.ticket.EventId.ToString());
+            Assert.True(firstTicket.userLastName == "Student", firstTicket.ticket.EventId.ToString());
+            Assert.True(firstTicket.ticket.EventId == -1, firstTicket.ticket.EventId.ToString());
+            Assert.True(firstTicket.ticket.UserId == -2, firstTicket.ticket.UserId.ToString());
+            Assert.True(seventhTicket.ticket.UserId == -4, seventhTicket.ticket.UserId.ToString());
+        }
 
         [Fact]
         public async Task GetAllTicketsAsAdminWithWrongId()
