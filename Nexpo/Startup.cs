@@ -57,6 +57,7 @@ namespace Nexpo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
             // ** ADDED for SSO feature **
             services.ConfigureNonBreakingSameSiteCookies();
             services.Configure<CookiePolicyOptions>(options =>
@@ -72,7 +73,7 @@ namespace Nexpo
                     AuthenticationHelpers.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
             });
 
-            // Maybe add AddCors
+
             services.AddSession(options =>
             {
 /*                options.Cookie.HttpOnly = true;
@@ -161,15 +162,25 @@ namespace Nexpo
                 services.AddScoped<IEmailService, EmailService>();
             }
 
-            services.AddCors(options =>
+            services.AddCors(x =>
             {
-                options.AddPolicy(name: CorsPolicy, builder =>
+                x.AddPolicy("AllowAll", builder =>
                 {
-                    builder.AllowAnyMethod();
-                    builder.AllowAnyOrigin();
-                    builder.AllowAnyHeader();
+                    builder.AllowCredentials()
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
                 });
             });
+            /*            services.AddCors(options =>
+                        {
+                            options.AddPolicy(name: CorsPolicy, builder =>
+                            {
+                                builder.AllowAnyMethod();
+                                builder.AllowAnyOrigin();
+                                builder.AllowAnyHeader();
+                            });
+                        });*/
 
             services.AddSwaggerGen(c =>
             {
@@ -193,18 +204,20 @@ namespace Nexpo
 
             app.UseRouting();
 
+            app.UseCors("AllowAll");
             app.UseCookiePolicy();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
 
-            app.UseCors(CorsPolicy);
+            app.UseAuthentication();
+            app.UseSession();
+            app.UseAuthorization();
 
             // MAYBE NEED TO USEMVC AND CHANGE ACCORDING TO GIT
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
 
     }
