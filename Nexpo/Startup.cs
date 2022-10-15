@@ -43,7 +43,8 @@ namespace Nexpo
         public void ConfigureServices(IServiceCollection services)
         {
             // ** ADDED for SSO feature **
-            services.Configure<CookiePolicyOptions>(options =>
+            services.ConfigureNonBreakingSameSiteCookies();
+/*            services.Configure<CookiePolicyOptions>(options =>
             {
                 // SameSiteMode.None is required to support SAML SSO.
                 options.MinimumSameSitePolicy = SameSiteMode.None;
@@ -52,14 +53,14 @@ namespace Nexpo
                 // Some older browsers don't support SameSiteMode.None.
                 options.OnAppendCookie = cookieContext => SameSite.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
                 options.OnDeleteCookie = cookieContext => SameSite.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
-            });
+            });*/
 
             // Maybe add AddCors
             services.AddSession(options =>
             {
-                options.Cookie.HttpOnly = true;
+/*                options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
-                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SameSite = SameSiteMode.None;*/
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
             });
@@ -174,6 +175,8 @@ namespace Nexpo
             }
 
             app.UseRouting();
+
+            app.UseCookiePolicy();
 
             app.UseAuthentication();
             app.UseAuthorization();
