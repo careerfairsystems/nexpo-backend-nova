@@ -57,8 +57,8 @@ namespace Nexpo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             // ** ADDED for SSO feature **
+            services.AddControllers();
             services.ConfigureNonBreakingSameSiteCookies();
             services.Configure<CookiePolicyOptions>(options =>
             {
@@ -162,16 +162,7 @@ namespace Nexpo
                 services.AddScoped<IEmailService, EmailService>();
             }
 
-            services.AddCors(x =>
-            {
-                x.AddPolicy("AllowAll", builder =>
-                {
-                    builder.AllowCredentials()
-                            .AllowAnyOrigin()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader();
-                });
-            });
+            services.AddCors();
             /*            services.AddCors(options =>
                         {
                             options.AddPolicy(name: CorsPolicy, builder =>
@@ -204,7 +195,11 @@ namespace Nexpo
 
             app.UseRouting();
 
-            app.UseCors("AllowAll");
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
             app.UseCookiePolicy();
 
 
