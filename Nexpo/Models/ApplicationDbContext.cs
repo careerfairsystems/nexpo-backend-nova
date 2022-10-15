@@ -2,6 +2,7 @@
 using Nexpo.Services;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Nexpo.Models
 {
@@ -51,7 +52,8 @@ namespace Nexpo.Models
             }
 
             // Companies
-            var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples"};
+            var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples", DesiredDegrees = new List<Degree>(){Degree.Bachelor, Degree.Master}, DesiredGuilds = new List<Guild>(){Guild.D, Guild.E}, Industries = new List<Industry>(){Industry.DataIT, Industry.ElectricityEnergyPower}, Positions = new List<Position>(){Position.ForeignOppurtunity, Position.Internship}};
+            //var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples"};
             var company2 = new Company { Id = -2, Name = "Google", Description = "You can find more about us by searching the web"  , DidYouKnow = "we are big"};
             var company3 = new Company { Id = -3, Name = "Spotify", Description = "We like music" ,  DidYouKnow = "we love music"};
             var company4 = new Company { Id = -4, Name = "Facebook", Description = "We have friends in common" , DidYouKnow = "Mark zuckerburg is an Alien" };

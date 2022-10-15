@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Nexpo.Models;
 using Nexpo.DTO;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nexpo.Tests.Controllers 
 {
@@ -72,6 +73,19 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.Name == "Apple", responseText);
             Assert.True(responseObject.Description == "A fruit company", responseText);
             Assert.True(responseObject.DidYouKnow == "Apples", responseText);
+            Assert.True(responseObject.DesiredDegrees.Contains(Degree.Bachelor), responseText);
+            // Assert.True(responseObject.DesiredDegrees.Contains(Degree.Master), responseText);
+            // Assert.True(responseObject.DesiredDegrees.ToList().Count == 2, responseText);
+            // Assert.True(responseObject.DesiredGuilds.Contains(Guild.D), responseText);
+            // Assert.True(responseObject.DesiredGuilds.Contains(Guild.E), responseText);
+            // Assert.True(responseObject.DesiredGuilds.ToList().Count == 2, responseText);
+            // Assert.True(responseObject.Industries.Contains(Industry.DataIT), responseText);
+            // Assert.True(responseObject.Industries.Contains(Industry.ElectricityEnergyPower), responseText);
+            // Assert.True(responseObject.Industries.ToList().Count == 2, responseText);
+            // Assert.True(responseObject.Positions.Contains(Position.ForeignOppurtunity), responseText);
+            // Assert.True(responseObject.Positions.Contains(Position.Internship), responseText);
+            // Assert.True(responseObject.Positions.ToList().Count == 2, responseText);
+            
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + response.StatusCode.ToString());
         }
 
