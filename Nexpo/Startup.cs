@@ -47,7 +47,6 @@ namespace Nexpo
             {
                 // SameSiteMode.None is required to support SAML SSO.
                 options.MinimumSameSitePolicy = SameSiteMode.None;
-
                 options.CheckConsentNeeded = context => false;
 
                 // Some older browsers don't support SameSiteMode.None.
@@ -59,7 +58,8 @@ namespace Nexpo
             services.AddSession(options =>
             {
                 options.Cookie.IsEssential = true;
-                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
             services.AddMvc((options) =>
             {
@@ -113,7 +113,8 @@ namespace Nexpo
                     {
                         LoadMetadata = true
                     });
-                options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
+
+                //options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
             });
 
             services.AddScoped<IConfig>(_ => Config);
@@ -183,6 +184,7 @@ namespace Nexpo
                 endpoints.MapControllers();
             });
         }
+
     }
 }
 
