@@ -33,6 +33,21 @@ namespace Nexpo
 
         public readonly string CorsPolicy = nameof(CorsPolicy);
 
+        public static class AuthenticationHelpers
+        {
+            public static void CheckSameSite(HttpContext httpContext, CookieOptions options)
+            {
+                if (options.SameSite != SameSiteMode.None)
+                    return;
+                string userAgent = httpContext.Request.Headers["User-Agent"].ToString();
+                if (httpContext.Request.IsHttps && !AuthenticationHelpers.DisallowsSameSiteNone(userAgent))
+                    return;
+                options.SameSite = SameSiteMode.Unspecified;
+            }
+
+            public static bool DisallowsSameSiteNone(string userAgent) => userAgent.Contains("CPU iPhone OS 12") || userAgent.Contains("iPad; CPU OS 12") || userAgent.Contains("Macintosh; Intel Mac OS X 10_14") && userAgent.Contains("Version/") && userAgent.Contains("Safari") || userAgent.Contains("Chrome/5") || userAgent.Contains("Chrome/6");
+        }
+
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Config = new Config(configuration);
@@ -44,16 +59,18 @@ namespace Nexpo
         {
             // ** ADDED for SSO feature **
             services.ConfigureNonBreakingSameSiteCookies();
-/*            services.Configure<CookiePolicyOptions>(options =>
+            services.Configure<CookiePolicyOptions>(options =>
             {
                 // SameSiteMode.None is required to support SAML SSO.
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-                options.CheckConsentNeeded = context => false;
+                options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
+                options.Secure = CookieSecurePolicy.SameAsRequest;
 
-                // Some older browsers don't support SameSiteMode.None.
-                options.OnAppendCookie = cookieContext => SameSite.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
-                options.OnDeleteCookie = cookieContext => SameSite.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
-            });*/
+                // Some older browsers don't support SameSiteMode.None
+                options.OnAppendCookie = cookieContext =>
+                    AuthenticationHelpers.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+                options.OnDeleteCookie = cookieContext =>
+                    AuthenticationHelpers.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+            });
 
             // Maybe add AddCors
             services.AddSession(options =>
