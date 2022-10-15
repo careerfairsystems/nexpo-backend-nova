@@ -57,9 +57,11 @@ namespace Nexpo
             // Maybe add AddCors
             services.AddSession(options =>
             {
+                options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
-                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SameSite = SameSiteMode.None;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
             });
             services.AddMvc((options) =>
             {
