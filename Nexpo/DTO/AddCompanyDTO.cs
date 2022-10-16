@@ -23,5 +23,12 @@ namespace Nexpo.DTO
 
         public string HostPhone { get; set; }
 
+        public List<int> DesiredDegrees { get; set;}
+
+        public List<int> DesiredGuilds { get; set;}
+        public List<int> Positions { get; set;}
+
+        public List<int> Industries { get; set;}
+
     }
 }

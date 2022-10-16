@@ -183,7 +183,11 @@ namespace Nexpo.Controllers
                 Description = dto.Description,
                 DidYouKnow = dto.DidYouKnow,
                 LogoUrl = dto.LogoUrl,
-                Website = dto.Website
+                Website = dto.Website,
+                DesiredDegrees= dto.DesiredDegrees,
+                DesiredGuilds= dto.DesiredGuilds,
+                Positions = dto.Positions,
+                Industries  = dto.Industries 
             };
             await _companyRepo.Add(company);
 
