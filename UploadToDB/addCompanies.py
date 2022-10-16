@@ -1,13 +1,23 @@
 import json
-from re import I
-from typing import Dict
 import pandas as pd
-
 import requests
 
-jsonfile = 'ArkadIndent2.json'
-url = 'http://localhost/api/companies/add'
-s3BucketUrl = 'https://nexpo-bucket.s3.eu-north-1.amazonaws.com/'
+jsonfile = 'example.json'
+url = 'http://{url}/api/companies/add'
+s3BucketUrl = 's3bucketURL'
+loginUrl = 'http://{url}/api/session/signin'
+
+
+loginHeaders = {
+    'accept': 'text/plain',
+    'Content-Type': 'application/json',
+}
+dataLogin = '{ "email": "{adminEmail}", "password": "{adminPassword}" }'
+
+login = requests.post(loginUrl, headers=loginHeaders, data=dataLogin)
+
+token =login.text.replace('"token":', 'Bearer ').replace('{','').replace('}', ''). replace('"' , '')
+print(login)
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)
@@ -71,19 +81,19 @@ for row in range(len(df)):
         else:
             logoUrl  =  '"' +""+ '"' 
 
-  
+
         headers = {
             'accept': 'text/plain',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization' : token,
         }
-
-        
-        data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ' }'
+        data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl +'}'
 
         #desiredDegree in work
         #data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ', "degrees":'+  desiredDegree +'  }'
 
-        
+
         r = requests.put(url, data=data.encode('utf-8'), headers=headers)
         print(r)
         print(r.content)
+        

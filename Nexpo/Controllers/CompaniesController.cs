@@ -173,8 +173,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpPut]
         [Route("add")]
-        //IN WORK
-        //[Authorize(Roles = nameof(Role.Administrator))]
+        [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
         public async Task<ActionResult> AddNewCompany(AddCompanyDto dto)
         {
@@ -187,26 +186,6 @@ namespace Nexpo.Controllers
                 Website = dto.Website
             };
             await _companyRepo.Add(company);
-
-            return Ok("company");
-        }
-
-        [HttpPut]
-        [Route("adDegree")]
-        //[Authorize(Roles = nameof(Role.Administrator))]
-        //IN WORK
-        [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
-        public async Task<ActionResult> AddNewDegree(AddDegreeDto dto, int companyId)
-        {
-
-            var company = await _companyRepo.Get(companyId);
-            if (company.DesiredDegrees == null)
-            {
-                company.DesiredDegrees = new List<Degree>();
-            }
-            company.DesiredDegrees.Add(dto.degree);
-
-            await _companyRepo.Update(company);
 
             return Ok(company);
         }
