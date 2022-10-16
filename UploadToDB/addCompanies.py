@@ -1,5 +1,4 @@
 import json
-from turtle import pos
 import pandas as pd
 import requests
 
@@ -14,24 +13,18 @@ loginHeaders = {
     'Content-Type': 'application/json',
 }
 dataLogin = '{ "email": "admin@example.com", "password": "password" }'
-
 login = requests.post(loginUrl, headers=loginHeaders, data=dataLogin)
-
 token =login.text.replace('"token":', 'Bearer ').replace('{','').replace('}', ''). replace('"' , '')
 print("lopgin response " , login)
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)
-
 df = pd.DataFrame(dictData)
-
-industrySet = set()
-
 for row in range(len(df)):
     pr = df.iloc[row]
     prof = pr['profile']
-    if type(prof) == dict:
     
+    if type(prof) == dict:
         if 'name' in prof:
             name: str = '"' + prof['name'] + '"'
         else: name = '"' +"" + '"' +'"' 
@@ -52,14 +45,11 @@ for row in range(len(df)):
                     positions.add(5) 
                 if weOffer[offer] == 'PartTime' or 'Extrajobb':
                     positions.add(6) 
-            
         else:
-            weOffer = '"' + "" + '"' 
+            positions = set()
 
         if 'desiredDegree' in prof:
-            
             desiredDegree = prof['desiredDegree']
-            
             for degree in range(len(desiredDegree)):
                 if desiredDegree[degree] == 'Ph.D':
                     desiredDegree[degree] = 3
@@ -67,7 +57,6 @@ for row in range(len(df)):
                     desiredDegree[degree] = 2
                 elif desiredDegree[degree] == 'Bachelor’s degree (180 ECTS)':
                     desiredDegree[degree] = 1
-            
         else:
             desiredDegree = []
 
@@ -75,9 +64,7 @@ for row in range(len(df)):
         if 'industry' in prof:
             industry: list= prof['industry'] 
             industryResult = set()
-            
             for ind in range(len(industry)):
-                industrySet.add(industry[ind])
                 if industry[ind] == 'ElectricityEnergyPower' or 'Electricity' or 'Energy & power' or 'El, Energi och kraft':
                     industryResult.add(1)
                 if industry[ind] == 'Environment' or 'renewable energy' or 'miljö' or 'Life Science' or 'water':
@@ -124,10 +111,10 @@ for row in range(len(df)):
                     industryResult.add(22)
                 if industry[ind] == 'Coaching':
                     industryResult.add(23)
-
         else:
-            industry = ""
+            industryResult = set()
 
+        #tagit höjd för att ändra "guilds" till "programme"
         if 'desiredProgramme' in prof:
             desiredProgramme: list = prof['desiredProgramme']
             desiredProgrammeResult = set()
@@ -174,7 +161,6 @@ for row in range(len(df)):
                     desiredProgrammeResult.add(4)
                 elif desiredProgramme[programme] == 'Byggteknik med väg- och trafikteknik':
                     desiredProgrammeResult.add(5)
-
         else:
             desiredProgramme  = '"' +"" + '"'
 
@@ -199,7 +185,6 @@ for row in range(len(df)):
 
             logoUrl  = prof['logotype']['name']
             logoUrl: str  = '"' + s3BucketUrl + logoUrl.replace('eps','jpg') + '"'
-
         else:
             logoUrl  =  '"' +""+ '"' 
 
@@ -208,9 +193,7 @@ for row in range(len(df)):
             'Content-Type': 'application/json',
             'Authorization' : token,
         }
-
         data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ',"desiredDegrees":' + json.dumps(desiredDegree) + ',"desiredGuilds":' + json.dumps(list(desiredProgrammeResult)) + ',"positions":' + json.dumps(list(positions)) + ',"industries":' + json.dumps(list(industryResult)) +  '}'
-
         r = requests.put(url, data=data.encode('utf-8'), headers=headers)
         print(r)
         #print(r.content)
