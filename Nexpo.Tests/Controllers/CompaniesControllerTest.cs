@@ -57,6 +57,21 @@ namespace Nexpo.Tests.Controllers
             var responseList = JsonConvert.DeserializeObject<List<PublicCompanyDto>>(responseText);
          
             Assert.True(responseList.Count == 4, responseText.ToString());
+            Assert.True(responseList[1].Name == "Facebook", responseText.ToString());
+            Assert.True(responseList[1].Description == "We have friends in common", responseText);
+            Assert.True(responseList[1].DidYouKnow == "Mark zuckerburg is an Alien", responseText);
+            Assert.True(responseList[1].DesiredDegrees.Contains((int) Degree.PhD), responseText);
+            Assert.True(responseList[1].DesiredDegrees.Contains((int)Degree.Master), responseText);
+            Assert.True(responseList[1].DesiredDegrees.Count == 2, responseText);
+            Assert.True(responseList[1].DesiredGuilds.Contains((int)Guild.ING), responseText);
+            Assert.True(responseList[1].DesiredGuilds.Contains((int)Guild.F), responseText);
+            Assert.True(responseList[1].DesiredGuilds.Count == 2, responseText);
+            Assert.True(responseList[1].Industries.Contains((int)Industry.Environment), responseText);
+            Assert.True(responseList[1].Industries.Contains((int)Industry.ElectricityEnergyPower), responseText);
+            Assert.True(responseList[1].Industries.Count == 2, responseText);
+            Assert.True(responseList[1].Positions.Contains((int)Position.Thesis), responseText);
+            Assert.True(responseList[1].Positions.Contains((int)Position.TraineeEmployment), responseText);
+            Assert.True(responseList[1].Positions.Count == 2, responseText);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + response.StatusCode.ToString());
         }
 
@@ -73,19 +88,18 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.Name == "Apple", responseText);
             Assert.True(responseObject.Description == "A fruit company", responseText);
             Assert.True(responseObject.DidYouKnow == "Apples", responseText);
-            Assert.True(responseObject.DesiredDegrees.Contains(Degree.Bachelor), responseText);
-            // Assert.True(responseObject.DesiredDegrees.Contains(Degree.Master), responseText);
-            // Assert.True(responseObject.DesiredDegrees.ToList().Count == 2, responseText);
-            // Assert.True(responseObject.DesiredGuilds.Contains(Guild.D), responseText);
-            // Assert.True(responseObject.DesiredGuilds.Contains(Guild.E), responseText);
-            // Assert.True(responseObject.DesiredGuilds.ToList().Count == 2, responseText);
-            // Assert.True(responseObject.Industries.Contains(Industry.DataIT), responseText);
-            // Assert.True(responseObject.Industries.Contains(Industry.ElectricityEnergyPower), responseText);
-            // Assert.True(responseObject.Industries.ToList().Count == 2, responseText);
-            // Assert.True(responseObject.Positions.Contains(Position.ForeignOppurtunity), responseText);
-            // Assert.True(responseObject.Positions.Contains(Position.Internship), responseText);
-            // Assert.True(responseObject.Positions.ToList().Count == 2, responseText);
-            
+            Assert.True(responseObject.DesiredDegrees.Contains((int) Degree.Bachelor), responseText);
+            Assert.True(responseObject.DesiredDegrees.Contains((int)Degree.Master), responseText);
+            Assert.True(responseObject.DesiredDegrees.Count == 2, responseText);
+            Assert.True(responseObject.DesiredGuilds.Contains((int)Guild.D), responseText);
+            Assert.True(responseObject.DesiredGuilds.Contains((int)Guild.E), responseText);
+            Assert.True(responseObject.DesiredGuilds.Count == 2, responseText);
+            Assert.True(responseObject.Industries.Contains((int)Industry.DataIT), responseText);
+            Assert.True(responseObject.Industries.Contains((int)Industry.ElectricityEnergyPower), responseText);
+            Assert.True(responseObject.Industries.Count == 2, responseText);
+            Assert.True(responseObject.Positions.Contains((int)Position.ForeignOppurtunity), responseText);
+            Assert.True(responseObject.Positions.Contains((int)Position.Internship), responseText);
+            Assert.True(responseObject.Positions.Count == 2, responseText);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + response.StatusCode.ToString());
         }
 

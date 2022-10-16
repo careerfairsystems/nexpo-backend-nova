@@ -52,11 +52,11 @@ namespace Nexpo.Models
             }
 
             // Companies
-            var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples", DesiredDegrees = new List<Degree>(){Degree.Bachelor, Degree.Master}, DesiredGuilds = new List<Guild>(){Guild.D, Guild.E}, Industries = new List<Industry>(){Industry.DataIT, Industry.ElectricityEnergyPower}, Positions = new List<Position>(){Position.ForeignOppurtunity, Position.Internship}};
+            var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredGuilds = new List<int>(){(int) Guild.D,(int) Guild.E}, Industries = new List<int>(){(int)Industry.DataIT,(int) Industry.ElectricityEnergyPower}, Positions = new List<int>(){(int)Position.ForeignOppurtunity, (int)Position.Internship}};
             //var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples"};
-            var company2 = new Company { Id = -2, Name = "Google", Description = "You can find more about us by searching the web"  , DidYouKnow = "we are big"};
-            var company3 = new Company { Id = -3, Name = "Spotify", Description = "We like music" ,  DidYouKnow = "we love music"};
-            var company4 = new Company { Id = -4, Name = "Facebook", Description = "We have friends in common" , DidYouKnow = "Mark zuckerburg is an Alien" };
+            var company2 = new Company { Id = -2, Name = "Google", Description = "You can find more about us by searching the web"  , DidYouKnow = "we are big", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredGuilds = new List<int>(){(int) Guild.A,(int) Guild.V}, Industries = new List<int>(){(int)Industry.Industry,(int) Industry.DataIT}, Positions = new List<int>(){(int)Position.PartTime, (int)Position.Internship}};
+            var company3 = new Company { Id = -3, Name = "Spotify", Description = "We like music" ,  DidYouKnow = "we love music", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredGuilds = new List<int>(){(int) Guild.K,(int) Guild.I}, Industries = new List<int>(){(int)Industry.Coaching,(int) Industry.BankingFinance}, Positions = new List<int>(){(int)Position.ForeignOppurtunity, (int)Position.SummerJob}};
+            var company4 = new Company { Id = -4, Name = "Facebook", Description = "We have friends in common" , DidYouKnow = "Mark zuckerburg is an Alien", DesiredDegrees = new List<int>(){(int) Degree.PhD,(int) Degree.Master}, DesiredGuilds = new List<int>(){(int) Guild.ING,(int) Guild.F}, Industries = new List<int>(){(int)Industry.Environment,(int) Industry.ElectricityEnergyPower}, Positions = new List<int>(){(int)Position.Thesis, (int)Position.TraineeEmployment}};
             Companies.AddRange(company1, company2, company3, company4);
             SaveChanges();
 
