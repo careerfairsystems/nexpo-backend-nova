@@ -34,17 +34,17 @@ for row in range(len(df)):
             positions = set()
             for offer in range(len(weOffer)):
                 if weOffer[offer] == 'Thesis' or 'Exjobb':
-                    positions.add(1)
+                    positions.add(0)
                 if weOffer[offer] == 'TraineeEmployment' or 'Heltidsjobb':
-                    positions.add(2) 
+                    positions.add(1) 
                 if weOffer[offer] == 'Internship' or 'Traineeplatser' or 'Praktikplatser':
-                    positions.add(3) 
+                    positions.add(2) 
                 if weOffer[offer] == 'SummerJob' or 'Sommarjobb':
-                    positions.add(4) 
+                    positions.add(3) 
                 if weOffer[offer] == 'ForeignOppurtunity' or 'Utlandsmöjligheter':
-                    positions.add(5) 
+                    positions.add(4) 
                 if weOffer[offer] == 'PartTime' or 'Extrajobb':
-                    positions.add(6) 
+                    positions.add(5) 
         else:
             positions = set()
 
@@ -52,11 +52,11 @@ for row in range(len(df)):
             desiredDegree = prof['desiredDegree']
             for degree in range(len(desiredDegree)):
                 if desiredDegree[degree] == 'Ph.D':
-                    desiredDegree[degree] = 3
-                elif desiredDegree[degree] == 'Master’s degree (300 ECTS)':
                     desiredDegree[degree] = 2
-                elif desiredDegree[degree] == 'Bachelor’s degree (180 ECTS)':
+                elif desiredDegree[degree] == 'Master’s degree (300 ECTS)':
                     desiredDegree[degree] = 1
+                elif desiredDegree[degree] == 'Bachelor’s degree (180 ECTS)':
+                    desiredDegree[degree] = 0
         else:
             desiredDegree = []
 
@@ -66,51 +66,51 @@ for row in range(len(df)):
             industryResult = set()
             for ind in range(len(industry)):
                 if industry[ind] == 'ElectricityEnergyPower' or 'Electricity' or 'Energy & power' or 'El, Energi och kraft':
-                    industryResult.add(1)
+                    industryResult.add(0)
                 if industry[ind] == 'Environment' or 'renewable energy' or 'miljö' or 'Life Science' or 'water':
-                    industryResult.add(2)
+                    industryResult.add(1)
                 if industry[ind] == 'Banking, Finance' or 'Investering' or 'Bank och finans':
-                    industryResult.add(3)
+                    industryResult.add(2)
                 if industry[ind] == 'Union' or 'Fackförbund':
-                    industryResult.add(4)
+                    industryResult.add(3)
                 if industry[ind] == 'Investment':
-                    industryResult.add(5)
+                    industryResult.add(4)
                 if industry[ind] == 'Insurance' or 'Försäkring':
-                    industryResult.add(6)
+                    industryResult.add(5)
                 if industry[ind] == 'Recruitment':
-                    industryResult.add(7)
+                    industryResult.add(6)
                 if industry[ind] == 'Construction' or 'Vägledning' or 'Bygg' or 'Fastigheter & Infrastruktur' or 'Property & Infrastructure':
-                    industryResult.add(8)
+                    industryResult.add(7)
                 if industry[ind] == 'Architecture' or 'Arkitektur och Grafisk design':
-                    industryResult.add(9)
+                    industryResult.add(8)
                 if industry[ind] == 'GraphicDesign' or 'Arkitektur och Grafisk design':
-                    industryResult.add(10)
+                    industryResult.add(9)
                 if industry[ind] == 'DataIT' or 'Data and IT' or 'Data' or 'information science' or 'it':
-                    industryResult.add(11)
+                    industryResult.add(10)
                 if industry[ind] == 'FinanceConsultancy':
-                    industryResult.add(12)
+                    industryResult.add(11)
                 if industry[ind] == 'Telecommunication' or 'Telekommunikation':
-                    industryResult.add(13)
+                    industryResult.add(12)
                 if industry[ind] == 'Consulting' or 'Bemanning & Arbetsförmedling' or 'Ekonomi och konsultverksamhet' or 'Konsultverksamhet':
-                    industryResult.add(14)
+                    industryResult.add(13)
                 if industry[ind] == 'Management':
-                    industryResult.add(15)
+                    industryResult.add(14)
                 if industry[ind] == 'Media':
-                    industryResult.add(16)
+                    industryResult.add(15)
                 if industry[ind] == 'Industry' or 'Industri':
-                    industryResult.add(17)
+                    industryResult.add(16)
                 if industry[ind] == 'NuclearPower' or 'Kärnkraft':
-                    industryResult.add(18)
+                    industryResult.add(17)
                 if industry[ind] == 'LifeScience':
-                    industryResult.add(19)
+                    industryResult.add(18)
                 if industry[ind] == 'MedialTechniques' or 'Medicinteknik':
-                    industryResult.add(20)
+                    industryResult.add(19)
                 if industry[ind] == 'PropertyInfrastructure':
-                    industryResult.add(21)
+                    industryResult.add(20)
                 if industry[ind] == 'Research' or 'Forskning':
-                    industryResult.add(22)
+                    industryResult.add(21)
                 if industry[ind] == 'Coaching':
-                    industryResult.add(23)
+                    industryResult.add(22)
         else:
             industryResult = set()
 
@@ -124,21 +124,21 @@ for row in range(len(df)):
                 elif desiredProgramme[programme] == 'Maskinteknik med teknisk design':
                     desiredProgrammeResult.add(7)
                 elif desiredProgramme[programme] == 'Elektroteknik':
-                    desiredProgrammeResult.add(3)
+                    desiredProgrammeResult.add(2)
                 elif desiredProgramme[programme] == 'Ekosystemteknik':
                     desiredProgrammeResult.add(9)
                 elif desiredProgramme[programme] == 'Maskinteknik':
                     desiredProgrammeResult.add(7)
                 elif desiredProgramme[programme] == 'TekniskNanovetenskap':
-                    desiredProgrammeResult.add(4)
+                    desiredProgrammeResult.add(3)
                 elif desiredProgramme[programme] == 'Bioteknik':
                     desiredProgrammeResult.add(6)
                 elif desiredProgramme[programme] == 'Industridesign':
-                    desiredProgrammeResult.add(1)
+                    desiredProgrammeResult.add(0)
                 elif desiredProgramme[programme] == 'Arkitekt':
-                    desiredProgrammeResult.add(1)
+                    desiredProgrammeResult.add(0)
                 elif desiredProgramme[programme] == 'Informations- och kommunikationsteknik':
-                    desiredProgrammeResult.add(2)
+                    desiredProgrammeResult.add(1)
                 elif desiredProgramme[programme] == 'Kemiteknik':
                     desiredProgrammeResult.add(6)
                 elif desiredProgramme[programme] == 'Byggteknik med järnvägsteknik':
@@ -148,17 +148,17 @@ for row in range(len(df)):
                 elif desiredProgramme[programme] == 'Byggteknik med arkitektur':
                     desiredProgrammeResult.add(5)
                 elif desiredProgramme[programme] == 'Industriell ekonomi':
-                    desiredProgrammeResult.add(5)
-                elif desiredProgramme[programme] == 'Teknisk Matematik':
                     desiredProgrammeResult.add(4)
-                elif desiredProgramme[programme] == 'Medicinteknik':
+                elif desiredProgramme[programme] == 'Teknisk Matematik':
                     desiredProgrammeResult.add(3)
+                elif desiredProgramme[programme] == 'Medicinteknik':
+                    desiredProgrammeResult.add(2)
                 elif desiredProgramme[programme] == 'Lantmäteri':
                     desiredProgrammeResult.add(8)
                 elif desiredProgramme[programme] == 'Datateknik':
-                    desiredProgrammeResult.add(2)
+                    desiredProgrammeResult.add(1)
                 elif desiredProgramme[programme] == 'Teknisk Fysik':
-                    desiredProgrammeResult.add(4)
+                    desiredProgrammeResult.add(3)
                 elif desiredProgramme[programme] == 'Byggteknik med väg- och trafikteknik':
                     desiredProgrammeResult.add(5)
         else:
