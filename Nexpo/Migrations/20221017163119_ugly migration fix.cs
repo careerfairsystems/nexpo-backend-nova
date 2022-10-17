@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Nexpo.Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nexpo.Migrations
 {
-    public partial class testlocal : Migration
+    public partial class uglymigrationfix : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
