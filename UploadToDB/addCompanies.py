@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import requests
 
-jsonfile = 'ArkadIndent2.json'
+jsonfile = 'example.json'
 url = 'http://localhost/api/companies'
 s3BucketUrl = 's3bucketURL'
 loginUrl = 'http://localhost/api/session/signin'

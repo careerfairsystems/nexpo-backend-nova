@@ -186,7 +186,10 @@ namespace Nexpo.Controllers
                 DesiredDegrees= dto.DesiredDegrees,
                 DesiredGuilds= dto.DesiredGuilds,
                 Positions = dto.Positions,
-                Industries  = dto.Industries 
+                Industries  = dto.Industries,
+                HostName = dto.HostName,
+                HostEmail = dto.HostEmail,
+                HostPhone = dto.HostPhone
             };
             await _companyRepo.Add(company);
 
