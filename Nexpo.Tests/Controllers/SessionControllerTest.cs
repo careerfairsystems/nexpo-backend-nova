@@ -22,7 +22,7 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             var json = new JsonObject();
             json.Add("email", "student1@example.com");
-            json.Add("password", "password123");
+            json.Add("password", "password");
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
