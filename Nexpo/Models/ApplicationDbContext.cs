@@ -62,7 +62,7 @@ namespace Nexpo.Models
 
             // Users
             var user1 = new User { Id = -1, Email = "admin@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.Administrator, FirstName = "Alpha", LastName = "Admin" };
-            var user2 = new User { Id = -2, Email = "student1@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.Student, FirstName = "Alpha", LastName = "Student" };
+            var user2 = new User { Id = -2, Email = "student1@example.com", PasswordHash = _passwordService.HashPassword("password123"), Role = Role.Student, FirstName = "Alpha", LastName = "Student" };
             var user3 = new User { Id = -3, Email = "student2@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.Student, FirstName = "Beta", LastName = "Student" };
             var user4 = new User { Id = -4, Email = "student3@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.Student, FirstName = "Gamma", LastName = "Student" };
             var user5 = new User { Id = -5, Email = "rep1@company1.example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyRepresentative, FirstName = "Alpha", LastName = "Rep", CompanyId = company1.Id.Value };

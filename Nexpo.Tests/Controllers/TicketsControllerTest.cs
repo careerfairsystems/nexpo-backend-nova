@@ -32,7 +32,7 @@ namespace Nexpo.Tests.Controllers
                     break;
                 default:
                     json.Add("email", "student1@example.com");
-                    json.Add("password", "password");
+                    json.Add("password", "password123");
                     break;
             }
 
