@@ -9,7 +9,7 @@
             BucketName = "";
             Region = "eu-north-1";
             AwsAccessKey = "";
-            AwsSecretAccessKey = "Z";
+            AwsSecretAccessKey = "";
             AwsSessionToken = "";
         }
 

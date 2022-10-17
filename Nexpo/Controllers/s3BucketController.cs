@@ -26,6 +26,26 @@ namespace Nexpo.Controllers
             _aws3Services = aws3Services;
         }
 
+        [HttpGet("{documentName}")]
+        public IActionResult GetDocumentFromS3(string documentName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(documentName))
+                    return StatusCode((int)HttpStatusCode.BadRequest, "the document name is required");
+
+                _aws3Services = new Aws3Services();
+
+                var document = _aws3Services.DownloadFileAsync(documentName).Result;
+
+                return File(document, "application/octet-stream", documentName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
         [HttpPost]
         [Route("post")]
         public IActionResult UploadDocumentToS3(IFormFile file)
@@ -51,8 +71,31 @@ namespace Nexpo.Controllers
             }
         }
 
+
+        [HttpDelete("{documentName}")]
+        public IActionResult DeletetDocumentFromS3(string documentName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(documentName))
+                    return StatusCode( (int)HttpStatusCode.BadRequest, "The 'documentName' parameter is required");
+
+                _aws3Services = new Aws3Services();
+
+                _aws3Services.DeleteFileAsync(documentName);
+
+                return StatusCode((int)HttpStatusCode.OK, documentName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
     }
 
-
     
+
+
+
 }
