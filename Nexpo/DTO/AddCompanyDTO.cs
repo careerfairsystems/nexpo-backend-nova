@@ -1,27 +1,34 @@
-﻿using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Nexpo.Models;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using Nexpo.Models;
 
 namespace Nexpo.DTO
 {
-    public class PublicCompanyDto
+    public class AddCompanyDto
     {
-        [Required]
-        public int Id { get; set; }
-        [Required]
         public string Name { get; set; }
         public string Description { get; set; }
-
         public string DidYouKnow { get; set; }
-        public string LogoUrl { get; set; }
         public string Website { get; set; }
+
+        public string LogoUrl { get; set; }
+
+        public string HostName { get; set; }
+
+        public string HostEmail { get; set; }
+
+        public string HostPhone { get; set; }
+
         public List<int> DesiredDegrees { get; set;}
+
         public List<int> DesiredGuilds { get; set;}
         public List<int> Positions { get; set;}
+
         public List<int> Industries { get; set;}
+
     }
 }

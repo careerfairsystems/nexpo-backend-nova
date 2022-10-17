@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221010194626_testlocal")]
-    partial class testlocal
+    [Migration("20221017163119_ugly migration fix")]
+    partial class uglymigrationfix
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,10 +32,10 @@ namespace Nexpo.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<List<Degree>>("DesiredDegrees")
+                    b.Property<List<int>>("DesiredDegrees")
                         .HasColumnType("integer[]");
 
-                    b.Property<List<Guild>>("DesiredGuilds")
+                    b.Property<List<int>>("DesiredGuilds")
                         .HasColumnType("integer[]");
 
                     b.Property<string>("DidYouKnow")
@@ -50,7 +50,7 @@ namespace Nexpo.Migrations
                     b.Property<string>("HostPhone")
                         .HasColumnType("text");
 
-                    b.Property<List<Industry>>("Industries")
+                    b.Property<List<int>>("Industries")
                         .HasColumnType("integer[]");
 
                     b.Property<string>("LogoUrl")
@@ -60,7 +60,7 @@ namespace Nexpo.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<List<Position>>("Positions")
+                    b.Property<List<int>>("Positions")
                         .HasColumnType("integer[]");
 
                     b.Property<string>("Website")
