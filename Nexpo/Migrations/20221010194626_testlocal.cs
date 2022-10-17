@@ -24,10 +24,10 @@ namespace Nexpo.Migrations
                     HostName = table.Column<string>(type: "text", nullable: true),
                     HostEmail = table.Column<string>(type: "text", nullable: true),
                     HostPhone = table.Column<string>(type: "text", nullable: true),
-                    DesiredDegrees = table.Column<List<Degree>>(type: "integer[]", nullable: true),
-                    DesiredGuilds = table.Column<List<Guild>>(type: "integer[]", nullable: true),
-                    Positions = table.Column<List<Position>>(type: "integer[]", nullable: true),
-                    Industries = table.Column<List<Industry>>(type: "integer[]", nullable: true)
+                    DesiredDegrees = table.Column<List<int>>(type: "integer[]", nullable: true),
+                    DesiredGuilds = table.Column<List<int>>(type: "integer[]", nullable: true),
+                    Positions = table.Column<List<int>>(type: "integer[]", nullable: true),
+                    Industries = table.Column<List<int>>(type: "integer[]", nullable: true)
                 },
                 constraints: table =>
                 {

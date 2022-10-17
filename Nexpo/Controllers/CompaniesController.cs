@@ -91,6 +91,10 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> PutCompany(int id, UpdateCompanyDto dto)
         {
             var company = await _companyRepo.Get(id);
+            if (company == null)
+            {
+                return NotFound();
+            }
 
             if (!string.IsNullOrEmpty(dto.Description))
             {
