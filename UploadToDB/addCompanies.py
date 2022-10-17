@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 
 jsonfile = 'ArkadIndent2.json'
-url = 'http://localhost/api/companies/add'
+url = 'http://localhost/api/companies'
 s3BucketUrl = 's3bucketURL'
 loginUrl = 'http://localhost/api/session/signin'
 
@@ -194,7 +194,6 @@ for row in range(len(df)):
             'Authorization' : token,
         }
         data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ',"desiredDegrees":' + json.dumps(desiredDegree) + ',"desiredGuilds":' + json.dumps(list(desiredProgrammeResult)) + ',"positions":' + json.dumps(list(positions)) + ',"industries":' + json.dumps(list(industryResult)) +  '}'
-        r = requests.put(url, data=data.encode('utf-8'), headers=headers)
+        r = requests.post(url, data=data.encode('utf-8'), headers=headers)
         print(r)
         #print(r.content)
-        

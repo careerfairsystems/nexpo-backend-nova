@@ -171,8 +171,7 @@ namespace Nexpo.Controllers
          /// <summary>
         /// Add new company
         /// </summary>
-        [HttpPut]
-        [Route("add")]
+        [HttpPost]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
         public async Task<ActionResult> AddNewCompany(AddCompanyDto dto)
