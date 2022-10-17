@@ -138,7 +138,8 @@ namespace Nexpo.Migrations
                     Code = table.Column<Guid>(type: "uuid", nullable: false),
                     PhotoOk = table.Column<bool>(type: "boolean", nullable: false),
                     EventId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    isConsumed = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
