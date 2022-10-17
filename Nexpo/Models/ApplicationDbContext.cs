@@ -87,7 +87,7 @@ namespace Nexpo.Models
             SaveChanges();
 
             // Tickets
-            var ticket1 = new Ticket { Id = -1, Code = Guid.NewGuid(), PhotoOk = true, EventId = event1.Id.Value, UserId = user2.Id.Value };
+            var ticket1 = new Ticket { Id = -1, Code = Guid.NewGuid(), PhotoOk = true, EventId = event1.Id.Value, UserId = user2.Id.Value , isConsumed = true};
             var ticket2 = new Ticket { Id = -2, Code = Guid.NewGuid(), PhotoOk = false, EventId = event1.Id.Value, UserId = user3.Id.Value };
             var ticket3 = new Ticket { Id = -3, Code = Guid.NewGuid(), PhotoOk = false, EventId = event2.Id.Value, UserId = user2.Id.Value };
             var ticket4 = new Ticket { Id = -4, Code = Guid.NewGuid(), PhotoOk = true, EventId = event3.Id.Value, UserId = user3.Id.Value };

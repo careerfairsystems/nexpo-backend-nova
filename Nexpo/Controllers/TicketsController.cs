@@ -80,6 +80,21 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
+        /// Update isConsumed on a ticket
+        /// </summary>
+        [HttpPut]
+        [Route("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Ticket), StatusCodes.Status200OK)]
+        public async Task<ActionResult> PutTicket(int id, UpdateTicketDto dto)
+        {
+            var ticket = await _ticketRepo.Get(id);
+            ticket.isConsumed = dto.isConsumed;
+            await _ticketRepo.Update(ticket);
+            return Ok();
+        }
+
+        /// <summary>
         /// Get a specific ticket
         /// </summary>
         [HttpGet]

@@ -16,6 +16,7 @@ namespace Nexpo.Models
         public Guid Code { get; set; } = Guid.NewGuid();
         [Required]
         public bool PhotoOk { get; set; }
+        public bool isConsumed { get; set; }
 
         public int EventId { get; set; }
         public Event Event { get; set; }
