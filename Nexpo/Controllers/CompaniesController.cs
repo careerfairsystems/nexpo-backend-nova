@@ -167,6 +167,34 @@ namespace Nexpo.Controllers
 
             return Ok(company);
         }
+
+         /// <summary>
+        /// Add new company
+        /// </summary>
+        [HttpPost]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
+        public async Task<ActionResult> AddNewCompany(AddCompanyDto dto)
+        {
+            
+            var company = new Company {
+                Name = dto.Name,
+                Description = dto.Description,
+                DidYouKnow = dto.DidYouKnow,
+                LogoUrl = dto.LogoUrl,
+                Website = dto.Website,
+                DesiredDegrees= dto.DesiredDegrees,
+                DesiredGuilds= dto.DesiredGuilds,
+                Positions = dto.Positions,
+                Industries  = dto.Industries,
+                HostName = dto.HostName,
+                HostEmail = dto.HostEmail,
+                HostPhone = dto.HostPhone
+            };
+            await _companyRepo.Add(company);
+
+            return Ok(company);
+        }
     }
 }
 
