@@ -7,7 +7,7 @@ namespace Nexpo.AWS
     {
         Task<byte[]> DownloadFileAsync(string file);
 
-        Task<bool> UploadFileAsync(IFormFile file);
+        Task<bool> UploadFileAsync(IFormFile file, string name);
 
         Task<bool> DeleteFileAsync(string fileName /*, string versionId = ""*/);
     }
