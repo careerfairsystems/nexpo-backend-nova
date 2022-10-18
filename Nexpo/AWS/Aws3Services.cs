@@ -28,7 +28,7 @@ namespace Nexpo.AWS
             //_awsS3Client = new AmazonS3Client(awsAccessKeyId, awsSecretAccessKey, awsSessionToken, RegionEndpoint.GetBySystemName(region));
         }
 
-        public async Task<bool> UploadFileAsync(IFormFile file)
+        public async Task<bool> UploadFileAsync(IFormFile file, string name)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace Nexpo.AWS
                     var uploadRequest = new TransferUtilityUploadRequest
                     {
                         InputStream = newMemoryStream,
-                        Key = file.FileName,
+                        Key = name,
                         BucketName = _bucketName,
                         ContentType = file.ContentType
                     };
