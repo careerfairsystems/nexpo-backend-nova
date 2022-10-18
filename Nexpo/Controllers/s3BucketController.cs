@@ -9,6 +9,7 @@ using System.Net;
 using Nexpo.AWS;
 using System.IO;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Linq;
 
 namespace Nexpo.Controllers
 {
@@ -38,7 +39,7 @@ namespace Nexpo.Controllers
 
                 var document = _aws3Services.DownloadFileAsync(documentName).Result;
 
-                return File(document, "application/octet-stream", documentName);
+                return File(document, "application/octet-stream", documentName + ".pdf");
             }
             catch (Exception ex)
             {
@@ -47,8 +48,8 @@ namespace Nexpo.Controllers
         }
 
         [HttpPost]
-        [Route("post")]
-        public IActionResult UploadDocumentToS3(IFormFile file)
+        [Route("{name}")]
+        public IActionResult UploadDocumentToS3(IFormFile file, string name)
         //public IActionResult UploadDocumentToS3()
         {
             //File file = File.Create("C:\\Users\\Hampus\\Documents\\Arkad\\cv\\test.pdf");
@@ -61,7 +62,7 @@ namespace Nexpo.Controllers
                 //_aws3Services = new Aws3Services(_appConfiguration.AwsAccessKey, _appConfiguration.AwsSecretAccessKey, _appConfiguration.AwsSessionToken, _appConfiguration.Region, _appConfiguration.BucketName);
                 _aws3Services = new Aws3Services();
 
-                var result = _aws3Services.UploadFileAsync(file);
+                var result = _aws3Services.UploadFileAsync(file,name);
 
                 return Ok((int)HttpStatusCode.Created);
             }
