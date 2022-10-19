@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 using Nexpo.Constants;
+using Microsoft.AspNetCore.Cors;
 
 namespace Nexpo.Controllers
 {
@@ -24,11 +25,13 @@ namespace Nexpo.Controllers
         {
             this.configuration = configuration;
         }
-
+        [EnableCors]
         [AllowAnonymous]
         [HttpGet("InitiateSingleSignOn")]
         public IActionResult InitiateSingleSignOn(string returnUrl)
         {
+
+            var sch = Saml2Defaults.Scheme;
             return new ChallengeResult(
                 Saml2Defaults.Scheme,
                 new AuthenticationProperties
@@ -37,6 +40,7 @@ namespace Nexpo.Controllers
                 });
         }
 
+        [EnableCors]
         [AllowAnonymous]
         [HttpGet("Callback")]
         public async Task<IActionResult> LoginCallback(string returnUrl)

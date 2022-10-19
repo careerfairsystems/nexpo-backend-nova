@@ -59,13 +59,13 @@ namespace Nexpo
         {
             // ** ADDED for SSO feature **
             services.AddControllers();
-            services.ConfigureNonBreakingSameSiteCookies();
+            //services.ConfigureNonBreakingSameSiteCookies();
             services.Configure<CookiePolicyOptions>(options =>
             {
-                // SameSiteMode.None is required to support SAML SSO.
-                options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
-                options.Secure = CookieSecurePolicy.SameAsRequest;
-
+                // SameSiteMode.None is required to support SA
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.Secure = CookieSecurePolicy.Always;
+                options.CheckConsentNeeded = context => false;
                 // Some older browsers don't support SameSiteMode.None
                 options.OnAppendCookie = cookieContext =>
                     AuthenticationHelpers.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
@@ -183,6 +183,13 @@ namespace Nexpo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext)
         {
+            app.UseRouting();
+            app.UseCors(x => x
+                .AllowAnyOrigin()
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -193,17 +200,11 @@ namespace Nexpo
                 dbContext.Seed();
             }
 
-            app.UseRouting();
+            
+            //app.UseCookiePolicy();
 
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
-            app.UseCookiePolicy();
-
-	    app.UseSession();
             app.UseAuthentication();
+	        app.UseSession();
             app.UseHttpsRedirection();
             app.UseAuthorization();
 
