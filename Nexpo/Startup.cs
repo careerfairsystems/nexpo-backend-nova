@@ -76,9 +76,9 @@ namespace Nexpo
 
             services.AddSession(options =>
             {
-/*                options.Cookie.HttpOnly = true;
+                options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
-                options.Cookie.SameSite = SameSiteMode.None;*/
+                options.Cookie.SameSite = SameSiteMode.None;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
             });
@@ -135,7 +135,7 @@ namespace Nexpo
                         LoadMetadata = true
                     });
 
-                //options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
+                options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
             });
 
             services.AddScoped<IConfig>(_ => Config);
@@ -202,9 +202,9 @@ namespace Nexpo
                 .AllowAnyHeader());
             app.UseCookiePolicy();
 
-
+	    app.UseSession();
             app.UseAuthentication();
-            app.UseSession();
+            app.UseHttpsRedirection();
             app.UseAuthorization();
 
             // MAYBE NEED TO USEMVC AND CHANGE ACCORDING TO GIT
