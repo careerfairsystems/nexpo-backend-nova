@@ -259,6 +259,9 @@ namespace Nexpo.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("isConsumed")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");

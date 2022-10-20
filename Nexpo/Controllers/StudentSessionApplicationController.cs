@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.OleDb;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +10,7 @@ using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
+using Nexpo.Services;
 
 namespace Nexpo.Controllers
 {
@@ -17,24 +19,26 @@ namespace Nexpo.Controllers
     public class StudentSessionsApplicationController : ControllerBase
     {
         private readonly ICompanyRepository _companyRepo;
+        private readonly IStudentRepository _studentRepository;
         private readonly IStudentSessionTimeslotRepository _timeslotRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
-        private readonly IStudentRepository _studentRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IEmailService _emailService;
 
 
         public StudentSessionsApplicationController(ICompanyRepository iCompanyRepository,
             IStudentSessionTimeslotRepository iStudentSessionTimeslotRepository,
             IStudentSessionApplicationRepository iStudentSessionApplicationRepository,
             IStudentRepository iStudentRepository,
-            IUserRepository iUserRepository
-            )
+            IUserRepository iUserRepository,
+            IEmailService iEmailService)
         {
             _companyRepo = iCompanyRepository;
             _timeslotRepo = iStudentSessionTimeslotRepository;
             _applicationRepo = iStudentSessionApplicationRepository;
             _studentRepository = iStudentRepository;
             _userRepository = iUserRepository;
+            _emailService = iEmailService;
         }
 
 
@@ -45,7 +49,7 @@ namespace Nexpo.Controllers
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(StudentSessionApplication), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PutSession(int id, UpdateSessionDto dto)
+        public async Task<ActionResult> RespondToApplication(int id, UpdateSessionDto dto)
         {
             var application = await _applicationRepo.Get(id);
             if (application == null)
@@ -58,10 +62,17 @@ namespace Nexpo.Controllers
             {
                 return Forbid();
             }
-
+            var oldStatus = application.Status;
             application.Status = dto.Status;
             await _applicationRepo.Update(application);
+            if(application.Status != oldStatus && application.Status == StudentSessionApplicationStatus.Accepted)
+            {
+                var company = await _companyRepo.Get(companyId);
+                var student = await _studentRepository.Get(application.StudentId);
+                var user = await _userRepository.Get(student.UserId);
 
+                await _emailService.SendApplicationAcceptedEmail(company, user);
+            }
             return Ok(application);
         }
 

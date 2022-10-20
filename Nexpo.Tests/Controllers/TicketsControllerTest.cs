@@ -11,7 +11,8 @@ using System.IO;
 using Newtonsoft.Json;
 using Nexpo.Models;
 using System.Collections.Generic;
-
+using SendGrid;
+using Microsoft.OpenApi.Expressions;
 
 namespace Nexpo.Tests.Controllers
 {
@@ -89,7 +90,6 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.StatusCode.ToString());
         }
 
-
         [Fact]
         public async Task GetSpecificTicketLegitimate()
         {
@@ -97,7 +97,7 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             var token = await Login("", client);
 
-            var response = await client.GetAsync("/api/tickets/-1");
+            var response = await client.GetAsync("/api/tickets/id/-1");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
 
             var responseObject = JsonConvert.DeserializeObject<Ticket>((await response.Content.ReadAsStringAsync()));
@@ -107,7 +107,6 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
         }
 
-        //Should this be possible? 
         [Fact]
         public async Task GetSpecificTicketFromAnotherUser()
         {
@@ -115,7 +114,18 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             var token = await Login("company", client);
 
-            var response = await client.GetAsync("/api/tickets/-1");
+            var response = await client.GetAsync("/api/tickets/id/-1");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task GetSpecificTicketLegitimateAsAdmin()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+
+            var response = await client.GetAsync("/api/tickets/id/-1");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
 
             var responseObject = JsonConvert.DeserializeObject<Ticket>((await response.Content.ReadAsStringAsync()));
@@ -130,9 +140,9 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var token = await Login("", client);
+            var token = await Login("admin", client);
 
-            var response = await client.GetAsync("/api/tickets/-123");
+            var response = await client.GetAsync("/api/tickets/id/-123");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.StatusCode.ToString());
         }
 
@@ -242,7 +252,7 @@ namespace Nexpo.Tests.Controllers
             var parsedContent = JObject.Parse(responseText);
             var newTicketId = parsedContent.Value<string>("id");
 
-            var response2 = await client.GetAsync("/api/tickets/" + newTicketId);
+            var response2 = await client.GetAsync("/api/tickets/id/" + newTicketId);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response2.StatusCode.ToString());
             var responseObject = JsonConvert.DeserializeObject<Ticket>((await response2.Content.ReadAsStringAsync()));
             Assert.True(responseObject.PhotoOk, responseObject.PhotoOk.ToString());
@@ -264,8 +274,69 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response5.StatusCode.Equals(HttpStatusCode.OK), response5.StatusCode.ToString());
             Assert.True(responseList2.Count == 2, "Nbr. of ticket: " + responseList.Count.ToString());
 
-            var response6 = await client.GetAsync("/api/tickets/" + newTicketId);
+            var response6 = await client.GetAsync("/api/tickets/id/" + newTicketId);
             Assert.True(response6.StatusCode.Equals(HttpStatusCode.NotFound), response6.StatusCode.ToString());
         }
+
+        [Fact]
+        public async Task DeleteConsumedExistingTicket()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("", client);
+
+            var response = await client.DeleteAsync("api/tickets/-1");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.ToString());
+        }
+
+        [Fact]
+        public async Task UpdateIsConsumedAsAdmin()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+
+            var json = new JsonObject();
+            json.Add("isConsumed", true);
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/tickets/-2", payload);
+            var responseObject = JsonConvert.DeserializeObject<Ticket>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(responseObject.isConsumed, responseObject.isConsumed.ToString());
+
+            var json2 = new JsonObject();
+            json2.Add("isConsumed", false);
+
+            var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
+            var response2 = await client.PutAsync("api/tickets/-2", payload2);
+            var responseObject2 = JsonConvert.DeserializeObject<Ticket>((await response2.Content.ReadAsStringAsync()));
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response2.StatusCode.ToString());
+            Assert.True(!responseObject2.isConsumed, responseObject2.isConsumed.ToString());
+        }
+
+        [Fact]
+        public async Task GetTicketIdAndGuidReturnSameTicket()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+
+            var response = await client.GetAsync("/api/tickets/id/-1");
+            var responseObject = JsonConvert.DeserializeObject<Ticket>((await response.Content.ReadAsStringAsync()));
+
+            var response2 = await client.GetAsync("/api/tickets/" + responseObject.Code);
+            var responseObject2 = JsonConvert.DeserializeObject<Ticket>((await response2.Content.ReadAsStringAsync()));
+            
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response2.StatusCode.ToString());
+
+
+            Assert.True(responseObject.Id == responseObject2.Id, responseObject.Id.ToString() + ", " + responseObject2.ToString());
+            Assert.True(responseObject.PhotoOk && responseObject2.PhotoOk, responseObject.PhotoOk.ToString() + ", " + responseObject2.PhotoOk.ToString());
+            Assert.True(responseObject.EventId == responseObject2.EventId, responseObject.EventId.ToString() + ", " + responseObject2.EventId.ToString());
+            Assert.True(responseObject.UserId == responseObject2.UserId, responseObject.UserId.ToString() + ", " + responseObject2.UserId.ToString());
+        }
+
     }
 }

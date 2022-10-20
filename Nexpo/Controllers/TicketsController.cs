@@ -80,15 +80,30 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Get a specific ticket
+        /// Update isConsumed on a ticket
+        /// </summary>
+        [HttpPut]
+        [Route("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Ticket), StatusCodes.Status200OK)]
+        public async Task<ActionResult> PutTicket(int id, UpdateTicketDto dto)
+        {
+            var ticket = await _ticketRepo.Get(id);
+            ticket.isConsumed = dto.isConsumed;
+            await _ticketRepo.Update(ticket);
+            return Ok(ticket);
+        }
+
+        /// <summary>
+        /// Get a specific ticket by Guid
         /// </summary>
         [HttpGet]
         [Route("{id}")]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Ticket>> GetTicket(int id)
+        public async Task<ActionResult<Ticket>> GetTicket(Guid id)
         {
-            var ticket = await _ticketRepo.Get(id);
+            var ticket = await _ticketRepo.GetByCode(id);
             if (ticket != null)
             {
                 return Ok(ticket);
@@ -98,6 +113,29 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
         }
+
+        /// <summary>
+        /// Get a specific ticket by id 
+        /// </summary>
+        [HttpGet]
+        [Route("id/{id}")]
+        [Authorize]
+        [ProducesResponseType(typeof(Ticket), StatusCodes.Status200OK)]
+        public async Task<ActionResult<Ticket>> GetTicket(int id)
+        {
+            var ticket = await _ticketRepo.Get(id);
+            var userId = HttpContext.User.GetId();
+            var userRole = HttpContext.User.GetRole();
+            if (ticket != null && (ticket.UserId == userId || userRole == Role.Administrator))
+            {
+                return Ok(ticket);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
 
         /// <summary>
         /// Delete/Unregister a ticket
@@ -115,11 +153,16 @@ namespace Nexpo.Controllers
             }
 
             var userId = HttpContext.User.GetId();
-            if (ticket.UserId != userId)
-            {
-                return Forbid();
-            }
+            var userRole = HttpContext.User.GetRole();
 
+            if(userRole != Role.Administrator)
+            {
+                if (ticket.UserId != userId || ticket.isConsumed)
+                {
+                    return Forbid();
+                }
+            }
+           
             await _ticketRepo.Remove(ticket);
             return NoContent();
         }
