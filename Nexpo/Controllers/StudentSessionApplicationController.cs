@@ -23,7 +23,7 @@ namespace Nexpo.Controllers
         private readonly IStudentSessionTimeslotRepository _timeslotRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
         private readonly IUserRepository _userRepository;
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
 
 
         public StudentSessionsApplicationController(ICompanyRepository iCompanyRepository,
@@ -31,7 +31,7 @@ namespace Nexpo.Controllers
             IStudentSessionApplicationRepository iStudentSessionApplicationRepository,
             IStudentRepository iStudentRepository,
             IUserRepository iUserRepository,
-            EmailService iEmailService)
+            IEmailService iEmailService)
         {
             _companyRepo = iCompanyRepository;
             _timeslotRepo = iStudentSessionTimeslotRepository;
