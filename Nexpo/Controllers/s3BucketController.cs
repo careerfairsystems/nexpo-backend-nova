@@ -15,7 +15,6 @@ namespace Nexpo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //api/[controller]
     public class AwsS3Controller : ControllerBase
     {
         private IAppConfiguration _appConfiguration;
@@ -50,16 +49,12 @@ namespace Nexpo.Controllers
         [HttpPost]
         [Route("{name}")]
         public IActionResult UploadDocumentToS3(IFormFile file, string name)
-        //public IActionResult UploadDocumentToS3()
         {
-            //File file = File.Create("C:\\Users\\Hampus\\Documents\\Arkad\\cv\\test.pdf");
             try
             {
                 if (file is null || file.Length <= 0)
-                    //return ReturnMessage("file is required to upload", (int)HttpStatusCode.BadRequest);
                     return StatusCode((int)HttpStatusCode.InternalServerError, "file is required to upload");
 
-                //_aws3Services = new Aws3Services(_appConfiguration.AwsAccessKey, _appConfiguration.AwsSecretAccessKey, _appConfiguration.AwsSessionToken, _appConfiguration.Region, _appConfiguration.BucketName);
                 _aws3Services = new Aws3Services();
 
                 var result = _aws3Services.UploadFileAsync(file,name);

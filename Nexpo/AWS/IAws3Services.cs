@@ -9,7 +9,7 @@ namespace Nexpo.AWS
 
         Task<bool> UploadFileAsync(IFormFile file, string name);
 
-        Task<bool> DeleteFileAsync(string fileName /*, string versionId = ""*/);
+        Task<bool> DeleteFileAsync(string fileName);
 
         bool IfFileExists(string fileName);
     }

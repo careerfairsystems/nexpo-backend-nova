@@ -16,16 +16,11 @@ namespace Nexpo.AWS
         private readonly string _bucketName;
         private readonly IAmazonS3 _awsS3Client;
 
-        //public Aws3Services(string awsAccessKeyId, string awsSecretAccessKey, string awsSessionToken, string region, string bucketName)
         public Aws3Services()
         {
             _bucketName = "cvfiler";
 
             _awsS3Client = new AmazonS3Client("", "", RegionEndpoint.GetBySystemName("eu-north-1"));
-            //_awsS3Client = new AmazonS3Client(awsAccessKeyId, awsSecretAccessKey, RegionEndpoint.GetBySystemName(region));
-            
-            //Session token needed?
-            //_awsS3Client = new AmazonS3Client(awsAccessKeyId, awsSecretAccessKey, awsSessionToken, RegionEndpoint.GetBySystemName(region));
         }
 
         public async Task<bool> UploadFileAsync(IFormFile file, string name)
@@ -93,19 +88,13 @@ namespace Nexpo.AWS
         }
 
         [HttpDelete("{documentName}")]
-        //Lägga till versionId?
-        //INTE KLAR, behöver mer logik. Nu returnar den alltid True
-        public async Task<bool> DeleteFileAsync(string fileName /*, string versionId*/)
+        public async Task<bool> DeleteFileAsync(string fileName)
         {
             DeleteObjectRequest request = new DeleteObjectRequest
             {
                 BucketName = _bucketName,
                 Key = fileName
             };
-
-            //if (!string.IsNullOrEmpty(versionId))
-            //   request.VersionId = versionId;
-
             await _awsS3Client.DeleteObjectAsync(request);
             return true;
         }
@@ -117,8 +106,7 @@ namespace Nexpo.AWS
                 GetObjectMetadataRequest request = new GetObjectMetadataRequest()
                 {
                     BucketName = _bucketName,
-                    Key = fileName,
-                    //VersionId = !string.IsNullOrEmpty(versionId) ? versionId : null
+                    Key = fileName
                 };
 
                 var response = _awsS3Client.GetObjectMetadataAsync(request).Result;
