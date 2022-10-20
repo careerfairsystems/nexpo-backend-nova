@@ -29,6 +29,8 @@ namespace Nexpo.Models
         public int? CompanyId { get; set; }
         [JsonIgnore]
         public Company Company { get; set; }
+
+        public bool hasCv {get; set;} 
     }
 
     public enum Role

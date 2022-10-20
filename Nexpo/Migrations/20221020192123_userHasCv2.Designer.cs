@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221017163119_ugly migration fix")]
-    partial class uglymigrationfix
+    [Migration("20221020192123_userHasCv2")]
+    partial class userHasCv2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -261,6 +261,9 @@ namespace Nexpo.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("isConsumed")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
@@ -306,6 +309,9 @@ namespace Nexpo.Migrations
 
                     b.Property<int>("Role")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("hasCv")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

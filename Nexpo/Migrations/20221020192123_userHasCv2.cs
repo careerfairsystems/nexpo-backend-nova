@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nexpo.Migrations
 {
-    public partial class uglymigrationfix : Migration
+    public partial class userHasCv2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -91,7 +91,8 @@ namespace Nexpo.Migrations
                     PhoneNr = table.Column<string>(type: "text", nullable: true),
                     FoodPreferences = table.Column<string>(type: "text", nullable: true),
                     ProfilePictureUrl = table.Column<string>(type: "text", nullable: true),
-                    CompanyId = table.Column<int>(type: "integer", nullable: true)
+                    CompanyId = table.Column<int>(type: "integer", nullable: true),
+                    hasCv = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,9 +138,9 @@ namespace Nexpo.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Code = table.Column<Guid>(type: "uuid", nullable: false),
                     PhotoOk = table.Column<bool>(type: "boolean", nullable: false),
+                    isConsumed = table.Column<bool>(type: "boolean", nullable: false),
                     EventId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    isConsumed = table.Column<bool>(type: "boolean", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -308,6 +308,9 @@ namespace Nexpo.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("hasCv")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");

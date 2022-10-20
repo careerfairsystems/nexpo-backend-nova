@@ -11,6 +11,7 @@ using Nexpo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using Nexpo.AWS;
 
 namespace Nexpo
 {
@@ -32,6 +33,8 @@ namespace Nexpo
         {
 
             services.AddControllers();
+            services.AddSingleton<IAppConfiguration, AppConfiguration>();
+            services.AddScoped  <IAws3Services, Aws3Services>();
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;
@@ -65,6 +68,7 @@ namespace Nexpo
             services.AddScoped<ICompanyConnectionRepository, CompanyConnectionRepository>();
             services.AddScoped<IStudentSessionTimeslotRepository, StudentSessionTimeslotRepository>();
             services.AddScoped<IStudentSessionApplicationRepository, StudentSessionApplicationRepository>();
+
 
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
