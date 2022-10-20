@@ -110,7 +110,7 @@ namespace Nexpo.AWS
             return true;
         }
 
-        public bool IsFileExists(string fileName, string versionId)
+        public bool IfFileExists(string fileName)
         {
             try
             {
@@ -135,7 +135,7 @@ namespace Nexpo.AWS
                     else if (string.Equals(awsEx.ErrorCode, "NotFound"))
                         return false;
                 }
-
+                return false;
                 throw;
             }
         }

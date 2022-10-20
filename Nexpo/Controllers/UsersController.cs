@@ -9,6 +9,7 @@ using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
 using Nexpo.Services;
+using Nexpo.AWS;
 
 namespace Nexpo.Controllers
 {
@@ -22,18 +23,26 @@ namespace Nexpo.Controllers
         private readonly IStudentRepository _studentRepo;
         private readonly PasswordService _passwordService;
 
+        private IAppConfiguration _appConfiguration;
+        private IAws3Services _aws3Services;
+
         public UsersController(
             IUserRepository iUserRepo, 
             ICompanyConnectionRepository iConnectionRepo, 
             IStudentSessionApplicationRepository iApplicationRepo,
             IStudentRepository iStudentRepository,
-            PasswordService passwordService)
+            PasswordService passwordService,
+            IAppConfiguration iAppConfiguration,
+            IAws3Services iAws3Services
+            )
         {
             _userRepo = iUserRepo;
             _connectionRepo = iConnectionRepo;
             _applicationRepo = iApplicationRepo;
             _studentRepo = iStudentRepository;
             _passwordService = passwordService;
+            _appConfiguration = iAppConfiguration;
+            _aws3Services = iAws3Services;
         }
 
         /// <summary>
@@ -159,6 +168,11 @@ namespace Nexpo.Controllers
         {
             int userId = HttpContext.User.GetId();
             var user = await _userRepo.Get(userId);
+
+            var response = _aws3Services.IfFileExists(user.Id.ToString());
+            user.hasCv = response;
+
+            
             return Ok(user);
         }
         

@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221017163119_ugly migration fix")]
-    partial class uglymigrationfix
+    [Migration("20221020173850_userHasCv")]
+    partial class userHasCv
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -306,6 +306,9 @@ namespace Nexpo.Migrations
 
                     b.Property<int>("Role")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("hasCv")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
