@@ -25,6 +25,7 @@ namespace Nexpo.Controllers
         private readonly IUserRepository _userRepository;
         private readonly EmailService _emailService;
 
+
         public StudentSessionsApplicationController(ICompanyRepository iCompanyRepository,
             IStudentSessionTimeslotRepository iStudentSessionTimeslotRepository,
             IStudentSessionApplicationRepository iStudentSessionApplicationRepository,
@@ -156,13 +157,31 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("my/company")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
-        [ProducesResponseType(typeof(IEnumerable<StudentSessionApplication>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<StudentSessionApplicationDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetApplicationsForCompany()
         {
             var companyId = HttpContext.User.GetCompanyId().Value;
             var applications = await _applicationRepo.GetAllForCompany(companyId);
-
-            return Ok(applications);
+            var studentApplications = new List<StudentSessionApplicationDto>();
+            foreach (var a in applications){
+                var student = await _studentRepository.Get(a.StudentId);
+                var user = await _userRepository.Get(student.UserId);
+                var dto = new StudentSessionApplicationDto
+                {
+                    Id = a.Id,
+                    Motivation = a.Motivation,
+                    Status = a.Status,
+                    StudentId = a.StudentId,
+                    CompanyId = a.CompanyId,
+                    Booked = a.Booked,
+                    StudentFirstName = user.FirstName,
+                    StudentLastName = user.LastName,
+                    StudentYear = student.Year,
+                    StudentGuild = student.Guild
+                };
+                studentApplications.Add(dto);
+            }
+            return Ok(studentApplications);
         }
 
         /// <summary>

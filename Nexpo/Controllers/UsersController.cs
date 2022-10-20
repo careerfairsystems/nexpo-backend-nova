@@ -60,12 +60,12 @@ namespace Nexpo.Controllers
             if (userRole == Role.CompanyRepresentative)
             {
                 var companyId = HttpContext.User.GetCompanyId().Value;
-                var student = _studentRepo.FindByUser(id);
+                var student = await _studentRepo.FindByUser(id);
                 if(student == null)
                 {
                     return Forbid();
                 }
-                var studentId = student.Id;
+                int studentId = student.Id.Value;
                 if (!await _applicationRepo.ApplicationExists(studentId, companyId))
                 {
                     return Forbid();
