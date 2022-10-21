@@ -62,8 +62,9 @@ namespace Nexpo
             //services.ConfigureNonBreakingSameSiteCookies();
             services.Configure<CookiePolicyOptions>(options =>
             {
-                // SameSiteMode.None is required to support SA
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                //SameSiteMode.None is required to support SA
+                options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
+	    	options.MinimumSameSitePolicy = SameSiteMode.None;
                 options.Secure = CookieSecurePolicy.Always;
                 options.CheckConsentNeeded = context => false;
                 // Some older browsers don't support SameSiteMode.None
@@ -128,11 +129,13 @@ namespace Nexpo
             .AddSaml2(options =>
             {
                 options.SPOptions.EntityId = new EntityId(this.Config.SPEntityId);
+		options.SPOptions.PublicOrigin = new Uri("https://www.nexpo.arkadtlth.se");
                 options.IdentityProviders.Add(
                     new IdentityProvider(
                         new EntityId(this.Config.IDPEntityId), options.SPOptions)
                     {
-                        LoadMetadata = true
+                        LoadMetadata = true,
+			//RelayStateUsedAsReturnUrl = true
                     });
 
                 options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
@@ -187,7 +190,7 @@ namespace Nexpo
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyOrigin()
-                .AllowAnyMethod()
+                .WithMethods("GET","POST","PUT")
                 .AllowAnyHeader());
 
             if (env.IsDevelopment())
@@ -200,13 +203,15 @@ namespace Nexpo
                 dbContext.Seed();
             }
 
-            
-            //app.UseCookiePolicy();
-
+	    //dbContext.Database.Migrate(); //ADD THIS IF DATABASoE IS CLOSED        
+            app.UseCookiePolicy();
+	    app.UseAuthorization();
+	   
+	    app.UseSession();
             app.UseAuthentication();
-	        app.UseSession();
-            app.UseHttpsRedirection();
-            app.UseAuthorization();
+	    
+            //app.UseHttpsRedirection();
+            
 
             // MAYBE NEED TO USEMVC AND CHANGE ACCORDING TO GIT
             app.UseEndpoints(endpoints =>

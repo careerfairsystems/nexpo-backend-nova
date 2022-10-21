@@ -25,13 +25,16 @@ namespace Nexpo.Controllers
         {
             this.configuration = configuration;
         }
-        [EnableCors]
+        
+	[EnableCors]
         [AllowAnonymous]
         [HttpGet("InitiateSingleSignOn")]
         public IActionResult InitiateSingleSignOn(string returnUrl)
         {
 
             var sch = Saml2Defaults.Scheme;
+	    // pretty ugly should be fixed later
+	    returnUrl = "https://www.nexpo.arkadtlth.se/api/saml/Callback"; 
             return new ChallengeResult(
                 Saml2Defaults.Scheme,
                 new AuthenticationProperties
@@ -40,7 +43,8 @@ namespace Nexpo.Controllers
                 });
         }
 
-        [EnableCors]
+        
+	[EnableCors]
         [AllowAnonymous]
         [HttpGet("Callback")]
         public async Task<IActionResult> LoginCallback(string returnUrl)
