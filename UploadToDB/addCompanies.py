@@ -2,10 +2,10 @@ import json
 import pandas as pd
 import requests
 
-jsonfile = 'Arkad2.json'
-url = 'http://localhost:5000/api/companies'
-s3BucketUrl = 'https://nexpo-bucket.s3.eu-north-1.amazonaws.com/'
-loginUrl = 'http://localhost:5000/api/session/signin'
+jsonfile = 'example.json'
+url = 'http://{url}/api/companies'
+s3BucketUrl = '{s3BucketUrl}'
+loginUrl = 'http://{url}:5000/api/session/signin'
 
 
 loginHeaders = {
@@ -15,7 +15,7 @@ loginHeaders = {
 dataLogin = '{ "email": "admin@example.com", "password": "password" }'
 login = requests.post(loginUrl, headers=loginHeaders, data=dataLogin)
 token =login.text.replace('"token":', 'Bearer ').replace('{','').replace('}', ''). replace('"' , '')
-print("lopgin response " , login)
+print("login response " , login)
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)
