@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import requests
 
-jsonfile = 'Arkad.json'
+jsonfile = 'Arkad2.json'
 url = 'http://localhost:5000/api/companies'
 s3BucketUrl = 'https://nexpo-bucket.s3.eu-north-1.amazonaws.com/'
 loginUrl = 'http://localhost:5000/api/session/signin'
@@ -23,6 +23,9 @@ df = pd.DataFrame(dictData)
 for row in range(len(df)):
     pr = df.iloc[row]
     prof = pr['profile']
+    companyHost = pr['companyHosts']
+    
+
     
     if type(prof) == dict:
         if 'name' in prof:
@@ -193,12 +196,23 @@ for row in range(len(df)):
         else:
             logoUrl  =  '"' +""+ '"' 
 
+        if type(companyHost) == list:
+            if len(companyHost) > 0:
+                companyHostsEmail:str = '"' + companyHost[0]['email'] + '"'
+            else:
+                companyHostsEmail:str = '"' +""+ '"' 
+                print(name + "comapnyHost")
+        else:
+            companyHostsEmail:str = '"' +""+ '"' 
+            print(name + "comapnyHost")
+   
         headers = {
             'accept': 'text/plain',
             'Content-Type': 'application/json',
             'Authorization' : token,
         }
-        data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ',"desiredDegrees":' + json.dumps(desiredDegree) + ',"desiredGuilds":' + json.dumps(list(desiredProgrammeResult)) + ',"positions":' + json.dumps(list(positions)) + ',"industries":' + json.dumps(list(industryResult)) +  '}'
+        data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ',"desiredDegrees":' + json.dumps(desiredDegree) + ',"desiredGuilds":' + json.dumps(list(desiredProgrammeResult)) + ',"positions":' + json.dumps(list(positions)) + ',"industries":' + json.dumps(list(industryResult)) + ',"hostEmail":' + companyHostsEmail + '}'
         r = requests.post(url, data=data.encode('utf-8'), headers=headers)
         print(r)
         #print(r.content)
+        
