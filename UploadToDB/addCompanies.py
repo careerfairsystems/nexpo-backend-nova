@@ -10,7 +10,6 @@ loginUrl = 'http://{url}:5000/api/session/signin'
 
 
 token = login.login(loginUrl)
-print("lopgin response " , login)
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)
