@@ -91,6 +91,31 @@ namespace Nexpo.Controllers
             return Ok(namedTickets);
         }
 
+
+        [HttpPost]
+        //[Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
+        public async Task<ActionResult> AddNewEvent(AddEventDto dto)
+        {
+
+            var even = new Event
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                Date = dto.Date,
+                Start = dto.Start,
+                End = dto.End,
+                Location = dto.Location,
+                Host = dto.Host,
+                Language = dto.Language,
+                Capacity = dto.Capacity
+            };
+            await _eventRepo.Add(even);
+
+            return Ok(even);
+        }
     }
+
+
 }
 
