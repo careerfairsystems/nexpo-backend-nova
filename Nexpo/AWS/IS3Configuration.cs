@@ -1,7 +1,7 @@
 ﻿namespace Nexpo.AWS
 {
 
-    public interface IAppConfiguration
+    public interface IS3Configuration
     {
         string AwsAccessKey { get; set; }
         string AwsSecretAccessKey { get; set; }

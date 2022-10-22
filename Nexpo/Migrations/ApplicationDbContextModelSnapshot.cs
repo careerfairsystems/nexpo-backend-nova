@@ -305,14 +305,17 @@ namespace Nexpo.Migrations
                     b.Property<string>("PhoneNr")
                         .HasColumnType("text");
 
-                    b.Property<string>("ProfilePictureUrl")
-                        .HasColumnType("text");
-
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
                     b.Property<bool>("hasCv")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("hasProfilePicture")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("profilePictureUrl")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
