@@ -11,13 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-<<<<<<< HEAD:Nexpo/Migrations/20221024212431_StudentSessionMotivations.Designer.cs
-    [Migration("20221024212431_StudentSessionMotivations")]
-    partial class StudentSessionMotivations
-=======
     [Migration("20221022172005_new migration")]
     partial class newmigration
->>>>>>> a4146d4 (prepared for profilepicture in front-end):Nexpo/Migrations/20221022172005_new migration.Designer.cs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
