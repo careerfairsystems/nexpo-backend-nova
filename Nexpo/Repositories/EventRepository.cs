@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Nexpo.Repositories
 {
@@ -11,6 +12,7 @@ namespace Nexpo.Repositories
     {
         public Task<IEnumerable<Event>> GetAll();
         public Task<Event> Get(int id);
+        public Task Add(Event even);
     }
 
     public class EventRepository : IEventRepository
@@ -58,6 +60,12 @@ namespace Nexpo.Repositories
                 Capacity = e.Capacity,
                 TicketCount = e.Tickets.Count()
             }).FirstOrDefaultAsync();
+        }
+
+        public async Task Add(Event even)
+        {
+            _context.Events.Add(even);
+            await _context.SaveChangesAsync();
         }
     }
 }
