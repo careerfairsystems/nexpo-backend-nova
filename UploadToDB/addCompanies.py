@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import requests
+import login
 
 jsonfile = 'example.json'
 url = 'http://{url}/api/companies'
@@ -8,14 +9,8 @@ s3BucketUrl = '{s3BucketUrl}'
 loginUrl = 'http://{url}:5000/api/session/signin'
 
 
-loginHeaders = {
-    'accept': 'text/plain',
-    'Content-Type': 'application/json',
-}
-dataLogin = '{ "email": "admin@example.com", "password": "password" }'
-login = requests.post(loginUrl, headers=loginHeaders, data=dataLogin)
-token =login.text.replace('"token":', 'Bearer ').replace('{','').replace('}', ''). replace('"' , '')
-print("login response " , login)
+token = login.login(loginUrl)
+print("lopgin response " , login)
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)
