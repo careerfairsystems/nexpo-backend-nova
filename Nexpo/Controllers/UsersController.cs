@@ -23,7 +23,7 @@ namespace Nexpo.Controllers
         private readonly IStudentRepository _studentRepo;
         private readonly PasswordService _passwordService;
 
-        private IAppConfiguration _appConfiguration;
+        private IS3Configuration _appConfiguration;
         private IAws3Services _aws3Services;
 
         public UsersController(
@@ -32,7 +32,7 @@ namespace Nexpo.Controllers
             IStudentSessionApplicationRepository iApplicationRepo,
             IStudentRepository iStudentRepository,
             PasswordService passwordService,
-            IAppConfiguration iAppConfiguration,
+            IS3Configuration iAppConfiguration,
             IAws3Services iAws3Services
             )
         {
@@ -169,10 +169,14 @@ namespace Nexpo.Controllers
             int userId = HttpContext.User.GetId();
             var user = await _userRepo.Get(userId);
 
-            var response = _aws3Services.IfFileExists(user.Id.ToString());
-            user.hasCv = response;
+            var responseCV = _aws3Services.IfFileExists(user.Id.ToString() + ".pdf");
+            user.hasCv = responseCV;
 
-            
+            var responseProfilePicture = _aws3Services.IfFileExists(user.Id.ToString() + ".jpg");
+            user.hasProfilePicture = responseProfilePicture;
+
+
+
             return Ok(user);
         }
         
@@ -213,6 +217,11 @@ namespace Nexpo.Controllers
                 }
                 user.PasswordHash = _passwordService.HashPassword(dto.Password);
             }
+            if (!string.IsNullOrEmpty(dto.profilePictureUrl))
+            {
+                user.profilePictureUrl = dto.profilePictureUrl;
+            }
+
             await _userRepo.Update(user);
 
             return Ok(user);

@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nexpo.Migrations
 {
-    public partial class userHasCv2 : Migration
+    public partial class newmigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -90,9 +90,10 @@ namespace Nexpo.Migrations
                     LastName = table.Column<string>(type: "text", nullable: false),
                     PhoneNr = table.Column<string>(type: "text", nullable: true),
                     FoodPreferences = table.Column<string>(type: "text", nullable: true),
-                    ProfilePictureUrl = table.Column<string>(type: "text", nullable: true),
+                    hasProfilePicture = table.Column<bool>(type: "boolean", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: true),
-                    hasCv = table.Column<bool>(type: "boolean", nullable: false)
+                    hasCv = table.Column<bool>(type: "boolean", nullable: false),
+                    profilePictureUrl = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

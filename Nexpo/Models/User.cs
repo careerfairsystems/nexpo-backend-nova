@@ -23,7 +23,7 @@ namespace Nexpo.Models
         public string LastName { get; set; }
         public string PhoneNr { get; set; }
         public string FoodPreferences { get; set; }
-        public string ProfilePictureUrl { get; set; }
+        public bool hasProfilePicture { get; set; }
 
         [ForeignKey(nameof(Company))]
         public int? CompanyId { get; set; }
@@ -31,6 +31,8 @@ namespace Nexpo.Models
         public Company Company { get; set; }
 
         public bool hasCv {get; set;} 
+
+        public string profilePictureUrl { get; set; }
     }
 
     public enum Role
