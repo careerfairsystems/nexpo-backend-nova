@@ -16,11 +16,10 @@ namespace Nexpo.AWS
         private readonly string _bucketName;
         private readonly IAmazonS3 _awsS3Client;
 
-        public Aws3Services()
+        public Aws3Services(string awsAccessKeyId, string awsSecretAccessKey, string region, string bucketName)
         {
-            _bucketName = "cvfiler";
-
-            _awsS3Client = new AmazonS3Client("", "", RegionEndpoint.GetBySystemName("eu-north-1"));
+            _bucketName = bucketName;
+            _awsS3Client = new AmazonS3Client(awsAccessKeyId, awsSecretAccessKey, RegionEndpoint.GetBySystemName(region));
         }
 
         public async Task<bool> UploadFileAsync(IFormFile file, string name)
@@ -30,7 +29,6 @@ namespace Nexpo.AWS
                 using (var newMemoryStream = new MemoryStream())
                 {
                     file.CopyTo(newMemoryStream);
-
                     var uploadRequest = new TransferUtilityUploadRequest
                     {
                         InputStream = newMemoryStream,
@@ -40,9 +38,7 @@ namespace Nexpo.AWS
                     };
 
                     var fileTransferUtility = new TransferUtility(_awsS3Client);
-
                     await fileTransferUtility.UploadAsync(uploadRequest);
-
                     return true;
                 }
             }
@@ -51,12 +47,9 @@ namespace Nexpo.AWS
                 throw;
             }
         }
-
-
         public async Task<byte[]> DownloadFileAsync(string file)
         {
             MemoryStream ms = null;
-
             try
             {
                 GetObjectRequest getObjectRequest = new GetObjectRequest
@@ -78,7 +71,6 @@ namespace Nexpo.AWS
 
                 if (ms is null || ms.ToArray().Length < 1)
                     throw new FileNotFoundException(string.Format("The document '{0}' is not found", file));
-
                 return ms.ToArray();
             }
             catch (Exception)
