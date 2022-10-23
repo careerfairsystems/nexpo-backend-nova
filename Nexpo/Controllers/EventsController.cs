@@ -93,7 +93,7 @@ namespace Nexpo.Controllers
 
 
         [HttpPost]
-        //[Authorize(Roles = nameof(Role.Administrator))]
+        [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         public async Task<ActionResult> AddNewEvent(AddEventDto dto)
         {
