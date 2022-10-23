@@ -233,5 +233,29 @@ namespace Nexpo.Controllers
 
             return Ok(timeslot);
         }
+
+
+        /// <summary>
+        /// Create a new timeslot for a company as admin
+        /// </summary>
+        [HttpPost]
+        [Route("add")]
+        //[Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status201Created)]
+        public async Task<ActionResult> PostTimeslotAdmin(CreateStudentSessionTimeslotAdminDto dto)
+        {
+            var timeslot = new StudentSessionTimeslot
+            {
+                Start = dto.Start,
+                End = dto.End,
+                Location = dto.Location,
+                CompanyId = dto.CompanyId
+            };
+
+            await _timeslotRepo.Add(timeslot);
+
+            return Ok(timeslot);
+
+        }
     }
 }

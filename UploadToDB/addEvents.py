@@ -35,7 +35,7 @@ for row in range(len(df)):
     headers = {
             'accept': 'text/plain',
             'Content-Type': 'application/json',
-            #'Authorization' : token,
+            'Authorization' : token,
         }
     data = '{ "name":' + name + ', "description":' + description +', "date":' + date + ', "start":' + start + ', "end":' + end + ',"location":' + location + ',"host":' + host + ',"language":' + language + ',"capacity":' + str(capacity)+  '}'
     r = requests.post(url, data=data.encode('utf-8'), headers=headers)
