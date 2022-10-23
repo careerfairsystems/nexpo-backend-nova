@@ -1,21 +1,15 @@
 import json
 import pandas as pd
 import requests
+import login
 
 jsonfile = 'example.json'
-url = 'http://localhost/api/companies'
-s3BucketUrl = 's3bucketURL'
-loginUrl = 'http://localhost/api/session/signin'
+url = 'http://{url}/api/companies'
+s3BucketUrl = '{s3BucketUrl}'
+loginUrl = 'http://{url}:5000/api/session/signin'
 
 
-loginHeaders = {
-    'accept': 'text/plain',
-    'Content-Type': 'application/json',
-}
-dataLogin = '{ "email": "admin@example.com", "password": "password" }'
-login = requests.post(loginUrl, headers=loginHeaders, data=dataLogin)
-token =login.text.replace('"token":', 'Bearer ').replace('{','').replace('}', ''). replace('"' , '')
-print("lopgin response " , login)
+token = login.login(loginUrl)
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)
@@ -23,6 +17,9 @@ df = pd.DataFrame(dictData)
 for row in range(len(df)):
     pr = df.iloc[row]
     prof = pr['profile']
+    companyHost = pr['companyHosts']
+    
+
     
     if type(prof) == dict:
         if 'name' in prof:
@@ -33,19 +30,20 @@ for row in range(len(df)):
             weOffer: list = prof['weOffer'] 
             positions = set()
             for offer in range(len(weOffer)):
-                if weOffer[offer] == 'Thesis' or 'Exjobb':
+                if weOffer[offer] == 'Thesis' or weOffer[offer] == 'Exjobb':
                     positions.add(0)
-                if weOffer[offer] == 'TraineeEmployment' or 'Heltidsjobb':
+                elif weOffer[offer] == 'TraineeEmployment' or weOffer[offer] == 'Heltidsjobb':
                     positions.add(1) 
-                if weOffer[offer] == 'Internship' or 'Traineeplatser' or 'Praktikplatser':
+                elif weOffer[offer] == 'Internship' or weOffer[offer] =='Traineeplatser' or weOffer[offer] == 'Praktikplatser':
                     positions.add(2) 
-                if weOffer[offer] == 'SummerJob' or 'Sommarjobb':
+                elif weOffer[offer] == 'SummerJob' or  weOffer[offer] ==  'Sommarjobb':
                     positions.add(3) 
-                if weOffer[offer] == 'ForeignOppurtunity' or 'Utlandsmöjligheter':
+                elif weOffer[offer] == 'ForeignOppurtunity' or  weOffer[offer] ==  'Utlandsmöjligheter':
                     positions.add(4) 
-                if weOffer[offer] == 'PartTime' or 'Extrajobb':
+                elif weOffer[offer] == 'PartTime' or weOffer[offer] == 'Extrajobb':
                     positions.add(5) 
         else:
+            print("positions", name)
             positions = set()
 
         if 'desiredDegree' in prof:
@@ -58,6 +56,7 @@ for row in range(len(df)):
                 elif desiredDegree[degree] == 'Bachelor’s degree (180 ECTS)':
                     desiredDegree[degree] = 0
         else:
+            print("desiredDegree", name)
             desiredDegree = []
 
         #missing Industries: strategy, consumer goods
@@ -65,57 +64,58 @@ for row in range(len(df)):
             industry: list= prof['industry'] 
             industryResult = set()
             for ind in range(len(industry)):
-                if industry[ind] == 'ElectricityEnergyPower' or 'Electricity' or 'Energy & power' or 'El, Energi och kraft':
+                if industry[ind] == 'ElectricityEnergyPower' or industry[ind] == 'Electricity' or industry[ind] == 'Energy & power' or industry[ind] == 'El, Energi och kraft':
                     industryResult.add(0)
-                if industry[ind] == 'Environment' or 'renewable energy' or 'miljö' or 'Life Science' or 'water':
+                if industry[ind] == 'Environment' or industry[ind] == 'renewable energy' or industry[ind] == 'miljö' or industry[ind] == 'Life Science' or industry[ind] == 'water':
                     industryResult.add(1)
-                if industry[ind] == 'Banking, Finance' or 'Investering' or 'Bank och finans':
+                if industry[ind] == 'Banking, Finance' or industry[ind] == 'Bank och finans':
                     industryResult.add(2)
-                if industry[ind] == 'Union' or 'Fackförbund':
+                if industry[ind] == 'Union' or industry[ind] == 'Fackförbund':
                     industryResult.add(3)
-                if industry[ind] == 'Investment':
+                if industry[ind] == 'Investment' or industry[ind] == 'Investering':
                     industryResult.add(4)
-                if industry[ind] == 'Insurance' or 'Försäkring':
+                if industry[ind] == 'Insurance' or industry[ind] == 'Försäkring':
                     industryResult.add(5)
                 if industry[ind] == 'Recruitment':
                     industryResult.add(6)
-                if industry[ind] == 'Construction' or 'Vägledning' or 'Bygg' or 'Fastigheter & Infrastruktur' or 'Property & Infrastructure':
+                if industry[ind] == 'Construction' or industry[ind] == 'Vägledning' or industry[ind] == 'Bygg' or  industry[ind] == 'Fastigheter & Infrastruktur' or  industry[ind] == 'Property & Infrastructure':
                     industryResult.add(7)
-                if industry[ind] == 'Architecture' or 'Arkitektur och Grafisk design':
+                if industry[ind] == 'Architecture' or industry[ind] == 'Arkitektur och Grafisk design':
                     industryResult.add(8)
-                if industry[ind] == 'GraphicDesign' or 'Arkitektur och Grafisk design':
+                if industry[ind] == 'GraphicDesign' or industry[ind] == 'Arkitektur och Grafisk design':
                     industryResult.add(9)
-                if industry[ind] == 'DataIT' or 'Data and IT' or 'Data' or 'information science' or 'it':
+                if industry[ind] == 'DataIT' or  industry[ind] == 'Data and IT' or industry[ind] == 'Data' or industry[ind] == 'information science' or industry[ind] == 'it':
                     industryResult.add(10)
                 if industry[ind] == 'FinanceConsultancy':
                     industryResult.add(11)
-                if industry[ind] == 'Telecommunication' or 'Telekommunikation':
+                if industry[ind] == 'Telecommunication' or industry[ind] == 'Telekommunikation':
                     industryResult.add(12)
-                if industry[ind] == 'Consulting' or 'Bemanning & Arbetsförmedling' or 'Ekonomi och konsultverksamhet' or 'Konsultverksamhet':
+                if industry[ind] == 'Consulting' or industry[ind] == 'Bemanning & Arbetsförmedling' or industry[ind] == 'Ekonomi och konsultverksamhet' or industry[ind] == 'Konsultverksamhet':
                     industryResult.add(13)
                 if industry[ind] == 'Management':
                     industryResult.add(14)
                 if industry[ind] == 'Media':
                     industryResult.add(15)
-                if industry[ind] == 'Industry' or 'Industri':
+                if industry[ind] == 'Industry' or industry[ind] == 'Industri':
                     industryResult.add(16)
-                if industry[ind] == 'NuclearPower' or 'Kärnkraft':
+                if industry[ind] == 'NuclearPower' or  industry[ind] =='Kärnkraft':
                     industryResult.add(17)
                 if industry[ind] == 'LifeScience':
-                    industryResult.add(18)
-                if industry[ind] == 'MedialTechniques' or 'Medicinteknik':
+                    industryResult.add(18) 
+                if industry[ind] == 'MedialTechniques' or  industry[ind] == 'Medicinteknik':
                     industryResult.add(19)
                 if industry[ind] == 'PropertyInfrastructure':
                     industryResult.add(20)
-                if industry[ind] == 'Research' or 'Forskning':
+                if industry[ind] == 'Research' or industry[ind] == 'Forskning':
                     industryResult.add(21)
                 if industry[ind] == 'Coaching':
                     industryResult.add(22)
         else:
+            print("industryResult", name)
             industryResult = set()
 
         #tagit höjd för att ändra "guilds" till "programme"
-        if 'desiredProgramme' in prof:
+        if "desiredProgramme" in prof:
             desiredProgramme: list = prof['desiredProgramme']
             desiredProgrammeResult = set()
             for programme in range(len(desiredProgramme)):              
@@ -162,6 +162,8 @@ for row in range(len(df)):
                 elif desiredProgramme[programme] == 'Byggteknik med väg- och trafikteknik':
                     desiredProgrammeResult.add(5)
         else:
+            print("desired Programme", name)
+            desiredProgrammeResult = set()
             desiredProgramme  = '"' +"" + '"'
 
         if 'didYouKnow' in prof:
@@ -188,12 +190,23 @@ for row in range(len(df)):
         else:
             logoUrl  =  '"' +""+ '"' 
 
+        if type(companyHost) == list:
+            if len(companyHost) > 0:
+                companyHostsEmail:str = '"' + companyHost[0]['email'] + '"'
+            else:
+                companyHostsEmail:str = '"' +""+ '"' 
+                print(name + "comapnyHost")
+        else:
+            companyHostsEmail:str = '"' +""+ '"' 
+            print(name + "comapnyHost")
+   
         headers = {
             'accept': 'text/plain',
             'Content-Type': 'application/json',
             'Authorization' : token,
         }
-        data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ',"desiredDegrees":' + json.dumps(desiredDegree) + ',"desiredGuilds":' + json.dumps(list(desiredProgrammeResult)) + ',"positions":' + json.dumps(list(positions)) + ',"industries":' + json.dumps(list(industryResult)) +  '}'
+        data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ',"desiredDegrees":' + json.dumps(desiredDegree) + ',"desiredGuilds":' + json.dumps(list(desiredProgrammeResult)) + ',"positions":' + json.dumps(list(positions)) + ',"industries":' + json.dumps(list(industryResult)) + ',"hostEmail":' + companyHostsEmail + '}'
         r = requests.post(url, data=data.encode('utf-8'), headers=headers)
         print(r)
         #print(r.content)
+        
