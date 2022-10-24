@@ -63,9 +63,9 @@ namespace Nexpo
             services.Configure<CookiePolicyOptions>(options =>
             {
                 //SameSiteMode.None is required to support SA
-                options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
+                //options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
 	    	options.MinimumSameSitePolicy = SameSiteMode.None;
-                options.Secure = CookieSecurePolicy.Always;
+                //options.Secure = CookieSecurePolicy.Always;
                 options.CheckConsentNeeded = context => false;
                 // Some older browsers don't support SameSiteMode.None
                 options.OnAppendCookie = cookieContext =>
@@ -77,10 +77,10 @@ namespace Nexpo
 
             services.AddSession(options =>
             {
-                options.Cookie.HttpOnly = true;
+                //options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
                 options.Cookie.SameSite = SameSiteMode.None;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                //options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
             });
             services.AddMvc((options) =>
@@ -130,13 +130,18 @@ namespace Nexpo
             {
                 options.SPOptions.EntityId = new EntityId(this.Config.SPEntityId);
 		options.SPOptions.PublicOrigin = new Uri("https://www.nexpo.arkadtlth.se");
-                options.IdentityProviders.Add(
+                //options.SPOptions.ReturnUrl = new Uri("https://www.nexpo.arkadtlth.se/");
+		options.IdentityProviders.Add(
                     new IdentityProvider(
                         new EntityId(this.Config.IDPEntityId), options.SPOptions)
                     {
                         LoadMetadata = true,
+			AllowUnsolicitedAuthnResponse = true,
+			//Binding = Sustainsys.Saml2.WebSso.Saml2BindingType.HttpRedirect
+			
 			//RelayStateUsedAsReturnUrl = true
                     });
+		options.SPOptions.WantAssertionsSigned = true;
 
                 options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
             });
@@ -190,7 +195,7 @@ namespace Nexpo
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyOrigin()
-                .WithMethods("GET","POST","PUT")
+                .AllowAnyMethod()
                 .AllowAnyHeader());
 
             if (env.IsDevelopment())
@@ -204,7 +209,7 @@ namespace Nexpo
             }
 
 	    //dbContext.Database.Migrate(); //ADD THIS IF DATABASoE IS CLOSED        
-            app.UseCookiePolicy();
+            //app.UseCookiePolicy();
 	    app.UseAuthorization();
 	   
 	    app.UseSession();

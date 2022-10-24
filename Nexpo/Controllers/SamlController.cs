@@ -34,7 +34,7 @@ namespace Nexpo.Controllers
 
             var sch = Saml2Defaults.Scheme;
 	    // pretty ugly should be fixed later
-	    returnUrl = "https://www.nexpo.arkadtlth.se/api/saml/Callback"; 
+	    returnUrl = "https://www.nexpo.arkadtlth.se/api/saml/Callback/"; 
             return new ChallengeResult(
                 Saml2Defaults.Scheme,
                 new AuthenticationProperties
@@ -44,12 +44,13 @@ namespace Nexpo.Controllers
         }
 
         
-	[EnableCors]
         [AllowAnonymous]
         [HttpGet("Callback")]
         public async Task<IActionResult> LoginCallback(string returnUrl)
         {
             var authenticateResult = await HttpContext.AuthenticateAsync(ApplicationSamlConstants.External);
+	    Console.WriteLine(authenticateResult);
+	    Console.WriteLine(authenticateResult.Principal.Identity.Name);
 
             if (!authenticateResult.Succeeded)
             {
