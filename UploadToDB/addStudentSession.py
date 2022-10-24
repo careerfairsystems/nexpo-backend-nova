@@ -3,9 +3,9 @@ import login
 import pandas as pd
 import requests
 
-jsonfile = 'ss.json'
-url = 'http://localhost:5000/api/timeslots/add'
-loginUrl = 'http://localhost:5000/api/session/signin'
+jsonfile = 'example.json'
+url = 'http://{localhost}/api/timeslots/add'
+loginUrl = 'http://{localhost}/api/session/signin'
 
 token = login.login(loginUrl)
 

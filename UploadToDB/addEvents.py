@@ -4,9 +4,9 @@ import pandas as pd
 import requests
 
 
-jsonfile = 'event.json'
-url = 'http://localhost:5000/api/events'
-loginUrl = 'http://localhost:5000/api/session/signin'
+jsonfile = '{event}.json'
+url = 'http://{localhost}/api/events'
+loginUrl = 'http://{localhost}/api/session/signin'
 
 
 token = login.login(loginUrl)

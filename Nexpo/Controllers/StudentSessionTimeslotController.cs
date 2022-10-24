@@ -240,7 +240,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpPost]
         [Route("add")]
-        //[Authorize(Roles = nameof(Role.Administrator))]
+        [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostTimeslotAdmin(CreateStudentSessionTimeslotAdminDto dto)
         {
