@@ -44,7 +44,8 @@ namespace Nexpo.Controllers
                 DesiredDegrees = c.DesiredDegrees,
                 DesiredGuilds = c.DesiredGuilds,
                 Positions = c.Positions,
-                Industries = c.Industries
+                Industries = c.Industries,
+                StudentSessionMotivation = c.StudentSessionMotivation
             });
 
             return Ok(publicCompanies);
@@ -75,7 +76,8 @@ namespace Nexpo.Controllers
                 DesiredDegrees = company.DesiredDegrees,
                 DesiredGuilds = company.DesiredGuilds,
                 Positions = company.Positions,
-                Industries = company.Industries
+                Industries = company.Industries,
+                StudentSessionMotivation = company.StudentSessionMotivation
 
             };
             return Ok(publicCompany);
@@ -119,6 +121,10 @@ namespace Nexpo.Controllers
             if (!string.IsNullOrEmpty(dto.HostPhone))
             {
                 company.HostPhone = dto.HostPhone;
+            }
+            if (!string.IsNullOrEmpty(dto.StudentSessionMotivation))
+            {
+                company.StudentSessionMotivation = dto.StudentSessionMotivation;
             }
             await _companyRepo.Update(company);
 
@@ -189,7 +195,8 @@ namespace Nexpo.Controllers
                 Industries  = dto.Industries,
                 HostName = dto.HostName,
                 HostEmail = dto.HostEmail,
-                HostPhone = dto.HostPhone
+                HostPhone = dto.HostPhone,
+                StudentSessionMotivation=dto.StudentSessionMotivation
             };
             await _companyRepo.Add(company);
 
