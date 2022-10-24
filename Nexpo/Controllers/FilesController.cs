@@ -50,59 +50,59 @@ namespace Nexpo.Controllers
             return File(IOFile.OpenRead(localFilename), mime);
         }
 
-        [HttpPost]
-        [Route("profile_picture")]
-        [Consumes("multipart/form-data")]
-        [Authorize]
-        [ProducesResponseType(typeof(FileCreatedDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PostProfilePicture(IFormFile file)
-        {
-            var maxAllowedFileSize = 2 * 1024 * 1024; // 2 MiB
-            if (file == null || file.Length > maxAllowedFileSize)
-            {
-                return BadRequest();
-            }
-
-            var allowedMimes = new List<string> { "image/png", "image/jpeg" };
-            if (!allowedMimes.Contains(file.ContentType))
-            {
-                return BadRequest();
-            }
-
-            var userId = HttpContext.User.GetId();
-            var user = await _userRepo.Get(userId);
-            if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
-            {
-                _fileService.RemoveFile(user.ProfilePictureUrl);
-            }
-
-            var fileUrl = await _fileService.SaveFile(file);
-            user.ProfilePictureUrl = fileUrl;
-            await _userRepo.Update(user);
-
-            var response = new FileCreatedDto { Url = fileUrl };
-
-            return Ok(response);
-        }
-
-        [HttpDelete]
-        [Route("profile_picture")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> DeleteProfilePicture()
-        {
-            var userId = HttpContext.User.GetId();
-            var user = await _userRepo.Get(userId);
-            if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
-            {
-                _fileService.RemoveFile(user.ProfilePictureUrl);
-                user.ProfilePictureUrl = null;
-                await _userRepo.Update(user);
-            }
-
-            return NoContent();
-        }
-
+    //    [HttpPost]
+    //    [Route("profile_picture")]
+    //    [Consumes("multipart/form-data")]
+    //    [Authorize]
+    //    [ProducesResponseType(typeof(FileCreatedDto), StatusCodes.Status200OK)]
+    //    public async Task<ActionResult> PostProfilePicture(IFormFile file)
+    //    {
+    //        var maxAllowedFileSize = 2 * 1024 * 1024; // 2 MiB
+    //        if (file == null || file.Length > maxAllowedFileSize)
+    //        {
+    //            return BadRequest();
+    //        }
+//
+    //        var allowedMimes = new List<string> { "image/png", "image/jpeg" };
+    //        if (!allowedMimes.Contains(file.ContentType))
+    //        {
+    //            return BadRequest();
+    //        }
+//
+    //        var userId = HttpContext.User.GetId();
+    //        var user = await _userRepo.Get(userId);
+    //        if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+    //        {
+    //            _fileService.RemoveFile(user.ProfilePictureUrl);
+    //        }
+//
+    //        var fileUrl = await _fileService.SaveFile(file);
+    //        user.ProfilePictureUrl = fileUrl;
+    //        await _userRepo.Update(user);
+//
+    //        var response = new FileCreatedDto { Url = fileUrl };
+//
+    //        return Ok(response);
+    //    }
+//
+    //    [HttpDelete]
+    //    [Route("profile_picture")]
+    //    [Authorize]
+    //    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    //    public async Task<ActionResult> DeleteProfilePicture()
+    //    {
+    //        var userId = HttpContext.User.GetId();
+    //        var user = await _userRepo.Get(userId);
+    //        if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
+    //        {
+    //            _fileService.RemoveFile(user.ProfilePictureUrl);
+    //            user.ProfilePictureUrl = null;
+    //            await _userRepo.Update(user);
+    //        }
+//
+    //        return NoContent();
+    //    }
+//
         [HttpPost]
         [Route("company_logo")]
         [Consumes("multipart/form-data")]

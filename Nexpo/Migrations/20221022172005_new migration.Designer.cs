@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221020192123_userHasCv2")]
-    partial class userHasCv2
+    [Migration("20221022172005_new migration")]
+    partial class newmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -62,6 +62,9 @@ namespace Nexpo.Migrations
 
                     b.Property<List<int>>("Positions")
                         .HasColumnType("integer[]");
+
+                    b.Property<string>("StudentSessionMotivation")
+                        .HasColumnType("text");
 
                     b.Property<string>("Website")
                         .HasColumnType("text");
@@ -304,14 +307,17 @@ namespace Nexpo.Migrations
                     b.Property<string>("PhoneNr")
                         .HasColumnType("text");
 
-                    b.Property<string>("ProfilePictureUrl")
-                        .HasColumnType("text");
-
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
                     b.Property<bool>("hasCv")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("hasProfilePicture")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("profilePictureUrl")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
