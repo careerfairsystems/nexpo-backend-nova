@@ -174,8 +174,8 @@ namespace Nexpo.Controllers
 
             var responseProfilePicture = _aws3Services.IfFileExists(user.Id.ToString() + ".jpg");
             user.hasProfilePicture = responseProfilePicture;
-
-
+            
+            user.profilePictureUrl = "https://cvfiler.s3.eu-north-1.amazonaws.com/" + userId.ToString() + ".jpg";
 
             return Ok(user);
         }
