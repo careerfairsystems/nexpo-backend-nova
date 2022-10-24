@@ -100,6 +100,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.Positions.Contains((int)Position.ForeignOppurtunity), responseText);
             Assert.True(responseObject.Positions.Contains((int)Position.Internship), responseText);
             Assert.True(responseObject.Positions.Count == 2, responseText);
+            Assert.True(responseObject.StudentSessionMotivation == "We are the greatest company in the world according to us!", responseText);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + response.StatusCode.ToString());
         }
 
@@ -255,6 +256,5 @@ namespace Nexpo.Tests.Controllers
          
             Assert.True(responseObject == null, "Object was not null");
         }
-
     }
 }

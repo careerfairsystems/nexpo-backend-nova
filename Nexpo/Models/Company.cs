@@ -29,6 +29,8 @@ namespace Nexpo.Models
         public List<int> Industries { get; set;}
         public IEnumerable<User> Representatives { get; set; }
         public IEnumerable<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
+        public string StudentSessionMotivation { get; set; }
+
     }
 
     public enum Degree {

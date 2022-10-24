@@ -23,5 +23,7 @@ namespace Nexpo.DTO
         public List<int> DesiredGuilds { get; set;}
         public List<int> Positions { get; set;}
         public List<int> Industries { get; set;}
+        public string StudentSessionMotivation { get; set; }
+
     }
 }

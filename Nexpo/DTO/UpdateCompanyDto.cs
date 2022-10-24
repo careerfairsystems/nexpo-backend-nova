@@ -13,5 +13,6 @@ namespace Nexpo.DTO
         public string HostName { get; set; }
         public string HostEmail { get; set; }
         public string HostPhone { get; set; }
+        public string StudentSessionMotivation { get; set; }
     }
 }
