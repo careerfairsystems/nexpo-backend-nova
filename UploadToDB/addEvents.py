@@ -4,9 +4,9 @@ import pandas as pd
 import requests
 
 
-jsonfile = 'event.json'
-url = 'http://localhost:5000/api/events'
-loginUrl = 'http://localhost:5000/api/session/signin'
+jsonfile = '{event}.json'
+url = 'http://{localhost}/api/events'
+loginUrl = 'http://{localhost}/api/session/signin'
 
 
 token = login.login(loginUrl)
@@ -35,7 +35,7 @@ for row in range(len(df)):
     headers = {
             'accept': 'text/plain',
             'Content-Type': 'application/json',
-            #'Authorization' : token,
+            'Authorization' : token,
         }
     data = '{ "name":' + name + ', "description":' + description +', "date":' + date + ', "start":' + start + ', "end":' + end + ',"location":' + location + ',"host":' + host + ',"language":' + language + ',"capacity":' + str(capacity)+  '}'
     r = requests.post(url, data=data.encode('utf-8'), headers=headers)
