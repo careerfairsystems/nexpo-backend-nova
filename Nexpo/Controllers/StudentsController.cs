@@ -57,9 +57,9 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if (dto.Guild.HasValue)
+            if (dto.Programme.HasValue)
             {
-                student.Guild = dto.Guild.Value;
+                student.Programme = dto.Programme.Value;
             }
             if (!string.IsNullOrEmpty(dto.LinkedIn))
             {
@@ -105,9 +105,9 @@ namespace Nexpo.Controllers
             var studentId = HttpContext.User.GetStudentId().Value;
             var student = await _studentRepo.Get(studentId);
 
-            if (dto.Guild.HasValue)
+            if (dto.Programme.HasValue)
             {
-                student.Guild = dto.Guild.Value;
+                student.Programme = dto.Programme.Value;
             }
             if (!string.IsNullOrEmpty(dto.LinkedIn))
             {

@@ -5,7 +5,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Nexpo.Migrations
 {
-    public partial class newmigration : Migration
+    public partial class programmeinsteadofguild : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -26,7 +26,8 @@ namespace Nexpo.Migrations
                     DesiredDegrees = table.Column<List<int>>(type: "integer[]", nullable: true),
                     DesiredGuilds = table.Column<List<int>>(type: "integer[]", nullable: true),
                     Positions = table.Column<List<int>>(type: "integer[]", nullable: true),
-                    Industries = table.Column<List<int>>(type: "integer[]", nullable: true)
+                    Industries = table.Column<List<int>>(type: "integer[]", nullable: true),
+                    StudentSessionMotivation = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -9,7 +9,7 @@ namespace Nexpo.Models
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? Id { get; set; }
-        public Guild? Guild { get; set; }
+        public Programme? Programme { get; set; }
         public string ResumeEnUrl { get; set; }
         public string ResumeSvUrl { get; set; }
         public string LinkedIn { get; set; }
@@ -21,9 +21,29 @@ namespace Nexpo.Models
         [JsonIgnore]
         public User User { get; set; }
     }
-    public enum Guild
+    public enum Programme
     {
-        A, D, E, F, I, ING, K, M, V, W
+        Brandingenjör,
+        Maskinteknik_Teknisk_Design,
+        Elektroteknik,
+        Ekosystemteknik,
+        Maskinteknik,
+        Nanoveteknik,
+        Bioteknik,
+        Industridesign,
+        Arkitekt,
+        Informations_och_Kommunikationsteknik,
+        Kemiteknik,
+        Byggteknik_med_Järnvägsteknik,
+        Väg_och_vatttenbyggnad,
+        Byggteknik_med_arkitektur,
+        Industriell_ekonomi,
+        Teknisk_Matematik,
+        Medicinteknik,
+        Lantmäteri,
+        Datateknik,
+        Teknisk_Fysik,
+        Byggteknik_med_väg_och_trafikteknik
     }
 }
 

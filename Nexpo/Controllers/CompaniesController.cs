@@ -42,7 +42,7 @@ namespace Nexpo.Controllers
                 Website = c.Website,
                 LogoUrl = c.LogoUrl,
                 DesiredDegrees = c.DesiredDegrees,
-                DesiredGuilds = c.DesiredGuilds,
+                DesiredProgramme = c.DesiredProgramme,
                 Positions = c.Positions,
                 Industries = c.Industries,
                 StudentSessionMotivation = c.StudentSessionMotivation
@@ -74,7 +74,7 @@ namespace Nexpo.Controllers
                 Website = company.Website,
                 LogoUrl = company.LogoUrl,
                 DesiredDegrees = company.DesiredDegrees,
-                DesiredGuilds = company.DesiredGuilds,
+                DesiredProgramme = company.DesiredProgramme,
                 Positions = company.Positions,
                 Industries = company.Industries,
                 StudentSessionMotivation = company.StudentSessionMotivation
@@ -190,7 +190,7 @@ namespace Nexpo.Controllers
                 LogoUrl = dto.LogoUrl,
                 Website = dto.Website,
                 DesiredDegrees= dto.DesiredDegrees,
-                DesiredGuilds= dto.DesiredGuilds,
+                DesiredProgramme= dto.DesiredProgramme,
                 Positions = dto.Positions,
                 Industries  = dto.Industries,
                 HostName = dto.HostName,

@@ -25,7 +25,7 @@ namespace Nexpo.DTO
 
         public List<int> DesiredDegrees { get; set;}
 
-        public List<int> DesiredGuilds { get; set;}
+        public List<int> DesiredProgramme { get; set;}
         public List<int> Positions { get; set;}
 
         public List<int> Industries { get; set;}

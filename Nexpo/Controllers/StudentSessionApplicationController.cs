@@ -177,7 +177,7 @@ namespace Nexpo.Controllers
                     StudentFirstName = user.FirstName,
                     StudentLastName = user.LastName,
                     StudentYear = student.Year,
-                    StudentGuild = student.Guild
+                    StudentProgramme = student.Programme
                 };
                 studentApplications.Add(dto);
             }

@@ -22,7 +22,7 @@ namespace Nexpo.Models
 
         public List<int> DesiredDegrees { get; set;}
 
-        public List<int> DesiredGuilds { get; set;}
+        public List<int> DesiredProgramme { get; set;}
 
         public List<int> Positions { get; set;}
 

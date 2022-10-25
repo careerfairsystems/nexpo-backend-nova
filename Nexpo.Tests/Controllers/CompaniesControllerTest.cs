@@ -63,9 +63,9 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseList[1].DesiredDegrees.Contains((int) Degree.PhD), responseText);
             Assert.True(responseList[1].DesiredDegrees.Contains((int)Degree.Master), responseText);
             Assert.True(responseList[1].DesiredDegrees.Count == 2, responseText);
-            Assert.True(responseList[1].DesiredGuilds.Contains((int)Guild.ING), responseText);
-            Assert.True(responseList[1].DesiredGuilds.Contains((int)Guild.F), responseText);
-            Assert.True(responseList[1].DesiredGuilds.Count == 2, responseText);
+            Assert.True(responseList[1].DesiredProgramme.Contains((int)Programme.Byggteknik_med_Järnvägsteknik), responseText);
+            Assert.True(responseList[1].DesiredProgramme.Contains((int)Programme.Teknisk_Fysik), responseText);
+            Assert.True(responseList[1].DesiredProgramme.Count == 2, responseText);
             Assert.True(responseList[1].Industries.Contains((int)Industry.Environment), responseText);
             Assert.True(responseList[1].Industries.Contains((int)Industry.ElectricityEnergyPower), responseText);
             Assert.True(responseList[1].Industries.Count == 2, responseText);
@@ -91,9 +91,9 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.DesiredDegrees.Contains((int) Degree.Bachelor), responseText);
             Assert.True(responseObject.DesiredDegrees.Contains((int)Degree.Master), responseText);
             Assert.True(responseObject.DesiredDegrees.Count == 2, responseText);
-            Assert.True(responseObject.DesiredGuilds.Contains((int)Guild.D), responseText);
-            Assert.True(responseObject.DesiredGuilds.Contains((int)Guild.E), responseText);
-            Assert.True(responseObject.DesiredGuilds.Count == 2, responseText);
+            Assert.True(responseObject.DesiredProgramme.Contains((int)Programme.Datateknik), responseText);
+            Assert.True(responseObject.DesiredProgramme.Contains((int)Programme.Elektroteknik), responseText);
+            Assert.True(responseObject.DesiredProgramme.Count == 2, responseText);
             Assert.True(responseObject.Industries.Contains((int)Industry.DataIT), responseText);
             Assert.True(responseObject.Industries.Contains((int)Industry.ElectricityEnergyPower), responseText);
             Assert.True(responseObject.Industries.Count == 2, responseText);

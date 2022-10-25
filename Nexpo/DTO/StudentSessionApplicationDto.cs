@@ -18,6 +18,6 @@ namespace Nexpo.DTO
         public string StudentFirstName { get; set; }
         public string StudentLastName { get; set; }
         public int? StudentYear { get; set; }
-        public Guild? StudentGuild { get; set; }
+        public Programme? StudentProgramme { get; set; }
     }
 }
