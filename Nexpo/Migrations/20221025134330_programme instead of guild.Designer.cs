@@ -11,9 +11,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221024212431_StudentSessionMotivations")]
-    partial class StudentSessionMotivations
-{
+    [Migration("20221025134330_programme instead of guild")]
+    partial class programmeinsteadofguild
+    {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

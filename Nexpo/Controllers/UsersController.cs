@@ -25,6 +25,7 @@ namespace Nexpo.Controllers
 
         private IS3Configuration _appConfiguration;
         private IAws3Services _aws3Services;
+        private IS3Configuration _s3Configuration;
 
         public UsersController(
             IUserRepository iUserRepo, 
@@ -33,7 +34,8 @@ namespace Nexpo.Controllers
             IStudentRepository iStudentRepository,
             PasswordService passwordService,
             IS3Configuration iAppConfiguration,
-            IAws3Services iAws3Services
+            IAws3Services iAws3Services,
+            IS3Configuration s3Configuration
             )
         {
             _userRepo = iUserRepo;
@@ -42,7 +44,7 @@ namespace Nexpo.Controllers
             _studentRepo = iStudentRepository;
             _passwordService = passwordService;
             _appConfiguration = iAppConfiguration;
-            _aws3Services = iAws3Services;
+            _s3Configuration = s3Configuration;
         }
 
         /// <summary>
@@ -168,8 +170,10 @@ namespace Nexpo.Controllers
         {
             int userId = HttpContext.User.GetId();
             var user = await _userRepo.Get(userId);
+            _aws3Services = new Aws3Services(_appConfiguration.AwsAccessKey, _appConfiguration.AwsSecretAccessKey, _appConfiguration.Region, _appConfiguration.BucketName);
 
-            var responseCV = _aws3Services.IfFileExists(user.Id.ToString() + ".pdf");
+
+            var responseCV = _aws3Services.IfFileExists( user.Id.ToString() + ".pdf");
             user.hasCv = responseCV;
 
             var responseProfilePicture = _aws3Services.IfFileExists(user.Id.ToString() + ".jpg");

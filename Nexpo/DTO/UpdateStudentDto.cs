@@ -8,7 +8,7 @@ namespace Nexpo.DTO
 {
     public class UpdateStudentDto
     {
-        public Guild? Guild { get; set; }
+        public Programme? Programme { get; set; }
         public string LinkedIn { get; set; }
         public string MasterTitle { get; set; }
         public int? Year { get; set; }

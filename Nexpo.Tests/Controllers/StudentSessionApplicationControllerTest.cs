@@ -62,7 +62,7 @@ namespace Nexpo.Tests.Controllers
 
             Assert.True(app3.Motivation == "User experience is very important for me", app3.Motivation);
             Assert.True(app3.StudentYear == 3, app3.StudentYear.ToString());
-            Assert.True(app3.StudentGuild == Guild.V, app3.StudentGuild.ToString());
+            Assert.True(app3.StudentProgramme == Programme.Väg_och_vatttenbyggnad, app3.StudentProgramme.ToString());
             Assert.True(app3.StudentFirstName == "Gamma", app3.StudentFirstName);
             Assert.True(app3.StudentLastName == "Student", app3.StudentLastName);
         }

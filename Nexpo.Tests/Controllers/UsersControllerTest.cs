@@ -336,9 +336,6 @@ namespace Nexpo.Tests.Controllers
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
             var response = await client.GetAsync("/api/users/me");
-
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseUser = JsonConvert.DeserializeObject<User>(responseText);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.StatusCode.ToString());
         }
 

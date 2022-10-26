@@ -55,7 +55,7 @@ namespace Nexpo.Tests.Controllers
 
             var responseObject = JsonConvert.DeserializeObject<Student>((await response.Content.ReadAsStringAsync()));
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
-            Assert.True(responseObject.Guild == Guild.D, responseObject.Guild.ToString());
+            Assert.True(responseObject.Programme == Programme.Datateknik, responseObject.Programme.ToString());
             Assert.True(responseObject.Year == 4, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
         }
@@ -72,7 +72,7 @@ namespace Nexpo.Tests.Controllers
 
             var responseObject = JsonConvert.DeserializeObject<Student>((await response.Content.ReadAsStringAsync()));
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
-            Assert.True(responseObject.Guild == Guild.D, responseObject.Guild.ToString());
+            Assert.True(responseObject.Programme == Programme.Datateknik, responseObject.Programme.ToString());
             Assert.True(responseObject.Year == 4, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
         }
@@ -122,7 +122,7 @@ namespace Nexpo.Tests.Controllers
            
             var responseObject = JsonConvert.DeserializeObject<Student>((await response.Content.ReadAsStringAsync()));
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
-            Assert.True(responseObject.Guild == Guild.D, responseObject.Guild.ToString());
+            Assert.True(responseObject.Programme == Programme.Datateknik, responseObject.Programme.ToString());
             Assert.True(responseObject.Year == 4, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
         }
@@ -157,7 +157,7 @@ namespace Nexpo.Tests.Controllers
             var token = await Login("admin", client);
 
             var json = new JsonObject();
-            json.Add("guild", 3);
+            json.Add("programme", 19);
             json.Add("linkedIn", "linkedin.com");
             json.Add("masterTitle", "Math");
             json.Add("year", 10);
@@ -169,7 +169,7 @@ namespace Nexpo.Tests.Controllers
             //Assertions of response
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
-            Assert.True(responseObject.Guild == Guild.F, responseObject.Guild.ToString());
+            Assert.True(responseObject.Programme == Programme.Teknisk_Fysik, responseObject.Programme.ToString());
             Assert.True(responseObject.Year == 10, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
             Assert.True(responseObject.LinkedIn == "linkedin.com", responseObject.LinkedIn.ToString());
@@ -177,7 +177,7 @@ namespace Nexpo.Tests.Controllers
 
             //Restore
             var json2 = new JsonObject();
-            json2.Add("guild", 1);
+            json2.Add("Programme", 18);
             json2.Add("linkedin", " ");
             json2.Add("mastertitle", "Project management in software systems");
             json2.Add("year", 4);
@@ -189,7 +189,7 @@ namespace Nexpo.Tests.Controllers
             //Verify Restore
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response2.StatusCode.ToString());
             Assert.True(responseObject2.Id == -1, responseObject2.Id.ToString());
-            Assert.True(responseObject2.Guild == Guild.D, responseObject2.Guild.ToString());
+            Assert.True(responseObject2.Programme == Programme.Datateknik, responseObject2.Programme.ToString());
             Assert.True(responseObject2.Year == 4, responseObject2.Year.ToString());
             Assert.True(responseObject2.LinkedIn == " ", responseObject2.LinkedIn.ToString());
             Assert.True(responseObject2.MasterTitle == "Project management in software systems", responseObject2.MasterTitle.ToString());
@@ -214,7 +214,7 @@ namespace Nexpo.Tests.Controllers
             //Assertions of response
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
-            Assert.True(responseObject.Guild == Guild.D, responseObject.Guild.ToString());
+            Assert.True(responseObject.Programme == Programme.Datateknik, responseObject.Programme.ToString());
             Assert.True(responseObject.Year == 10, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
             Assert.True(responseObject.LinkedIn == "linkedin.com", responseObject.LinkedIn.ToString());
@@ -232,7 +232,7 @@ namespace Nexpo.Tests.Controllers
             //Verify Restore
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response2.StatusCode.ToString());
             Assert.True(responseObject2.Id == -1, responseObject2.Id.ToString());
-            Assert.True(responseObject2.Guild == Guild.D, responseObject2.Guild.ToString());
+            Assert.True(responseObject2.Programme == Programme.Datateknik, responseObject2.Programme.ToString());
             Assert.True(responseObject2.Year == 4, responseObject2.Year.ToString());
             Assert.True(responseObject2.LinkedIn == " ", responseObject2.LinkedIn.ToString());
             Assert.True(responseObject2.MasterTitle == "Project management in software systems", responseObject2.MasterTitle.ToString());
@@ -298,7 +298,7 @@ namespace Nexpo.Tests.Controllers
             var token = await Login("", client);
 
             var json = new JsonObject();
-            json.Add("guild", 3);
+            json.Add("programme", 19);
             json.Add("linkedIn", "linkedin.com");
             json.Add("masterTitle", "Math");
             json.Add("year", 10);
@@ -310,7 +310,7 @@ namespace Nexpo.Tests.Controllers
             //Assertions of response
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
-            Assert.True(responseObject.Guild == Guild.F, responseObject.Guild.ToString());
+            Assert.True(responseObject.Programme == Programme.Teknisk_Fysik, responseObject.Programme.ToString());
             Assert.True(responseObject.Year == 10, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
             Assert.True(responseObject.LinkedIn == "linkedin.com", responseObject.LinkedIn.ToString());
@@ -318,7 +318,7 @@ namespace Nexpo.Tests.Controllers
 
             //Restore
             var json2 = new JsonObject();
-            json2.Add("guild", 1);
+            json2.Add("Programme", 18);
             json2.Add("linkedin", " ");
             json2.Add("mastertitle", "Project management in software systems");
             json2.Add("year", 4);
@@ -330,7 +330,7 @@ namespace Nexpo.Tests.Controllers
             //Verify Restore
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response2.StatusCode.ToString());
             Assert.True(responseObject2.Id == -1, responseObject2.Id.ToString());
-            Assert.True(responseObject2.Guild == Guild.D, responseObject2.Guild.ToString());
+            Assert.True(responseObject2.Programme == Programme.Datateknik, responseObject2.Programme.ToString());
             Assert.True(responseObject2.Year == 4, responseObject2.Year.ToString());
             Assert.True(responseObject2.LinkedIn == " ", responseObject2.LinkedIn.ToString());
             Assert.True(responseObject2.MasterTitle == "Project management in software systems", responseObject2.MasterTitle.ToString());
@@ -355,7 +355,7 @@ namespace Nexpo.Tests.Controllers
             //Assertions of response
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
-            Assert.True(responseObject.Guild == Guild.D, responseObject.Guild.ToString());
+            Assert.True(responseObject.Programme == Programme.Datateknik, responseObject.Programme.ToString());
             Assert.True(responseObject.Year == 10, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
             Assert.True(responseObject.LinkedIn == "linkedin.com", responseObject.LinkedIn.ToString());
@@ -373,7 +373,7 @@ namespace Nexpo.Tests.Controllers
             //Verify Restore
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response2.StatusCode.ToString());
             Assert.True(responseObject2.Id == -1, responseObject2.Id.ToString());
-            Assert.True(responseObject2.Guild == Guild.D, responseObject2.Guild.ToString());
+            Assert.True(responseObject2.Programme == Programme.Datateknik, responseObject2.Programme.ToString());
             Assert.True(responseObject2.Year == 4, responseObject2.Year.ToString());
             Assert.True(responseObject2.LinkedIn == " ", responseObject2.LinkedIn.ToString());
             Assert.True(responseObject2.MasterTitle == "Project management in software systems", responseObject2.MasterTitle.ToString());
@@ -387,7 +387,7 @@ namespace Nexpo.Tests.Controllers
             var token = await Login("", client);
 
             var json = new JsonObject();
-            json.Add("guild", 3);
+            json.Add("programme", 18);
             json.Add("linkedIn", "linkedin.com");
             json.Add("masterTitle", "Math");
             json.Add("year", 10);

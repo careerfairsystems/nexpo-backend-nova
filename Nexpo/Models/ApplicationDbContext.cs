@@ -52,11 +52,11 @@ namespace Nexpo.Models
             }
 
             // Companies
-            var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredGuilds = new List<int>(){(int) Guild.D,(int) Guild.E}, Industries = new List<int>(){(int)Industry.DataIT,(int) Industry.ElectricityEnergyPower}, Positions = new List<int>(){(int)Position.ForeignOppurtunity, (int)Position.Internship}, StudentSessionMotivation = "We are the greatest company in the world according to us!"};
+            var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Datateknik,(int) Programme.Elektroteknik}, Industries = new List<int>(){(int)Industry.DataIT,(int) Industry.ElectricityEnergyPower}, Positions = new List<int>(){(int)Position.ForeignOppurtunity, (int)Position.Internship}, StudentSessionMotivation = "We are the greatest company in the world according to us!"};
             //var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples"};
-            var company2 = new Company { Id = -2, Name = "Google", Description = "You can find more about us by searching the web"  , DidYouKnow = "we are big", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredGuilds = new List<int>(){(int) Guild.A,(int) Guild.V}, Industries = new List<int>(){(int)Industry.Industry,(int) Industry.DataIT}, Positions = new List<int>(){(int)Position.PartTime, (int)Position.Internship}};
-            var company3 = new Company { Id = -3, Name = "Spotify", Description = "We like music" ,  DidYouKnow = "we love music", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredGuilds = new List<int>(){(int) Guild.K,(int) Guild.I}, Industries = new List<int>(){(int)Industry.Coaching,(int) Industry.BankingFinance}, Positions = new List<int>(){(int)Position.ForeignOppurtunity, (int)Position.SummerJob}};
-            var company4 = new Company { Id = -4, Name = "Facebook", Description = "We have friends in common" , DidYouKnow = "Mark zuckerburg is an Alien", DesiredDegrees = new List<int>(){(int) Degree.PhD,(int) Degree.Master}, DesiredGuilds = new List<int>(){(int) Guild.ING,(int) Guild.F}, Industries = new List<int>(){(int)Industry.Environment,(int) Industry.ElectricityEnergyPower}, Positions = new List<int>(){(int)Position.Thesis, (int)Position.TraineeEmployment}};
+            var company2 = new Company { Id = -2, Name = "Google", Description = "You can find more about us by searching the web"  , DidYouKnow = "we are big", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Arkitekt,(int) Programme.Väg_och_vatttenbyggnad}, Industries = new List<int>(){(int)Industry.Industry,(int) Industry.DataIT}, Positions = new List<int>(){(int)Position.PartTime, (int)Position.Internship}};
+            var company3 = new Company { Id = -3, Name = "Spotify", Description = "We like music" ,  DidYouKnow = "we love music", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Kemiteknik,(int) Programme.Industriell_ekonomi}, Industries = new List<int>(){(int)Industry.Coaching,(int) Industry.BankingFinance}, Positions = new List<int>(){(int)Position.ForeignOppurtunity, (int)Position.SummerJob}};
+            var company4 = new Company { Id = -4, Name = "Facebook", Description = "We have friends in common" , DidYouKnow = "Mark zuckerburg is an Alien", DesiredDegrees = new List<int>(){(int) Degree.PhD,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Byggteknik_med_Järnvägsteknik,(int) Programme.Teknisk_Fysik}, Industries = new List<int>(){(int)Industry.Environment,(int) Industry.ElectricityEnergyPower}, Positions = new List<int>(){(int)Position.Thesis, (int)Position.TraineeEmployment}};
             Companies.AddRange(company1, company2, company3, company4);
             SaveChanges();
 
@@ -74,9 +74,9 @@ namespace Nexpo.Models
             SaveChanges();
 
             // Students
-            var student1 = new Student { Id = -1, Guild = Guild.D, Year = 4, MasterTitle = "Project management in software systems", UserId = user2.Id.Value };
-            var student2 = new Student { Id = -2, Guild = Guild.I, Year = 2, UserId = user3.Id.Value, LinkedIn = "my-impressive-profile" };
-            var student3 = new Student { Id = -3, Guild = Guild.V, Year = 3, UserId = user4.Id.Value };
+            var student1 = new Student { Id = -1, Programme = Programme.Datateknik, Year = 4, MasterTitle = "Project management in software systems", UserId = user2.Id.Value };
+            var student2 = new Student { Id = -2, Programme = Programme.Industriell_ekonomi, Year = 2, UserId = user3.Id.Value, LinkedIn = "my-impressive-profile" };
+            var student3 = new Student { Id = -3, Programme = Programme.Väg_och_vatttenbyggnad, Year = 3, UserId = user4.Id.Value };
             Students.AddRange(student1, student2, student3);
             SaveChanges();
 

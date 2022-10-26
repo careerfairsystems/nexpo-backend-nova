@@ -120,47 +120,47 @@ for row in range(len(df)):
             desiredProgrammeResult = set()
             for programme in range(len(desiredProgramme)):              
                 if desiredProgramme[programme] == 'Brandingenjörsutbildning':
-                    desiredProgrammeResult.add(8)
+                    desiredProgrammeResult.add(0)
                 elif desiredProgramme[programme] == 'Maskinteknik med teknisk design':
-                    desiredProgrammeResult.add(7)
+                    desiredProgrammeResult.add(1)
                 elif desiredProgramme[programme] == 'Elektroteknik':
                     desiredProgrammeResult.add(2)
                 elif desiredProgramme[programme] == 'Ekosystemteknik':
-                    desiredProgrammeResult.add(9)
-                elif desiredProgramme[programme] == 'Maskinteknik':
-                    desiredProgrammeResult.add(7)
-                elif desiredProgramme[programme] == 'TekniskNanovetenskap':
                     desiredProgrammeResult.add(3)
+                elif desiredProgramme[programme] == 'Maskinteknik':
+                    desiredProgrammeResult.add(4)
+                elif desiredProgramme[programme] == 'TekniskNanovetenskap':
+                    desiredProgrammeResult.add(5)
                 elif desiredProgramme[programme] == 'Bioteknik':
                     desiredProgrammeResult.add(6)
                 elif desiredProgramme[programme] == 'Industridesign':
-                    desiredProgrammeResult.add(0)
+                    desiredProgrammeResult.add(7)
                 elif desiredProgramme[programme] == 'Arkitekt':
-                    desiredProgrammeResult.add(0)
+                    desiredProgrammeResult.add(8)
                 elif desiredProgramme[programme] == 'Informations- och kommunikationsteknik':
-                    desiredProgrammeResult.add(1)
+                    desiredProgrammeResult.add(9)
                 elif desiredProgramme[programme] == 'Kemiteknik':
-                    desiredProgrammeResult.add(6)
+                    desiredProgrammeResult.add(10)
                 elif desiredProgramme[programme] == 'Byggteknik med järnvägsteknik':
-                    desiredProgrammeResult.add(5)
+                    desiredProgrammeResult.add(11)
                 elif desiredProgramme[programme] == 'Väg- och vatttenbyggnad':
-                    desiredProgrammeResult.add(8)
+                    desiredProgrammeResult.add(12)
                 elif desiredProgramme[programme] == 'Byggteknik med arkitektur':
-                    desiredProgrammeResult.add(5)
+                    desiredProgrammeResult.add(13)
                 elif desiredProgramme[programme] == 'Industriell ekonomi':
-                    desiredProgrammeResult.add(4)
+                    desiredProgrammeResult.add(14)
                 elif desiredProgramme[programme] == 'Teknisk Matematik':
-                    desiredProgrammeResult.add(3)
+                    desiredProgrammeResult.add(15)
                 elif desiredProgramme[programme] == 'Medicinteknik':
-                    desiredProgrammeResult.add(2)
+                    desiredProgrammeResult.add(16)
                 elif desiredProgramme[programme] == 'Lantmäteri':
-                    desiredProgrammeResult.add(8)
+                    desiredProgrammeResult.add(17)
                 elif desiredProgramme[programme] == 'Datateknik':
-                    desiredProgrammeResult.add(1)
+                    desiredProgrammeResult.add(18)
                 elif desiredProgramme[programme] == 'Teknisk Fysik':
-                    desiredProgrammeResult.add(3)
+                    desiredProgrammeResult.add(19)
                 elif desiredProgramme[programme] == 'Byggteknik med väg- och trafikteknik':
-                    desiredProgrammeResult.add(5)
+                    desiredProgrammeResult.add(20)
         else:
             print("desired Programme", name)
             desiredProgrammeResult = set()
