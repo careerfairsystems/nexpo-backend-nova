@@ -164,7 +164,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpGet]
         [Route("me")]
-        //[Authorize]
+        [Authorize]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetMe()
         {
