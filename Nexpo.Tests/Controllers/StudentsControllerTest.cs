@@ -178,7 +178,7 @@ namespace Nexpo.Tests.Controllers
             //Restore
             var json2 = new JsonObject();
             json2.Add("Programme", 18);
-            json2.Add("linkedin", " ");
+            json2.Add("linkedin", "");
             json2.Add("mastertitle", "Project management in software systems");
             json2.Add("year", 4);
 
@@ -191,7 +191,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject2.Id == -1, responseObject2.Id.ToString());
             Assert.True(responseObject2.Programme == Programme.Datateknik, responseObject2.Programme.ToString());
             Assert.True(responseObject2.Year == 4, responseObject2.Year.ToString());
-            Assert.True(responseObject2.LinkedIn == " ", responseObject2.LinkedIn.ToString());
+            Assert.True(responseObject2.LinkedIn == "", responseObject2.LinkedIn.ToString());
             Assert.True(responseObject2.MasterTitle == "Project management in software systems", responseObject2.MasterTitle.ToString());
         }
 
@@ -222,7 +222,7 @@ namespace Nexpo.Tests.Controllers
 
             //Restore
             var json2 = new JsonObject();
-            json2.Add("linkedin", " ");
+            json2.Add("linkedin", "");
             json2.Add("year", 4);
 
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
@@ -234,7 +234,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject2.Id == -1, responseObject2.Id.ToString());
             Assert.True(responseObject2.Programme == Programme.Datateknik, responseObject2.Programme.ToString());
             Assert.True(responseObject2.Year == 4, responseObject2.Year.ToString());
-            Assert.True(responseObject2.LinkedIn == " ", responseObject2.LinkedIn.ToString());
+            Assert.True(responseObject2.LinkedIn == "", responseObject2.LinkedIn.ToString());
             Assert.True(responseObject2.MasterTitle == "Project management in software systems", responseObject2.MasterTitle.ToString());
         }
 
@@ -319,7 +319,7 @@ namespace Nexpo.Tests.Controllers
             //Restore
             var json2 = new JsonObject();
             json2.Add("Programme", 18);
-            json2.Add("linkedin", " ");
+            json2.Add("linkedin", "");
             json2.Add("mastertitle", "Project management in software systems");
             json2.Add("year", 4);
 
@@ -332,7 +332,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject2.Id == -1, responseObject2.Id.ToString());
             Assert.True(responseObject2.Programme == Programme.Datateknik, responseObject2.Programme.ToString());
             Assert.True(responseObject2.Year == 4, responseObject2.Year.ToString());
-            Assert.True(responseObject2.LinkedIn == " ", responseObject2.LinkedIn.ToString());
+            Assert.True(responseObject2.LinkedIn == "", responseObject2.LinkedIn.ToString());
             Assert.True(responseObject2.MasterTitle == "Project management in software systems", responseObject2.MasterTitle.ToString());
         }
 
@@ -363,7 +363,7 @@ namespace Nexpo.Tests.Controllers
 
             //Restore
             var json2 = new JsonObject();
-            json2.Add("linkedin", " ");
+            json2.Add("linkedin", "");
             json2.Add("year", 4);
 
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
@@ -375,7 +375,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject2.Id == -1, responseObject2.Id.ToString());
             Assert.True(responseObject2.Programme == Programme.Datateknik, responseObject2.Programme.ToString());
             Assert.True(responseObject2.Year == 4, responseObject2.Year.ToString());
-            Assert.True(responseObject2.LinkedIn == " ", responseObject2.LinkedIn.ToString());
+            Assert.True(responseObject2.LinkedIn == "", responseObject2.LinkedIn.ToString());
             Assert.True(responseObject2.MasterTitle == "Project management in software systems", responseObject2.MasterTitle.ToString());
         }
 
