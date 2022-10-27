@@ -32,7 +32,6 @@ namespace Nexpo.Controllers
         public IActionResult InitiateSingleSignOn(string returnUrl)
         {
 
-            var sch = Saml2Defaults.Scheme;
 	    // pretty ugly should be fixed later
 	    returnUrl = "https://www.nexpo.arkadtlth.se/api/saml/Callback/"; 
             return new ChallengeResult(

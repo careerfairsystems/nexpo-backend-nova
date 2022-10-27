@@ -129,31 +129,31 @@ namespace Nexpo
             .AddSaml2(options =>
             {
                 options.SPOptions.EntityId = new EntityId(this.Config.SPEntityId);
-		options.SPOptions.PublicOrigin = new Uri("https://www.nexpo.arkadtlth.se");
-                //options.SPOptions.ReturnUrl = new Uri("https://www.nexpo.arkadtlth.se/");
-		options.IdentityProviders.Add(
-                    new IdentityProvider(
-                        new EntityId(this.Config.IDPEntityId), options.SPOptions)
-                    {
-                        LoadMetadata = true,
-			AllowUnsolicitedAuthnResponse = true,
-			//Binding = Sustainsys.Saml2.WebSso.Saml2BindingType.HttpRedirect
+		        options.SPOptions.PublicOrigin = new Uri("https://www.nexpo.arkadtlth.se");
+                        //options.SPOptions.ReturnUrl = new Uri("https://www.nexpo.arkadtlth.se/");
+		        options.IdentityProviders.Add(
+                            new IdentityProvider(
+                                new EntityId(this.Config.IDPEntityId), options.SPOptions)
+                            {
+                                LoadMetadata = true,
+			        AllowUnsolicitedAuthnResponse = true,
+			        //Binding = Sustainsys.Saml2.WebSso.Saml2BindingType.HttpRedirect
 			
-			//RelayStateUsedAsReturnUrl = true
-                    });
-		options.SPOptions.WantAssertionsSigned = true;
+			        //RelayStateUsedAsReturnUrl = true
+                            });
+		        options.SPOptions.WantAssertionsSigned = true;
 
-                //options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
-            	
-		options.SPOptions.ServiceCertificates.Add(
-                    new ServiceCertificate
-                    {
-                       Certificate = new X509Certificate2(
-                            this.Config.CertificatePath,
-                            this.Config.CertificatePassword),
-                       Use = CertificateUse.Both
+                        //options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
+
+                options.SPOptions.ServiceCertificates.Add(
+                            new ServiceCertificate
+                            {
+                                Certificate = new X509Certificate2(
+                                    this.Config.CertificatePath,
+                                    this.Config.CertificatePassword),
+                                Use = CertificateUse.Both
+                            });
                     });
-		});
 
             services.AddScoped<IConfig>(_ => Config);
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
