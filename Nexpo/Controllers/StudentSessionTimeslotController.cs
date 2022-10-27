@@ -5,12 +5,9 @@ using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Nexpo.Controllers
 {
@@ -45,7 +42,7 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Create a new timeslot for a company
+        /// Create a new timeslot for a company (Delete?) 
         /// </summary>
         [HttpPost]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]

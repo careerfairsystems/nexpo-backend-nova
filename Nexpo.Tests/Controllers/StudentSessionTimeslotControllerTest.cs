@@ -60,6 +60,51 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
+        public async Task GetAllTimeslotsByCompanyIdNotSignedIn()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+
+            var response = await client.GetAsync("/api/timeslots/company/-2");
+            var responseList = JsonConvert.DeserializeObject<List<StudentSessionTimeslot>>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(responseList.Count == 2, "Wrong number of timeslots, got: " + responseList.Count.ToString());
+        }
+        
+        [Fact]
+        public async Task GetAllTimeslotsByCompanyIdNotExist()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+
+            var response = await client.GetAsync("/api/timeslots/company/-4");
+            var responseList = JsonConvert.DeserializeObject<List<StudentSessionTimeslot>>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(responseList.Count == 0, "Wrong number of timeslots, got: " + responseList.Count.ToString());
+        }
+
+        //TODO
+        [Fact]
+        public async Task CreateNewTimeslotAndDelete()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            await Login("company", client);
+
+            var json = new JsonObject();
+            json.Add("start", "2022-11-15 12:00");
+            json.Add("end", "2022-11-15 13:00");
+            json.Add("location", "2022-11-15 12:00");
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/timeslots", payload);
+            var responseObject = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response.Content.ReadAsStringAsync());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Post application error code: " + response.StatusCode);
+
+
+        }
+
+        [Fact]
         public async Task GetSingleTimeslot()
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
