@@ -83,7 +83,7 @@ namespace Nexpo
                 //options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
             });
-            services.AddMvc((options) =>
+            /*services.AddMvc((options) =>
             {
                 options.RespectBrowserAcceptHeader = true;
                 options.ReturnHttpNotAcceptable = true;
@@ -93,7 +93,7 @@ namespace Nexpo
                 options.FormatterMappings.SetMediaTypeMappingForFormat("json", "application/json");
                 options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
             })
-            .AddDataAnnotationsLocalization();
+            .AddDataAnnotationsLocalization();*/
             // ** **
             
             services.AddControllers();
