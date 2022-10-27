@@ -108,19 +108,19 @@ namespace Nexpo.Controllers
             }
 
             // Update allowed fields
-            if (!string.IsNullOrEmpty(dto.FirstName))
+            if (dto.FirstName != null)
             {
                 user.FirstName = dto.FirstName;
             }
-            if (!string.IsNullOrEmpty(dto.LastName))
+            if (dto.LastName != null)
             {
                 user.LastName = dto.LastName;
             }
-            if (!string.IsNullOrEmpty(dto.PhoneNr))
+            if (dto.PhoneNr != null)
             {
                 user.PhoneNr = dto.PhoneNr;
             }
-            if (!string.IsNullOrEmpty(dto.FoodPreferences))
+            if (dto.FoodPreferences != null)
             {
                 user.FoodPreferences = dto.FoodPreferences;
             }
@@ -197,19 +197,19 @@ namespace Nexpo.Controllers
             var user = await _userRepo.Get(userId);
 
             // Update allowed fields
-            if (!string.IsNullOrEmpty(dto.FirstName))
+            if (dto.FirstName != null)
             {
                 user.FirstName = dto.FirstName;
             }
-            if (!string.IsNullOrEmpty(dto.LastName))
+            if (dto.LastName != null)
             {
                 user.LastName = dto.LastName;
             }
-            if (!string.IsNullOrEmpty(dto.PhoneNr))
+            if (dto.PhoneNr != null)
             {
                 user.PhoneNr = dto.PhoneNr;
             }
-            if (!string.IsNullOrEmpty(dto.FoodPreferences))
+            if (dto.FoodPreferences != null)
             {
                 user.FoodPreferences = dto.FoodPreferences;
             }
@@ -221,7 +221,7 @@ namespace Nexpo.Controllers
                 }
                 user.PasswordHash = _passwordService.HashPassword(dto.Password);
             }
-            if (!string.IsNullOrEmpty(dto.profilePictureUrl))
+            if (dto.profilePictureUrl != null)
             {
                 user.profilePictureUrl = dto.profilePictureUrl;
             }
