@@ -58,8 +58,17 @@ namespace Nexpo.Repositories
 
         public async Task Add(Ticket ticket)
         {
-            _context.Tickets.Add(ticket);
-            await _context.SaveChangesAsync();
+            using (var dbContextTransaction = _context.Database.BeginTransaction())
+            {
+                var events = _context.Events.Where(e => e.Id == ticket.EventId).ToList();
+                   
+                if(events[0].TicketCount < events[0].Capacity)
+                {
+                    _context.Tickets.Add(ticket);
+                    await _context.SaveChangesAsync();
+                }
+                dbContextTransaction.Commit();
+            }
         }
 
         public async Task Update(Ticket ticket)
