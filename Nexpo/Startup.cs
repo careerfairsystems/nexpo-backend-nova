@@ -143,8 +143,17 @@ namespace Nexpo
                     });
 		options.SPOptions.WantAssertionsSigned = true;
 
-                options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
-            });
+                //options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
+            	
+		options.SPOptions.ServiceCertificates.Add(
+                    new ServiceCertificate
+                    {
+                       Certificate = new X509Certificate2(
+                            this.Config.CertificatePath,
+                            this.Config.CertificatePassword),
+                       Use = CertificateUse.Both
+                    });
+		});
 
             services.AddScoped<IConfig>(_ => Config);
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
