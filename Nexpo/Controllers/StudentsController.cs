@@ -61,11 +61,11 @@ namespace Nexpo.Controllers
             {
                 student.Programme = dto.Programme.Value;
             }
-            if (!string.IsNullOrEmpty(dto.LinkedIn))
+            if (dto.LinkedIn != null)
             {
                 student.LinkedIn = dto.LinkedIn;
             }
-            if (!string.IsNullOrEmpty(dto.MasterTitle))
+            if (dto.MasterTitle != null)
             {
                 student.MasterTitle = dto.MasterTitle;
             }
@@ -109,11 +109,11 @@ namespace Nexpo.Controllers
             {
                 student.Programme = dto.Programme.Value;
             }
-            if (!string.IsNullOrEmpty(dto.LinkedIn))
+            if (dto.LinkedIn != null)
             {
                 student.LinkedIn = dto.LinkedIn;
             }
-            if (!string.IsNullOrEmpty(dto.MasterTitle))
+            if (dto.MasterTitle != null)
             {
                 student.MasterTitle = dto.MasterTitle;
             }
