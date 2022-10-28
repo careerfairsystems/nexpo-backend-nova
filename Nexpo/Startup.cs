@@ -141,7 +141,7 @@ namespace Nexpo
 			
 			        //RelayStateUsedAsReturnUrl = true
                             });
-		        options.SPOptions.WantAssertionsSigned = true;
+		        options.SPOptions.WantAssertionsSigned = false;
 
                         //options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
 
@@ -153,7 +153,13 @@ namespace Nexpo
                                     this.Config.CertificatePassword),
                                 Use = CertificateUse.Both
                             });
-                    });
+                options.SPOptions.ServiceCertificates.Add(
+                            new ServiceCertificate
+                            {
+                                Certificate = new X509Certificate2("cert.cer", "madison"),
+                                Use = CertificateUse.Both
+                            });
+            });
 
             services.AddScoped<IConfig>(_ => Config);
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
