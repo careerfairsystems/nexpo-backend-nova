@@ -48,8 +48,7 @@ namespace Nexpo.Controllers
         public async Task<IActionResult> LoginCallback(string returnUrl)
         {
             var authenticateResult = await HttpContext.AuthenticateAsync(ApplicationSamlConstants.External);
-	    Console.WriteLine(authenticateResult);
-	    Console.WriteLine(authenticateResult.Principal.Identity.Name);
+            return Ok(authenticateResult);
 
             if (!authenticateResult.Succeeded)
             {
