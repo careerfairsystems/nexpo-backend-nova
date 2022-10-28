@@ -153,12 +153,6 @@ namespace Nexpo
                                     this.Config.CertificatePassword),
                                 Use = CertificateUse.Both
                             });
-                options.SPOptions.ServiceCertificates.Add(
-                            new ServiceCertificate
-                            {
-                                Certificate = new X509Certificate2("cert.cer", "madison"),
-                                Use = CertificateUse.Both
-                            });
             });
 
             services.AddScoped<IConfig>(_ => Config);
