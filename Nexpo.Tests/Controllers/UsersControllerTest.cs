@@ -166,7 +166,6 @@ namespace Nexpo.Tests.Controllers
 
             var json = new JsonObject();
             json.Add("firstName", "Rakel");
-            json.Add("lastName", "Spektakel");
             json.Add("password", "superdupersecret");
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
@@ -177,7 +176,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
             Assert.True(responseObject.Id == -3, responseObject.Id.ToString());
             Assert.True(responseObject.FirstName == "Rakel", responseObject.FirstName);
-            Assert.True(responseObject.LastName == "Spektakel", responseObject.LastName);
+            Assert.True(responseObject.LastName == "Student", responseObject.LastName);
             Assert.True(responseObject.Role.Equals(Role.Student), responseObject.Role.ToString());
             Assert.True(responseObject.PhoneNr == null, responseObject.PhoneNr);
             Assert.True(responseObject.FoodPreferences == null, responseObject.FoodPreferences);
@@ -203,7 +202,7 @@ namespace Nexpo.Tests.Controllers
             //Restore
             var json2 = new JsonObject();
             json2.Add("firstName", "Alpha");
-            json2.Add("lastName", "Student");
+            json2.Add("lastName", null);
             json2.Add("password", "password");
 
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");

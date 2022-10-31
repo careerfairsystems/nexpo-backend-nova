@@ -13,6 +13,8 @@ namespace Nexpo.Services
         protected readonly IConfig _config;
         protected readonly TokenService _tokenService;
 
+        private string baseUrl = "https://nexpo-web.arkadtlth.se";
+
         public IEmailService(IConfig iConfig, TokenService tokenService)
         {
             _config = iConfig;
@@ -29,7 +31,7 @@ namespace Nexpo.Services
             };
             var signedToken = _tokenService.SignToken(signUpDto, DateTime.Now.AddDays(1)); // SignUp link is valid for one day
             var tokenString = Uri.EscapeDataString(signedToken);
-            var content = $"Verify your email by clicking on this link: {_config.BaseUrl}/finalize_signup/{tokenString}";
+            var content = $"Verify your email by clicking on this link: {baseUrl}/finalize_signup/{tokenString}";
             return SendEmail(user.Email, "Complete the signup", content, content);
         }
 
@@ -43,7 +45,7 @@ namespace Nexpo.Services
             var tokenString = Uri.EscapeDataString(signedToken);
             var content = $"Join your company on the Arkad fair by finalizing your account.<br><br>" +
                 "This is needed to be able to connect with the studends during the fair with the Arkad-app<br>" +
-                $"Click on the following link and set a password and you are good to go: {_config.BaseUrl}/finalize_signup/{tokenString}" +
+                $"Click on the following link and set a password and you are good to go: {baseUrl}/finalize_signup/{tokenString}" +
                 "<br><br>After you have finalized your account you need to download the app from the app store, search for \"arkad tlth\" and it should appear." +
                 "<br><br>Should you have any further questions regarding this, the app or how to connect with students, feel free to contact us at it.arkad@tlth.se";
             return SendEmail(user.Email, "Join your company in the Arkad App", content, content);
@@ -65,7 +67,7 @@ namespace Nexpo.Services
             };
             var signedToken = _tokenService.SignToken(passwordResetDto, DateTime.Now.AddHours(1)); // Password reset link valid for an hour
             var tokenString = Uri.EscapeDataString(signedToken);
-            var content = $"Reset your password by following this link: {_config.BaseUrl}/reset_password/{tokenString} The link is valid for an hour.";
+            var content = $"Reset your password by following this link: {baseUrl}/reset_password/{tokenString} The link is valid for an hour.";
             return SendEmail(user.Email, "Reset your password", content, content);
         }
     }
