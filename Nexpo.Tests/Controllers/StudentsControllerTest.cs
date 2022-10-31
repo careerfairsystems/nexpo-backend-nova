@@ -173,7 +173,6 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.Programme == Programme.Teknisk_Fysik, responseObject.Programme.ToString());
             Assert.True(responseObject.Year == 4, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
-            Assert.True(responseObject.LinkedIn == "", "Wrong LinkedIn url");
             Assert.True(responseObject.MasterTitle == "Math", responseObject.MasterTitle.ToString());
 
             //Restore
@@ -314,7 +313,6 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.Programme == Programme.Byggteknik_med_väg_och_trafikteknik, responseObject.Programme.ToString());
             Assert.True(responseObject.Year == 1, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
-            Assert.True(responseObject.LinkedIn == "", "Wrong LinkedIn url");
             Assert.True(responseObject.MasterTitle == "Math", responseObject.MasterTitle.ToString());
 
             //Restore
