@@ -112,6 +112,7 @@ namespace Nexpo.Controllers
                 student.Programme = dto.Programme.Value;
             }
             if (dto.LinkedIn != null && (dto.LinkedIn.StartsWith("https://www.linkedin.com/in/") || dto.LinkedIn.Equals("")))
+
             {
                 student.LinkedIn = dto.LinkedIn;
             }
