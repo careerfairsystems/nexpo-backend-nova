@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221025134330_programme instead of guild")]
-    partial class programmeinsteadofguild
+    [Migration("20221027195604_test")]
+    partial class test
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -35,7 +35,7 @@ namespace Nexpo.Migrations
                     b.Property<List<int>>("DesiredDegrees")
                         .HasColumnType("integer[]");
 
-                    b.Property<List<int>>("DesiredGuilds")
+                    b.Property<List<int>>("DesiredProgramme")
                         .HasColumnType("integer[]");
 
                     b.Property<string>("DidYouKnow")
@@ -156,14 +156,14 @@ namespace Nexpo.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("Guild")
-                        .HasColumnType("integer");
-
                     b.Property<string>("LinkedIn")
                         .HasColumnType("text");
 
                     b.Property<string>("MasterTitle")
                         .HasColumnType("text");
+
+                    b.Property<int?>("Programme")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ResumeEnUrl")
                         .HasColumnType("text");
