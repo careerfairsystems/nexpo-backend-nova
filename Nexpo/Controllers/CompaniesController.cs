@@ -202,6 +202,23 @@ namespace Nexpo.Controllers
 
             return Ok(company);
         }
+        /// <summary>
+        /// Delete company by name
+        /// </summary>
+        [HttpDelete]
+        [Route("{name}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
+        public async Task<ActionResult> DeleteCompany(string name)
+        {
+            Company c = await _companyRepo.FindByName(name);
+            if(c == null)
+            {
+                return NotFound();
+            }
+            await _companyRepo.Remove(c);
+            return Ok();
+        }
     }
 }
 
