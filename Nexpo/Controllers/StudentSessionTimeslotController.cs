@@ -234,7 +234,6 @@ namespace Nexpo.Controllers
             return Ok(timeslot);
         }
 
-
         /// <summary>
         /// Create a new timeslot for a company as admin
         /// </summary>
@@ -256,6 +255,30 @@ namespace Nexpo.Controllers
 
             return Ok(timeslot);
 
+        }
+
+        /// <summary>
+        /// Update the location for a timeslot
+        /// </summary>
+        [HttpPut]
+        [Route("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status200OK)]
+        public async Task<ActionResult> UpdateTimeslot(int id, UpdateStudentSessionLocationDto dto)
+        {
+            var timeslot = await _timeslotRepo.Get(id);
+            if (timeslot == null)
+            {
+                return NotFound();
+            }
+
+            if(dto.Location != null)
+            {
+                timeslot.Location = dto.Location;
+            }
+            await _timeslotRepo.Update(timeslot);
+
+            return Ok(timeslot);
         }
     }
 }
