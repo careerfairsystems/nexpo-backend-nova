@@ -56,7 +56,7 @@ namespace Nexpo.Tests.Controllers
             string responseText = await response.Content.ReadAsStringAsync();
             var responseList = JsonConvert.DeserializeObject<List<Event>>(responseText);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
-            Assert.True(responseList.Count == 4, responseText.ToString());
+            Assert.True(responseList.Count == 5, responseText.ToString());
 
             var firstEvent = responseList.Find(r => r.Id == -1);
             var secondEvent = responseList.Find(r => r.Id == -2);
@@ -64,7 +64,7 @@ namespace Nexpo.Tests.Controllers
             var fourthEvent = responseList.Find(r => r.Id == -4);
 
             Assert.True(firstEvent.Description == "Breakfast with SEB", firstEvent.Description);
-            Assert.True(secondEvent.Date == "2021-11-13", secondEvent.Date);
+            Assert.True(secondEvent.Date == "2022-11-13", secondEvent.Date);
             Assert.True(thirdEvent.Host == "Randstad", thirdEvent.Host);
             Assert.True(fourthEvent.Capacity == 2, fourthEvent.Capacity.ToString());
         }
@@ -81,7 +81,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
 
             Assert.True(responseObject.Name == "CV Workshop with Randstad", responseText);
-            Assert.True(responseObject.Date == "2021-11-14", responseText);
+            Assert.True(responseObject.Date == "2022-11-14", responseText);
             Assert.True(responseObject.End == "15:00", responseText);
             Assert.True(responseObject.Language == "Swedish", responseText);
         }

@@ -56,7 +56,12 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if (e.TicketCount >= e.Capacity)
+            if ((DateTime.Parse(e.Date) - DateTime.Now).TotalDays < 2) 
+            {
+                return BadRequest();
+            }
+
+            if (e.TicketCount >= e.Capacity) 
             {
                 return Conflict();
             }

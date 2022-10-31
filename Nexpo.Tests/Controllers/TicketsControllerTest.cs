@@ -199,7 +199,7 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            
+
             var json = new JsonObject();
             json.Add("eventid", -1);
             json.Add("photook", true);
@@ -207,6 +207,22 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.ToString());
+        }
+
+        [Fact]
+        public async Task PostTicketLessThanTwoDaysBefore()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("", client);
+
+            var json = new JsonObject();
+            json.Add("eventid", -5);
+            json.Add("photook", true);
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), response.ToString());
         }
 
         [Fact]
