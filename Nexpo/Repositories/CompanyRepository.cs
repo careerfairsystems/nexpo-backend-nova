@@ -14,6 +14,7 @@ namespace Nexpo.Repositories
         public Task<Company> Get(int id);
         public Task<Company> GetWithChildren(int id);
         public Task<Company> FindByUser(int userId);
+        public Task<Company> FindByName(string name);
         public Task Add(Company company);
         public Task Remove(Company company);
         public Task Update(Company company);
@@ -53,7 +54,10 @@ namespace Nexpo.Repositories
         {
             return await _context.Companies.Where(c => c.Representatives.Any(u => u.Id == userId)).FirstOrDefaultAsync();
         }
-
+        public async Task<Company> FindByName(string name)
+        {
+            return await _context.Companies.Where(c => c.Name == name).FirstOrDefaultAsync();
+        }
         public async Task Add(Company company)
         {
             _context.Companies.Add(company);
