@@ -62,11 +62,6 @@ namespace Nexpo.Controllers
                 return BadRequest();
             }
 
-            if (e.TicketCount >= e.Capacity) 
-            {
-                return Conflict();
-            }
-
             // Only allow a user to register once
             var userId = HttpContext.User.GetId();
             if (await _ticketRepo.TicketExists(dto.EventId, userId))
@@ -80,7 +75,10 @@ namespace Nexpo.Controllers
                 EventId = dto.EventId,
                 UserId = userId,
             };
-            await _ticketRepo.Add(ticket);
+            if(!await _ticketRepo.Add(ticket))
+            {
+                return Conflict();
+            }
 
             return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, ticket);
         }

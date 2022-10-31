@@ -14,7 +14,7 @@ namespace Nexpo.Repositories
         public Task<IEnumerable<Ticket>> GetAllForEvent(int eventId);
         public Task<Ticket> Get(int id);
         public Task<Ticket> GetByCode(Guid code);
-        public Task Add(Ticket ticket);
+        public Task<bool> Add(Ticket ticket);
         public Task Update(Ticket ticket);
         public Task Remove(Ticket ticket);
 
@@ -23,10 +23,12 @@ namespace Nexpo.Repositories
     public class TicketRepository : ITicketRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEventRepository _eventRepo;
 
-        public TicketRepository(ApplicationDbContext context)
+        public TicketRepository(ApplicationDbContext context, IEventRepository iEventRepo)
         {
             _context = context;
+            _eventRepo = iEventRepo;
         }
 
         public async Task<bool> TicketExists(int eventId, int userId)
@@ -56,10 +58,22 @@ namespace Nexpo.Repositories
             return await _context.Tickets.Include(t => t.Event).Where(t => t.Code == code).FirstOrDefaultAsync();
         }
 
-        public async Task Add(Ticket ticket)
+        public async Task<bool> Add(Ticket ticket)
         {
-            _context.Tickets.Add(ticket);
-            await _context.SaveChangesAsync();
+            using (var dbContextTransaction = _context.Database.BeginTransaction())
+            {
+                var _event = await _eventRepo.Get(ticket.EventId);
+                
+                // Don't add ticket if limit is reached
+                if (_event.TicketCount == _event.Capacity) {
+                    return false;
+                }
+                
+                _context.Tickets.Add(ticket);
+                await _context.SaveChangesAsync();
+                dbContextTransaction.Commit();
+                return true;
+            }
         }
 
         public async Task Update(Ticket ticket)
