@@ -448,5 +448,51 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Delete studentsession error code: " + response.StatusCode);
         }
 
+        [Fact]
+        public async Task UpdateLocationTimeslotNotExist()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            await Login("admin", client);
+
+            var json = new JsonObject();
+            json.Add("location", "E:A");
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/timeslots/-123", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Put studentsession error code: " + response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateLocationTimeslot()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            await Login("admin", client);
+
+            var json = new JsonObject();
+            json.Add("location", "E:A");
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/timeslots/-1", payload);
+            var responseObject = JsonConvert.DeserializeObject<StudentSessionTimeslot>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Put studentsession error code: " + response.StatusCode);
+            Assert.True(responseObject.Location == "E:A", "Wrong location: " + responseObject.Location.ToString());
+            Assert.True(responseObject.CompanyId == -1, "Wrong CompandyId: " + responseObject.CompanyId.ToString());
+            Assert.True(responseObject.Start == DateTime.Parse("2021-11-21 10:00"), "Wrong time, got: " + responseObject.Start);
+
+            //Restore 
+            json = new JsonObject();
+            json.Add("location", "Zoom");
+
+            payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            response = await client.PutAsync("api/timeslots/-1", payload);
+            responseObject = JsonConvert.DeserializeObject<StudentSessionTimeslot>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Put studentsession error code: " + response.StatusCode);
+            Assert.True(responseObject.Location == "Zoom", "Wrong location: " + responseObject.Location.ToString());
+            Assert.True(responseObject.CompanyId == -1, "Wrong CompandyId: " + responseObject.CompanyId.ToString());
+            Assert.True(responseObject.Start == DateTime.Parse("2021-11-21 10:00"), "Wrong time, got: " + responseObject.Start);
+        }
+
     }
 }
