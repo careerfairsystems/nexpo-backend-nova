@@ -10,6 +10,7 @@ using Xunit;
 using System.IO;
 using Newtonsoft.Json;
 using Nexpo.Models;
+using static System.Net.WebRequestMethods;
 
 namespace Nexpo.Tests.Controllers
 {
@@ -170,9 +171,9 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
             Assert.True(responseObject.Programme == Programme.Teknisk_Fysik, responseObject.Programme.ToString());
-            Assert.True(responseObject.Year == 10, responseObject.Year.ToString());
+            Assert.True(responseObject.Year == 4, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
-            Assert.True(responseObject.LinkedIn == "linkedin.com", responseObject.LinkedIn.ToString());
+            Assert.True(responseObject.LinkedIn == null, "Wrong LinkedIn url");
             Assert.True(responseObject.MasterTitle == "Math", responseObject.MasterTitle.ToString());
 
             //Restore
@@ -204,8 +205,8 @@ namespace Nexpo.Tests.Controllers
             var token = await Login("admin", client);
 
             var json = new JsonObject();
-            json.Add("linkedIn", "linkedin.com");
-            json.Add("year", 10);
+            json.Add("linkedIn", "https://www.linkedin.com/in/test");
+            json.Add("year", 1);
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/students/-1", payload);
@@ -215,9 +216,9 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
             Assert.True(responseObject.Programme == Programme.Datateknik, responseObject.Programme.ToString());
-            Assert.True(responseObject.Year == 10, responseObject.Year.ToString());
+            Assert.True(responseObject.Year == 1, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
-            Assert.True(responseObject.LinkedIn == "linkedin.com", responseObject.LinkedIn.ToString());
+            Assert.True(responseObject.LinkedIn == "https://www.linkedin.com/in/test", responseObject.LinkedIn.ToString());
             Assert.True(responseObject.MasterTitle == "Project management in software systems", responseObject.MasterTitle.ToString());
 
             //Restore
@@ -298,10 +299,10 @@ namespace Nexpo.Tests.Controllers
             var token = await Login("", client);
 
             var json = new JsonObject();
-            json.Add("programme", 19);
+            json.Add("programme", 20);
             json.Add("linkedIn", "linkedin.com");
             json.Add("masterTitle", "Math");
-            json.Add("year", 10);
+            json.Add("year", 1);
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/students/me", payload);
@@ -310,10 +311,10 @@ namespace Nexpo.Tests.Controllers
             //Assertions of response
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
-            Assert.True(responseObject.Programme == Programme.Teknisk_Fysik, responseObject.Programme.ToString());
-            Assert.True(responseObject.Year == 10, responseObject.Year.ToString());
+            Assert.True(responseObject.Programme == Programme.Byggteknik_med_väg_och_trafikteknik, responseObject.Programme.ToString());
+            Assert.True(responseObject.Year == 1, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
-            Assert.True(responseObject.LinkedIn == "linkedin.com", responseObject.LinkedIn.ToString());
+            Assert.True(responseObject.LinkedIn == "", "Wrong LinkedIn url");
             Assert.True(responseObject.MasterTitle == "Math", responseObject.MasterTitle.ToString());
 
             //Restore
@@ -345,8 +346,8 @@ namespace Nexpo.Tests.Controllers
             var token = await Login("", client);
 
             var json = new JsonObject();
-            json.Add("linkedIn", "linkedin.com");
-            json.Add("year", 10);
+            json.Add("linkedIn", "https://www.linkedin.com/in/test");
+            json.Add("year", 5);
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/students/me", payload);
@@ -356,9 +357,9 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
             Assert.True(responseObject.Id == -1, responseObject.Id.ToString());
             Assert.True(responseObject.Programme == Programme.Datateknik, responseObject.Programme.ToString());
-            Assert.True(responseObject.Year == 10, responseObject.Year.ToString());
+            Assert.True(responseObject.Year == 5, responseObject.Year.ToString());
             Assert.True(responseObject.UserId == -2, responseObject.UserId.ToString());
-            Assert.True(responseObject.LinkedIn == "linkedin.com", responseObject.LinkedIn.ToString());
+            Assert.True(responseObject.LinkedIn == "https://www.linkedin.com/in/test", responseObject.LinkedIn.ToString());
             Assert.True(responseObject.MasterTitle == "Project management in software systems", responseObject.MasterTitle.ToString());
 
             //Restore

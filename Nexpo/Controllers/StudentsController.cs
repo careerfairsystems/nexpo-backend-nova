@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nexpo.DTO;
 using Nexpo.Helpers;
+using Nexpo.Migrations;
 using Nexpo.Models;
 using Nexpo.Repositories;
 
@@ -57,11 +59,11 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if (dto.Programme.HasValue)
+            if (dto.Programme.HasValue && (int) dto.Programme.Value < Enum.GetNames(typeof(Programme)).Length)
             {
                 student.Programme = dto.Programme.Value;
             }
-            if (dto.LinkedIn != null)
+            if (dto.LinkedIn != null && (dto.LinkedIn.StartsWith("https://www.linkedin.com/in/") || dto.LinkedIn.Equals("")))
             {
                 student.LinkedIn = dto.LinkedIn;
             }
@@ -69,7 +71,7 @@ namespace Nexpo.Controllers
             {
                 student.MasterTitle = dto.MasterTitle;
             }
-            if (dto.Year.HasValue)
+            if (dto.Year.HasValue && dto.Year <= 5)
             {
                 student.Year = dto.Year.Value;
             }
@@ -105,11 +107,12 @@ namespace Nexpo.Controllers
             var studentId = HttpContext.User.GetStudentId().Value;
             var student = await _studentRepo.Get(studentId);
 
-            if (dto.Programme.HasValue)
+            if (dto.Programme.HasValue && (int) dto.Programme.Value < Enum.GetNames(typeof(Programme)).Length)
             {
                 student.Programme = dto.Programme.Value;
             }
-            if (dto.LinkedIn != null)
+            if (dto.LinkedIn != null && (dto.LinkedIn.StartsWith("https://www.linkedin.com/in/") || dto.LinkedIn.Equals("")))
+
             {
                 student.LinkedIn = dto.LinkedIn;
             }
@@ -117,7 +120,7 @@ namespace Nexpo.Controllers
             {
                 student.MasterTitle = dto.MasterTitle;
             }
-            if (dto.Year.HasValue)
+            if (dto.Year.HasValue && dto.Year <= 5)
             {
                 student.Year = dto.Year.Value;
             }
