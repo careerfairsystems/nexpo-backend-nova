@@ -13,6 +13,7 @@ using Xunit;
 using Newtonsoft.Json;
 using Nexpo.Models;
 using Nexpo.DTO;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace Nexpo.Tests.Controllers
 {
@@ -25,6 +26,10 @@ namespace Nexpo.Tests.Controllers
             {
                 case "company":
                     json.Add("email", "rep1@company1.example.com");
+                    json.Add("password", "password");
+                    break;
+                case "company3":
+                    json.Add("email", "rep1@company3.example.com");
                     json.Add("password", "password");
                     break;
                 case "admin":
@@ -68,6 +73,47 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
+        public async Task GetAllApplicationsAsCompanyWrongPath()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("company", client);
+
+            var response = await client.GetAsync("/api/applications/my/student");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task GetAllApplicationsAsStudent()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("", client);
+
+            var response = await client.GetAsync("/api/applications/my/student");
+            var responseList = JsonConvert.DeserializeObject<List<StudentSessionApplication>>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(responseList.Count == 2, "Number of applications: " + responseList.Count.ToString());
+
+            var app3 = responseList.Find(r => r.Id == -4);
+
+            Assert.True(app3.Motivation == "I would like to learn more about searching", app3.Motivation);
+            Assert.True(app3.StudentId == -1, app3.StudentId.ToString());
+            Assert.True(app3.CompanyId == -2, app3.CompanyId.ToString());
+        }
+
+        [Fact]
+        public async Task GetAllApplicationsAsStudentWrongPath()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("", client);
+
+            var response = await client.GetAsync("/api/applications/my/company");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+        }
+
+        [Fact]
         public async Task GetApplicationAsStudent()
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
@@ -81,6 +127,50 @@ namespace Nexpo.Tests.Controllers
             //Get someone elses application
             response = await client.GetAsync("/api/applications/-3");
             Assert.True(!response.StatusCode.Equals(HttpStatusCode.OK), "Inproper access");
+        }
+
+        [Fact]
+        public async Task GetAnotherApplicationAsStudent()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("", client);
+            var response = await client.GetAsync("/api/applications/-3");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Inproper access");
+        }
+
+        [Fact]
+        public async Task GetApplicationAsCompany()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("company", client);
+            var response = await client.GetAsync("/api/applications/-1");
+            var app = JsonConvert.DeserializeObject<StudentSessionApplication>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(app.Motivation == "Hej, jag är jättebra och tror att ni vill träffa mig!", "Wrong motivation: " + app.Motivation);
+        }
+
+        [Fact]
+        public async Task GetAnotherCompanyApplication()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("company", client);
+            var response = await client.GetAsync("/api/applications/-4");
+            var app = JsonConvert.DeserializeObject<StudentSessionApplication>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task GetCompanyApplicationNotExist()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("company", client);
+            var response = await client.GetAsync("/api/applications/-123");
+            var app = JsonConvert.DeserializeObject<StudentSessionApplication>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.StatusCode.ToString());
         }
 
         [Fact]
@@ -118,35 +208,138 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
+        public async Task RespondToApplicationAsCompanyNotExist()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("company", client);
+
+            //Update status
+            var json = new JsonObject();
+            json.Add("status", 1);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/applications/-123", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Put application error code: " + response.StatusCode);
+        }
+
+        [Fact]
+        public async Task RespondToAnotherCompanyApplication()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("company", client);
+
+            //Update status
+            var json = new JsonObject();
+            json.Add("status", 1);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/applications/-4", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Put application error code: " + response.StatusCode);
+        }
+
+        [Fact]
+        public async Task RespondToApplicationAsStudent()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("", client);
+
+            //Update status
+            var json = new JsonObject();
+            json.Add("status", 1);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/applications/-1", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Put application error code: " + response.StatusCode);
+        }
+
+        [Fact]
         public async Task PostApplicationAsStudentThenDelete()
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var studentClient = application.CreateClient();
             var companyClient = application.CreateClient();
             await Login("", studentClient);
-            await Login("company", companyClient);
+            await Login("company3", companyClient);
             
-            //Ensure seed data is correct
-            var response = await companyClient.GetAsync("/api/applications/my/company");
-            var appList = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>(await response.Content.ReadAsStringAsync());
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
-            Assert.True(appList.Count == 3, "Incorrect seed data");
+            //Post application
+            var json = new JsonObject();
+            json.Add("motivation", "Hej, jag är jättebra och tror att ni vill träffa mig!");
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await studentClient.PostAsync("api/applications/company/-3", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Post application error code: " + response.StatusCode);
+
+            //Check application as company
+            response = await companyClient.GetAsync("/api/applications/my/company");
+            var appList = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get as company error");
+            Assert.True(appList.Count == 2, "Application list length should be 2, count:" + appList.Count.ToString());
+            Assert.True(appList[1].Motivation == "Hej, jag är jättebra och tror att ni vill träffa mig!", "Wrong motivation, got: " + appList[1].Motivation);
+            int id = appList[1].Id.GetValueOrDefault();
+
+            //Restore
+            response = await studentClient.DeleteAsync("api/applications/" + id);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NoContent), "Delete application error code: " + response.StatusCode);
+            response = await companyClient.GetAsync("/api/applications/my/company");
+            appList = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get as company error");
+            Assert.True(appList.Count == 1, "Application list length should be 1, count:" + appList.Count.ToString());
+        }
+
+        [Fact]
+        public async Task PostApplicationAsStudentNoTimeslots()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var studentClient = application.CreateClient();
+            var companyClient = application.CreateClient();
+            await Login("", studentClient);
 
             //Post application
             var json = new JsonObject();
             json.Add("motivation", "Hej, jag är jättebra och tror att ni vill träffa mig!");
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            response = await studentClient.PostAsync("api/applications/company/-1", payload);
+            var response = await studentClient.PostAsync("api/applications/company/-4", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Conflict), "Post application error code: " + response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdateApplicationAsStudent()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var studentClient = application.CreateClient();
+            var companyClient = application.CreateClient();
+            await Login("", studentClient);
+            await Login("company", companyClient);
+
+            //Post application
+            var json = new JsonObject();
+            json.Add("motivation", "This is a test");
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await studentClient.PostAsync("api/applications/company/-1", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Post application error code: " + response.StatusCode);
 
             //Check application as company
+            response = await companyClient.GetAsync("/api/applications/my/company");
+            var appList = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get as company error");
+            Assert.True(appList.Count == 3, "Application list length should be 3, count:" + appList.Count.ToString());
+            Assert.True(appList[2].Motivation == "This is a test", "Wrong motivation, got: " + appList[2].Motivation);
+            int id = appList[2].Id.GetValueOrDefault();
+
+            //Restore
+            json = new JsonObject();
+            json.Add("motivation", "Hej, jag är jättebra och tror att ni vill träffa mig!");
+            payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            response = await studentClient.PostAsync("api/applications/company/-1", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Post application error code: " + response.StatusCode);
+
             response = await companyClient.GetAsync("/api/applications/my/company");
             appList = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>((await response.Content.ReadAsStringAsync()));
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get as company error");
             Assert.True(appList.Count == 3, "Application list length should be 3, count:" + appList.Count.ToString());
             Assert.True(appList[2].Motivation == "Hej, jag är jättebra och tror att ni vill träffa mig!", "Wrong motivation, got: " + appList[2].Motivation);
-            int id = appList[2].Id.GetValueOrDefault();
+            id = appList[2].Id.GetValueOrDefault();
         }
+
 
         [Fact]
         public async Task GetApplicationAccepted()
@@ -159,6 +352,75 @@ namespace Nexpo.Tests.Controllers
             var status = JsonConvert.DeserializeObject<ApplicationStatusDto>((await response.Content.ReadAsStringAsync()));
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get error code: ");
             Assert.True(!status.accepted, "Accepted should be false");
+        }
+
+        [Fact]
+        public async Task GetApplicationAcceptedForNonAppliedCompany()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            await Login("", client);
+
+            var response = await client.GetAsync("/api/applications/accepted/-4");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task GetApplicationAcceptedWhenAccepted()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var studentClient = application.CreateClient();
+            var companyClient = application.CreateClient();
+            await Login("", studentClient);
+            await Login("company", companyClient);
+
+            //Update status
+            var json = new JsonObject();
+            json.Add("status", 1);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await companyClient.PutAsync("api/applications/-1", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Put application error code: " + response.StatusCode);
+
+            response = await studentClient.GetAsync("/api/applications/accepted/-1");
+            var status = JsonConvert.DeserializeObject<ApplicationStatusDto>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get error code: ");
+            Assert.True(status.accepted, "Accepted should be true");
+
+            //Roll back
+            json = new JsonObject();
+            json.Add("status", 0);
+            payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            response = await companyClient.PutAsync("api/applications/-1", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get application error code: " + response.StatusCode);
+        }
+
+        [Fact]
+        public async Task GetApplicationAcceptedWhenDeclined()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var studentClient = application.CreateClient();
+            var companyClient = application.CreateClient();
+            await Login("", studentClient);
+            await Login("company", companyClient);
+
+            //Update status
+            var json = new JsonObject();
+            json.Add("status", 2);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await companyClient.PutAsync("api/applications/-1", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Put application error code: " + response.StatusCode);
+
+            response = await studentClient.GetAsync("/api/applications/accepted/-1");
+            var status = JsonConvert.DeserializeObject<ApplicationStatusDto>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get error code: ");
+            Assert.True(!status.accepted, "Accepted should be false");
+
+            //Roll back
+            json = new JsonObject();
+            json.Add("status", 0);
+            payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            response = await companyClient.PutAsync("api/applications/-1", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get application error code: " + response.StatusCode);
         }
     }
 }

@@ -5,12 +5,9 @@ using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Nexpo.Controllers
 {
@@ -37,6 +34,7 @@ namespace Nexpo.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("company/{id}")]
+        [Authorize]
         [ProducesResponseType(typeof(IEnumerable<StudentSessionTimeslot>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetAllTimeslots(int id)
         {
@@ -45,31 +43,11 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Create a new timeslot for a company
-        /// </summary>
-        [HttpPost]
-        [Authorize(Roles = nameof(Role.CompanyRepresentative))]
-        [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status201Created)]
-        public async Task<ActionResult> PostTimeslot(CreateStudentSessionTimeslotDto dto)
-        {
-            var timeslot = new StudentSessionTimeslot
-            {
-                Start = dto.Start,
-                End = dto.End,
-                Location = dto.Location
-            };
-
-            await _timeslotRepo.Add(timeslot);
-
-            return CreatedAtAction(nameof(GetTimeslot), new { id = timeslot.Id }, timeslot);
-
-        }
-
-        /// <summary>
         /// Get a single timeslot
         /// </summary>
         [HttpGet]
         [Route("{id}")]
+        [Authorize]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetTimeslot(int id)
         {
@@ -86,6 +64,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpGet]
         [Route("companies")]
+        [Authorize]
         [ProducesResponseType(typeof(IEnumerable<PublicCompanyDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetCompaniesWithTimeslot()
         {
@@ -112,32 +91,6 @@ namespace Nexpo.Controllers
             });
 
             return Ok(publicCompanies);
-        }
-
-        /// <summary>
-        /// Delete a timeslot
-        /// </summary>
-        [HttpDelete]
-        [Route("{id}")]
-        [Authorize(Roles = nameof(Role.CompanyRepresentative))]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> DeleteTimeslot(int id)
-        {
-            var timeslot = await _timeslotRepo.Get(id);
-            if (timeslot == null)
-            {
-                return NotFound();
-            }
-
-            var companyId = HttpContext.User.GetCompanyId().Value;
-            if (timeslot.CompanyId != companyId)
-            {
-                return Forbid();
-            }
-
-            await _timeslotRepo.Remove(timeslot);
-
-            return NoContent();
         }
 
         /// <summary>
@@ -256,6 +209,26 @@ namespace Nexpo.Controllers
 
             return Ok(timeslot);
 
+        }
+
+        /// <summary>
+        /// Delete a timeslot
+        /// </summary>
+        [HttpDelete]
+        [Route("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> DeleteTimeslot(int id)
+        {
+            var timeslot = await _timeslotRepo.Get(id);
+            if (timeslot == null)
+            {
+                return NotFound();
+            }
+
+            await _timeslotRepo.Remove(timeslot);
+
+            return NoContent();
         }
     }
 }
