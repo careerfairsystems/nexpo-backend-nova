@@ -200,7 +200,7 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Checks if application exists and is accepted and is booked
+        /// Checks if application exists for given companyId and is accepted and is booked
         /// </summary>
         [HttpGet]
         [Route("accepted/{id}")]

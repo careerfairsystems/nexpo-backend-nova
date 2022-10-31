@@ -13,6 +13,7 @@ using Nexpo.Models;
 using Nexpo.DTO;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace Nexpo.Tests.Controllers 
 {
@@ -255,6 +256,33 @@ namespace Nexpo.Tests.Controllers
             var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
          
             Assert.True(responseObject == null, "Object was not null");
+        }
+
+        [Fact]
+        public async Task PostThenDelete()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+            
+            var json = new JsonObject();
+            json.Add("description", "We produce the best and brightest.");
+            json.Add("name", "LTH");
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("/api/companies/", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<Company>(responseText);
+            Assert.True(responseObject.Description == "We produce the best and brightest.", "Faulty description");
+
+            var id = responseObject.Id;
+
+            response = await client.DeleteAsync("/api/companies/LTH");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+
+            response = await client.GetAsync("/api/companies/" + id);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.StatusCode.ToString());
         }
     }
 }
