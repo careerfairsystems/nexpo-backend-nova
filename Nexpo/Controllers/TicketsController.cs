@@ -46,7 +46,7 @@ namespace Nexpo.Controllers
         /// Create a new ticket to an event
         /// </summary>
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostTicket(CreateTicketDto dto)
         {
@@ -82,6 +82,39 @@ namespace Nexpo.Controllers
 
             return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, ticket);
         }
+
+        /// <summary>
+        /// Create new ticket as admin to an event. Ignores capacity and startTime
+        /// </summary>
+        [HttpPost]
+        [Route("add")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
+        public async Task<ActionResult> PostTicketAdmin(CreateTicketAdminDto dto)
+        {
+            var e = await _eventRepo.Get(dto.EventId);
+            if (e == null)
+            {
+                return NotFound();
+            }
+
+            // Only allow a user to register once
+            if (await _ticketRepo.TicketExists(dto.EventId, dto.UserId))
+            {
+                return Conflict();
+            }
+
+            var ticket = new Ticket
+            {
+                PhotoOk = dto.PhotoOk,
+                EventId = dto.EventId,
+                UserId = dto.UserId,
+            };
+
+            await _ticketRepo.AddAdmin(ticket);
+
+            return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, ticket);
+        } 
 
         /// <summary>
         /// Update isConsumed on a ticket
