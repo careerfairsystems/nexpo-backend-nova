@@ -310,6 +310,145 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
+        public async Task AdminPostandDeleteTicketCloseToEvent()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+
+            //Add new ticket
+            var json = new JsonObject();
+            json.Add("eventid", -5);
+            json.Add("photook", true);
+            json.Add("userid", -4);
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/add", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), response.ToString());
+
+            //Check response and db updated
+            string responseText = await response.Content.ReadAsStringAsync();
+            var parsedContent = JObject.Parse(responseText);
+            var newTicketId = parsedContent.Value<string>("id");
+
+            var response2 = await client.GetAsync("/api/tickets/id/" + newTicketId);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response2.StatusCode.ToString());
+            var responseObject = JsonConvert.DeserializeObject<Ticket>((await response2.Content.ReadAsStringAsync()));
+            Assert.True(responseObject.PhotoOk, responseObject.PhotoOk.ToString());
+            Assert.True(responseObject.EventId == -5, responseObject.EventId.ToString());
+            Assert.True(responseObject.UserId == -4, responseObject.UserId.ToString());
+
+            //Delete created ticket
+            var response4 = await client.DeleteAsync("api/tickets/" + newTicketId);
+            Assert.True(response4.StatusCode.Equals(HttpStatusCode.NoContent));
+
+            //Check ticket does not exist and users total nbr. of tickets
+            var response6 = await client.GetAsync("/api/tickets/id/" + newTicketId);
+            Assert.True(response6.StatusCode.Equals(HttpStatusCode.NotFound), response6.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task AdminDeleteTicketConsumed()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+
+            //Add new ticket
+            var json = new JsonObject();
+            json.Add("eventid", -5);
+            json.Add("photook", true);
+            json.Add("userid", -4);
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/add", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), response.ToString());
+
+            //Check response, db updated and set consumed
+            string responseText = await response.Content.ReadAsStringAsync();
+            var parsedContent = JObject.Parse(responseText);
+            var newTicketId = parsedContent.Value<string>("id");
+
+            json = new JsonObject();
+            json.Add("isConsumed", true);
+
+            payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            response = await client.PutAsync("api/tickets/" + newTicketId, payload);
+            var responseObject = JsonConvert.DeserializeObject<Ticket>((await response.Content.ReadAsStringAsync()));
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+
+            var response2 = await client.GetAsync("/api/tickets/id/" + newTicketId);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response2.StatusCode.ToString());
+            responseObject = JsonConvert.DeserializeObject<Ticket>((await response2.Content.ReadAsStringAsync()));
+            Assert.True(responseObject.PhotoOk, responseObject.PhotoOk.ToString());
+            Assert.True(responseObject.EventId == -5, responseObject.EventId.ToString());
+            Assert.True(responseObject.UserId == -4, responseObject.UserId.ToString());
+            Assert.True(responseObject.isConsumed, responseObject.isConsumed.ToString());
+
+            //Delete created ticket
+            var response4 = await client.DeleteAsync("api/tickets/" + newTicketId);
+            Assert.True(response4.StatusCode.Equals(HttpStatusCode.NoContent));
+
+            //Check ticket does not exist and users total nbr. of tickets
+            var response6 = await client.GetAsync("/api/tickets/id/" + newTicketId);
+            Assert.True(response6.StatusCode.Equals(HttpStatusCode.NotFound), response6.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task AdminPostTicketWrongEventId()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+
+            //Add new ticket
+            var json = new JsonObject();
+            json.Add("eventid", -22);
+            json.Add("photook", true);
+            json.Add("userid", -4);
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/add", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.ToString());
+         }
+
+        [Fact]
+        public async Task AdminPostDublicateTicketToUser()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+
+            //Add new ticket
+            var json = new JsonObject();
+            json.Add("eventid", -5);
+            json.Add("photook", true);
+            json.Add("userid", -4);
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/add", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Conflict), response.ToString());
+        }
+
+        [Fact]
+        public async Task StudentPostTicketWrongRoute()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("", client);
+
+            //Add new ticket
+            var json = new JsonObject();
+            json.Add("eventid", -1);
+            json.Add("photook", true);
+            json.Add("userid", -2);
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/add", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.ToString());
+        }
+
+        [Fact]
         public async Task DeleteConsumedExistingTicket()
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
