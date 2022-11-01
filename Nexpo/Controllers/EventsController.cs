@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Nexpo.DTO;
-using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
 
@@ -141,22 +137,27 @@ namespace Nexpo.Controllers
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         public async Task<ActionResult> AddNewEvent(AddEventDto dto)
         {
-
-            var even = new Event
+            DateTime temp;
+            if(DateTime.TryParse(dto.Date, out temp) && DateTime.TryParse(dto.Start, out temp) && DateTime.TryParse(dto.End, out temp))
             {
-                Name = dto.Name,
-                Description = dto.Description,
-                Date = dto.Date,
-                Start = dto.Start,
-                End = dto.End,
-                Location = dto.Location,
-                Host = dto.Host,
-                Language = dto.Language,
-                Capacity = dto.Capacity
-            };
-            await _eventRepo.Add(even);
+                var even = new Event
+                {
+                    Name = dto.Name,
+                    Description = dto.Description,
+                    Date = dto.Date,
+                    Start = dto.Start,
+                    End = dto.End,
+                    Location = dto.Location,
+                    Host = dto.Host,
+                    Language = dto.Language,
+                    Capacity = dto.Capacity
+                };
+                await _eventRepo.Add(even);
 
-            return Ok(even);
+                return Ok(even);
+            }
+            
+            return BadRequest();
         }
     }
 

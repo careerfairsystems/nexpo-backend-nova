@@ -56,6 +56,12 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
+            DateTime startTime = DateTime.Parse(e.Start);
+            if ((DateTime.Parse(e.Date).AddHours(startTime.Hour -12).AddMinutes(startTime.Minute) - DateTime.Now).TotalHours < 48) 
+            {
+                return BadRequest();
+            }
+
             // Only allow a user to register once
             var userId = HttpContext.User.GetId();
             if (await _ticketRepo.TicketExists(dto.EventId, userId))
@@ -155,6 +161,13 @@ namespace Nexpo.Controllers
 
             if(userRole != Role.Administrator)
             {
+                var e = await _eventRepo.Get(ticket.EventId);
+                DateTime startTime = DateTime.Parse(e.Start);
+                if ((DateTime.Parse(e.Date).AddHours(startTime.Hour - 12).AddMinutes(startTime.Minute) - DateTime.Now).TotalHours < 48)
+                {
+                    return BadRequest();
+                }
+
                 if (ticket.UserId != userId || ticket.isConsumed)
                 {
                     return Forbid();

@@ -81,11 +81,12 @@ namespace Nexpo.Models
             SaveChanges();
 
             // Events
-            var event1 = new Event { Id = -1, Name = "Breakfast Mingle", Description = "Breakfast with SEB", Date = "2021-11-12", Start = "08:15", End = "10:00", Host = "SEB", Location = "Cornelis", Language = "Swedish", Capacity = 30 };
-            var event2 = new Event { Id = -2, Name = "Bounce with Uber", Description = "Day event at Bounce with Uber", Date = "2021-11-13", Start = "09:00", End = "16:00", Host = "Uber", Location = "Bounce Malmö", Language = "English", Capacity = 20 };
-            var event3 = new Event { Id = -3, Name = "CV Workshop with Randstad", Description = "Make your CV look professional with the help of Randstad", Date = "2021-11-14", Start = "13:30", End = "15:00", Host = "Randstad", Location = "E:A", Language = "Swedish", Capacity = 3 };
-            var event4 = new Event { Id = -4, Name = "Inspirational lunch lecture", Description = "Get inspired and expand your horizons", Date = "2021-11-15", Start = "12:15", End = "13:00", Host = "SYV", Location = "MA:3", Language = "Swedish", Capacity = 2 };
-            Events.AddRange(event1, event2, event3, event4);
+            var event1 = new Event { Id = -1, Name = "Breakfast Mingle", Description = "Breakfast with SEB", Date = "2022-11-12", Start = "08:15", End = "10:00", Host = "SEB", Location = "Cornelis", Language = "Swedish", Capacity = 30 };
+            var event2 = new Event { Id = -2, Name = "Bounce with Uber", Description = "Day event at Bounce with Uber", Date = "2022-11-13", Start = "09:00", End = "16:00", Host = "Uber", Location = "Bounce Malmö", Language = "English", Capacity = 20 };
+            var event3 = new Event { Id = -3, Name = "CV Workshop with Randstad", Description = "Make your CV look professional with the help of Randstad", Date = "2022-11-14", Start = "13:30", End = "15:00", Host = "Randstad", Location = "E:A", Language = "Swedish", Capacity = 3 };
+            var event4 = new Event { Id = -4, Name = "Inspirational lunch lecture", Description = "Get inspired and expand your horizons", Date = "2022-11-15", Start = "12:15", End = "13:00", Host = "SYV", Location = "MA:3", Language = "Swedish", Capacity = 2 };
+            var event5 = new Event { Id = -5, Name = "Pick apples with Apple", Description = "An apple a day keeps the doctor away", Date = DateTime.Now.AddHours(47).ToString(), Start = "12:15", End = "13:00", Host = "Apple", Location = "M:B", Language = "English", Capacity = 200};
+            Events.AddRange(event1, event2, event3, event4, event5);
             SaveChanges();
 
             // Tickets
@@ -96,7 +97,8 @@ namespace Nexpo.Models
             var ticket5 = new Ticket { Id = -5, Code = Guid.NewGuid(), PhotoOk = true, EventId = event4.Id.Value, UserId = user3.Id.Value };
             var ticket6 = new Ticket { Id = -6, Code = Guid.NewGuid(), PhotoOk = true, EventId = event4.Id.Value, UserId = user4.Id.Value };
             var ticket7 = new Ticket { Id = -7, Code = Guid.NewGuid(), PhotoOk = true, EventId = event1.Id.Value, UserId = user4.Id.Value };
-            Tickets.AddRange(ticket1, ticket2, ticket3, ticket4, ticket5, ticket6, ticket7);
+            var ticket8 = new Ticket { Id = -8, Code = Guid.NewGuid(), PhotoOk = true, EventId = event5.Id.Value, UserId = user3.Id.Value };
+            Tickets.AddRange(ticket1, ticket2, ticket3, ticket4, ticket5, ticket6, ticket7, ticket8);
             SaveChanges();
 
             // StudentSessionTimeslots

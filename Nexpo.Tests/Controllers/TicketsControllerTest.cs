@@ -31,6 +31,10 @@ namespace Nexpo.Tests.Controllers
                     json.Add("email", "admin@example.com");
                     json.Add("password", "password");
                     break;
+                case "student2":
+                    json.Add("email", "student2@example.com");
+                    json.Add("password", "password");
+                    break;
                 default:
                     json.Add("email", "student1@example.com");
                     json.Add("password", "password");
@@ -199,7 +203,7 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            
+
             var json = new JsonObject();
             json.Add("eventid", -1);
             json.Add("photook", true);
@@ -207,6 +211,22 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.ToString());
+        }
+
+        [Fact]
+        public async Task PostTicketLessThanTwoDaysBefore()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("", client);
+
+            var json = new JsonObject();
+            json.Add("eventid", -5);
+            json.Add("photook", true);
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), response.ToString());
         }
 
         [Fact]
@@ -229,6 +249,17 @@ namespace Nexpo.Tests.Controllers
 
             var response = await client.DeleteAsync("api/tickets/-22");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.ToString());
+        }
+
+        [Fact]
+        public async Task DeleteTicketCloseToEvent()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("student2", client);
+
+            var response = await client.DeleteAsync("api/tickets/-8");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), response.ToString());
         }
 
         [Fact]

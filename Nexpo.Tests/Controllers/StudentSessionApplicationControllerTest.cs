@@ -180,22 +180,16 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             var token = await Login("company", client);
 
-            //Ensure seed data is correct
-            var response = await client.GetAsync("/api/applications/-2");
-            var app = JsonConvert.DeserializeObject<StudentSessionApplication>((await response.Content.ReadAsStringAsync()));
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get application error code: " + response.StatusCode);
-            Assert.True(app.Status == StudentSessionApplicationStatus.NoResponse, "Incorrect seed data");
-
             //Update status
             var json = new JsonObject();
             json.Add("status", 1);
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            response = await client.PutAsync("api/applications/-1", payload);
+            var response = await client.PutAsync("api/applications/-1", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Put application error code: " + response.StatusCode);
 
             //Check update worked
             response = await client.GetAsync("/api/applications/-1");
-            app = JsonConvert.DeserializeObject<StudentSessionApplication>(await response.Content.ReadAsStringAsync());
+            var app = JsonConvert.DeserializeObject<StudentSessionApplication>(await response.Content.ReadAsStringAsync());
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Get application error code: " + response.StatusCode);
             Assert.True(app.Status == StudentSessionApplicationStatus.Accepted, "Status didn't update, got: " + app.Status);
 
