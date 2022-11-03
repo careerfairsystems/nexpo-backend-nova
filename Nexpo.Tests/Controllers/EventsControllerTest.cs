@@ -192,7 +192,7 @@ namespace Nexpo.Tests.Controllers
             json.Remove("language");
             json.Remove("capacity");
             json.Add("description", "Breakfast with SEB");
-            json.Add("date", "2021-11-12");
+            json.Add("date", "2022-11-12");
             json.Add("end", "10:00");
             json.Add("language", "Swedish");
             json.Add("capacity", 30);
