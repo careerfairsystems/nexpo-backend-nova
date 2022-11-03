@@ -90,6 +90,36 @@ namespace Nexpo.Controllers
             }
             return Ok(namedTickets);
         }
+
+        /// <summary>
+        /// Returns all food preferences of event. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("{id}/foodprefs")]
+        [Authorize(Roles = nameof(Role.CompanyRepresentative))]
+        [ProducesResponseType(typeof(IEnumerable<EventFoodDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetFoodPrefForEvent(int id)
+        {
+            var e = await _eventRepo.Get(id);
+            if (e == null)
+            {
+                return NotFound();
+            }
+
+            var tickets = await _ticketRepo.GetAllForEvent(e.Id.Value);
+
+            var foodPreferences = (from t in tickets
+                                  select _userRepository.Get(t.UserId).Result.FoodPreferences)
+                                  .ToArray();
+
+            var uniqueWithCount = foodPreferences.GroupBy(z => z)
+                                                    .Select(g => new EventFoodDto { Preference = (g.Key != null) ? g.Key : "Inget", Count = g.Count() });
+
+            return Ok(uniqueWithCount);
+        }
+        
         /// <summary>
         /// Update information for an Event
         /// </summary>

@@ -247,5 +247,23 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.Start == "08:15", $"Description was actually ({responseObject.Start})");
             Assert.True(responseObject.Location == "Cornelis", $"Description was actually ({responseObject.Location})");
         }
+
+        [Fact]
+        public async Task TestFoodPref()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("company", client);
+
+            var response = await client.GetAsync("/api/events/2/foodprefs");
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            
+
+
+
+
+        }
+
     }
 }
