@@ -56,7 +56,7 @@ namespace Nexpo.Tests.Controllers
             string responseText = await response.Content.ReadAsStringAsync();
             var responseList = JsonConvert.DeserializeObject<List<Event>>(responseText);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
-            Assert.True(responseList.Count == 4, responseText.ToString());
+            Assert.True(responseList.Count == 5, responseText.ToString());
 
             var firstEvent = responseList.Find(r => r.Id == -1);
             var secondEvent = responseList.Find(r => r.Id == -2);
@@ -64,7 +64,7 @@ namespace Nexpo.Tests.Controllers
             var fourthEvent = responseList.Find(r => r.Id == -4);
 
             Assert.True(firstEvent.Description == "Breakfast with SEB", firstEvent.Description);
-            Assert.True(secondEvent.Date == "2021-11-13", secondEvent.Date);
+            Assert.True(secondEvent.Date == "2022-11-13", secondEvent.Date);
             Assert.True(thirdEvent.Host == "Randstad", thirdEvent.Host);
             Assert.True(fourthEvent.Capacity == 2, fourthEvent.Capacity.ToString());
         }
@@ -81,7 +81,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
 
             Assert.True(responseObject.Name == "CV Workshop with Randstad", responseText);
-            Assert.True(responseObject.Date == "2021-11-14", responseText);
+            Assert.True(responseObject.Date == "2022-11-14", responseText);
             Assert.True(responseObject.End == "15:00", responseText);
             Assert.True(responseObject.Language == "Swedish", responseText);
         }
@@ -192,7 +192,7 @@ namespace Nexpo.Tests.Controllers
             json.Remove("language");
             json.Remove("capacity");
             json.Add("description", "Breakfast with SEB");
-            json.Add("date", "2021-11-12");
+            json.Add("date", "2022-11-12");
             json.Add("end", "10:00");
             json.Add("language", "Swedish");
             json.Add("capacity", 30);
@@ -239,7 +239,7 @@ namespace Nexpo.Tests.Controllers
             var responseObject = JsonConvert.DeserializeObject<AddEventDto>(responseText);
          
             Assert.True(responseObject.Description == "Breakfast with SEB", $"Description was actually ({responseObject.Description})");
-            Assert.True(responseObject.Date == "2021-11-12", $"Description was actually ({responseObject.Date})");
+            Assert.True(responseObject.Date == "2022-11-12", $"Description was actually ({responseObject.Date})");
             Assert.True(responseObject.End == "10:00", $"Description was actually ({responseObject.End})");
             Assert.True(responseObject.Language == "Swedish", $"Description was actually ({responseObject.Language})");
             Assert.True(responseObject.Capacity == 30, $"Description was actually ({responseObject.Capacity})");

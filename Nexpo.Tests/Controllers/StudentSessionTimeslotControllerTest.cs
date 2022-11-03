@@ -414,8 +414,8 @@ namespace Nexpo.Tests.Controllers
 
             //Add new timeslot
             var json = new JsonObject();
-       //   json.Add("start", "2021-11-15 12:45");
-       //   json.Add("end", "2021-11-15 13:15");
+            json.Add("start", DateTime.Parse("2021-11-15 12:45"));
+            json.Add("end", DateTime.Parse("2021-11-15 13:15"));
             json.Add("companyid", "-1");
             json.Add("location", "At home");
 

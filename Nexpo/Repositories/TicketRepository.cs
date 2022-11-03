@@ -15,6 +15,7 @@ namespace Nexpo.Repositories
         public Task<Ticket> Get(int id);
         public Task<Ticket> GetByCode(Guid code);
         public Task<bool> Add(Ticket ticket);
+        public Task AddAdmin(Ticket ticket);
         public Task Update(Ticket ticket);
         public Task Remove(Ticket ticket);
 
@@ -65,7 +66,7 @@ namespace Nexpo.Repositories
                 var _event = await _eventRepo.Get(ticket.EventId);
                 
                 // Don't add ticket if limit is reached
-                if (_event.TicketCount == _event.Capacity) {
+                if (_event.TicketCount >= _event.Capacity) {
                     return false;
                 }
                 
@@ -74,6 +75,12 @@ namespace Nexpo.Repositories
                 dbContextTransaction.Commit();
                 return true;
             }
+        }
+
+        public async Task AddAdmin(Ticket ticket)
+        {
+            _context.Tickets.Add(ticket);
+            await _context.SaveChangesAsync();
         }
 
         public async Task Update(Ticket ticket)
