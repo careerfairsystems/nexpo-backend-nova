@@ -86,7 +86,51 @@ namespace Nexpo.Controllers
             }
             return Ok(namedTickets);
         }
+        /// <summary>
+        /// Update information for an Event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
+        public async Task<ActionResult> UpdateEvent(int id, AddEventDto dto)
+        {
 
+            var even = await _eventRepo.Get(id);
+
+            if(!string.IsNullOrEmpty(dto.Name)){
+                even.Name = dto.Name; 
+            }
+            if(!string.IsNullOrEmpty(dto.Description)){
+                even.Description = dto.Description; 
+            }
+            if(!string.IsNullOrEmpty(dto.Date)){
+                even.Date = dto.Date; 
+            }
+            if(!string.IsNullOrEmpty(dto.Start)){
+                even.Start = dto.Start; 
+            }
+            if(!string.IsNullOrEmpty(dto.End)){
+                even.End = dto.End; 
+            }
+            if(!string.IsNullOrEmpty(dto.Location)){
+                even.Location = dto.Location; 
+            }
+            if(!string.IsNullOrEmpty(dto.Host)){
+                even.Host = dto.Host; 
+            }
+            if(!string.IsNullOrEmpty(dto.Language)){
+                even.Language = dto.Language; 
+            }
+            if(dto.Capacity != 0){
+                even.Capacity = dto.Capacity; 
+            }
+            await _eventRepo.Update(even);
+
+            return Ok(even);
+        }
 
         [HttpPost]
         [Authorize(Roles = nameof(Role.Administrator))]

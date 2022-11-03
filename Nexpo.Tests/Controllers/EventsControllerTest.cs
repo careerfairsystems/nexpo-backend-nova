@@ -151,5 +151,101 @@ namespace Nexpo.Tests.Controllers
             var response = await client.GetAsync("/api/events/55/tickets");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.StatusCode.ToString());
         }
+        
+        [Fact]
+        public async Task PutEvent()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+            var dto = new AddEventDto();
+            dto.Description = "New description";
+            dto.Date = "2011-03-07";
+            dto.End = "17:00";
+            dto.Language = "English";
+            dto.Capacity = 25;
+            
+            var json = new JsonObject();
+            json.Add("description", dto.Description);
+            json.Add("date", dto.Date);
+            json.Add("end", dto.End);
+            json.Add("language", dto.Language);
+            json.Add("capacity", dto.Capacity);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("/api/events/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<AddEventDto>(responseText);
+         
+            Assert.True(responseObject.Description == "New description", $"Description was actually ({responseObject.Description})");
+            Assert.True(responseObject.Date == "2011-03-07", $"Description was actually ({responseObject.Date})");
+            Assert.True(responseObject.End == "17:00", $"Description was actually ({responseObject.End})");
+            Assert.True(responseObject.Language == "English", $"Description was actually ({responseObject.Language})");
+            Assert.True(responseObject.Capacity == 25, $"Description was actually ({responseObject.Capacity})");
+            Assert.True(responseObject.Name == "Breakfast Mingle", $"Description was actually ({responseObject.Name})");
+            Assert.True(responseObject.Start == "08:15", $"Description was actually ({responseObject.Start})");
+            json.Remove("description");
+            json.Remove("date");
+            json.Remove("end");
+            json.Remove("language");
+            json.Remove("capacity");
+            json.Add("description", "Breakfast with SEB");
+            json.Add("date", "2021-11-12");
+            json.Add("end", "10:00");
+            json.Add("language", "Swedish");
+            json.Add("capacity", 30);
+            await client.PutAsync("/api/events/-1", new StringContent(json.ToString(), Encoding.UTF8, "application/json"));
+        }
+
+        [Fact]
+        public async Task PutUnauthorized()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("company", client);
+            var dto = new AddEventDto();
+            dto.Description = "None";
+            
+            var json = new JsonObject();
+            json.Add("description", dto.Description);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("/api/events/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<AddEventDto>(responseText);
+         
+            Assert.True(responseObject == null, "Object was not null");
+        }
+
+        [Fact]
+        public async Task PutEmpty()
+        {
+            var application = new WebApplicationFactory<Nexpo.Program>();
+            var client = application.CreateClient();
+            var token = await Login("admin", client);
+            var dto = new AddEventDto();
+            
+            var json = new JsonObject();
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("/api/events/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+
+            string responseText = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<AddEventDto>(responseText);
+         
+            Assert.True(responseObject.Description == "Breakfast with SEB", $"Description was actually ({responseObject.Description})");
+            Assert.True(responseObject.Date == "2021-11-12", $"Description was actually ({responseObject.Date})");
+            Assert.True(responseObject.End == "10:00", $"Description was actually ({responseObject.End})");
+            Assert.True(responseObject.Language == "Swedish", $"Description was actually ({responseObject.Language})");
+            Assert.True(responseObject.Capacity == 30, $"Description was actually ({responseObject.Capacity})");
+            Assert.True(responseObject.Name == "Breakfast Mingle", $"Description was actually ({responseObject.Name})");
+            Assert.True(responseObject.Start == "08:15", $"Description was actually ({responseObject.Start})");
+            Assert.True(responseObject.Location == "Cornelis", $"Description was actually ({responseObject.Location})");
+        }
     }
 }
