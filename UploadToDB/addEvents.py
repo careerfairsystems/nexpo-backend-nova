@@ -8,10 +8,7 @@ jsonfile = '{event}.json'
 url = 'http://{localhost}/api/events'
 loginUrl = 'http://{localhost}/api/session/signin'
 
-
-token = login.login(loginUrl)
-
-
+token = login.get_token()
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)

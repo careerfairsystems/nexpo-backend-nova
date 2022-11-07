@@ -2,24 +2,13 @@ import requests
 import json
 import pandas as pd
 from collections import Counter
-
+from login import get_token
 HEADER = {
     "accept": "application/json",
     "Content-Type": "application/json",
 }
 
 BASE_URL = "https://www.nexpo.arkadtlth.se/api"
-
-ADMIN_USER = {
-    "email": "admin@admin.com",
-    "password": "admin"
-}
-
-def _get_token():
-    url = f"{BASE_URL}/session/signin"
-    response = requests.post(url, headers=HEADER, data=json.dumps(ADMIN_USER))
-    return f"Bearer {response.json()['token']}"
-
 
 def all_events():
     url = f"{BASE_URL}/events"
@@ -32,7 +21,7 @@ def all_events():
 def get_food_pref(event_id: int):
     food_preferences = []
     url = f"{BASE_URL}/events/{event_id}/tickets"
-    admin_header = {**HEADER, 'authorization': _get_token()}
+    admin_header = {**HEADER, 'authorization': get_token()}
 
     tickets = requests.get(url, headers=admin_header).json()
     for ticket in tickets:
