@@ -6,10 +6,8 @@ import login
 jsonfile = 'example.json'
 url = 'http://{url}/api/companies'
 s3BucketUrl = '{s3BucketUrl}'
-loginUrl = 'http://{url}:5000/api/session/signin'
 
-
-token = login.login(loginUrl)
+token = login.get_token()
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)

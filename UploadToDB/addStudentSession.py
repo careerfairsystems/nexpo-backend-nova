@@ -5,9 +5,8 @@ import requests
 
 jsonfile = 'example.json'
 url = 'http://{localhost}/api/timeslots/add'
-loginUrl = 'http://{localhost}/api/session/signin'
 
-token = login.login(loginUrl)
+token = login.get_token()
 
 headers = {
         'accept': 'text/plain',
