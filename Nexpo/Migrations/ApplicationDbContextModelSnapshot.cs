@@ -72,34 +72,6 @@ namespace Nexpo.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("Nexpo.Models.CompanyConnection", b =>
-                {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("text");
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("CompanyConnections");
-                });
-
             modelBuilder.Entity("Nexpo.Models.Event", b =>
                 {
                     b.Property<int?>("Id")
@@ -325,25 +297,6 @@ namespace Nexpo.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Nexpo.Models.CompanyConnection", b =>
-                {
-                    b.HasOne("Nexpo.Models.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Nexpo.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("Nexpo.Models.Student", b =>

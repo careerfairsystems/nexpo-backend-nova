@@ -16,13 +16,11 @@ namespace Nexpo.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly IStudentRepository _studentRepo;
-        private readonly ICompanyConnectionRepository _connectionRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
 
-        public StudentsController(IStudentRepository iStudentRepo, ICompanyConnectionRepository iConnectionRepo, IStudentSessionApplicationRepository iApplicationRepo)
+        public StudentsController(IStudentRepository iStudentRepo, IStudentSessionApplicationRepository iApplicationRepo)
         {
             _studentRepo = iStudentRepo;
-            _connectionRepo = iConnectionRepo;
             _applicationRepo = iApplicationRepo;
         }
 
