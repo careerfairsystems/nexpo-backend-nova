@@ -11,8 +11,6 @@ using System.IO;
 using Newtonsoft.Json;
 using Nexpo.Models;
 using System.Collections.Generic;
-using SendGrid;
-using Microsoft.OpenApi.Expressions;
 
 namespace Nexpo.Tests.Controllers
 {

@@ -10,7 +10,6 @@ using Xunit;
 using System.IO;
 using Newtonsoft.Json;
 using Nexpo.Models;
-using static System.Net.WebRequestMethods;
 
 namespace Nexpo.Tests.Controllers
 {

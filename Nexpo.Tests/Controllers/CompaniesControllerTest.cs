@@ -12,8 +12,6 @@ using Newtonsoft.Json;
 using Nexpo.Models;
 using Nexpo.DTO;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace Nexpo.Tests.Controllers 
 {

@@ -1,15 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Amazon;
-using Amazon.S3;
-using Amazon.S3.Model;
 using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using Nexpo.AWS;
-using System.IO;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Linq;
 
 namespace Nexpo.Controllers
 {

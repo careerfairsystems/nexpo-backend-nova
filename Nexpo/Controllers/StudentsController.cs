@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nexpo.DTO;
 using Nexpo.Helpers;
-using Nexpo.Migrations;
 using Nexpo.Models;
 using Nexpo.Repositories;
 
