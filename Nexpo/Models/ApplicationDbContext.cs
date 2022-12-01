@@ -13,7 +13,6 @@ namespace Nexpo.Models
         public DbSet<Company> Companies { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
-        public DbSet<CompanyConnection> CompanyConnections { get; set; }
         public DbSet<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
         public DbSet<StudentSessionApplication> StudentSessionApplications { get; set; }
 
@@ -81,10 +80,10 @@ namespace Nexpo.Models
             SaveChanges();
 
             // Events
-            var event1 = new Event { Id = -1, Name = "Breakfast Mingle", Description = "Breakfast with SEB", Date = "2022-11-12", Start = "08:15", End = "10:00", Host = "SEB", Location = "Cornelis", Language = "Swedish", Capacity = 30 };
-            var event2 = new Event { Id = -2, Name = "Bounce with Uber", Description = "Day event at Bounce with Uber", Date = "2022-11-13", Start = "09:00", End = "16:00", Host = "Uber", Location = "Bounce Malmö", Language = "English", Capacity = 20 };
-            var event3 = new Event { Id = -3, Name = "CV Workshop with Randstad", Description = "Make your CV look professional with the help of Randstad", Date = "2022-11-14", Start = "13:30", End = "15:00", Host = "Randstad", Location = "E:A", Language = "Swedish", Capacity = 3 };
-            var event4 = new Event { Id = -4, Name = "Inspirational lunch lecture", Description = "Get inspired and expand your horizons", Date = "2022-11-15", Start = "12:15", End = "13:00", Host = "SYV", Location = "MA:3", Language = "Swedish", Capacity = 2 };
+            var event1 = new Event { Id = -1, Name = "Breakfast Mingle", Description = "Breakfast with SEB", Date = DateTime.Now.AddDays(10).Date.ToString(), Start = "08:15", End = "10:00", Host = "SEB", Location = "Cornelis", Language = "Swedish", Capacity = 30 };
+            var event2 = new Event { Id = -2, Name = "Bounce with Uber", Description = "Day event at Bounce with Uber", Date = DateTime.Now.AddDays(11).Date.ToString(), Start = "09:00", End = "16:00", Host = "Uber", Location = "Bounce Malmö", Language = "English", Capacity = 20 };
+            var event3 = new Event { Id = -3, Name = "CV Workshop with Randstad", Description = "Make your CV look professional with the help of Randstad", Date = DateTime.Now.AddDays(12).Date.ToString(), Start = "13:30", End = "15:00", Host = "Randstad", Location = "E:A", Language = "Swedish", Capacity = 3 };
+            var event4 = new Event { Id = -4, Name = "Inspirational lunch lecture", Description = "Get inspired and expand your horizons", Date = DateTime.Now.AddDays(14).Date.ToString(), Start = "12:15", End = "13:00", Host = "SYV", Location = "MA:3", Language = "Swedish", Capacity = 2 };
             var event5 = new Event { Id = -5, Name = "Pick apples with Apple", Description = "An apple a day keeps the doctor away", Date = DateTime.Now.AddHours(47).ToString(), Start = "12:15", End = "13:00", Host = "Apple", Location = "M:B", Language = "English", Capacity = 200};
             Events.AddRange(event1, event2, event3, event4, event5);
             SaveChanges();
@@ -125,12 +124,6 @@ namespace Nexpo.Models
             StudentSessionApplications.AddRange(application1, application2, application3, application4, application5, application6, application7);
             SaveChanges();
 
-
-            // CompanyConnections
-            var connection1 = new CompanyConnection { Id = -1, Comment = "Someone that is very passionate about what they are doing", Rating = 4, StudentId = student1.Id.Value, CompanyId = company1.Id.Value };
-            var connection2 = new CompanyConnection { Id = -2, Comment = "Seems like a interesting guy, contact him later about internship", Rating = 5, StudentId = student3.Id.Value, CompanyId = company4.Id.Value };
-            CompanyConnections.AddRange(connection1, connection2);
-            SaveChanges();
         }
     }
 }

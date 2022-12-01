@@ -64,7 +64,7 @@ namespace Nexpo.Tests.Controllers
             var fourthEvent = responseList.Find(r => r.Id == -4);
 
             Assert.True(firstEvent.Description == "Breakfast with SEB", firstEvent.Description);
-            Assert.True(secondEvent.Date == "2022-11-13", secondEvent.Date);
+            Assert.True(secondEvent.Date == DateTime.Now.AddDays(11).Date.ToString(), secondEvent.Date);
             Assert.True(thirdEvent.Host == "Randstad", thirdEvent.Host);
             Assert.True(fourthEvent.Capacity == 2, fourthEvent.Capacity.ToString());
         }
@@ -81,7 +81,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK));
 
             Assert.True(responseObject.Name == "CV Workshop with Randstad", responseText);
-            Assert.True(responseObject.Date == "2022-11-14", responseText);
+            Assert.True(responseObject.Date == DateTime.Now.AddDays(12).Date.ToString(), responseText);
             Assert.True(responseObject.End == "15:00", responseText);
             Assert.True(responseObject.Language == "Swedish", responseText);
         }
@@ -239,7 +239,7 @@ namespace Nexpo.Tests.Controllers
             var responseObject = JsonConvert.DeserializeObject<AddEventDto>(responseText);
          
             Assert.True(responseObject.Description == "Breakfast with SEB", $"Description was actually ({responseObject.Description})");
-            Assert.True(responseObject.Date == "2022-11-12", $"Description was actually ({responseObject.Date})");
+            Assert.True(responseObject.Date == DateTime.Now.AddDays(10).Date.ToString(), $"Description was actually ({responseObject.Date})");
             Assert.True(responseObject.End == "10:00", $"Description was actually ({responseObject.End})");
             Assert.True(responseObject.Language == "Swedish", $"Description was actually ({responseObject.Language})");
             Assert.True(responseObject.Capacity == 30, $"Description was actually ({responseObject.Capacity})");

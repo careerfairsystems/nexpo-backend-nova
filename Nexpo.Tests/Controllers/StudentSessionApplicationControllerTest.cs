@@ -3,7 +3,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net;
 using System.Text;
@@ -13,7 +12,6 @@ using Xunit;
 using Newtonsoft.Json;
 using Nexpo.Models;
 using Nexpo.DTO;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace Nexpo.Tests.Controllers
 {

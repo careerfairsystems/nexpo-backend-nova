@@ -8,8 +8,6 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
 using System.IO;
-using SendGrid;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Nexpo.Tests.Controllers
 {

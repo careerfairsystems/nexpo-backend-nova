@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nexpo.DTO;
 using Nexpo.Helpers;
-using Nexpo.Migrations;
 using Nexpo.Models;
 using Nexpo.Repositories;
 
@@ -16,13 +15,11 @@ namespace Nexpo.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly IStudentRepository _studentRepo;
-        private readonly ICompanyConnectionRepository _connectionRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
 
-        public StudentsController(IStudentRepository iStudentRepo, ICompanyConnectionRepository iConnectionRepo, IStudentSessionApplicationRepository iApplicationRepo)
+        public StudentsController(IStudentRepository iStudentRepo, IStudentSessionApplicationRepository iApplicationRepo)
         {
             _studentRepo = iStudentRepo;
-            _connectionRepo = iConnectionRepo;
             _applicationRepo = iApplicationRepo;
         }
 
