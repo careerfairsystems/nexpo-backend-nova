@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
@@ -18,7 +17,6 @@ namespace Nexpo.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _userRepo;
-        private readonly ICompanyConnectionRepository _connectionRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
         private readonly IStudentRepository _studentRepo;
         private readonly PasswordService _passwordService;
@@ -28,8 +26,7 @@ namespace Nexpo.Controllers
         private IS3Configuration _s3Configuration;
 
         public UsersController(
-            IUserRepository iUserRepo, 
-            ICompanyConnectionRepository iConnectionRepo, 
+            IUserRepository iUserRepo,
             IStudentSessionApplicationRepository iApplicationRepo,
             IStudentRepository iStudentRepository,
             PasswordService passwordService,
@@ -39,7 +36,6 @@ namespace Nexpo.Controllers
             )
         {
             _userRepo = iUserRepo;
-            _connectionRepo = iConnectionRepo;
             _applicationRepo = iApplicationRepo;
             _studentRepo = iStudentRepository;
             _passwordService = passwordService;

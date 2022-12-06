@@ -1,7 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using Nexpo.Services;
+﻿using Nexpo.Services;
 using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace Nexpo.Tests.Services
