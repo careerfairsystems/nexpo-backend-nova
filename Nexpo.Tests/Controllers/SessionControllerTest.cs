@@ -18,9 +18,11 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var json = new JsonObject();
-            json.Add("email", "student1@example.com");
-            json.Add("password", "password");
+            var json = new JsonObject
+            {
+                { "email", "student1@example.com" },
+                { "password", "password" }
+            };
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
@@ -32,9 +34,11 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var json = new JsonObject();
-            json.Add("email", "rep1@company1.example.com");
-            json.Add("password", "password");
+            var json = new JsonObject
+            {
+                { "email", "rep1@company1.example.com" },
+                { "password", "password" }
+            };
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
@@ -46,9 +50,11 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var json = new JsonObject();
-            json.Add("email", "admin@example.com");
-            json.Add("password", "password");
+            var json = new JsonObject
+            {
+                { "email", "admin@example.com" },
+                { "password", "password" }
+            };
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
@@ -60,9 +66,11 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var json = new JsonObject();
-            json.Add("email", "student1@example.com");
-            json.Add("password", "Password");
+            var json = new JsonObject
+            {
+                { "email", "student1@example.com" },
+                { "password", "Password" }
+            };
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
@@ -74,9 +82,11 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var json = new JsonObject();
-            json.Add("email", "student1@example.se");
-            json.Add("password", "password");
+            var json = new JsonObject
+            {
+                { "email", "student1@example.se" },
+                { "password", "password" }
+            };
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
@@ -88,8 +98,10 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var json = new JsonObject();
-            json.Add("email", "student1@example.com");
+            var json = new JsonObject
+            {
+                { "email", "student1@example.com" }
+            };
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/forgot_password", payload);
@@ -101,8 +113,10 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var json = new JsonObject();
-            json.Add("email", "student1@example.se");
+            var json = new JsonObject
+            {
+                { "email", "student1@example.se" }
+            };
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/forgot_password", payload);
@@ -114,9 +128,11 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var json = new JsonObject();
-            json.Add("email", "student1@example.com");
-            json.Add("password", "password");
+            var json = new JsonObject
+            {
+                { "email", "student1@example.com" },
+                { "password", "password" }
+            };
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
@@ -126,9 +142,11 @@ namespace Nexpo.Tests.Controllers
             token = "Bearer " + parser.Value<String>("token");
             client.DefaultRequestHeaders.Add("Authorization", token);
 
-            var json2 = new JsonObject();
-            json2.Add("token", token);
-            json2.Add("password", "newPassword123");
+            var json2 = new JsonObject
+            {
+                { "token", token },
+                { "password", "newPassword123" }
+            };
 
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PostAsync("/api/session/reset_password", payload2);
@@ -140,9 +158,11 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-            var json = new JsonObject();
-            json.Add("email", "student1@example.com");
-            json.Add("password", "password");
+            var json = new JsonObject
+            {
+                { "email", "student1@example.com" },
+                { "password", "password" }
+            };
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
@@ -152,9 +172,11 @@ namespace Nexpo.Tests.Controllers
             token = "Bearer " + parser.Value<String>("token");
             client.DefaultRequestHeaders.Add("Authorization", token);
 
-            var json2 = new JsonObject();
-            json2.Add("token", token);
-            json2.Add("password", "newP");
+            var json2 = new JsonObject
+            {
+                { "token", token },
+                { "password", "newP" }
+            };
 
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PostAsync("/api/session/reset_password", payload2);

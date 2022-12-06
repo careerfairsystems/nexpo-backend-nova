@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Nexpo.Models;
 using System.Collections.Generic;
 using Nexpo.DTO;
+using System;
 
 namespace Nexpo.Tests.Controllers
 {
@@ -34,7 +35,7 @@ namespace Nexpo.Tests.Controllers
             var fourthEvent = responseList.Find(r => r.Id == -4);
 
             Assert.True(firstEvent.Description.Equals("Breakfast with SEB"), "Wrong Description. Expected: Breakfast with SEB. Recieved: " + firstEvent.Description);
-            Assert.True(secondEvent.Date.Equals("2022-11-13"), "Wrong Date. Expexted: 2022-11-13. Recieved: " + secondEvent.Date);
+            Assert.True(secondEvent.Date.Equals(DateTime.Now.AddDays(11).Date.ToString()), "Wrong Date. Expexted: " + DateTime.Now.AddDays(11).Date.ToString() + ". Recieved: " + secondEvent.Date);
             Assert.True(thirdEvent.Host.Equals("Randstad"), "Wrong Host. Expected: Ranstad. Recieved: " + thirdEvent.Host);
             Assert.True(fourthEvent.Capacity == 2, "Wrong capacity. Expected: 2. Recieved: " + fourthEvent.Capacity.ToString());
         }
@@ -51,7 +52,7 @@ namespace Nexpo.Tests.Controllers
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Recieved: " + response.StatusCode.ToString());
             Assert.True(responseObject.Name.Equals("CV Workshop with Randstad"), "Wrong event name. Expected: CV Workshop with Randstad. Recieved: " + responseObject.Name);
-            Assert.True(responseObject.Date.Equals("2022-11-14"), "Wrong Date. Expected: 2022-11-14. Recieved: " + responseObject.Date);
+            Assert.True(responseObject.Date.Equals(DateTime.Now.AddDays(12).Date.ToString()), "Wrong Date. Expected: " + DateTime.Now.AddDays(12).Date.ToString() + ". Recieved: " + responseObject.Date);
             Assert.True(responseObject.End.Equals("15:00"), "Wrong end time. Expected: 15:00. Recieved: "  + responseObject.End );
             Assert.True(responseObject.Language.Equals("Swedish"), "Wrong Language. Expected: Swedish. Recieved: " + responseObject.Language);
         }
@@ -127,13 +128,15 @@ namespace Nexpo.Tests.Controllers
             dto.End = "17:00";
             dto.Language = "English";
             dto.Capacity = 25;
-            
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
-            json.Add("date", dto.Date);
-            json.Add("end", dto.End);
-            json.Add("language", dto.Language);
-            json.Add("capacity", dto.Capacity);
+
+            var json = new JsonObject
+            {
+                { "description", dto.Description },
+                { "date", dto.Date },
+                { "end", dto.End },
+                { "language", dto.Language },
+                { "capacity", dto.Capacity }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/events/-1", payload);
 
@@ -201,7 +204,7 @@ namespace Nexpo.Tests.Controllers
             var responseObject = JsonConvert.DeserializeObject<AddEventDto>(responseText);
          
             Assert.True(responseObject.Description.Equals("Get inspired and expand your horizons"), $"Wrong description. Description was actually ({responseObject.Description})");
-            Assert.True(responseObject.Date.Equals("2022-11-15"), $"Wrong date. Date was actually ({responseObject.Date})");
+            Assert.True(responseObject.Date.Equals(DateTime.Now.AddDays(14).Date.ToString()), $"Wrong date. Date was actually ({responseObject.Date})");
             Assert.True(responseObject.End.Equals("13:00"), $"Wrong end time. Was actually ({responseObject.End})");
             Assert.True(responseObject.Language.Equals("Swedish"), $"Wrong Language. Was actually ({responseObject.Language})");
             Assert.True(responseObject.Capacity == 2, $"Wrong capacity. Was actually ({responseObject.Capacity})");

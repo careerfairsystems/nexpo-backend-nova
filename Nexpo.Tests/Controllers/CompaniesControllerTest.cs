@@ -92,10 +92,13 @@ namespace Nexpo.Tests.Controllers
             var client = await TestUtils.Login("admin");
             var dto = new UpdateCompanyDto();
             dto.Description = "New description";
-            
+
             //Update Description
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
+            var json = new JsonObject
+            {
+                { "description", dto.Description }
+            };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/-3", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Recieved: " + response.StatusCode.ToString());
@@ -125,9 +128,12 @@ namespace Nexpo.Tests.Controllers
             var client = await TestUtils.Login("company1");
             var dto = new UpdateCompanyDto();
             dto.Description = "None";
-            
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
+
+            var json = new JsonObject
+            {
+                { "description", dto.Description }
+            };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/-1", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Recieved: " + response.StatusCode.ToString());
@@ -143,9 +149,12 @@ namespace Nexpo.Tests.Controllers
             var client = await TestUtils.Login("admin");
             var dto = new UpdateCompanyDto();
             dto.Description = "None";
-            
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
+
+            var json = new JsonObject
+            {
+                { "description", dto.Description }
+            };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/-22", payload);
 
@@ -186,9 +195,12 @@ namespace Nexpo.Tests.Controllers
             var client = await TestUtils.Login("company2");
             var dto = new UpdateCompanyDto();
             dto.Description = "New description";
-            
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
+
+            var json = new JsonObject
+            {
+                { "description", dto.Description }
+            };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/me", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Recieved: " + response.StatusCode.ToString());
@@ -214,9 +226,12 @@ namespace Nexpo.Tests.Controllers
             var client = await TestUtils.Login("admin");
             var dto = new UpdateCompanyDto();
             dto.Description = "None";
-            
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
+
+            var json = new JsonObject
+            {
+                { "description", dto.Description }
+            };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/me", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Recieved: " + response.StatusCode.ToString());
@@ -230,10 +245,13 @@ namespace Nexpo.Tests.Controllers
         public async Task PostThenDelete()
         {
             var client = await TestUtils.Login("admin");
-            
-            var json = new JsonObject();
-            json.Add("description", "We produce the best and brightest.");
-            json.Add("name", "LTH");
+
+            var json = new JsonObject
+            {
+                { "description", "We produce the best and brightest." },
+                { "name", "LTH" }
+            };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/companies/", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Recieved: " + response.StatusCode.ToString());
