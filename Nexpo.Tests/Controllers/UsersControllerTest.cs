@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Nexpo.Models;
-using System;
+using SendGrid;
 using System.Collections.Generic;
-using System.IO;
+using System.Data;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -16,415 +16,346 @@ namespace Nexpo.Tests.Controllers
 { 
     public class UserControllerTest
     {
-        private async Task<String> Login(string role, HttpClient client)
-        {
-            var json = new JsonObject();
-            switch (role)
-            {
-                case "company":
-                    json.Add("email", "rep1@company1.example.com");
-                    json.Add("password", "password");
-                    break;
-                case "company3":
-                    json.Add("email", "rep1@company3.example.com");
-                    json.Add("password", "password");
-                    break;
-                case "admin":
-                    json.Add("email", "admin@example.com");
-                    json.Add("password", "password");
-                    break;
-                case "student2":
-                    json.Add("email", "student2@example.com");
-                    json.Add("password", "password");
-                    break;
-                default:
-                    json.Add("email", "student1@example.com");
-                    json.Add("password", "password");
-                    break;
-            }
-
-            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("/api/session/signin", payload);
-            string token = new StreamReader(response.Content.ReadAsStream()).ReadToEnd();
-            var parser = JObject.Parse(token);
-            token = "Bearer " + parser.Value<String>("token");
-            client.DefaultRequestHeaders.Add("Authorization", token);
-            return token;
-        }
-
         [Fact]
         public async Task AdminGetAllUsers()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
+            var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/users/");
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseList = JsonConvert.DeserializeObject<List<User>>(responseText);
-            Assert.True(responseList.Count == 9, responseText.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
+            var responseList = JsonConvert.DeserializeObject<List<User>>(await response.Content.ReadAsStringAsync());
             var userAdmin = responseList.Find(r => r.Id == -1);
             var userStudent = responseList.Find(r => r.Id == -2);
             var userRep = responseList.Find(r => r.Id == -5);
-
-            Assert.True(userAdmin.Role.Equals(Role.Administrator), userAdmin.Role.ToString());
-            Assert.True(userStudent.FirstName == "Alpha", userStudent.FirstName);
-            Assert.True(userRep.CompanyId == -1, userRep.CompanyId.ToString());
+            
+            Assert.True(responseList.Count == 9, "Wrong number of users. Expected: 9. Received: " + responseList.Count.ToString());
+            Assert.True(userAdmin.Role.Equals(Role.Administrator), "Wrong user role. Expected: admin. Received: " + userAdmin.Role.ToString());
+            Assert.True(userStudent.FirstName.Equals("Alpha"), "Wrong user first name. Expected: Alpha. Received: " +  userStudent.FirstName);
+            Assert.True(userRep.CompanyId == -1, "Wrong company id. Expected: -1. Received: " + userRep.CompanyId.ToString());
         }
 
         [Fact]
         public async Task StudentGetAllUsers()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("", client);
+            var client =  await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/users/");
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseList = JsonConvert.DeserializeObject<List<User>>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
         public async Task AdminGetUser()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
+            var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/users/-5");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseUser = JsonConvert.DeserializeObject<User>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-            Assert.True(responseUser.CompanyId == -1, responseUser.CompanyId.ToString());
-            Assert.True(responseUser.Email == "rep1@company1.example.com", responseUser.Email);
-            Assert.True(responseUser.Role.Equals(Role.CompanyRepresentative), responseUser.Role.ToString());
+            var responseUser = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+            Assert.True(responseUser.CompanyId == -1, "Wrong company id. Expected: -1. Received: " + responseUser.CompanyId.ToString());
+            Assert.True(responseUser.Email.Equals("rep1@company1.example.com"), "Wrong email. Expected: rep1@company1.example.com. Received: " + responseUser.Email);
+            Assert.True(responseUser.Role.Equals(Role.CompanyRepresentative), "Wrong user role. Expected: CompanyRepresentative. Received: " + responseUser.Role.ToString());
         }
 
         [Fact]
         public async Task CompanyGetUserLegit()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("company", client);
+            var client = await TestUtils.Login("company1");
             var response = await client.GetAsync("/api/users/-2");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseUser = JsonConvert.DeserializeObject<User>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-            Assert.True(responseUser.FirstName == "Alpha", responseUser.FirstName);
-            Assert.True(responseUser.Email == "student1@example.com", responseUser.Email);
-            Assert.True(responseUser.Role.Equals(Role.Student), responseUser.Role.ToString());
+            var responseUser = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+            Assert.True(responseUser.FirstName.Equals("Alpha"), "Wrong user first name. Expected: Alpha. Received: " + responseUser.FirstName);
+            Assert.True(responseUser.Email.Equals("student1@example.com"), "Wrong email. Expected: student1@example.com. Received: " + responseUser.Email);
+            Assert.True(responseUser.Role.Equals(Role.Student), "Wrong user role. Expected: Student. Received: " + responseUser.Role.ToString());
         }
 
         [Fact]
         public async Task CompanyGetUserNotStudent()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("company", client);
+            var client = await TestUtils.Login("company1");
             var response = await client.GetAsync("/api/users/-6");
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseUser = JsonConvert.DeserializeObject<User>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
         public async Task CompanyGetUserNoStudentApplication()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("company3", client);
+            var client =  await TestUtils.Login("company3");
             var response = await client.GetAsync("/api/users/-2");
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseUser = JsonConvert.DeserializeObject<User>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
         public async Task StudentGetUser()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("", client);
+            var client =  await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/users/-2");
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseUser = JsonConvert.DeserializeObject<User>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
         public async Task AdminUpdateUser()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
-
-            var json = new JsonObject();
-            json.Add("firstName", "Rakel");
-            json.Add("password", "superdupersecret");
-
+            var application = new WebApplicationFactory<Program>();
+            var client =  await TestUtils.Login("admin");
+            var json = new JsonObject
+            {
+                { "firstName", "Rakel" },
+                { "password", "superdupersecret" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync("api/users/-3", payload);
-            var responseObject = JsonConvert.DeserializeObject<User>((await response.Content.ReadAsStringAsync()));
-
-            //Assertions of response
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
-            Assert.True(responseObject.Id == -3, responseObject.Id.ToString());
-            Assert.True(responseObject.FirstName == "Rakel", responseObject.FirstName);
-            Assert.True(responseObject.LastName == "Student", responseObject.LastName);
-            Assert.True(responseObject.Role.Equals(Role.Student), responseObject.Role.ToString());
-            Assert.True(responseObject.PhoneNr == null, responseObject.PhoneNr);
-            Assert.True(responseObject.FoodPreferences == null, responseObject.FoodPreferences);
+            var response = await client.PutAsync("api/users/-6", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
 
             //Sign-in with old password
             var testClient = application.CreateClient();
-            var testJson = new JsonObject();
-            testJson.Add("email", "student2@example.com");
-            testJson.Add("password", "password");
+            var testJson = new JsonObject
+            {
+                { "email", "rep2@company1.example.com" },
+                { "password", "password" }
+            };
             var testPayload = new StringContent(testJson.ToString(), Encoding.UTF8, "application/json");
             var testResponse = await testClient.PostAsync("/api/session/signin", testPayload);
-            Assert.True(testResponse.StatusCode.Equals(HttpStatusCode.BadRequest), "Unauthorized Login, returned: " + testResponse.StatusCode.ToString());
+            Assert.True(testResponse.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + testResponse.StatusCode.ToString());
 
             //Sign-in with new password
             var test2Client = application.CreateClient();
-            var test2Json = new JsonObject();
-            test2Json.Add("email", "student2@example.com");
-            test2Json.Add("password", "superdupersecret");
+            var test2Json = new JsonObject
+            {
+                { "email", "rep2@company1.example.com" },
+                { "password", "superdupersecret" }
+            };
             var test2Payload = new StringContent(test2Json.ToString(), Encoding.UTF8, "application/json");
             var test2Response = await test2Client.PostAsync("/api/session/signin", test2Payload);
-            Assert.True(test2Response.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + test2Response.StatusCode.ToString());
+            Assert.True(test2Response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + test2Response.StatusCode.ToString());
 
             //Restore
-            var json2 = new JsonObject();
-            json2.Add("firstName", "Alpha");
-            json2.Add("lastName", null);
-            json2.Add("password", "password");
+            var json2 = new JsonObject
+            {
+                { "firstName", "Alpha" },
+                { "lastName", null },
+                { "password", "password" }
+            };
 
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
-            var response2 = await client.PutAsync("api/users/-3", payload2);
-            var responseObject2 = JsonConvert.DeserializeObject<User>((await response2.Content.ReadAsStringAsync()));
-
-            //Verify Restore
-            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
-            Assert.True(responseObject2.Id == -3, responseObject.Id.ToString());
-            Assert.True(responseObject2.FirstName == "Alpha", responseObject.FirstName);
-            Assert.True(responseObject2.LastName == "Student", responseObject.LastName);
-            Assert.True(responseObject2.Role.Equals(Role.Student), responseObject.Role.ToString());
-            Assert.True(responseObject2.PhoneNr == null, responseObject.PhoneNr);
-            Assert.True(responseObject2.FoodPreferences == null, responseObject.FoodPreferences);
-
+            var response2 = await client.PutAsync("api/users/-6", payload2);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
+            
             //Sign-in with new password
             var verifyClient = application.CreateClient();
-            var verifyJson = new JsonObject();
-            verifyJson.Add("email", "student2@example.com");
-            verifyJson.Add("password", "password");
+            var verifyJson = new JsonObject
+            {
+                { "email", "rep2@company1.example.com" },
+                { "password", "password" }
+            };
             var verifyPayload = new StringContent(verifyJson.ToString(), Encoding.UTF8, "application/json");
             var verifyResponse = await verifyClient.PostAsync("/api/session/signin", verifyPayload);
-            Assert.True(verifyResponse.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + verifyResponse.StatusCode.ToString());
+            Assert.True(verifyResponse.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + verifyResponse.StatusCode.ToString());
+
+            //Verify
+            var responseObject = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+            Assert.True(responseObject.Id == -6, "Wrong user id. Expected: -6. Received: " + responseObject.Id.ToString());
+            Assert.True(responseObject.FirstName.Equals("Rakel"), "Wrong first name. Expected: Rakel. Received: " +  responseObject.FirstName);
+            Assert.True(responseObject.LastName.Equals("Rep"), "Wrong last name. Expected: Rep. Received: " + responseObject.LastName);
+            Assert.True(responseObject.Role.Equals(Role.CompanyRepresentative), "Wrong user role. Expected: CompanyRepresentative. Received: " + responseObject.Role.ToString());
+            Assert.True(responseObject.PhoneNr == null, "Wrong phone number. Expected: null. Received: " + responseObject.PhoneNr);
+            Assert.True(responseObject.FoodPreferences == null, "Wrong food preferences. Expected: null. Received: " + responseObject.FoodPreferences);
+
+            var responseObject2 = JsonConvert.DeserializeObject<User>(await response2.Content.ReadAsStringAsync());
+            Assert.True(responseObject2.Id == -6, "Wrong user id. Expected: -6. Received: " + responseObject2.Id.ToString());
+            Assert.True(responseObject2.FirstName.Equals("Alpha"), "Wrong first name. Expected: Alpha. Received: " + responseObject2.FirstName);
+            Assert.True(responseObject2.LastName.Equals("Rep"), "Wrong last name. Expected: Rep. Received: " + responseObject2.LastName);
+            Assert.True(responseObject2.Role.Equals(Role.CompanyRepresentative), "Wrong user role. Expected: CompanyRepresentative. Received: " + responseObject2.Role.ToString());
+            Assert.True(responseObject2.PhoneNr == null, "Wrong phone number. Expected: null. Received: " + responseObject2.PhoneNr);
+            Assert.True(responseObject2.FoodPreferences == null, "Wrong food preferences. Expected: null. Received: " + responseObject2.FoodPreferences);
         }
 
         [Fact]
         public async Task AdminUpdateUserBadPassword()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
-
-            var json = new JsonObject();
-            json.Add("password", "test");
-
+            var client = await TestUtils.Login("admin");
+            var json = new JsonObject
+            {
+                { "password", "test" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-2", payload);
-            var responseObject = JsonConvert.DeserializeObject<User>((await response.Content.ReadAsStringAsync()));
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), response.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + response.ToString());
         }
 
         [Fact]
         public async Task AdminUpdateUserNotExist()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
-
-            var json = new JsonObject();
-            json.Add("firstName", "Rakel");
-            json.Add("lastName", "Spektakel");
-
+            var client = await TestUtils.Login("admin");
+            var json = new JsonObject
+            {
+                { "firstName", "Rakel" },
+                { "lastName", "Spektakel" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync("api/users/-22", payload);
-            var responseObject = JsonConvert.DeserializeObject<User>((await response.Content.ReadAsStringAsync()));
+            var response = await client.PutAsync("api/users/-123", payload);
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong Status Code. Expected: NotFound. Received: " + response.ToString());
         }
 
         [Fact]
         public async Task UnautherizedUpdateUser()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("company", client);
-
-            var json = new JsonObject();
-            json.Add("firstName", "Rakel");
-            json.Add("lastName", "Spektakel");
-
+            var client =  await TestUtils.Login("company1");
+            var json = new JsonObject
+            {
+                { "firstName", "Rakel" },
+                { "lastName", "Spektakel" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-2", payload);
-            var responseObject = JsonConvert.DeserializeObject<User>((await response.Content.ReadAsStringAsync()));
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.ToString());
         }
 
         [Fact]
         public async Task CompanyGetMe()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("company", client);
+            var client = await TestUtils.Login("company1");
             var response = await client.GetAsync("/api/users/me");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseUser = JsonConvert.DeserializeObject<User>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-            Assert.True(responseUser.FirstName == "Alpha", responseUser.FirstName);
-            Assert.True(responseUser.Email == "rep1@company1.example.com", responseUser.Email);
-            Assert.True(responseUser.Role.Equals(Role.CompanyRepresentative), responseUser.Role.ToString());
+            var responseUser = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+            Assert.True(responseUser.FirstName.Equals("Alpha"), "Wrong first name. Expected: Alpha. Received: " + responseUser.FirstName);
+            Assert.True(responseUser.Email.Equals("rep1@company1.example.com"), "Wrong email. Expected: rep1@company1.example.com. Received: " + responseUser.Email);
+            Assert.True(responseUser.Role.Equals(Role.CompanyRepresentative), "Wrong user role. Expected: CompanyRepresentative. Received: " + responseUser.Role.ToString());
         }
 
         [Fact]
         public async Task StudentGetMe()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("", client);
+            var client =  await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/users/me");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseUser = JsonConvert.DeserializeObject<User>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-            Assert.True(responseUser.FirstName == "Alpha", responseUser.FirstName);
-            Assert.True(responseUser.Email == "student1@example.com", responseUser.Email);
-            Assert.True(responseUser.Role.Equals(Role.Student), responseUser.Role.ToString());
+            var responseUser = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+            Assert.True(responseUser.FirstName.Equals("Alpha"), "Wrong first name. Expected: Alpha. Received: " + responseUser.FirstName);
+            Assert.True(responseUser.Email.Equals("student1@example.com"), "Wrong email. Expected: student1@example.com. Received: " + responseUser.Email);
+            Assert.True(responseUser.Role.Equals(Role.Student), "Wrong user role. Expected: Student. Received: " + responseUser.Role.ToString());
         }
 
         [Fact]
         public async Task AdminGetMe()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
+            var client =  await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/users/me");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseUser = JsonConvert.DeserializeObject<User>(responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-            Assert.True(responseUser.FirstName == "Alpha", responseUser.FirstName);
-            Assert.True(responseUser.Email == "admin@example.com", responseUser.Email);
-            Assert.True(responseUser.Role.Equals(Role.Administrator), responseUser.Role.ToString());
+            var responseUser = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+            Assert.True(responseUser.FirstName.Equals("Alpha"), "Wrong first name. Expected: Alpha. Received: " + responseUser.FirstName);
+            Assert.True(responseUser.Email.Equals("admin@example.com"), "Wrong email. Expected: admin@example.com. Received: " + responseUser.Email);
+            Assert.True(responseUser.Role.Equals(Role.Administrator), "Wrong user role. Expected: Administrator. Received: " + responseUser.Role.ToString());
         }
 
         [Fact]
         public async Task UnauthorizedGetMe()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
+            var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
             var response = await client.GetAsync("/api/users/me");
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.StatusCode.ToString());
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong Status Code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task StudentUpdateMe()
+        public async Task UserUpdateMe()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("student2", client);
-
-            var json = new JsonObject();
-            json.Add("firstName", "Rakel");
-            json.Add("lastName", "Spektakel");
-            json.Add("password", "superdupersecret");
-
+            var application = new WebApplicationFactory<Program>();
+            var client = await TestUtils.Login("company4");
+            var json = new JsonObject
+            {
+                { "firstName", "Rakel" },
+                { "lastName", "Spektakel" },
+                { "password", "superdupersecret" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/me", payload);
-            var responseObject = JsonConvert.DeserializeObject<User>((await response.Content.ReadAsStringAsync()));
-
-            //Assertions of response
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
-            Assert.True(responseObject.Id == -3, responseObject.Id.ToString());
-            Assert.True(responseObject.FirstName == "Rakel", responseObject.FirstName);
-            Assert.True(responseObject.LastName == "Spektakel", responseObject.LastName);
-            Assert.True(responseObject.Role.Equals(Role.Student), responseObject.Role.ToString());
-            Assert.True(responseObject.PhoneNr == null, responseObject.PhoneNr);
-            Assert.True(responseObject.FoodPreferences == null, responseObject.FoodPreferences);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
 
             //Sign-in with old password
             var testClient = application.CreateClient();
-            var testJson = new JsonObject();
-            testJson.Add("email", "student2@example.com");
-            testJson.Add("password", "password");
+            var testJson = new JsonObject
+            {
+                { "email", "rep1@company4.example.com" },
+                { "password", "password" }
+            };
             var testPayload = new StringContent(testJson.ToString(), Encoding.UTF8, "application/json");
             var testResponse = await testClient.PostAsync("/api/session/signin", testPayload);
-            Assert.True(testResponse.StatusCode.Equals(HttpStatusCode.BadRequest), "Unauthorized Login, returned: " + testResponse.StatusCode.ToString());
+            Assert.True(testResponse.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + testResponse.StatusCode.ToString());
 
             //Sign-in with new password
             var test2Client = application.CreateClient();
-            var test2Json = new JsonObject();
-            test2Json.Add("email", "student2@example.com");
-            test2Json.Add("password", "superdupersecret");
+            var test2Json = new JsonObject
+            {
+                { "email", "rep1@company4.example.com" },
+                { "password", "superdupersecret" }
+            };
             var test2Payload = new StringContent(test2Json.ToString(), Encoding.UTF8, "application/json");
             var test2Response = await test2Client.PostAsync("/api/session/signin", test2Payload);
-            Assert.True(test2Response.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + test2Response.StatusCode.ToString());
+            Assert.True(test2Response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + test2Response.StatusCode.ToString());
 
             //Restore
-            var json2 = new JsonObject();
-            json2.Add("firstName", "Alpha");
-            json2.Add("lastName", "Student");
-            json2.Add("password", "password");
-
+            var json2 = new JsonObject
+            {
+                { "firstName", "Epsilon" },
+                { "lastName", "Rep" },
+                { "password", "password" }
+            };
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/users/me", payload2);
-            var responseObject2 = JsonConvert.DeserializeObject<User>((await response2.Content.ReadAsStringAsync()));
-
-            //Verify Restore
-            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), response.ToString());
-            Assert.True(responseObject2.Id == -3, responseObject.Id.ToString());
-            Assert.True(responseObject2.FirstName == "Alpha", responseObject.FirstName);
-            Assert.True(responseObject2.LastName == "Student", responseObject.LastName);
-            Assert.True(responseObject2.Role.Equals(Role.Student), responseObject.Role.ToString());
-            Assert.True(responseObject2.PhoneNr == null, responseObject.PhoneNr);
-            Assert.True(responseObject2.FoodPreferences == null, responseObject.FoodPreferences);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
 
             //Sign-in with new password
             var verifyClient = application.CreateClient();
-            var verifyJson = new JsonObject();
-            verifyJson.Add("email", "student1@example.com");
-            verifyJson.Add("password", "password");
+            var verifyJson = new JsonObject
+            {
+                { "email", "rep1@company4.example.com" },
+                { "password", "password" }
+            };
             var verifyPayload = new StringContent(verifyJson.ToString(), Encoding.UTF8, "application/json");
             var verifyResponse = await verifyClient.PostAsync("/api/session/signin", verifyPayload);
-            Assert.True(verifyResponse.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + verifyResponse.StatusCode.ToString());
+            Assert.True(verifyResponse.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + verifyResponse.StatusCode.ToString());
+
+            //Verify
+            var responseObject = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+            Assert.True(responseObject.Id == -9, "Wrong user id. Expected: -9. Received: " + responseObject.Id.ToString());
+            Assert.True(responseObject.FirstName.Equals("Rakel"), "Wrong first name. Expected: Rakel. Received: " + responseObject.FirstName);
+            Assert.True(responseObject.LastName.Equals("Spektakel"), "Wrong last name. Expected: Spektakel. Received: " + responseObject.LastName);
+            Assert.True(responseObject.Role.Equals(Role.CompanyRepresentative), "Wrong user role. Expected: CompanyRepresentative. Received: " + responseObject.Role.ToString());
+            Assert.True(responseObject.PhoneNr == null, "Wrong phone number. Expected: null. Received: " + responseObject.PhoneNr);
+            Assert.True(responseObject.FoodPreferences == null, "Wrong food preferences. Expected: null. Received: " + responseObject.FoodPreferences);
+
+            var responseObject2 = JsonConvert.DeserializeObject<User>((await response2.Content.ReadAsStringAsync()));
+            Assert.True(responseObject2.Id == -9, "Wrong user id. Expected: -9. Received: " + responseObject2.Id.ToString());
+            Assert.True(responseObject2.FirstName.Equals("Epsilon"), "Wrong first name. Expected: Epsikon. Received: " + responseObject2.FirstName);
+            Assert.True(responseObject2.LastName.Equals("Rep"), "Wrong last name. Expected: Rep. Received: " + responseObject2.LastName);
+            Assert.True(responseObject2.Role.Equals(Role.CompanyRepresentative), "Wrong user role. Expected: CompanyRepresentative. Received: " + responseObject2.Role.ToString());
+            Assert.True(responseObject2.PhoneNr == null, "Wrong phone number. Expected: null. Received: " + responseObject2.PhoneNr);
+            Assert.True(responseObject2.FoodPreferences == null, "Wrong food preferences. Expected: null. Received: " + responseObject2.FoodPreferences);
         }
 
         [Fact]
         public async Task StudentUpdateMeBadPassword()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("", client);
-
-            var json = new JsonObject();
-            json.Add("password", "test");
-
+            var client = await TestUtils.Login("student1");
+            var json = new JsonObject
+            {
+                { "password", "test" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/me", payload);
-            var responseObject = JsonConvert.DeserializeObject<User>((await response.Content.ReadAsStringAsync()));
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), response.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + response.ToString());
         }
 
         [Fact]
@@ -432,15 +363,14 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Nexpo.Program>();
             var client = application.CreateClient();
-
-            var json = new JsonObject();
-            json.Add("password", "newSuperSecretPassword");
-
+            var json = new JsonObject
+            {
+                { "password", "newSuperSecretPassword" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/me", payload);
-            var responseObject = JsonConvert.DeserializeObject<User>((await response.Content.ReadAsStringAsync()));
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), response.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong Status Code. Expected: Unauthorized. Received: " + response.ToString());
         }
     }
 }

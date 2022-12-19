@@ -100,13 +100,13 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseList.Count == 3, "Wrong number of tickets. Expected: 3. Received: " + responseList.Count);
 
             var firstTicket = responseList.Find(r => r.ticket.Id == -1);
-            var seventhTicket = responseList.Find(r => r.ticket.Id == -7);
+            var thirdTicket = responseList.Find(r => r.ticket.Id == -3);
 
             Assert.True(firstTicket.userFirstName.Equals("Alpha"), "Wrong ticket first name. Expected: Alpha. Received: " + firstTicket.userFirstName.ToString());
             Assert.True(firstTicket.userLastName.Equals("Student"), "Wrong ticket last name. Expected: Student. Received: " + firstTicket.userLastName.ToString());
             Assert.True(firstTicket.ticket.EventId == -1, "Wrong event id. Expected: -1. Received: " +  firstTicket.ticket.EventId.ToString());
             Assert.True(firstTicket.ticket.UserId == -2, "Wrong userID. Expected: -2. Received: " + firstTicket.ticket.UserId.ToString());
-            Assert.True(seventhTicket.ticket.UserId == -4, "Wrong userID, Expected: -4. Reciéved: " + seventhTicket.ticket.UserId.ToString());
+            Assert.True(thirdTicket.ticket.UserId == -4, "Wrong userID, Expected: -4. Reciéved: " + thirdTicket.ticket.UserId.ToString());
         }
 
         [Fact]

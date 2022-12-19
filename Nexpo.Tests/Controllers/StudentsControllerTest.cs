@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;

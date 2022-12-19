@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json.Linq;
-using Nexpo.Models;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
