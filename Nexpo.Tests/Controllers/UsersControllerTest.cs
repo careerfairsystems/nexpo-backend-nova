@@ -1,12 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Nexpo.Models;
-using SendGrid;
 using System.Collections.Generic;
-using System.Data;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
@@ -21,7 +18,6 @@ namespace Nexpo.Tests.Controllers
         {
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/users/");
-
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             var responseList = JsonConvert.DeserializeObject<List<User>>(await response.Content.ReadAsStringAsync());
@@ -140,7 +136,6 @@ namespace Nexpo.Tests.Controllers
                 { "lastName", null },
                 { "password", "password" }
             };
-
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/users/-6", payload2);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
@@ -280,6 +275,7 @@ namespace Nexpo.Tests.Controllers
             };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/me", payload);
+
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
 
             //Sign-in with old password
@@ -291,6 +287,7 @@ namespace Nexpo.Tests.Controllers
             };
             var testPayload = new StringContent(testJson.ToString(), Encoding.UTF8, "application/json");
             var testResponse = await testClient.PostAsync("/api/session/signin", testPayload);
+
             Assert.True(testResponse.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + testResponse.StatusCode.ToString());
 
             //Sign-in with new password
@@ -302,6 +299,7 @@ namespace Nexpo.Tests.Controllers
             };
             var test2Payload = new StringContent(test2Json.ToString(), Encoding.UTF8, "application/json");
             var test2Response = await test2Client.PostAsync("/api/session/signin", test2Payload);
+
             Assert.True(test2Response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + test2Response.StatusCode.ToString());
 
             //Restore
@@ -361,7 +359,7 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task UpdateMeUnautherized()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
+            var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
             var json = new JsonObject
             {

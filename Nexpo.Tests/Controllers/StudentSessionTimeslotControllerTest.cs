@@ -18,7 +18,6 @@ namespace Nexpo.Tests.Controllers
         public async Task GetAllTimeslotsByCompanyId()
         {
             var client = await TestUtils.Login("student1");
-
             var response = await client.GetAsync("/api/timeslots/company/-1");
             var responseList = JsonConvert.DeserializeObject<List<StudentSessionTimeslot>>(await response.Content.ReadAsStringAsync());
 
@@ -30,7 +29,6 @@ namespace Nexpo.Tests.Controllers
         public async Task GetAllTimeslotsByCompanyIdNotExist()
         {
             var client = await TestUtils.Login("student1");
-
             var response = await client.GetAsync("/api/timeslots/company/-4");
             var responseList = JsonConvert.DeserializeObject<List<StudentSessionTimeslot>>(await response.Content.ReadAsStringAsync());
 
@@ -42,7 +40,6 @@ namespace Nexpo.Tests.Controllers
         public async Task GetSingleTimeslot()
         {
             var client = await TestUtils.Login("student1");
-
             var response = await client.GetAsync("/api/timeslots/-1");
             var app = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response.Content.ReadAsStringAsync());
 
@@ -63,12 +60,11 @@ namespace Nexpo.Tests.Controllers
         public async Task GetAllCompaniesThatHaveTimeslots()
         {
             var client = await TestUtils.Login("student1");
-
             var response = await client.GetAsync("/api/timeslots/companies");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
             var responseList = JsonConvert.DeserializeObject<List<PublicCompanyDto>>(await response.Content.ReadAsStringAsync());
             var app3 = responseList.Find(r => r.Id == -1);
-
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
             Assert.True(responseList.Count == 3, "Wrong number of companies. Expected: 3. Received: " + responseList.Count);
             Assert.True(app3.Name.Equals("Apple"), "Wrong company name. Expected: Apple. Received: " + app3.Name);
         }
@@ -144,39 +140,35 @@ namespace Nexpo.Tests.Controllers
             {
                 { "status", 1 }
             };
-
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await companyClient.PutAsync("api/applications/-2", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode);
 
             //Book studentsession as student
             payload = new StringContent("", Encoding.UTF8, "application/json");
-            response = await studentClient.PutAsync("/api/timeslots/book/-2", payload);
-            var responseObject1 = JsonConvert.DeserializeObject<StudentSessionTimeslot>((await response.Content.ReadAsStringAsync()));
+            var response2 = await studentClient.PutAsync("/api/timeslots/book/-2", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
             
-
             //Unbook studentsession as student
             payload = new StringContent("", Encoding.UTF8, "application/json");
-            response = await studentClient.PutAsync("/api/timeslots/unbook/-2", payload);
-            var responseObject2 = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response.Content.ReadAsStringAsync());
+            var response3 = await studentClient.PutAsync("/api/timeslots/unbook/-2", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
-
 
             //Restore student application
             json = new JsonObject
             {
                 { "status", 0 }
             };
-
             payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             response = await companyClient.PutAsync("api/applications/-2", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode);
 
             //Verify behaviour
+            var responseObject1 = JsonConvert.DeserializeObject<StudentSessionTimeslot>((await response2.Content.ReadAsStringAsync()));
             Assert.True(responseObject1.Location.Equals("Zoom"), "Wrong location. Expected: Zoom. Received: " + responseObject1.Location.ToString());
             Assert.True(responseObject1.StudentId == -2, "Wrong student id. Expected: -2. Recieved: " + responseObject1.StudentId.ToString());
 
+            var responseObject2 = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response3.Content.ReadAsStringAsync());
             Assert.True(responseObject2.Location.Equals("Zoom"), "Wrong location. Expected: Zoom. Received: " + responseObject2.Location.ToString());
             Assert.True(responseObject2.StudentId == null, "Wrong student id. Expected: null. Recieved: " + responseObject2.StudentId.ToString());
         }
@@ -192,16 +184,14 @@ namespace Nexpo.Tests.Controllers
             {
                 { "status", 1 }
             };
-
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await companyClient.PutAsync("api/applications/-3", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode);
 
             //Book studentsession as student
             payload = new StringContent("", Encoding.UTF8, "application/json");
-            response = await studentClient.PutAsync("/api/timeslots/book/-3", payload);
-            var responseObject1 = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response.Content.ReadAsStringAsync());
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+            var response2 = await studentClient.PutAsync("/api/timeslots/book/-3", payload);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
             
             //Book another studentsession as student
             payload = new StringContent("", Encoding.UTF8, "application/json");
@@ -210,24 +200,24 @@ namespace Nexpo.Tests.Controllers
 
             //Unbook studentsession as student
             payload = new StringContent("", Encoding.UTF8, "application/json");
-            response = await studentClient.PutAsync("/api/timeslots/unbook/-3", payload);
-            var responseObject2 = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response.Content.ReadAsStringAsync());
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+            var response3 = await studentClient.PutAsync("/api/timeslots/unbook/-3", payload);
+            Assert.True(response3.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             //Restore student application
             json = new JsonObject
             {
                 { "status", 0 }
             };
-
             payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             response = await companyClient.PutAsync("api/applications/-2", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode);
 
             //Verify
+            var responseObject1 = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response2.Content.ReadAsStringAsync());
             Assert.True(responseObject1.Location.Equals("Zoom"), "Wrong location. Expected: Zoom. Received: " + responseObject1.Location.ToString());
             Assert.True(responseObject1.StudentId == -3, "Wrong student id. Expected: -3. Recieved: " + responseObject1.StudentId.ToString());
 
+            var responseObject2 = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response3.Content.ReadAsStringAsync());
             Assert.True(responseObject2.Location.Equals("Zoom"), "Wrong location. Expected: Zoom. Received: " + responseObject2.Location.ToString());
             Assert.True(responseObject2.StudentId == null, "Wrong student id. Expected: null. Recieved: " + responseObject2.StudentId.ToString());
         }
@@ -243,7 +233,6 @@ namespace Nexpo.Tests.Controllers
             {
                 { "status", 1 }
             };
-
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await companyClient.PutAsync("api/applications/-1", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode);
@@ -278,14 +267,12 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response1 = await companyClient.PutAsync("api/applications/-4", payload);
             var response2 = await companyClient.PutAsync("api/applications/-5", payload);
-
             Assert.True(response1.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response1.StatusCode);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode);
 
             //Book studentsession as student1
             payload = new StringContent("", Encoding.UTF8, "application/json");
             var response3 = await studentClient1.PutAsync("/api/timeslots/book/-4", payload);
-
             Assert.True(response3.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response3.StatusCode.ToString());
             
             //Unbook same studentsession as student2
@@ -306,7 +293,6 @@ namespace Nexpo.Tests.Controllers
             payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response6 = await companyClient.PutAsync("api/applications/-4", payload);
             var response7 = await companyClient.PutAsync("api/applications/-5", payload);
-
             Assert.True(response6.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response6.StatusCode);
             Assert.True(response7.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response7.StatusCode);
 
@@ -335,14 +321,12 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response1 = await companyClient.PutAsync("api/applications/-4", payload);
             var response2 = await companyClient.PutAsync("api/applications/-5", payload);
-
             Assert.True(response1.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response1.StatusCode);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode);
 
             //Book studentsession as student1
             payload = new StringContent("", Encoding.UTF8, "application/json");
             var response3 = await studentClient1.PutAsync("/api/timeslots/book/-5", payload);
-
             Assert.True(response3.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response3.StatusCode.ToString());
 
             //Book same studentsession as student2
@@ -363,7 +347,6 @@ namespace Nexpo.Tests.Controllers
             payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response6 = await companyClient.PutAsync("api/applications/-4", payload);
             var response7 = await companyClient.PutAsync("api/applications/-5", payload);
-
             Assert.True(response6.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response6.StatusCode);
             Assert.True(response7.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response7.StatusCode);
 
@@ -445,7 +428,6 @@ namespace Nexpo.Tests.Controllers
         public async Task UpdateLocationTimeslot()
         {
             var client = await TestUtils.Login("admin");
-
             var json = new JsonObject
             {
                 { "location", "E:A" }

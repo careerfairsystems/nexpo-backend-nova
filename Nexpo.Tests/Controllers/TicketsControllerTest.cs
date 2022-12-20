@@ -44,7 +44,7 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task GetAllTicketsNotLoggedIn()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
+            var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
             var response = await client.GetAsync("/api/tickets");
 
@@ -56,7 +56,6 @@ namespace Nexpo.Tests.Controllers
         {
             var client = await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/tickets/id/-1");
-
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             var responseObject = JsonConvert.DeserializeObject<Ticket>(await response.Content.ReadAsStringAsync());
@@ -94,6 +93,7 @@ namespace Nexpo.Tests.Controllers
         {
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/tickets/id/-123");
+
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
 
@@ -145,7 +145,7 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task PostTicketUnauthorized()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
+            var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
             var json = new JsonObject
             {
@@ -213,7 +213,6 @@ namespace Nexpo.Tests.Controllers
             };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets", payload);
-
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Wrong status code. Expected: Created. Received: " + response.ToString());
             
             //Check response and db updated
@@ -265,7 +264,6 @@ namespace Nexpo.Tests.Controllers
             };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets/add", payload);
-
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Wrong status code. Expected: Created. Received: " + response.ToString());
 
             //Check response and db updated
@@ -311,7 +309,6 @@ namespace Nexpo.Tests.Controllers
             string responseText = await response.Content.ReadAsStringAsync();
             var parsedContent = JObject.Parse(responseText);
             var newTicketId = parsedContent.Value<string>("id");
-
             json = new JsonObject
             {
                 { "isConsumed", true }
@@ -433,7 +430,6 @@ namespace Nexpo.Tests.Controllers
         public async Task GetTicketIdAndGuidReturnSameTicket()
         {
             var client = await TestUtils.Login("admin");
-
             var response = await client.GetAsync("/api/tickets/id/-1");
             var responseObject = JsonConvert.DeserializeObject<Ticket>(await response.Content.ReadAsStringAsync());
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
