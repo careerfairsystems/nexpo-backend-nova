@@ -211,14 +211,15 @@ namespace Nexpo.Tests.Controllers
             };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await studentClient.PostAsync("api/applications/company/-3", payload);
+            var responseObject = JsonConvert.DeserializeObject<StudentSessionApplicationDto>(await response.Content.ReadAsStringAsync());
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             //Check application as company
             response = await companyClient.GetAsync("/api/applications/my/company");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            var appList1 = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>((await response.Content.ReadAsStringAsync()));
-            int id = appList1[1].Id.GetValueOrDefault();
+            var appList1 = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>(await response.Content.ReadAsStringAsync());
+            int id = responseObject.Id.GetValueOrDefault();
 
             //Restore
             response = await studentClient.DeleteAsync("api/applications/" + id);
@@ -227,13 +228,13 @@ namespace Nexpo.Tests.Controllers
             response = await companyClient.GetAsync("/api/applications/my/company");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            var appList2 = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>((await response.Content.ReadAsStringAsync()));
+            var appList2 = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>(await response.Content.ReadAsStringAsync());
+            var app1 = appList1.Find(r => r.Id == id);
 
             //Verify 
             Assert.True(appList1.Count == 2, "Application list length should be 2, count:" + appList1.Count.ToString());
-            Assert.True(appList1[1].Motivation.Equals("Hej, jag är jättebra och tror att ni vill träffa mig!"), "Wrong motivation, got: " + appList1[1].Motivation);
+            Assert.True(app1.Motivation.Equals("Hej, jag är jättebra och tror att ni vill träffa mig!"), "Wrong motivation, got: " + appList1[1].Motivation);
             Assert.True(appList2.Count == 1, "Application list length should be 1, count:" + appList2.Count.ToString());
-
         }
 
         [Fact]
@@ -283,14 +284,18 @@ namespace Nexpo.Tests.Controllers
             var response4 = await companyClient.GetAsync("/api/applications/my/company");
             Assert.True(response4.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response4.StatusCode.ToString());
 
-            //Verify
             var appList1 = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>(await response2.Content.ReadAsStringAsync());
-            Assert.True(appList1.Count == 3, "Application list length should be 3, count:" + appList1.Count.ToString());
-            Assert.True(appList1[0].Motivation.Equals("This is a test"), "Wrong motivation, got: " + appList1[2].Motivation);
-
             var appList2 = JsonConvert.DeserializeObject<List<StudentSessionApplicationDto>>(await response4.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<StudentSessionApplicationDto>(await response1.Content.ReadAsStringAsync());
+            int id = responseObject.Id.GetValueOrDefault();
+            var app1 = appList1.Find(r => r.Id == id);
+            var app2 = appList2.Find(r => r.Id == id);
+
+            //Verify
+            Assert.True(appList1.Count == 3, "Application list length should be 3, count:" + appList1.Count.ToString());
+            Assert.True(app1.Motivation.Equals("This is a test"), "Wrong motivation, got: " + appList1[2].Motivation);
             Assert.True(appList2.Count == 3, "Application list length should be 3, count:" + appList2.Count.ToString());
-            Assert.True(appList2[0].Motivation.Equals("Search algrorithms are very cool"), "Wrong motivation, got: " + appList2[2].Motivation);
+            Assert.True(app2.Motivation.Equals("Search algrorithms are very cool"), "Wrong motivation, got: " + appList2[2].Motivation);
         }
 
 
