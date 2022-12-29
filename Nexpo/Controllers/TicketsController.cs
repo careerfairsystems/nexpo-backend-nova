@@ -53,8 +53,7 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            DateTime startTime = DateTime.Parse(e.Start);
-            if ((DateTime.Parse(e.Date).AddHours(startTime.Hour -12).AddMinutes(startTime.Minute) - DateTime.Now).TotalHours < 48) 
+            if ((DateTime.Parse(e.Date) - DateTime.Today).TotalDays < 2) 
             {
                 return BadRequest();
             }
@@ -192,8 +191,7 @@ namespace Nexpo.Controllers
             if(userRole != Role.Administrator)
             {
                 var e = await _eventRepo.Get(ticket.EventId);
-                DateTime startTime = DateTime.Parse(e.Start);
-                if ((DateTime.Parse(e.Date).AddHours(startTime.Hour - 12).AddMinutes(startTime.Minute) - DateTime.Now).TotalHours < 48)
+                if ((DateTime.Parse(e.Date) - DateTime.Today).TotalDays < 2)
                 {
                     return BadRequest();
                 }

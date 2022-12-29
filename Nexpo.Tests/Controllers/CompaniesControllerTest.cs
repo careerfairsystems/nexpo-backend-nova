@@ -1,13 +1,10 @@
 using Microsoft.AspNetCore.Mvc.Testing;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
-using System.IO;
 using Newtonsoft.Json;
 using Nexpo.Models;
 using Nexpo.DTO;
@@ -17,270 +14,232 @@ namespace Nexpo.Tests.Controllers
 {
     public class CompaniesControllerTest
     {
-        private async Task<String> Login(string role, HttpClient client)
-        {
-            var json = new JsonObject();
-            switch (role)
-            {
-                case "company":
-                    json.Add("email", "rep1@company1.example.com");
-                    json.Add("password", "password");
-                    break;
-                case "admin":
-                    json.Add("email", "admin@example.com");
-                    json.Add("password", "password");
-                    break;
-                default:
-                    json.Add("email", "student1@example.com");
-                    json.Add("password", "password");
-                    break;
-            }
-
-            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("/api/session/signin", payload);
-            string token = new StreamReader(response.Content.ReadAsStream()).ReadToEnd();
-            var parser = JObject.Parse(token);
-            token = "Bearer " + parser.Value<String>("token");
-            client.DefaultRequestHeaders.Add("Authorization", token);
-            return token;
-        }
 
         [Fact]
         public async Task GetAllCompanies()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
+            var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
             var response = await client.GetAsync("/api/companies/");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong StatusCode. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseList = JsonConvert.DeserializeObject<List<PublicCompanyDto>>(responseText);
-         
-            Assert.True(responseList.Count == 4, responseText.ToString());
-            Assert.True(responseList[1].Name == "Facebook", responseText.ToString());
-            Assert.True(responseList[1].Description == "We have friends in common", responseText);
-            Assert.True(responseList[1].DidYouKnow == "Mark zuckerburg is an Alien", responseText);
-            Assert.True(responseList[1].DesiredDegrees.Contains((int) Degree.PhD), responseText);
-            Assert.True(responseList[1].DesiredDegrees.Contains((int)Degree.Master), responseText);
-            Assert.True(responseList[1].DesiredDegrees.Count == 2, responseText);
-            Assert.True(responseList[1].DesiredProgramme.Contains((int)Programme.Byggteknik_med_Järnvägsteknik), responseText);
-            Assert.True(responseList[1].DesiredProgramme.Contains((int)Programme.Teknisk_Fysik), responseText);
-            Assert.True(responseList[1].DesiredProgramme.Count == 2, responseText);
-            Assert.True(responseList[1].Industries.Contains((int)Industry.Environment), responseText);
-            Assert.True(responseList[1].Industries.Contains((int)Industry.ElectricityEnergyPower), responseText);
-            Assert.True(responseList[1].Industries.Count == 2, responseText);
-            Assert.True(responseList[1].Positions.Contains((int)Position.Thesis), responseText);
-            Assert.True(responseList[1].Positions.Contains((int)Position.TraineeEmployment), responseText);
-            Assert.True(responseList[1].Positions.Count == 2, responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + response.StatusCode.ToString());
+            var responseList = JsonConvert.DeserializeObject<List<PublicCompanyDto>>(await response.Content.ReadAsStringAsync());
+            var company = responseList.Find(r => r.Id == -4);
+
+            Assert.True(responseList.Count == 4, "Wrong number of companies. Expected: 4. Received: " + responseList.Count);
+            Assert.True(company.Name.Equals("Facebook"), "Wrong company name. Expected: Facebook. Received: " + company.Name);
+            Assert.True(company.Description.Equals("We have friends in common"), "Wrong description. Received: " + company.Description);
+            Assert.True(company.DidYouKnow.Equals("Mark zuckerburg is an Alien"), "Wrong DidYouKnow. Received: " + company.DidYouKnow);
+            Assert.True(company.DesiredDegrees.Contains((int) Degree.PhD), "Missing Desired Degree. Expected: PhD. Received: " + company.DesiredDegrees.ToString());
+            Assert.True(company.DesiredDegrees.Contains((int)Degree.Master), "Missing Desired Degree. Expected: Master. Received: " + company.DesiredDegrees.ToString());
+            Assert.True(company.DesiredDegrees.Count == 2, "Wrong number of Desired Degrees. Expected: 2. Received: " + company.DesiredDegrees.Count);
+            Assert.True(company.DesiredProgramme.Contains((int)Programme.Byggteknik_med_Järnvägsteknik), "Missing Desired Programme. Expected: Byggteknik_med_Järnvägsteknik. Received: " + company.DesiredProgramme.ToString());
+            Assert.True(company.DesiredProgramme.Contains((int)Programme.Teknisk_Fysik), "Missing Desired Programme. Expected: Teknisk_Fysik. Received: " + company.DesiredProgramme.ToString());
+            Assert.True(company.DesiredProgramme.Count == 2, "Wrong number of Desired Programmes. Expected: 2. Received: " + company.DesiredProgramme.Count);
+            Assert.True(company.Industries.Contains((int)Industry.Environment), "Missing Industry. Expected: Environment. Received: " + company.Industries.ToString());
+            Assert.True(company.Industries.Contains((int)Industry.ElectricityEnergyPower), "Missing Industry. Expected: ElectricityEnergyPower. Received: " + company.Industries.ToString());
+            Assert.True(company.Industries.Count == 2, "Wrong number of Industries. Expected: 2. Received: " + company.Industries.Count);
+            Assert.True(company.Positions.Contains((int)Position.Thesis), "Missing Position. Expected: Thesis. Received: " + company.Positions.ToString());
+            Assert.True(company.Positions.Contains((int)Position.TraineeEmployment), "Missing Industry. Expected: TrainingEmployment. Received: " + company.Positions.ToString());
+            Assert.True(company.Positions.Count == 2, "Wrong number of Positions. Expected: 2. Received: " + company.Positions.Count);
         }
 
         [Fact]
         public async Task GetCompanySuccesful()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
+            var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
-            var response = await client.GetAsync("/api/companies/-1");
+            var response = await client.GetAsync("/api/companies/-4");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong StatusCode. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
-         
-            Assert.True(responseObject.Name == "Apple", responseText);
-            Assert.True(responseObject.Description == "A fruit company", responseText);
-            Assert.True(responseObject.DidYouKnow == "Apples", responseText);
-            Assert.True(responseObject.DesiredDegrees.Contains((int) Degree.Bachelor), responseText);
-            Assert.True(responseObject.DesiredDegrees.Contains((int)Degree.Master), responseText);
-            Assert.True(responseObject.DesiredDegrees.Count == 2, responseText);
-            Assert.True(responseObject.DesiredProgramme.Contains((int)Programme.Datateknik), responseText);
-            Assert.True(responseObject.DesiredProgramme.Contains((int)Programme.Elektroteknik), responseText);
-            Assert.True(responseObject.DesiredProgramme.Count == 2, responseText);
-            Assert.True(responseObject.Industries.Contains((int)Industry.DataIT), responseText);
-            Assert.True(responseObject.Industries.Contains((int)Industry.ElectricityEnergyPower), responseText);
-            Assert.True(responseObject.Industries.Count == 2, responseText);
-            Assert.True(responseObject.Positions.Contains((int)Position.ForeignOppurtunity), responseText);
-            Assert.True(responseObject.Positions.Contains((int)Position.Internship), responseText);
-            Assert.True(responseObject.Positions.Count == 2, responseText);
-            Assert.True(responseObject.StudentSessionMotivation == "We are the greatest company in the world according to us!", responseText);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + response.StatusCode.ToString());
+            var company = JsonConvert.DeserializeObject<PublicCompanyDto>(await response.Content.ReadAsStringAsync());
+            Assert.True(company.Name.Equals("Facebook"), "Wrong company name. Expected: Facebook. Received: " + company.Name);
+            Assert.True(company.Description.Equals("We have friends in common"), "Wrong description. Received: " + company.Description);
+            Assert.True(company.DidYouKnow.Equals("Mark zuckerburg is an Alien"), "Wrong DidYouKnow. Received: " + company.DidYouKnow);
+            Assert.True(company.DesiredDegrees.Contains((int)Degree.PhD), "Missing Desired Degree. Expected: PhD. Received: " + company.DesiredDegrees.ToString());
+            Assert.True(company.DesiredDegrees.Contains((int)Degree.Master), "Missing Desired Degree. Expected: Master. Received: " + company.DesiredDegrees.ToString());
+            Assert.True(company.DesiredDegrees.Count == 2, "Wrong number of Desired Degrees. Expected: 2. Received: " + company.DesiredDegrees.Count);
+            Assert.True(company.DesiredProgramme.Contains((int)Programme.Byggteknik_med_Järnvägsteknik), "Missing Desired Programme. Expected: Byggteknik_med_Järnvägsteknik. Received: " + company.DesiredProgramme.ToString());
+            Assert.True(company.DesiredProgramme.Contains((int)Programme.Teknisk_Fysik), "Missing Desired Programme. Expected: Teknisk_Fysik. Received: " + company.DesiredProgramme.ToString());
+            Assert.True(company.DesiredProgramme.Count == 2, "Wrong number of Desired Programmes. Expected: 2. Received: " + company.DesiredProgramme.Count);
+            Assert.True(company.Industries.Contains((int)Industry.Environment), "Missing Industry. Expected: Environment. Received: " + company.Industries.ToString());
+            Assert.True(company.Industries.Contains((int)Industry.ElectricityEnergyPower), "Missing Industry. Expected: ElectricityEnergyPower. Received: " + company.Industries.ToString());
+            Assert.True(company.Industries.Count == 2, "Wrong number of Industries. Expected: 2. Received: " + company.Industries.Count);
+            Assert.True(company.Positions.Contains((int)Position.Thesis), "Missing Position. Expected: Thesis. Received: " + company.Positions.ToString());
+            Assert.True(company.Positions.Contains((int)Position.TraineeEmployment), "Missing Industry. Expected: TrainingEmployment. Received: " + company.Positions.ToString());
+            Assert.True(company.Positions.Count == 2, "Wrong number of Positions. Expected: 2. Received: " + company.Positions.Count);
+            Assert.True(company.StudentSessionMotivation.Equals("We are better than Apple!"), "Wrong StudentSessionMotivation. Received: " + company.StudentSessionMotivation);
         }
 
         [Fact]
         public async Task GetCompanyFailure()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
+            var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
-            var response = await client.GetAsync("/api/companies/-5");
+            var response = await client.GetAsync("/api/companies/-123");
          
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Login failed, returned: " + response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong StatusCode. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
         public async Task PutCompany()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
-            var dto = new UpdateCompanyDto();
-            dto.Description = "New description";
-            
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
+            //Setup
+            var client = await TestUtils.Login("admin");
+            var json = new JsonObject
+            {
+                { "description", "New description" }
+            };
+
+            //Update Description
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync("/api/companies/-1", payload);
+            var response = await client.PutAsync("/api/companies/-3", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
-         
-            Assert.True(responseObject.Description == "New description", $"Description was actually ({responseObject.Description})");
+            //Restore
             json.Remove("description");
-            json.Add("description", "A fruit company");
-            await client.PutAsync("/api/companies/-1", new StringContent(json.ToString(), Encoding.UTF8, "application/json"));
+            json.Add("description", "We like music");
+            var response2 = await client.PutAsync("/api/companies/-3", new StringContent(json.ToString(), Encoding.UTF8, "application/json"));
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response2.StatusCode.ToString());
+
+            //Verify
+            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(await response.Content.ReadAsStringAsync());
+            var responseObject2 = JsonConvert.DeserializeObject<PublicCompanyDto>(await response2.Content.ReadAsStringAsync());
+            Assert.True(responseObject.Description.Equals("New description"), $"Wrong Description. Description was actually ({responseObject.Description})");
+            Assert.True(responseObject2.Description.Equals("We like music"), $"Wrong Description. Description was actually ({responseObject2.Description})");
+
+
         }
 
         [Fact]
         public async Task PutCompanyForbidden()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("company", client);
-            var dto = new UpdateCompanyDto();
-            dto.Description = "None";
-            
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
+            var client = await TestUtils.Login("company1");
+            var json = new JsonObject
+            {
+                { "description", "None" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/-1", payload);
-
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
 
             string responseText = await response.Content.ReadAsStringAsync();
             var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
-         
-            Assert.True(responseObject == null, "Object was not null");
+            Assert.True(responseObject == null, "Returned Object was not null. Received: " + responseText);
         }
 
         [Fact]
         public async Task PutNonExistingCompany()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
-            var dto = new UpdateCompanyDto();
-            dto.Description = "None";
-            
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
+            var client = await TestUtils.Login("admin");
+            var json = new JsonObject
+            {
+                { "description", "None" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync("/api/companies/-5", payload);
+            var response = await client.PutAsync("/api/companies/-22", payload);
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong Status Code. Expected: NotFound. Received: " +  response.StatusCode.ToString());
         }
 
         [Fact]
         public async Task GetMe()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("company", client);
+            var client = await TestUtils.Login("company1");
             var response = await client.GetAsync("/api/companies/me");
+            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(await response.Content.ReadAsStringAsync());
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
-
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Login failed, returned: " + response.StatusCode.ToString());
-            Assert.True(responseObject.Name == "Apple", responseText);
-            Assert.True(responseObject.Description == "A fruit company", responseText);
-            Assert.True(responseObject.DidYouKnow == "Apples", responseText);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
+            Assert.True(responseObject.Name.Equals("Apple"), "Wrong company name. Expected: Apple. Received: " + responseObject.Name);
+            Assert.True(responseObject.Description.Equals("A fruit company"), "Wromg Description. Received: " + responseObject.Description);
+            Assert.True(responseObject.DidYouKnow.Equals("Apples"), "Wrong DidYouKnow. Received: " + responseObject.DidYouKnow);
         }
 
         [Fact]
         public async Task GetIllegalMe()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
+            var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/companies/me");
-
             string responseText = await response.Content.ReadAsStringAsync();
             var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Login failed, returned: " + response.StatusCode.ToString());
-            Assert.True(responseObject == null, "Object was not null");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
+            Assert.True(responseObject == null, "Returned Object was not null. Received: " + responseText);
         }
 
         [Fact]
         public async Task PutMe()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("company", client);
-            var dto = new UpdateCompanyDto();
-            dto.Description = "New description";
-            
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
+            var client = await TestUtils.Login("company2");
+            var json = new JsonObject
+            {
+                { "description", "New description" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/me", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
-
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
-         
-            Assert.True(responseObject.Description == "New description", $"Description was actually ({responseObject.Description})");
             json.Remove("description");
-            json.Add("description", "A fruit company");
-            await client.PutAsync("/api/companies/me", new StringContent(json.ToString(), Encoding.UTF8, "application/json"));
+            json.Add("description", "You can find more about us by searching the web");
+            var response2 = await client.PutAsync("/api/companies/me", new StringContent(json.ToString(), Encoding.UTF8, "application/json"));
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response2.StatusCode.ToString());
+
+            var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(await response.Content.ReadAsStringAsync());
+            var responseObject2 = JsonConvert.DeserializeObject<PublicCompanyDto>(await response2.Content.ReadAsStringAsync());
+            Assert.True(responseObject.Description.Equals("New description"), $"Wrong Description. Description was actually ({responseObject.Description})");
+            Assert.True(responseObject2.Description.Equals("You can find more about us by searching the web"), $"Description was actually ({responseObject2.Description})");
         }
 
         [Fact]
         public async Task PutMeForbidden()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
-            var dto = new UpdateCompanyDto();
-            dto.Description = "None";
-            
-            var json = new JsonObject();
-            json.Add("description", dto.Description);
+            var client = await TestUtils.Login("admin");
+            var json = new JsonObject
+            {
+                { "description", "None" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/me", payload);
-
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
 
             string responseText = await response.Content.ReadAsStringAsync();
             var responseObject = JsonConvert.DeserializeObject<PublicCompanyDto>(responseText);
-         
-            Assert.True(responseObject == null, "Object was not null");
+            Assert.True(responseObject == null, "Returned Object was not null. Received: " +  responseText);
         }
 
         [Fact]
         public async Task PostThenDelete()
         {
-            var application = new WebApplicationFactory<Nexpo.Program>();
-            var client = application.CreateClient();
-            var token = await Login("admin", client);
-            
-            var json = new JsonObject();
-            json.Add("description", "We produce the best and brightest.");
-            json.Add("name", "LTH");
+            var client = await TestUtils.Login("admin");
+            var json = new JsonObject
+            {
+                { "description", "We produce the best and brightest." },
+                { "name", "LTH" }
+            };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/companies/", payload);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            string responseText = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<Company>(responseText);
-            Assert.True(responseObject.Description == "We produce the best and brightest.", "Faulty description");
-
+            var responseObject = JsonConvert.DeserializeObject<Company>(await response.Content.ReadAsStringAsync());
             var id = responseObject.Id;
 
+            response = await client.GetAsync("/api/companies/");
+            var responseObject2 = JsonConvert.DeserializeObject<List<Company>>(await response.Content.ReadAsStringAsync());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
+
             response = await client.DeleteAsync("/api/companies/LTH");
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             response = await client.GetAsync("/api/companies/" + id);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong Status Code. Expected: NotFound. Received: " + response.StatusCode.ToString());
+
+            response = await client.GetAsync("/api/companies/");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
+            var responseObject3 = JsonConvert.DeserializeObject<List<Company>>(await response.Content.ReadAsStringAsync());
+
+            Assert.True(responseObject.Description.Equals("We produce the best and brightest."), "Wrong Description. Received: " + responseObject.Description);
+            Assert.True(responseObject2.Count == 5, "Wrong number of companies. Expected: 5. Received: " + responseObject2.Count);
+            Assert.True(responseObject3.Count == 4, "Wrong number of companies. Expected: 4. Received: " + responseObject3.Count);
         }
     }
 }
