@@ -1,3 +1,5 @@
+# This file needs to be run with sudo
+
 checkInstalled() {
     if ! [ -x "$(command -v $@)" ]; then
         echo "Error: $@ is not installed." >&2
@@ -7,13 +9,35 @@ checkInstalled() {
     fi
 }
 
+show_help() {
+    echo "Usage: ./runBackend.sh [OPTIONS]"
+    echo "Likely needs to be run with sudo"
+    echo "Script for running the backend"
+    echo ""
+    echo "Options:"
+    echo "-h, --help     Display this help message and exit"
+    echo "-d, --redocker   Delete the docker container and recreate it"
+    echo ""
+}
+
 checkInstalled docker
 checkInstalled dotnet
 
-if(docker ps -a | grep nexpo_database); then
-    docker rm -f nexpo_database
+while getopts ":h:d" opt; do
+    case $opt in
+    h|help)
+        show_help
+        exit 1
+        ;;
+    d|redocker)
+        # Forcably deleted (and later reinstalls) the docker container
+        docker rm -f nexpo_database
+        ;;
+    esac
+done
+
+if(!(docker ps -a | grep nexpo_database)); then
+    sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
 fi
-sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
+
 dotnet run --project Nexpo
-# Första gången: Kör denna fil
-# Sedan: Kör endast dotnet run --project Nexpo
