@@ -20,13 +20,14 @@ show_help() {
     echo "Options:"
     echo "-h, --help     Display this help message and exit"
     echo "-d, --redocker   Delete the docker container and recreate it"
+    echo "-q, --quick    Create an alias for this file. Is then run with \"git run\""
     echo ""
 }
 
 checkInstalled docker
 checkInstalled dotnet
 
-while getopts ":h:d" opt; do
+while getopts ":h:d:q" opt; do
     case $opt in
     h|help)
         show_help
@@ -36,6 +37,9 @@ while getopts ":h:d" opt; do
         # Forcably deleted (and later reinstalls) the docker container
         docker rm -f nexpo_database
         ;;
+    q|quick)
+        # Create an alias for this file. Is then run with "git run"
+        git config --local alias.run '!sudo ./runBackend.sh'
     esac
 done
 
