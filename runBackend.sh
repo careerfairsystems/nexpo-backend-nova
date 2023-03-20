@@ -40,6 +40,8 @@ while getopts ":h:d:q" opt; do
     q|quick)
         # Create an alias for this file. Is then run with "git run"
         git config --local alias.run '!sudo ./runBackend.sh'
+        exit 1
+        ;;
     esac
 done
 
