@@ -1,5 +1,8 @@
 # This file needs to be run with sudo
 
+# Create an alias for this file. Is then run with "git run"
+# git config --local alias.run '!sudo ./runBackend.sh'
+
 checkInstalled() {
     if ! [ -x "$(command -v $@)" ]; then
         echo "Error: $@ is not installed." >&2
