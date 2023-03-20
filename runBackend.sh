@@ -35,10 +35,11 @@ while getopts ":h:d:q" opt; do
         ;;
     d|redocker)
         # Forcably deleted (and later reinstalls) the docker container
-        docker rm -f nexpo_database
+        sudo docker rm -f nexpo_database
         ;;
     q|quick)
         # Create an alias for this file. Is then run with "git run"
+        git config core.filemode false
         git config --local alias.run '!sudo ./runBackend.sh'
         exit 1
         ;;
