@@ -24,15 +24,10 @@ show_help() {
     echo ""
 }
 
-while getopts ":h:d:q" opt; do
+while getopts ":h:q" opt; do
     case $opt in
     h|help)
         show_help
-        exit 1
-        ;;
-    d|redocker)
-        # Forcably deleted (and later reinstalls) the docker container
-        sudo docker rm -f nexpo_database
         exit 1
         ;;
     q|quick)
@@ -47,8 +42,24 @@ done
 checkInstalled docker
 checkInstalled dotnet
 
-if(!(docker ps -a | grep nexpo_database)); then
-    sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
+CONTAINER_NAME=nexpo_database
+
+
+
+if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}\$"; then
+    echo "The container already exists"
+else
+    sudo docker create --name "$CONTAINER_NAME" "$IMAGE_NAME"
+    echo "Created the container"
 fi
+
+if docker container inspect -f '{{.State.Running}}' "$CONTAINER_NAME" >/dev/null 2>&1; then
+    echo "The container is already running"
+else
+    sudo docker start "$CONTAINER_NAME"
+    echo "Started the container"
+fi
+
+
 
 dotnet run --project Nexpo
