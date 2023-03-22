@@ -49,7 +49,7 @@ CONTAINER_NAME=nexpo_database
 if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}\$"; then
     echo "The container already exists"
 else
-    sudo docker create --name "$CONTAINER_NAME" "$IMAGE_NAME"
+    sudo docker run -d --name $CONTAINER_NAME -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
     echo "Created the container"
 fi
 
