@@ -40,6 +40,9 @@ standalone(){
     fi
 }
 
+
+
+
 while getopts ":h:q:s" opt; do
     case $opt in
     h|help)
