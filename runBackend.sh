@@ -24,6 +24,22 @@ show_help() {
     echo ""
 }
 
+standalone(){
+    if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}\$"; then
+        echo "The container already exists"
+    else
+        docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
+        echo "Created the container"
+    fi
+
+    if docker container inspect -f '{{.State.Running}}' "$CONTAINER_NAME" >/dev/null 2>&1; then
+        echo "The container is already running"
+    else
+        sudo docker start "$CONTAINER_NAME"
+        echo "Started the container"
+    fi
+}
+
 while getopts ":h:q" opt; do
     case $opt in
     h|help)
@@ -36,30 +52,14 @@ while getopts ":h:q" opt; do
         git config --local alias.run '!sh ./runBackend.sh'
         exit 1
         ;;
+    s|standalone)
+        standalone()
     esac
 done
 
 checkInstalled docker
 checkInstalled dotnet
 
-CONTAINER_NAME=nexpo_database
-
-
-
-if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}\$"; then
-    echo "The container already exists"
-else
-    docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
-    echo "Created the container"
-fi
-
-if docker container inspect -f '{{.State.Running}}' "$CONTAINER_NAME" >/dev/null 2>&1; then
-    echo "The container is already running"
-else
-    sudo docker start "$CONTAINER_NAME"
-    echo "Started the container"
-fi
-
-
+sudo docker-compose up
 
 dotnet run --project Nexpo

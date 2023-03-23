@@ -4,6 +4,7 @@ volumes:
   db_data:
   uploads:
 
+
 services:
   nexpo:
     image: ${DOCKER_REGISTRY-}nexpo
