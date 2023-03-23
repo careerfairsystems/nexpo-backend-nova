@@ -19,7 +19,7 @@ show_help() {
     echo ""
     echo "Options:"
     echo "-h, --help     Display this help message and exit"
-    echo "-d, --redocker   Delete the docker container and recreate it"
+    echo "-s, --standalone   Make a standalone docker run. Does not use docker-compose."
     echo "-q, --quick    Create an alias for this file. Is then run with \"git run\""
     echo ""
 }
@@ -39,9 +39,6 @@ standalone(){
         echo "Started the container"
     fi
 }
-
-
-
 
 while getopts ":h:q:s" opt; do
     case $opt in
@@ -67,5 +64,4 @@ checkInstalled docker
 checkInstalled dotnet
 
 sudo docker-compose up
-
 dotnet run --project Nexpo
