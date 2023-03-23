@@ -40,7 +40,7 @@ standalone(){
     fi
 }
 
-while getopts ":h:q" opt; do
+while getopts ":h:q:s" opt; do
     case $opt in
     h|help)
         show_help
@@ -53,7 +53,10 @@ while getopts ":h:q" opt; do
         exit 1
         ;;
     s|standalone)
-        standalone()
+        standalone
+        dotnet run --project Nexpo
+        exit 1
+        ;;
     esac
 done
 
