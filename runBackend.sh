@@ -24,21 +24,7 @@ show_help() {
     echo ""
 }
 
-standalone(){
-    if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}\$"; then
-        echo "The container already exists"
-    else
-        docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
-        echo "Created the container"
-    fi
 
-    if docker container inspect -f '{{.State.Running}}' "$CONTAINER_NAME" >/dev/null 2>&1; then
-        echo "The container is already running"
-    else
-        sudo docker start "$CONTAINER_NAME"
-        echo "Started the container"
-    fi
-}
 
 while getopts ":h:q:s" opt; do
     case $opt in
@@ -53,7 +39,11 @@ while getopts ":h:q:s" opt; do
         exit 1
         ;;
     s|standalone)
-        standalone
+        # Make a standalone docker run. Does not use docker-compose.
+        # More unreliable, but quicker to start
+        # since future runs can skip the docker-compose step
+        sudo docker rm -f nexpo_database
+        sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
         dotnet run --project Nexpo
         exit 1
         ;;
