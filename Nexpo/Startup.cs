@@ -48,8 +48,16 @@ namespace Nexpo
                 options.SameSite = SameSiteMode.Unspecified;
             }
 
-            public static bool DisallowsSameSiteNone(string userAgent) => userAgent.Contains("CPU iPhone OS 12") || userAgent.Contains("iPad; CPU OS 12") || userAgent.Contains("Macintosh; Intel Mac OS X 10_14") && userAgent.Contains("Version/") && userAgent.Contains("Safari") || userAgent.Contains("Chrome/5") || userAgent.Contains("Chrome/6");
-        }
+            public static bool DisallowsSameSiteNone(string userAgent){
+                return (userAgent.Contains("CPU iPhone OS 12") 
+                || userAgent.Contains("iPad; CPU OS 12") 
+                || userAgent.Contains("Macintosh; Intel Mac OS X 10_14") 
+                && userAgent.Contains("Version/") 
+                && userAgent.Contains("Safari") 
+                || userAgent.Contains("Chrome/5") 
+                || userAgent.Contains("Chrome/6"));
+            }
+        
         public class CustomSecurityTokenHandler : Sustainsys.Saml2.Saml2P.Saml2PSecurityTokenHandler
         {
             protected override ClaimsIdentity CreateClaimsIdentity(Saml2SecurityToken samlToken, string issuer, TokenValidationParameters validationParameters)
@@ -143,7 +151,6 @@ namespace Nexpo
                 options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
             })
             .AddDataAnnotationsLocalization();*/
-            // ** **
             
             services.AddControllers();
             services.AddSingleton<IS3Configuration, S3Config>();
