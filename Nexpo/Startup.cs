@@ -102,13 +102,25 @@ namespace Nexpo
         public void ConfigureServices(IServiceCollection services)
         {
             // ** ADDED for SSO feature **
+            services.AddDistributedMemoryCache();
+            
+            
+            services.AddSession(options =>
+            {
+                //options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+                options.Cookie.SameSite = SameSiteMode.None;
+                //options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+            });
+
             services.AddControllers();
             //services.ConfigureNonBreakingSameSiteCookies();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 //SameSiteMode.None is required to support SA
                 //options.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
-	    	options.MinimumSameSitePolicy = SameSiteMode.None;
+	    	    options.MinimumSameSitePolicy = SameSiteMode.None;
                 //options.Secure = CookieSecurePolicy.Always;
                 options.CheckConsentNeeded = context => false;
                 // Some older browsers don't support SameSiteMode.None
@@ -119,14 +131,7 @@ namespace Nexpo
             });
 
 
-            services.AddSession(options =>
-            {
-                //options.Cookie.HttpOnly = true;
-                options.Cookie.IsEssential = true;
-                options.Cookie.SameSite = SameSiteMode.None;
-                //options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-
-            });
+            
             /*services.AddMvc((options) =>
             {
                 options.RespectBrowserAcceptHeader = true;
@@ -264,14 +269,14 @@ namespace Nexpo
                 dbContext.Database.Migrate();
                 dbContext.Seed();
             }
-
-	    //dbContext.Database.Migrate(); //ADD THIS IF DATABASoE IS CLOSED        
-            //app.UseCookiePolicy();
-	    app.UseAuthorization();
-	   
-	    app.UseSession();
+    
+	        //dbContext.Database.Migrate(); //ADD THIS IF DATABASE IS CLOSED        
+                //app.UseCookiePolicy();
+	        app.UseAuthorization();
+	        
+	        app.UseSession();
             app.UseAuthentication();
-	    
+	        
             //app.UseHttpsRedirection();
             
 
