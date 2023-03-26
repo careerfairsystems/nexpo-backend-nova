@@ -2,9 +2,9 @@
 
 namespace Nexpo.DTO
 {
-    public class FileCreatedDto
+    public class UpdateStudentSessionLocationDto
     {
         [Required]
-        public string Url { get; set; }
+        public string Location { get; set; }
     }
 }

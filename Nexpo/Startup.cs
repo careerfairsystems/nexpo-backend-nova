@@ -211,7 +211,6 @@ namespace Nexpo
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ITicketRepository, TicketRepository>();
-            services.AddScoped<ICompanyConnectionRepository, CompanyConnectionRepository>();
             services.AddScoped<IStudentSessionTimeslotRepository, StudentSessionTimeslotRepository>();
             services.AddScoped<IStudentSessionApplicationRepository, StudentSessionApplicationRepository>();
 

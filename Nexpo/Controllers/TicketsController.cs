@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
@@ -46,7 +43,7 @@ namespace Nexpo.Controllers
         /// Create a new ticket to an event
         /// </summary>
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostTicket(CreateTicketDto dto)
         {
@@ -56,9 +53,9 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if (e.TicketCount >= e.Capacity)
+            if ((DateTime.Parse(e.Date) - DateTime.Today).TotalDays < 2) 
             {
-                return Conflict();
+                return BadRequest();
             }
 
             // Only allow a user to register once
@@ -74,10 +71,46 @@ namespace Nexpo.Controllers
                 EventId = dto.EventId,
                 UserId = userId,
             };
-            await _ticketRepo.Add(ticket);
+            if(!await _ticketRepo.Add(ticket))
+            {
+                return Conflict();
+            }
 
             return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, ticket);
         }
+
+        /// <summary>
+        /// Create new ticket as admin to an event. Ignores capacity and startTime
+        /// </summary>
+        [HttpPost]
+        [Route("add")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
+        public async Task<ActionResult> PostTicketAdmin(CreateTicketAdminDto dto)
+        {
+            var e = await _eventRepo.Get(dto.EventId);
+            if (e == null)
+            {
+                return NotFound();
+            }
+
+            // Only allow a user to register once
+            if (await _ticketRepo.TicketExists(dto.EventId, dto.UserId))
+            {
+                return Conflict();
+            }
+
+            var ticket = new Ticket
+            {
+                PhotoOk = dto.PhotoOk,
+                EventId = dto.EventId,
+                UserId = dto.UserId,
+            };
+
+            await _ticketRepo.AddAdmin(ticket);
+
+            return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, ticket);
+        } 
 
         /// <summary>
         /// Update isConsumed on a ticket
@@ -157,6 +190,12 @@ namespace Nexpo.Controllers
 
             if(userRole != Role.Administrator)
             {
+                var e = await _eventRepo.Get(ticket.EventId);
+                if ((DateTime.Parse(e.Date) - DateTime.Today).TotalDays < 2)
+                {
+                    return BadRequest();
+                }
+
                 if (ticket.UserId != userId || ticket.isConsumed)
                 {
                     return Forbid();

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.OleDb;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -200,7 +198,7 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Checks if application exists and is accepted and is booked
+        /// Checks if application exists for given companyId and is accepted and is booked
         /// </summary>
         [HttpGet]
         [Route("accepted/{id}")]

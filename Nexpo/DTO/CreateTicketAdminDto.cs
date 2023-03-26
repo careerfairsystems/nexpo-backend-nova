@@ -1,12 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO
 {
-    public class CreateTicketDto
+    public class CreateTicketAdminDto
     {
         [Required]
         public int EventId { get; set; }
         [Required]
         public bool PhotoOk { get; set; }
+        [Required]
+        public int UserId { get; set; }
     }
 }

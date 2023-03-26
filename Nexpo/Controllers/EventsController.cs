@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Nexpo.DTO;
-using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
 
@@ -90,29 +86,78 @@ namespace Nexpo.Controllers
             }
             return Ok(namedTickets);
         }
+        /// <summary>
+        /// Update information for an Event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
+        public async Task<ActionResult> UpdateEvent(int id, AddEventDto dto)
+        {
 
+            var even = await _eventRepo.Get(id);
+
+            if(!string.IsNullOrEmpty(dto.Name)){
+                even.Name = dto.Name; 
+            }
+            if(!string.IsNullOrEmpty(dto.Description)){
+                even.Description = dto.Description; 
+            }
+            if(!string.IsNullOrEmpty(dto.Date)){
+                even.Date = dto.Date; 
+            }
+            if(!string.IsNullOrEmpty(dto.Start)){
+                even.Start = dto.Start; 
+            }
+            if(!string.IsNullOrEmpty(dto.End)){
+                even.End = dto.End; 
+            }
+            if(!string.IsNullOrEmpty(dto.Location)){
+                even.Location = dto.Location; 
+            }
+            if(!string.IsNullOrEmpty(dto.Host)){
+                even.Host = dto.Host; 
+            }
+            if(!string.IsNullOrEmpty(dto.Language)){
+                even.Language = dto.Language; 
+            }
+            if(dto.Capacity != 0){
+                even.Capacity = dto.Capacity; 
+            }
+            await _eventRepo.Update(even);
+
+            return Ok(even);
+        }
 
         [HttpPost]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         public async Task<ActionResult> AddNewEvent(AddEventDto dto)
         {
-
-            var even = new Event
+            DateTime temp;
+            if(DateTime.TryParse(dto.Date, out temp) && DateTime.TryParse(dto.Start, out temp) && DateTime.TryParse(dto.End, out temp))
             {
-                Name = dto.Name,
-                Description = dto.Description,
-                Date = dto.Date,
-                Start = dto.Start,
-                End = dto.End,
-                Location = dto.Location,
-                Host = dto.Host,
-                Language = dto.Language,
-                Capacity = dto.Capacity
-            };
-            await _eventRepo.Add(even);
+                var even = new Event
+                {
+                    Name = dto.Name,
+                    Description = dto.Description,
+                    Date = dto.Date,
+                    Start = dto.Start,
+                    End = dto.End,
+                    Location = dto.Location,
+                    Host = dto.Host,
+                    Language = dto.Language,
+                    Capacity = dto.Capacity
+                };
+                await _eventRepo.Add(even);
 
-            return Ok(even);
+                return Ok(even);
+            }
+            
+            return BadRequest();
         }
     }
 

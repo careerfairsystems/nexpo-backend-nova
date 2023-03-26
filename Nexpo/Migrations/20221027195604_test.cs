@@ -162,34 +162,6 @@ namespace Nexpo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CompanyConnections",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Rating = table.Column<int>(type: "integer", nullable: false),
-                    Comment = table.Column<string>(type: "text", nullable: true),
-                    StudentId = table.Column<int>(type: "integer", nullable: false),
-                    CompanyId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CompanyConnections", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CompanyConnections_Companies_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CompanyConnections_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "StudentSessionApplications",
                 columns: table => new
                 {
@@ -217,16 +189,6 @@ namespace Nexpo.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CompanyConnections_CompanyId",
-                table: "CompanyConnections",
-                column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CompanyConnections_StudentId",
-                table: "CompanyConnections",
-                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Students_UserId",
@@ -272,9 +234,6 @@ namespace Nexpo.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "CompanyConnections");
-
             migrationBuilder.DropTable(
                 name: "StudentSessionApplications");
 

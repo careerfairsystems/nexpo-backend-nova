@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
@@ -201,6 +198,23 @@ namespace Nexpo.Controllers
             await _companyRepo.Add(company);
 
             return Ok(company);
+        }
+        /// <summary>
+        /// Delete company by name
+        /// </summary>
+        [HttpDelete]
+        [Route("{name}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
+        public async Task<ActionResult> DeleteCompany(string name)
+        {
+            Company c = await _companyRepo.FindByName(name);
+            if(c == null)
+            {
+                return NotFound();
+            }
+            await _companyRepo.Remove(c);
+            return Ok();
         }
     }
 }
