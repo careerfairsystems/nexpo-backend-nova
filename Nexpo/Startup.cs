@@ -31,6 +31,12 @@ namespace Nexpo
 {
     public class Startup
     {
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
+        {
+            Config = new Config(configuration);
+            Environment = environment;
+        }
+        
         public IConfig Config { get; }
         public IWebHostEnvironment Environment { get; }
 
@@ -49,13 +55,15 @@ namespace Nexpo
             }
 
             public static bool DisallowsSameSiteNone(string userAgent){
-                return (userAgent.Contains("CPU iPhone OS 12") 
+                return (
+                userAgent.Contains("CPU iPhone OS 12") 
                 || userAgent.Contains("iPad; CPU OS 12") 
                 || userAgent.Contains("Macintosh; Intel Mac OS X 10_14") 
                 && userAgent.Contains("Version/") 
                 && userAgent.Contains("Safari") 
                 || userAgent.Contains("Chrome/5") 
-                || userAgent.Contains("Chrome/6"));
+                || userAgent.Contains("Chrome/6")
+                );
             }
         
         public class CustomSecurityTokenHandler : Sustainsys.Saml2.Saml2P.Saml2PSecurityTokenHandler
@@ -100,11 +108,7 @@ namespace Nexpo
                // return identity;
             }
         }
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
-        {
-            Config = new Config(configuration);
-            Environment = environment;
-        }
+        
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -293,8 +297,9 @@ namespace Nexpo
                 endpoints.MapControllers();
             });
 
-        }
+            }
 
+        }
     }
 }
 
