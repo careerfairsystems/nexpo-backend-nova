@@ -14,8 +14,8 @@ checkInstalled() {
 
 show_help() {
     echo "Usage: ./runBackend.sh [OPTIONS]"
-    echo "Likely needs to be run with sudo"
     echo "Script for running the backend"
+    echo "Needs to be run with sudo"
     echo ""
     echo "Options:"
     echo "-h, --help     Display this help message and exit"
