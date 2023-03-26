@@ -24,8 +24,6 @@ show_help() {
     echo ""
 }
 
-
-
 while getopts ":h:q:s" opt; do
     case $opt in
     h|help)
