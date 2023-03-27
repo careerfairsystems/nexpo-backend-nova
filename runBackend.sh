@@ -38,8 +38,12 @@ while getopts ":h:q:s" opt; do
         git config --local alias.run '!sh ./runBackend.sh'
         exit 1
         ;;
-    c|compose)
-        # Implement compose instead
+    s|standalone)
+        # Make a standalone docker run. Does not use docker-compose.
+        # Less relaiable, but an alternative
+        sudo docker rm -f nexpo_database
+        sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
+        dotnet run --project Nexpo
         exit 1
         ;;
     esac
@@ -48,7 +52,5 @@ done
 checkInstalled docker
 checkInstalled dotnet
 
-sudo docker rm -f nexpo_database
-sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
-dotnet run --project Nexpo
-dotnet run --project Nexpo
+sudo docker-compose up -d
+
