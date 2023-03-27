@@ -14,8 +14,8 @@ checkInstalled() {
 
 show_help() {
     echo "Usage: ./runBackend.sh [OPTIONS]"
+    echo "Likely needs to be run with sudo"
     echo "Script for running the backend"
-    echo "Needs to be run with sudo"
     echo ""
     echo "Options:"
     echo "-h, --help     Display this help message and exit"
@@ -38,13 +38,8 @@ while getopts ":h:q:s" opt; do
         git config --local alias.run '!sh ./runBackend.sh'
         exit 1
         ;;
-    s|standalone)
-        # Make a standalone docker run. Does not use docker-compose.
-        # More unreliable, but quicker to start
-        # since future runs can skip the docker-compose step
-        sudo docker rm -f nexpo_database
-        sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
-        dotnet run --project Nexpo
+    c|compose)
+        # Implement compose instead
         exit 1
         ;;
     esac
@@ -53,5 +48,6 @@ done
 checkInstalled docker
 checkInstalled dotnet
 
-sudo docker-compose up
+sudo docker rm -f nexpo_database
+sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
 dotnet run --project Nexpo
