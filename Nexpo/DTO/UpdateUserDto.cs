@@ -1,4 +1,4 @@
-﻿
+﻿using Nexpo.Models;
 
 namespace Nexpo.DTO
 {
@@ -9,7 +9,7 @@ namespace Nexpo.DTO
         public string PhoneNr { get; set; }
         public string FoodPreferences { get; set; }
         public string Password { get; set; }
-
         public string profilePictureUrl { get; set; }
+        public Role? Role { get; set; }
     }
 }

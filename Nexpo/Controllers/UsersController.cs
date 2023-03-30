@@ -68,7 +68,7 @@ namespace Nexpo.Controllers
             {
                 var companyId = HttpContext.User.GetCompanyId().Value;
                 var student = await _studentRepo.FindByUser(id);
-                if(student == null)
+                if (student == null)
                 {
                     return Forbid();
                 }
@@ -120,6 +120,13 @@ namespace Nexpo.Controllers
             {
                 user.FoodPreferences = dto.FoodPreferences;
             }
+            // Only update the role if it was present in the dto
+            if (dto.Role.HasValue)
+            {
+                // Cast to Role from Role? is necessesary because Role must be mandatory in User
+                user.Role = (Role)dto.Role;
+            }
+
             if (!string.IsNullOrEmpty(dto.Password))
             {
                 if (!_passwordService.IsStrongPassword(dto.Password))
@@ -169,17 +176,17 @@ namespace Nexpo.Controllers
             _aws3Services = new Aws3Services(_appConfiguration.AwsAccessKey, _appConfiguration.AwsSecretAccessKey, _appConfiguration.Region, _appConfiguration.BucketName);
 
 
-            var responseCV = _aws3Services.IfFileExists( user.Id.ToString() + ".pdf");
+            var responseCV = _aws3Services.IfFileExists(user.Id.ToString() + ".pdf");
             user.hasCv = responseCV;
 
             var responseProfilePicture = _aws3Services.IfFileExists(user.Id.ToString() + ".jpg");
             user.hasProfilePicture = responseProfilePicture;
-            
+
             user.profilePictureUrl = "https://cvfiler.s3.eu-north-1.amazonaws.com/" + userId.ToString() + ".jpg";
 
             return Ok(user);
         }
-        
+
         /// <summary>
         /// Update the signed in user's information
         /// </summary>
