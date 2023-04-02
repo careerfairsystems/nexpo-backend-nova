@@ -23,11 +23,13 @@ namespace Nexpo.Tests.Controllers
             //Setup
             //Login as volenteer
             var client = await TestUtils.Login("volenteer"); 
+
             //Create json payload with new role
             var json = new JsonObject
             {
                 { "role", "CompanyRepresentative" }
             }; 
+            
             //Create payload from json
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json"); 
 
@@ -46,7 +48,7 @@ namespace Nexpo.Tests.Controllers
 
             //change role back to Volenteer
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
-            var response2 = await client.PutAsync("api/students/10", payload2);
+            var response2 = await client.PutAsync("api/users/-10", payload2);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
 
             //Assertions of response
@@ -60,7 +62,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.Role.Equals(Role.CompanyRepresentative), "Wrong role. Expected: 2. Received: " + responseObject.Role.ToString());
 
             //Verify that the role has been changed back
-            var responseObject2 = JsonConvert.DeserializeObject<Student>(await response2.Content.ReadAsStringAsync());
+            var responseObject2 = JsonConvert.DeserializeObject<User>(await response2.Content.ReadAsStringAsync());
             Assert.True(responseObject2.Role.Equals(Role.Volunteer), "Wrong role. Expected: 3. Received: " + responseObject2.Role.ToString());
         }
 
