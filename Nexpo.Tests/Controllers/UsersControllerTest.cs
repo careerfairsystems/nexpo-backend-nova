@@ -11,8 +11,59 @@ using Xunit;
 
 namespace Nexpo.Tests.Controllers
 { 
+    /// <summary>
+    /// This class contains tests for the UserController
+    /// To see workflow of tests, see the comments in the test UpdateRoleOfVolenteer()
+    /// </summary>
     public class UserControllerTest
     {
+        [Fact]
+        public async Task UpdateRoleOfVolenteer()
+        {
+            //Setup
+            //Login as volenteer
+            var client = await TestUtils.Login("volenteer"); 
+            //Create json payload with new role
+            var json = new JsonObject
+            {
+                { "role", "CompanyRepresentative" }
+            }; 
+            //Create payload from json
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json"); 
+
+            //Send a PUT request to update the user with id -10 with the payload. 
+            //Note that in the ApplicationDBContext the volenteer has id -10
+            var response = await client.PutAsync("api/users/-10", payload); 
+            
+            //Assertions of response, meaning
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            //Restore
+            var json2 = new JsonObject
+            {
+                { "role", "Volunteer" }
+            };
+
+            //change role back to Volenteer
+            var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
+            var response2 = await client.PutAsync("api/students/10", payload2);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
+
+            //Assertions of response
+            //Verify that the role has been changed
+            //await response.Content.ReadAsStringAsync() returns the response body as a string
+            //JsonConvert.DeserializeObject<User> deserializes the string to a User object (meaning that the response body is a json object)
+            var responseObject = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+
+            //Verify that the role has been changed
+            //Takes the information in the response body and compares it to the expected value
+            Assert.True(responseObject.Role.Equals(Role.CompanyRepresentative), "Wrong role. Expected: 2. Received: " + responseObject.Role.ToString());
+
+            //Verify that the role has been changed back
+            var responseObject2 = JsonConvert.DeserializeObject<Student>(await response2.Content.ReadAsStringAsync());
+            Assert.True(responseObject2.Role.Equals(Role.Volunteer), "Wrong role. Expected: 3. Received: " + responseObject2.Role.ToString());
+        }
+
         [Fact]
         public async Task AdminGetAllUsers()
         {
