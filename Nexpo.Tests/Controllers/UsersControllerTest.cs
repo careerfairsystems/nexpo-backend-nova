@@ -29,12 +29,13 @@ namespace Nexpo.Tests.Controllers
             {
                 { "role", "CompanyRepresentative" }
             }; 
-            
+
             //Create payload from json
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json"); 
 
             //Send a PUT request to update the user with id -10 with the payload. 
             //Note that in the ApplicationDBContext the volenteer has id -10
+            //Notera dock att man måste migrera databasen för att detta ska fungera (se wiki på github)
             var response = await client.PutAsync("api/users/-10", payload); 
             
             //Assertions of response, meaning
