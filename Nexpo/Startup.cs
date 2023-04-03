@@ -29,6 +29,7 @@ using System.Linq;
 
 namespace Nexpo
 {
+    
     public class Startup
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
@@ -37,8 +38,9 @@ namespace Nexpo
             Environment = environment;
         }
 
-        public IConfig Config { get; }
-        public IWebHostEnvironment Environment { get; }
+        public static IConfig Config { get; set; }
+        
+        public static IWebHostEnvironment Environment { get; set; }
 
         public readonly string CorsPolicy = nameof(CorsPolicy);
 
@@ -188,12 +190,12 @@ namespace Nexpo
             .AddCookie(ApplicationSamlConstants.External)
             .AddSaml2(options =>
             {
-                options.SPOptions.EntityId = new EntityId(this.Config.SPEntityId);
+                options.SPOptions.EntityId = new EntityId(Config.SPEntityId);
 		        options.SPOptions.PublicOrigin = new Uri("https://www.nexpo.arkadtlth.se");
                         //options.SPOptions.ReturnUrl = new Uri("https://www.nexpo.arkadtlth.se/");
 		        options.IdentityProviders.Add(
                             new IdentityProvider(
-                                new EntityId(this.Config.IDPEntityId), options.SPOptions)
+                                new EntityId(Config.IDPEntityId), options.SPOptions)
                             {
                                 LoadMetadata = true,
                                 //Binding = Saml2BindingType.HttpRedirect,
@@ -211,8 +213,8 @@ namespace Nexpo
                             new ServiceCertificate
                             {
                                 Certificate = new X509Certificate2(
-                                    this.Config.CertificatePath,
-                                    this.Config.CertificatePassword),
+                                    Config.CertificatePath,
+                                    Config.CertificatePassword),
                                 Use = CertificateUse.Both
                             });
                 //options.SPOptions.
@@ -296,6 +298,7 @@ namespace Nexpo
             {
                 endpoints.MapControllers();
             });
+        
         }
         }
     }
