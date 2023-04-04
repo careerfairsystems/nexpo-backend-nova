@@ -67,6 +67,7 @@ namespace Nexpo
                 || userAgent.Contains("Chrome/6")
                 );
             }
+        }
         
         public class CustomSecurityTokenHandler : Sustainsys.Saml2.Saml2P.Saml2PSecurityTokenHandler
         {
@@ -192,7 +193,7 @@ namespace Nexpo
             {
                 options.SPOptions.EntityId = new EntityId(Config.SPEntityId);
 		        options.SPOptions.PublicOrigin = new Uri("https://www.nexpo.arkadtlth.se");
-                        //options.SPOptions.ReturnUrl = new Uri("https://www.nexpo.arkadtlth.se/");
+                //options.SPOptions.ReturnUrl = new Uri("https://www.nexpo.arkadtlth.se/");
 		        options.IdentityProviders.Add(
                             new IdentityProvider(
                                 new EntityId(Config.IDPEntityId), options.SPOptions)
@@ -232,10 +233,10 @@ namespace Nexpo
             services.AddScoped<IStudentSessionTimeslotRepository, StudentSessionTimeslotRepository>();
             services.AddScoped<IStudentSessionApplicationRepository, StudentSessionApplicationRepository>();
 
-
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
+
             if (Environment.IsDevelopment())
             {
                 services.AddScoped<IEmailService, DevEmailService>();
@@ -284,24 +285,21 @@ namespace Nexpo
             }
     
 	        //dbContext.Database.Migrate(); //ADD THIS IF DATABASE IS CLOSED        
-                //app.UseCookiePolicy();
+            //app.UseCookiePolicy();
 	        app.UseAuthorization();
 	        
 	        app.UseSession();
             app.UseAuthentication();
 	        
             //app.UseHttpsRedirection();
-            
 
             // MAYBE NEED TO USEMVC AND CHANGE ACCORDING TO GIT
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
-        
+            });   
         }
-        }
-    }
+    }   
 }
 
 
