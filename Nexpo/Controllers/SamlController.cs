@@ -26,20 +26,20 @@ namespace Nexpo.Controllers
             this.configuration = configuration;
         }
         
-	[EnableCors]
+	    [EnableCors]
         [AllowAnonymous]
         [HttpGet("InitiateSingleSignOn")]
         public IActionResult InitiateSingleSignOn(string returnUrl)
         {
-
-	    // pretty ugly should be fixed later
-	    returnUrl = "https://www.nexpo.arkadtlth.se/api/saml/Callback/"; 
+	        // pretty ugly should be fixed later
+	        returnUrl = "https://www.nexpo.arkadtlth.se/api/saml/Callback/"; 
             return new ChallengeResult(
                 Saml2Defaults.Scheme,
                 new AuthenticationProperties
                 {
                     RedirectUri = Url.Action(nameof(LoginCallback), new { returnUrl })
-                });
+                }
+            );
         }
 
         
@@ -48,7 +48,6 @@ namespace Nexpo.Controllers
         public async Task<IActionResult> LoginCallback(string returnUrl)
         {
             var authenticateResult = await HttpContext.AuthenticateAsync(ApplicationSamlConstants.External);
-            return Ok(authenticateResult);
 
             if (!authenticateResult.Succeeded)
             {
@@ -63,6 +62,32 @@ namespace Nexpo.Controllers
                 return Redirect(returnUrl);
 
             }
+
+            return this.Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("AttributeConsumerService")]
+        public async Task<IActionResult> AttributeConsumerService()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(ApplicationSamlConstants.External);
+
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            var token = this.CreateJwtSecurityToken(authenticateResult);
+            HttpContext.Session.SetString("JWT", new JwtSecurityTokenHandler().WriteToken(token));
+
+            return this.Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(Saml2Defaults.Scheme);
 
             return this.Ok();
         }
