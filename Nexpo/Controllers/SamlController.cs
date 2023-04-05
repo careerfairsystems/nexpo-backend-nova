@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 using Nexpo.Constants;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.Extensions.Options;
 
 namespace Nexpo.Controllers
 {
@@ -20,10 +21,15 @@ namespace Nexpo.Controllers
     public class SamlController : Controller
     {
         private readonly IConfiguration configuration;
+        private readonly Saml2Options saml2Configuration;
 
         public SamlController(IConfiguration configuration)
         {
             this.configuration = configuration;
+
+            var saml2Configuration = new Saml2Options();
+            configuration.GetSection("Saml2").Bind(saml2Configuration); //rätt section?
+
         }
         
 	    [EnableCors]
@@ -115,5 +121,15 @@ namespace Nexpo.Controllers
                 expires: DateTime.Now.AddHours(1),
                 signingCredentials: credentials);
         }
+
+        [HttpGet("Metadata")]
+        public async Task<IActionResult> Metadata()
+        {
+            //implementera metadata generation
+
+        }
+
+
     }
+
 }
