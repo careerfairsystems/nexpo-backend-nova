@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Http;
 using Nexpo.Constants;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.Extensions.Options;
+using Sustainsys.Saml2.Configuration;
+using Sustainsys.Saml2.Metadata;
+using Microsoft.IdentityModel.Tokens.Saml2;
 
 namespace Nexpo.Controllers
 {
@@ -21,14 +24,10 @@ namespace Nexpo.Controllers
     public class SamlController : Controller
     {
         private readonly IConfiguration configuration;
-        private readonly Saml2Options saml2Configuration;
 
         public SamlController(IConfiguration configuration)
         {
             this.configuration = configuration;
-
-            var saml2Configuration = new Saml2Options();
-            configuration.GetSection("Saml2").Bind(saml2Configuration); //rätt section?
 
         }
         
@@ -46,6 +45,79 @@ namespace Nexpo.Controllers
                     RedirectUri = Url.Action(nameof(LoginCallback), new { returnUrl })
                 }
             );
+        }
+
+        [HttpGet("Metadata")]
+        public async Task<IActionResult> Metadata()
+        {   
+            var saml2Options = new Saml2Options();
+            configuration.GetSection("Saml2").Bind(saml2Options); //rätt section?
+
+            var SPOptions = saml2Options.SPOptions;
+
+            var entityDescriptor = new EntityDescriptor();
+            entityDescriptor.EntityId = SPOptions.EntityId;
+
+            var sp = new SpSsoDescriptor();
+
+            var ACS = new AssertionConsumerService
+            {
+                Binding = new Uri("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"),
+                Location = new Uri("https://www.nexpo.arkadtlth.se/api/saml/ACS"),
+                Index = 0,
+            };
+
+            sp.AssertionConsumerServices.TryAdd(0, ACS);
+
+            var SLO = new SingleLogoutService
+            {
+                Binding = new Uri("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-REDIRECT"),
+                Location = new Uri("https://www.nexpo.arkadtlth.se/api/saml/Logout"),
+            };
+
+            sp.SingleLogoutServices.Add(SLO);
+
+            var technicalContactMail = "it.arkad@tlth.se";
+            var SPX509cert = SPOptions.ServiceCertificates[0];
+
+            var nameIdFormat = new Uri("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"); //rätt?
+
+            var callback = new Uri("https://www.nexpo.arkadtlth.se/api/saml/Callback"); 
+
+            //NameId Format - kolla om rätt 
+            //private key
+            //WantAssertionsSigned
+            //callback - lägg till
+            
+
+            
+
+
+            
+
+
+            //var idpOptions = saml2Options.IdentityProviders.Default;
+            //var idpURi = new Uri(idpOptions.MetadataLocation);
+
+            //var nameidformat = 
+
+            //_______________________
+
+
+            //var metadataSerializer = new MetadataSerializer();
+            //var metadata = metadataSerializer.
+            //return Content(metadata, "text/xml");
+            
+            /*
+            plan: Lägg till saml2configuration samt mina endpoints i en xml fil, och displaya den.
+            
+            Måste byta lite localhost endpoitns
+
+            Hur hämtar jag mina endpoints? Double as localhost and onserver
+            
+            */
+
+
         }
 
         
@@ -72,8 +144,9 @@ namespace Nexpo.Controllers
             return this.Ok();
         }
 
+        //ACS is an abbreviation for AttributeConsumerService
         [AllowAnonymous]
-        [HttpPost("AttributeConsumerService")]
+        [HttpPost("ACS")]
         public async Task<IActionResult> AttributeConsumerService()
         {
             var authenticateResult = await HttpContext.AuthenticateAsync(ApplicationSamlConstants.External);
@@ -86,7 +159,7 @@ namespace Nexpo.Controllers
             var token = this.CreateJwtSecurityToken(authenticateResult);
             HttpContext.Session.SetString("JWT", new JwtSecurityTokenHandler().WriteToken(token));
 
-            return this.Ok();
+            return this.Ok(); 
         }
 
         [AllowAnonymous]
@@ -122,12 +195,8 @@ namespace Nexpo.Controllers
                 signingCredentials: credentials);
         }
 
-        [HttpGet("Metadata")]
-        public async Task<IActionResult> Metadata()
-        {
-            //implementera metadata generation
+    
 
-        }
 
 
     }
