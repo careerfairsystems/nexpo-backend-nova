@@ -13,10 +13,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 using Nexpo.Constants;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.Extensions.Options;
 using Sustainsys.Saml2.Configuration;
 using Sustainsys.Saml2.Metadata;
-using Microsoft.IdentityModel.Tokens.Saml2;
+using System.Xml;
+using System.Security.Cryptography.Xml;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Nexpo.Controllers
 {
@@ -52,70 +53,76 @@ namespace Nexpo.Controllers
         {   
             var saml2Options = new Saml2Options();
             configuration.GetSection("Saml2").Bind(saml2Options); //rätt section?
-
             var SPOptions = saml2Options.SPOptions;
+            //var serviceProvider = (ServiceProvider) Nexpo.Startup.ServiceProvider;
 
-            var entityDescriptor = new EntityDescriptor();
-            entityDescriptor.EntityId = SPOptions.EntityId;
+            //config entityID
+            var entityDescriptor = new EntityDescriptor(SPOptions.EntityId);
 
-            var sp = new SpSsoDescriptor();
+            var SPX509cert = SPOptions.ServiceCertificates[0];
+            var SPX509Data = new KeyInfoX509Data();
+            SPX509Data.AddCertificate(SPX509cert.Certificate);
+            var keyInfo = new DSigKeyInfo();
+            //maybe add SPX509Data to keyInfo
 
+            var SPX509Descriptor = new KeyDescriptor
+            {
+                Use = KeyType.Signing,
+                KeyInfo = keyInfo,
+            };
+
+            //entityDescriptor.keyDiscriptors.Add(SPX509Descriptor);
+        
+            //config endpoints
+            var spd = new SpSsoDescriptor();
             var ACS = new AssertionConsumerService
             {
                 Binding = new Uri("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"),
-                Location = new Uri("https://www.nexpo.arkadtlth.se/api/saml/ACS"),
+                Location = new Uri("https://www.nexpo.arkadtlth.se/api/saml/ACS"), //fullt att hårdkoda - refactor
                 Index = 0,
             };
 
-            sp.AssertionConsumerServices.TryAdd(0, ACS);
-
             var SLO = new SingleLogoutService
             {
-                Binding = new Uri("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-REDIRECT"),
+                Binding = new Uri("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
                 Location = new Uri("https://www.nexpo.arkadtlth.se/api/saml/Logout"),
             };
 
-            sp.SingleLogoutServices.Add(SLO);
+            spd.AssertionConsumerServices.TryAdd(0, ACS);
+            spd.SingleLogoutServices.Add(SLO);
+            spd.WantAssertionsSigned = SPOptions.WantAssertionsSigned;
+            entityDescriptor.RoleDescriptors.Add(spd);
 
-            var technicalContactMail = "it.arkad@tlth.se";
-            var SPX509cert = SPOptions.ServiceCertificates[0];
-
-            var nameIdFormat = new Uri("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"); //rätt?
+            
 
             var callback = new Uri("https://www.nexpo.arkadtlth.se/api/saml/Callback"); 
 
-            //NameId Format - kolla om rätt 
+
+            //var technicalContactMail = "it.arkad@tlth.se"; //lägg i config/constants    
+            //var tokenHandler = SPOptions.Saml2PSecurityTokenHandler;
+            //
+            //var nameIdFormat = new Uri("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"); //rätt?
+
+            
+
+
+            var xmlDoc = new XmlDocument();
+            var xmlDeclaration = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
+            xmlDoc.AppendChild(xmlDeclaration);
+            
+            var entityDescriptorXMLChild = xmlDoc.CreateElement(entityDescriptor.Extensions.ToString());
+            xmlDoc.AppendChild(entityDescriptorXMLChild);
+            //NameId Format - kolla om rätt n
             //private key
             //WantAssertionsSigned
             //callback - lägg till
+            //baseURL
+
+            //kolla på add ta all info från SPOptions och lägg till i xml
             
-
             
-
-
-            
-
-
-            //var idpOptions = saml2Options.IdentityProviders.Default;
-            //var idpURi = new Uri(idpOptions.MetadataLocation);
-
-            //var nameidformat = 
-
-            //_______________________
-
-
-            //var metadataSerializer = new MetadataSerializer();
-            //var metadata = metadataSerializer.
-            //return Content(metadata, "text/xml");
-            
-            /*
-            plan: Lägg till saml2configuration samt mina endpoints i en xml fil, och displaya den.
-            
-            Måste byta lite localhost endpoitns
-
-            Hur hämtar jag mina endpoints? Double as localhost and onserver
-            
-            */
+            //outer?
+            return Content(xmlDoc.InnerText, "text/xml");
 
 
         }

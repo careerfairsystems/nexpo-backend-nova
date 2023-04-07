@@ -12,24 +12,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using Nexpo.AWS;
+
 // adding for SAML feature
 using Nexpo.Constants;
-using Nexpo.Helpers;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Sustainsys.Saml2;
 using Sustainsys.Saml2.Metadata;
-using Swashbuckle.AspNetCore.Swagger;
-using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using System.Security.Claims;
 using System.Linq;
 
 namespace Nexpo
 {
-    
+
     public class Startup
     {
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
@@ -41,6 +37,8 @@ namespace Nexpo
         public static IConfig Config { get; set; }
         
         public static IWebHostEnvironment Environment { get; set; }
+
+        public static IServiceProvider ServiceProvider { get; }
 
         public readonly string CorsPolicy = nameof(CorsPolicy);
 
@@ -103,22 +101,14 @@ namespace Nexpo
                     claimsIdentity.AddClaim(snClaim);
                 }
                 return claimsIdentity;
-                /*ClaimsIdentity identity = base.CreateClaimsIdentity(samlToken, issuer, validationParameters);
-                Claim claim = new Claim("Name", "jon.doe");
-                Claim[] claims = new Claim[] { claim };
-                identity.AddClaims(claims);*/
-
-               // return identity;
             }
         }
         
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public static void ConfigureServices(IServiceCollection services)
         {
             // ** ADDED for SSO feature **
             services.AddDistributedMemoryCache();
-            
             
             services.AddSession(options =>
             {
@@ -144,20 +134,18 @@ namespace Nexpo
                 options.OnDeleteCookie = cookieContext =>
                     AuthenticationHelpers.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
             });
-
-
-            
-            /*services.AddMvc((options) =>
+            /*
+            services.AddMvc((options) =>
             {
                 options.RespectBrowserAcceptHeader = true;
                 options.ReturnHttpNotAcceptable = true;
-                options.InputFormatters.Add(new XmlSerializerInputFormatter(
-                    options));
+                options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
                 options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
                 options.FormatterMappings.SetMediaTypeMappingForFormat("json", "application/json");
                 options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
             })
-            .AddDataAnnotationsLocalization();*/
+            .AddDataAnnotationsLocalization();
+            */
             
             services.AddControllers();
             services.AddSingleton<IS3Configuration, S3Config>();
@@ -171,7 +159,7 @@ namespace Nexpo
             {
                 o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                // add for SSO
+                
                 o.DefaultScheme = ApplicationSamlConstants.Application;
                 o.DefaultSignInScheme = ApplicationSamlConstants.External;
             }).AddJwtBearer(options =>
@@ -205,10 +193,8 @@ namespace Nexpo
 			
 			        //RelayStateUsedAsReturnUrl = true
                             });
-		        options.SPOptions.WantAssertionsSigned = false;
-                
 
-                //options.SPOptions.ServiceCertificates.Add(new X509Certificate2(this.Config.CertificatePath, this.Config.CertificatePassword));
+		        options.SPOptions.WantAssertionsSigned = false;
 
                 options.SPOptions.ServiceCertificates.Add(
                             new ServiceCertificate
@@ -218,11 +204,14 @@ namespace Nexpo
                                     Config.CertificatePassword),
                                 Use = CertificateUse.Both
                             });
-                //options.SPOptions.
 
                 options.SPOptions.Saml2PSecurityTokenHandler = new CustomSecurityTokenHandler();
             });
+            //var serviceProviderOptions = new ServiceProviderOptions();
 
+            //var serviceProvider = services.BuildServiceProvider();
+            
+            //services.AddScoped<IServiceProvider, SamlController>();
             services.AddScoped<IConfig>(_ => Config);
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
             services.AddScoped<IUserRepository, UserRepository>();
@@ -232,7 +221,7 @@ namespace Nexpo
             services.AddScoped<ITicketRepository, TicketRepository>();
             services.AddScoped<IStudentSessionTimeslotRepository, StudentSessionTimeslotRepository>();
             services.AddScoped<IStudentSessionApplicationRepository, StudentSessionApplicationRepository>();
-
+            
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
@@ -260,12 +249,13 @@ namespace Nexpo
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Nexpo", Version = "v1" });
+                
             });
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext)
+        public static async void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext)
         {
             app.UseRouting();
             app.UseCors(x => x
@@ -279,14 +269,15 @@ namespace Nexpo
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nexpo v1"));
+                //http://localhost:5000/swagger/index.html
 
-                //ADD LATER.
                 //dbContext.Database.Migrate();
                 //dbContext.Seed();
             }
     
-	        //dbContext.Database.Migrate(); //ADD THIS IF DATABASE IS CLOSED        
+	                
             //app.UseCookiePolicy();
+            
 	        app.UseAuthorization();
 	        
 	        app.UseSession();
@@ -294,10 +285,13 @@ namespace Nexpo
 	        
             //app.UseHttpsRedirection();
 
+            
+
             // MAYBE NEED TO USEMVC AND CHANGE ACCORDING TO GIT
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+    
             });   
         }
     }   
