@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Nexpo
@@ -21,7 +22,7 @@ namespace Nexpo
         public string IDPEntityId { get; set; }
         public string CertificatePath { get; set; }
         public string CertificatePassword { get; set; }
-
+        public string  PrivateKeyPath { get; set; }
     }
 
     public class Config : IConfig
@@ -40,8 +41,7 @@ namespace Nexpo
             IDPEntityId = config["SAML:IDPEntityId"];
             CertificatePath = config["SAML:CertificatePath"];
             CertificatePassword = config["SAML:CertificatePassword"];
-
-
+            PrivateKeyPath = config["SAML:PrivateKeyPath"];
         }
 
         public string BaseUrl { get; set; }
@@ -55,6 +55,7 @@ namespace Nexpo
         public string IDPEntityId { get; set; }
         public string CertificatePath { get; set; }
         public string CertificatePassword { get; set; }
+        public string PrivateKeyPath { get; set; }
 
 
     }
