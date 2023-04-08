@@ -182,8 +182,7 @@ namespace Nexpo
             .AddSaml2(options =>
             {
                 options.SPOptions.EntityId = new EntityId(Config.SPEntityId);
-		        options.SPOptions.PublicOrigin = new Uri("https://www.nexpo.arkadtlth.se");
-                //options.SPOptions.ReturnUrl = new Uri("https://www.nexpo.arkadtlth.se/");
+		        
 		        options.IdentityProviders.Add(
                             new IdentityProvider(
                                 new EntityId(Config.IDPEntityId), options.SPOptions)
@@ -197,18 +196,14 @@ namespace Nexpo
                             });
 
 		        options.SPOptions.WantAssertionsSigned = false;
+            
+                var certificate = X509Certificate2.CreateFromPemFile(Config.SPCertificatePath, Config.SPPrivateKeyPath);
 
-                var cert = new X509Certificate2(Config.CertificatePath, Config.CertificatePassword);
-                RSACryptoServiceProvider privateKey = new RSACryptoServiceProvider();
-                string privateKeyText = File.ReadAllText(Config.PrivateKeyPath);
-                privateKey.FromXmlString(privateKeyText);
-
-                //need to add certificate
                 options.SPOptions.ServiceCertificates.Add(
                             new ServiceCertificate
                             {
-                                Certificate = cert.CopyWithPrivateKey(privateKey),
-                                Use = CertificateUse.Both
+                                Certificate = certificate,
+                                Use = CertificateUse.Signing
                             });
 
                 options.SPOptions.Saml2PSecurityTokenHandler = new CustomSecurityTokenHandler();
@@ -262,7 +257,7 @@ namespace Nexpo
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public static async void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext)
         {
             app.UseRouting();
             app.UseCors(x => x
@@ -292,8 +287,7 @@ namespace Nexpo
 	        
             //app.UseHttpsRedirection();
 
-            
-
+        
             // MAYBE NEED TO USEMVC AND CHANGE ACCORDING TO GIT
             app.UseEndpoints(endpoints =>
             {
