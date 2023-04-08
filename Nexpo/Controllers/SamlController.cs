@@ -31,14 +31,14 @@ namespace Nexpo.Controllers
             this.configuration = configuration;
 
         }
-        
-	    [EnableCors]
+
+        [EnableCors]
         [AllowAnonymous]
         [HttpGet("InitiateSingleSignOn")]
         public IActionResult InitiateSingleSignOn(string returnUrl)
         {
-	        // pretty ugly should be fixed later
-	        returnUrl = "https://www.nexpo.arkadtlth.se/api/saml/Callback/"; 
+            // pretty ugly should be fixed later
+            returnUrl = "https://www.nexpo.arkadtlth.se/api/saml/Callback/";
             return new ChallengeResult(
                 Saml2Defaults.Scheme,
                 new AuthenticationProperties
@@ -48,16 +48,23 @@ namespace Nexpo.Controllers
             );
         }
 
-        [HttpGet("Metadata")]
-        public async Task<IActionResult> Metadata()
-        {   
-            var saml2Options = new Saml2Options();
+        /// <summary>
+        /// the endpoint corresponding to the entityID in the metadata
+        /// does nothing currently but planning to use it to display metadata
+        /// </summary>
+        [HttpGet("SP")]
+        public Task<IActionResult> SP()
+        {
+        
+           var saml2Options = new Saml2Options();
             configuration.GetSection("Saml2").Bind(saml2Options); //rätt section?
             var SPOptions = saml2Options.SPOptions;
             //var serviceProvider = (ServiceProvider) Nexpo.Startup.ServiceProvider;
 
+
             //config entityID
             var entityDescriptor = new EntityDescriptor(SPOptions.EntityId);
+
 
             var SPX509cert = SPOptions.ServiceCertificates[0];
             var SPX509Data = new KeyInfoX509Data();
@@ -65,14 +72,16 @@ namespace Nexpo.Controllers
             var keyInfo = new DSigKeyInfo();
             //maybe add SPX509Data to keyInfo
 
+
             var SPX509Descriptor = new KeyDescriptor
             {
                 Use = KeyType.Signing,
                 KeyInfo = keyInfo,
             };
 
+
             //entityDescriptor.keyDiscriptors.Add(SPX509Descriptor);
-        
+
             //config endpoints
             var spd = new SpSsoDescriptor();
             var ACS = new AssertionConsumerService
@@ -82,34 +91,43 @@ namespace Nexpo.Controllers
                 Index = 0,
             };
 
+
             var SLO = new SingleLogoutService
             {
                 Binding = new Uri("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
                 Location = new Uri("https://www.nexpo.arkadtlth.se/api/saml/Logout"),
             };
 
+
             spd.AssertionConsumerServices.TryAdd(0, ACS);
             spd.SingleLogoutServices.Add(SLO);
             spd.WantAssertionsSigned = SPOptions.WantAssertionsSigned;
             entityDescriptor.RoleDescriptors.Add(spd);
 
-            
-
-            var callback = new Uri("https://www.nexpo.arkadtlth.se/api/saml/Callback"); 
 
 
-            //var technicalContactMail = "it.arkad@tlth.se"; //lägg i config/constants    
+
+
+            var callback = new Uri("https://www.nexpo.arkadtlth.se/api/saml/Callback");
+
+
+
+
+            //var technicalContactMail = "it.arkad@tlth.se"; //lägg i config/constants   
             //var tokenHandler = SPOptions.Saml2PSecurityTokenHandler;
             //
             //var nameIdFormat = new Uri("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"); //rätt?
 
-            
+
+
+
+
 
 
             var xmlDoc = new XmlDocument();
             var xmlDeclaration = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
             xmlDoc.AppendChild(xmlDeclaration);
-            
+
             var entityDescriptorXMLChild = xmlDoc.CreateElement(entityDescriptor.Extensions.ToString());
             xmlDoc.AppendChild(entityDescriptorXMLChild);
             //NameId Format - kolla om rätt n
@@ -118,16 +136,19 @@ namespace Nexpo.Controllers
             //callback - lägg till
             //baseURL
 
+
             //kolla på add ta all info från SPOptions och lägg till i xml
-            
-            
+
+
             //outer?
-            return Content(xmlDoc.InnerText, "text/xml");
+            //return Content(xmlDoc.InnerText, "text/xml");
 
 
+
+            return null;
         }
 
-        
+
         [AllowAnonymous]
         [HttpGet("Callback")]
         public async Task<IActionResult> LoginCallback(string returnUrl)
@@ -166,7 +187,7 @@ namespace Nexpo.Controllers
             var token = this.CreateJwtSecurityToken(authenticateResult);
             HttpContext.Session.SetString("JWT", new JwtSecurityTokenHandler().WriteToken(token));
 
-            return this.Ok(); 
+            return this.Ok();
         }
 
         [AllowAnonymous]
@@ -202,7 +223,7 @@ namespace Nexpo.Controllers
                 signingCredentials: credentials);
         }
 
-    
+
 
 
 
