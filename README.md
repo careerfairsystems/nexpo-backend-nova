@@ -1,5 +1,5 @@
 # nexpo-backend-nova
-A rebuild of the nexpo backend with C#, currently in use for the ARKAD career fair as of 20223.
+A rebuild of the nexpo backend with C#, currently in use for the ARKAD career fair as of 2023.
 
 This is the backend that supports the [Nexpo app](https://github.com/careerfairsystems/nexpo-app) and in the future hopefully the new nexpo website.
 
