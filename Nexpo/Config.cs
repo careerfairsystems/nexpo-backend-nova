@@ -20,28 +20,45 @@ namespace Nexpo
         // ** ADDED for SSO feature **
         public string SPEntityId { get; set; }
         public string IDPEntityId { get; set; }
-        public string CertificatePath { get; set; }
-        public string CertificatePassword { get; set; }
-        public string  PrivateKeyPath { get; set; }
+        public string SPCertificatePath { get; set; }
+        public string SPCertificatePassword { get; set; }
+        public string SPPrivateKeyPath { get; set; }
+        public string SPCallbackUrl { get; set; }
+        public string SPLogoutUrl { get; set; }
+        public string SPACSUrl { get; set; }
+
+
     }
 
     public class Config : IConfig
     {
 
+    
         public Config(IConfiguration config)
         {
             BaseUrl = config["BaseUrl"];
             SendGridApiKey = config["SendGridApiKey"];
             SecretKey = config["SecretKey"];
-            JWTIssuer = config["JWT:Issuer"];
-            JWTAudience = config["JWT:Audience"];
-            JWTExpires = config["JWT:Expires"];
+            JWTIssuer = config["JWTIssuer"];
+            JWTAudience = config["JWTAudience"];
+            JWTExpires = config["JWTExpires"];
             ConnectionString = config["ConnectionString"];
-            SPEntityId = config["SAML:SPEntityId"];
-            IDPEntityId = config["SAML:IDPEntityId"];
-            CertificatePath = config["SAML:CertificatePath"];
-            CertificatePassword = config["SAML:CertificatePassword"];
-            PrivateKeyPath = config["SAML:PrivateKeyPath"];
+
+            SPEntityId = config["SAML:SP:SPEntityId"];
+            SPCallbackUrl = config["SAML:SP:SPCallbackUrl"];
+            SPLogoutUrl = config["SAML:SP:SPLogoutUrl"];
+            SPACSUrl = config["SAML:SP:SPACSUrl"];
+            SPCertificatePath = config["SAML:SP:SPCertificatePath"];
+            SPCertificatePassword = config["SAML:SP:SPCertificatePassword"];
+            SPPrivateKeyPath = config["SAML:SP:SPPrivateKeyPath"];
+
+            IDPEntityId = config["SAML:IDP:IDPEntityId"];
+            // CertificatePath = config["SAML:IDP:IDPCertificatePath"];
+            // CertificatePassword = config["SAML:IDP:IDPCertificatePassword"];
+            // IDPSSOUrl = config["SAML:IDP:IDPSSOUrl"];
+            // IDPLogoutUrl = config["SAML:IDP:IDPLogoutUrl"];
+
+
         }
 
         public string BaseUrl { get; set; }
@@ -53,9 +70,16 @@ namespace Nexpo
         public string ConnectionString { get; set; }
         public string SPEntityId { get; set; }
         public string IDPEntityId { get; set; }
-        public string CertificatePath { get; set; }
-        public string CertificatePassword { get; set; }
-        public string PrivateKeyPath { get; set; }
+        public string SPCertificatePath { get; set; }
+        public string SPCertificatePassword { get; set; }
+        public string SPPrivateKeyPath { get; set; }
+        public string SPCallbackUrl { get; set; }
+        public string SPLogoutUrl { get; set; }
+        public string SPACSUrl { get; set; }
+
+
+
+
 
 
     }
