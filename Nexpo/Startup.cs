@@ -22,6 +22,8 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using System.Security.Claims;
 using System.Linq;
+using System.Security.Cryptography;
+using System.IO;
 
 namespace Nexpo
 {
@@ -196,12 +198,16 @@ namespace Nexpo
 
 		        options.SPOptions.WantAssertionsSigned = false;
 
+                var cert = new X509Certificate2(Config.CertificatePath, Config.CertificatePassword);
+                RSACryptoServiceProvider privateKey = new RSACryptoServiceProvider();
+                string privateKeyText = File.ReadAllText(Config.PrivateKeyPath);
+                privateKey.FromXmlString(privateKeyText);
+
+                //need to add certificate
                 options.SPOptions.ServiceCertificates.Add(
                             new ServiceCertificate
                             {
-                                Certificate = new X509Certificate2(
-                                    Config.CertificatePath,
-                                    Config.CertificatePassword),
+                                Certificate = cert.CopyWithPrivateKey(privateKey),
                                 Use = CertificateUse.Both
                             });
 
@@ -225,7 +231,8 @@ namespace Nexpo
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
-
+            services.AddScoped<EmailService, EmailService>();
+            
             if (Environment.IsDevelopment())
             {
                 services.AddScoped<IEmailService, DevEmailService>();
