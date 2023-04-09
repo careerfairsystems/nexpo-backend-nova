@@ -113,6 +113,8 @@
     <md:NameIDFormat>urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified</md:NameIDFormat>
     <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
       Location="https://www.nexpo.arkadtlth.se/api/Saml/ACS" index="1" />
+      <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
+      Location="https://www.nexpo.arkadtlth.se/api/Saml/init"/>
   </md:SPSSODescriptor>
   <md:ContactPerson contactType="technical">
     <md:GivenName>ARKAD Head of IT</md:GivenName>
