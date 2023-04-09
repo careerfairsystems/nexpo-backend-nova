@@ -114,7 +114,7 @@
     <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
       Location="https://www.nexpo.arkadtlth.se/api/Saml/ACS" index="1" />
       <md:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
-      Location="https://www.nexpo.arkadtlth.se/api/Saml/init"/>
+      Location="https://www.nexpo.arkadtlth.se/api/Saml/InitiateSingleSignOn"/>
   </md:SPSSODescriptor>
   <md:ContactPerson contactType="technical">
     <md:GivenName>ARKAD Head of IT</md:GivenName>
