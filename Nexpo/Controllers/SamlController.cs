@@ -57,23 +57,15 @@ namespace Nexpo.Controllers
         /// SSO AssertionConsumerService endpoint
         ///
         /// The endpoint that the IdP will post the SAMLResponse to
+        /// Meaning after a successful login, the idp performs a redirect to this endpoint
+        /// The HttpContext will contain the SAMLResponse
         /// ACS is an abbreviation for AttributeConsumerService
         /// </summary>
         [AllowAnonymous]
         [HttpPost("ACS")]
-        public async Task<IActionResult> AttributeConsumerService()
-        {
-            var authenticateResult = await HttpContext.AuthenticateAsync(ApplicationSamlConstants.External);
-
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            var token = this.CreateJwtSecurityToken(authenticateResult);
-            HttpContext.Session.SetString("JWT", new JwtSecurityTokenHandler().WriteToken(token));
-
-            return this.Ok();
+        public void AttributeConsumerService(HttpContext context)
+        {            
+                
         }
 
         /// <summary>
