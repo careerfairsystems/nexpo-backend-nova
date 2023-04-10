@@ -7,6 +7,7 @@ using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+//Note: This class has not been tested to work yet
 namespace Nexpo.Controllers
 {
     [Route("api/Saml")]
