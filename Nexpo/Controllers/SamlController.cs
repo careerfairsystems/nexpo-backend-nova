@@ -12,12 +12,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 using Nexpo.Constants;
-using Microsoft.AspNetCore.Cors;
-using Sustainsys.Saml2.Configuration;
-using Sustainsys.Saml2.Metadata;
-using System.Xml;
-using System.Security.Cryptography.Xml;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Nexpo.Controllers
 {
@@ -30,42 +24,6 @@ namespace Nexpo.Controllers
         {
             this.configuration = configuration;
 
-        }
-
-        /// <summary>
-        /// SSO SingleSignOnService endpoint
-        ///
-        /// The endpoint that sends a SAML authentication request to the IdP
-        /// </summary>
-        [EnableCors]
-        [AllowAnonymous]
-        [HttpGet("InitiateSingleSignOn")]
-        public IActionResult InitiateSingleSignOn(string returnUrl)
-        {
-            // pretty ugly should be fixed later
-            returnUrl = "https://www.nexpo.arkadtlth.se/api/saml/Callback/";
-            return new ChallengeResult(
-                Saml2Defaults.Scheme,
-                new AuthenticationProperties
-                {
-                    RedirectUri = Url.Action(nameof(LoginCallback), new { returnUrl })
-                }
-            );
-        }
-
-        /// <summary>
-        /// SSO AssertionConsumerService endpoint
-        ///
-        /// The endpoint that the IdP will post the SAMLResponse to
-        /// Meaning after a successful login, the idp performs a redirect to this endpoint
-        /// The HttpContext will contain the SAMLResponse
-        /// ACS is an abbreviation for AttributeConsumerService
-        /// </summary>
-        [AllowAnonymous]
-        [HttpPost("ACS")]
-        public void AttributeConsumerService(HttpContext context)
-        {            
-                
         }
 
         /// <summary>
