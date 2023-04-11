@@ -47,7 +47,7 @@ namespace Nexpo.Controllers
             
             // TODO: Still need to do something with the information
             
-            //Is this redirect correct?
+            //Is this redirect correct? - nvm I want to log them in. Redo this
             context.Response.Redirect(context.Request.Form["RelayState"].ToString());
         }
 
