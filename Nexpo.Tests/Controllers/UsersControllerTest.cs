@@ -11,46 +11,60 @@ using System.Threading.Tasks;
 using Xunit;
 
 namespace Nexpo.Tests.Controllers
-{ 
+{
     public class UserControllerTest
     {
         [Fact]
-        public async Task AdminChangeRole(){
+        public async Task AdminChangeRole()
+        {
+
             //Setup
             //Login as admin, in order to be able to update the role of a user
-            //Otherwise: receive "Unauthorized" as response
+            //Otherwise we'll receive "Unauthorized" as response from the client.PutAync
             var client = await TestUtils.Login("admin");
-            
-            //Create a data transfer object with the new role
+
+            //Create a data transfer object (DTO) with the new role
+            //DTO's are classes that are used to transfer data 
             //IMO this is easier than storing the enum Role in a json file
-            var updateRoleDto = new UpdateUserDto{
+            var updateRoleDto = new UpdateUserDto
+            {
                 Role = Role.Volunteer
             };
 
-            //Serialize the data transfer object to json 
+            //Serialize the data transfer object to json
+            //Meaning take what we want to transfer inside the DTO and convert it to a string
             //and then to a StringContent so the client can send it
             var json = JsonConvert.SerializeObject(updateRoleDto);
             var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
 
             //Send a PUT request to update the user with id -5 with the payload. 
-            //Note that in the ApplicationDBContext the volenteer has id -10
-            //Note that api/users/-5 is the endpoint for updating a user with id -5 (see UsersController.cs api/users/{id})
-            //So we are updating the role of the CompanyRepresentative to the role contained in the DTO (Volunteer)
+            //Note that in the ApplicationDBContext the CompanyRepresentative has id -5
+            //api/users/-5 is the endpoint for updating a user with id -5
+            // -> (see UsersController.cs api/users/{id})
+            //So we are updating the role of the CompanyRepresentative to the role contained in the DTO
             var response = await client.PutAsync("api/users/-5", payload);
 
             //Assertions of response, meaning that check that the "put" request was successful
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+            Assert.True(
+                response.StatusCode.Equals(HttpStatusCode.OK),
+                "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString()
+            );
 
             //Extract the content of the response and deserialize it to a User object
-            var user = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+            var serializedUser = await response.Content.ReadAsStringAsync()
+            var user = JsonConvert.DeserializeObject<User>(serializedUser);
             
             //Check that the role of the user is now Volunteer
-            Assert.True(user.Role.Equals(Role.Volunteer), "Wrong role. Expected: CompanyRepresentative. Received: " + user.Role.ToString());
-            
+            Assert.True(
+                user.Role.Equals(Role.Volunteer), 
+                "Wrong role. Expected: CompanyRepresentative. Received: " + user.Role.ToString()
+            );
+
             //The process of restoring back to an CompanyRepresentative
             //Note that if this is not done, the comming tests will fail
             //(an alternative is seeding the database with a new user that you can corrupt)
-            var updateRoleDto2 = new UpdateUserDto{
+            var updateRoleDto2 = new UpdateUserDto
+            {
                 Role = Role.CompanyRepresentative
             };
 
@@ -59,10 +73,16 @@ namespace Nexpo.Tests.Controllers
             var payload2 = new StringContent(json2, UnicodeEncoding.UTF8, "application/json");
 
             var response2 = await client.PutAsync("api/users/-5", payload2);
-            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
+            Assert.True(
+                response2.StatusCode.Equals(HttpStatusCode.OK), 
+                "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString()
+            );
 
             var user2 = JsonConvert.DeserializeObject<User>(await response2.Content.ReadAsStringAsync());
-            Assert.True(user2.Role.Equals(Role.CompanyRepresentative), "Wrong role. Expected: CompanyRepresentative. Received: " + user2.Role.ToString());
+            Assert.True(
+                user2.Role.Equals(Role.CompanyRepresentative), 
+                "Wrong role. Expected: CompanyRepresentative. Received: " + user2.Role.ToString()
+            );
 
         }
         [Fact]
@@ -76,17 +96,17 @@ namespace Nexpo.Tests.Controllers
             var userAdmin = responseList.Find(r => r.Id == -1);
             var userStudent = responseList.Find(r => r.Id == -2);
             var userRep = responseList.Find(r => r.Id == -5);
-            
+
             Assert.True(responseList.Count == 9, "Wrong number of users. Expected: 9. Received: " + responseList.Count.ToString());
             Assert.True(userAdmin.Role.Equals(Role.Administrator), "Wrong user role. Expected: admin. Received: " + userAdmin.Role.ToString());
-            Assert.True(userStudent.FirstName.Equals("Alpha"), "Wrong user first name. Expected: Alpha. Received: " +  userStudent.FirstName);
+            Assert.True(userStudent.FirstName.Equals("Alpha"), "Wrong user first name. Expected: Alpha. Received: " + userStudent.FirstName);
             Assert.True(userRep.CompanyId == -1, "Wrong company id. Expected: -1. Received: " + userRep.CompanyId.ToString());
         }
 
         [Fact]
         public async Task StudentGetAllUsers()
         {
-            var client =  await TestUtils.Login("student1");
+            var client = await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/users/");
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
@@ -130,7 +150,7 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task CompanyGetUserNoStudentApplication()
         {
-            var client =  await TestUtils.Login("company3");
+            var client = await TestUtils.Login("company3");
             var response = await client.GetAsync("/api/users/-2");
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
@@ -139,7 +159,7 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task StudentGetUser()
         {
-            var client =  await TestUtils.Login("student1");
+            var client = await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/users/-2");
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
@@ -149,7 +169,7 @@ namespace Nexpo.Tests.Controllers
         public async Task AdminUpdateUser()
         {
             var application = new WebApplicationFactory<Program>();
-            var client =  await TestUtils.Login("admin");
+            var client = await TestUtils.Login("admin");
             var json = new JsonObject
             {
                 { "firstName", "Rakel" },
@@ -191,7 +211,7 @@ namespace Nexpo.Tests.Controllers
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/users/-6", payload2);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
-            
+
             //Sign-in with new password
             var verifyClient = application.CreateClient();
             var verifyJson = new JsonObject
@@ -206,7 +226,7 @@ namespace Nexpo.Tests.Controllers
             //Verify
             var responseObject = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
             Assert.True(responseObject.Id == -6, "Wrong user id. Expected: -6. Received: " + responseObject.Id.ToString());
-            Assert.True(responseObject.FirstName.Equals("Rakel"), "Wrong first name. Expected: Rakel. Received: " +  responseObject.FirstName);
+            Assert.True(responseObject.FirstName.Equals("Rakel"), "Wrong first name. Expected: Rakel. Received: " + responseObject.FirstName);
             Assert.True(responseObject.LastName.Equals("Rep"), "Wrong last name. Expected: Rep. Received: " + responseObject.LastName);
             Assert.True(responseObject.Role.Equals(Role.CompanyRepresentative), "Wrong user role. Expected: CompanyRepresentative. Received: " + responseObject.Role.ToString());
             Assert.True(responseObject.PhoneNr == null, "Wrong phone number. Expected: null. Received: " + responseObject.PhoneNr);
@@ -253,7 +273,7 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task UnautherizedUpdateUser()
         {
-            var client =  await TestUtils.Login("company1");
+            var client = await TestUtils.Login("company1");
             var json = new JsonObject
             {
                 { "firstName", "Rakel" },
@@ -281,7 +301,7 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task StudentGetMe()
         {
-            var client =  await TestUtils.Login("student1");
+            var client = await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/users/me");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
@@ -294,7 +314,7 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task AdminGetMe()
         {
-            var client =  await TestUtils.Login("admin");
+            var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/users/me");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
