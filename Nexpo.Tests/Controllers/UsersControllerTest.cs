@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using Nexpo.Models;
+using Nexpo.DTO;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -13,6 +14,56 @@ namespace Nexpo.Tests.Controllers
 { 
     public class UserControllerTest
     {
+        [Fact]
+        public async Task AdminChangeRole(){
+            //Setup
+            //Login as admin, in order to be able to update the role of a user
+            //Otherwise: receive "Unauthorized" as response
+            var client = await TestUtils.Login("admin");
+            
+            //Create a data transfer object with the new role
+            //IMO this is easier than storing the enum Role in a json file
+            var updateRoleDto = new UpdateUserDto{
+                Role = Role.Volunteer
+            };
+
+            //Serialize the data transfer object to json 
+            //and then to a StringContent so the client can send it
+            var json = JsonConvert.SerializeObject(updateRoleDto);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+
+            //Send a PUT request to update the user with id -5 with the payload. 
+            //Note that in the ApplicationDBContext the volenteer has id -10
+            //So we are updating the role of the CompanyRepresentative to the role contained in the DTO (Volunteer)
+            var response = await client.PutAsync("api/users/-5", payload);
+
+            //Assertions of response, meaning that check that the "put" request was successful
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            //Extract the content of the response and deserialize it to a User object
+            var user = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+            
+            //Check that the role of the user is now Volunteer
+            Assert.True(user.Role.Equals(Role.Volunteer), "Wrong role. Expected: CompanyRepresentative. Received: " + user.Role.ToString());
+            
+            //The process of restoring back to an CompanyRepresentative
+            //Note that if this is not done, the comming tests will fail
+            //(an alternative is seeding the database with a new user that you can corrupt)
+            var updateRoleDto2 = new UpdateUserDto{
+                Role = Role.CompanyRepresentative
+            };
+
+            //Same process as above
+            var json2 = JsonConvert.SerializeObject(updateRoleDto2);
+            var payload2 = new StringContent(json2, UnicodeEncoding.UTF8, "application/json");
+
+            var response2 = await client.PutAsync("api/users/-5", payload2);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
+
+            var user2 = JsonConvert.DeserializeObject<User>(await response2.Content.ReadAsStringAsync());
+            Assert.True(user2.Role.Equals(Role.CompanyRepresentative), "Wrong role. Expected: CompanyRepresentative. Received: " + user2.Role.ToString());
+
+        }
         [Fact]
         public async Task AdminGetAllUsers()
         {
