@@ -17,12 +17,15 @@ namespace Nexpo.Tests.Controllers
     /// </summary>
     public class UserControllerTest
     {
+        //Has await process, so it is async
+        //[Fact] is an attribute that tells the test runner that this is a test
         [Fact]
         public async Task UpdateRoleOfVolenteer()
         {
             //Setup
-            //Login as volenteer
-            var client = await TestUtils.Login("volenteer"); 
+            //Login as admin, in order to be able to update the role of a user
+            //Otherwise I receive "Unauthorized" as response
+            var client = await TestUtils.Login("admin"); 
 
             //Create json payload with new role
             var json = new JsonObject
@@ -30,24 +33,24 @@ namespace Nexpo.Tests.Controllers
                 { "role", "CompanyRepresentative" }
             }; 
 
-            //Create payload from json
+            //Create a payload with the json object and the correct content type
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json"); 
 
             //Send a PUT request to update the user with id -10 with the payload. 
             //Note that in the ApplicationDBContext the volenteer has id -10
-            //Notera dock att man måste migrera databasen för att detta ska fungera (se wiki på github)
+            //So we are updating the role of the volenteer to CompanyRepresentative
             var response = await client.PutAsync("api/users/-10", payload); 
             
-            //Assertions of response, meaning
+            //Assertions of response, meaning that check that the "put" request was successful
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            //Restore
+            //Restore back to original state (Volenteer)
             var json2 = new JsonObject
             {
                 { "role", "Volunteer" }
             };
 
-            //change role back to Volenteer
+            //Make another payload with the new role, change the role back to Volunteer, check that the response is OK
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/users/-10", payload2);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
