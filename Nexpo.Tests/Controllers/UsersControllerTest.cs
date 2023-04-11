@@ -42,6 +42,7 @@ namespace Nexpo.Tests.Controllers
             //api/users/-5 is the endpoint for updating a user with id -5
             // -> (see UsersController.cs api/users/{id})
             //So we are updating the role of the CompanyRepresentative to the role contained in the DTO
+
             var response = await client.PutAsync("api/users/-5", payload);
 
             //Assertions of response, meaning that check that the "put" request was successful
