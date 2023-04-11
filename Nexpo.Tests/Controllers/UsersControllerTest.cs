@@ -34,6 +34,7 @@ namespace Nexpo.Tests.Controllers
 
             //Send a PUT request to update the user with id -5 with the payload. 
             //Note that in the ApplicationDBContext the volenteer has id -10
+            //Note that api/users/-5 is the endpoint for updating a user with id -5 (see UsersController.cs api/users/{id})
             //So we are updating the role of the CompanyRepresentative to the role contained in the DTO (Volunteer)
             var response = await client.PutAsync("api/users/-5", payload);
 
