@@ -52,7 +52,7 @@ namespace Nexpo.Tests.Controllers
             );
 
             //Extract the content of the response and deserialize it to a User object
-            var serializedUser = await response.Content.ReadAsStringAsync()
+            var serializedUser = await response.Content.ReadAsStringAsync();
             var user = JsonConvert.DeserializeObject<User>(serializedUser);
             
             //Check that the role of the user is now Volunteer
