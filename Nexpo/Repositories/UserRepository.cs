@@ -62,7 +62,7 @@ namespace Nexpo.Repositories
         public async Task Update(User user)
         {
             _context.Entry(user).State = EntityState.Modified;
-             await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -17,10 +17,18 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             var json = new JsonObject();
 
+            ///<summary>
+            /// This switch statement is used to login as a specific user in tests
+            /// Correspons to the mockdata in ApplicatioDbContext
+            /// </summary>
             switch (user)
             {
                 case "admin":
                     json.Add("email", "admin@example.com");
+                    json.Add("password", "password");
+                    break;
+                case "volenteer":
+                    json.Add("email", "volenteer@example.com");
                     json.Add("password", "password");
                     break;
                 case "student1":
