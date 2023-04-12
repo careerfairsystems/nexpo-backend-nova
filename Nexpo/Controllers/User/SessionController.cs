@@ -30,12 +30,12 @@ namespace Nexpo.Controllers
             TokenService tokenService,
             IEmailService iEmailService)
         {
-            _userRepo = iUserRepo;
-            _studentRepo = iStudentRepo;
-            _companyRepo = iCompanyRepo;
+            _userRepo        = iUserRepo;
+            _studentRepo     = iStudentRepo;
+            _companyRepo     = iCompanyRepo;
             _passwordService = passwordService;
-            _tokenService = tokenService;
-            _emailService = iEmailService;
+            _tokenService    = tokenService;
+            _emailService    = iEmailService;
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace Nexpo.Controllers
     public static class UserClaims
     {
         public static readonly string Id = nameof(Id);
-        public static readonly string Role = ClaimTypes.Role; // To be able to use roles in authorization
+        public static readonly string Role = ClaimTypes.Role; 
         public static readonly string CompanyId = nameof(CompanyId);
         public static readonly string StudentId = nameof(StudentId);
     }

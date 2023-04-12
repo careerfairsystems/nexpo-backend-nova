@@ -23,8 +23,8 @@ namespace Nexpo.Controllers
             IStudentSessionTimeslotRepository iStudentSessionTimeslotRepository,
             IStudentSessionApplicationRepository iStudentSessionApplicationRepository)
         {
-            _companyRepo = iCompanyRepository;
-            _timeslotRepo = iStudentSessionTimeslotRepository;
+            _companyRepo     = iCompanyRepository;
+            _timeslotRepo    = iStudentSessionTimeslotRepository;
             _applicationRepo = iStudentSessionApplicationRepository;
         }
 
@@ -76,18 +76,18 @@ namespace Nexpo.Controllers
                     var timeslots = await _timeslotRepo.GetAllForCompany(company.Id.GetValueOrDefault());
                     if (timeslots.Count() > 0)
                     {
-                       companiesWithTimeslots.Add(company);
+                        companiesWithTimeslots.Add(company);
                     }
                 }
             }
 
             var publicCompanies = companiesWithTimeslots.Select(c => new PublicCompanyDto
             {
-                Id = c.Id.Value,
-                Name = c.Name,
+                Id          = c.Id.Value,
+                Name        = c.Name,
                 Description = c.Description,
-                Website = c.Website,
-                LogoUrl = c.LogoUrl
+                Website     = c.Website,
+                LogoUrl     = c.LogoUrl
             });
 
             return Ok(publicCompanies);
@@ -249,6 +249,7 @@ namespace Nexpo.Controllers
             {
                 timeslot.Location = dto.Location;
             }
+            
             await _timeslotRepo.Update(timeslot);
 
             return Ok(timeslot);
