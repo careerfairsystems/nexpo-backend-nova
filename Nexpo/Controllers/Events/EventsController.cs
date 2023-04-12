@@ -24,8 +24,8 @@ namespace Nexpo.Controllers
             IUserRepository iUserRepository
             )
         {
-            _eventRepo = iEventRepo;
-            _ticketRepo = iTicketRepo;
+            _eventRepo      = iEventRepo;
+            _ticketRepo     = iTicketRepo;
             _userRepository = iUserRepository;
         }
 
@@ -41,23 +41,25 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Get a specific event
+        /// <param name="id"></param>
         /// </summary>
         [HttpGet]
         [Route("{id}")]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetEvent(int id)
         {
-            var e = await _eventRepo.Get(id);
-            if (e == null) 
+            var _event = await _eventRepo.Get(id);
+
+            if (_event == null) 
             {
                 return NotFound();
             }
 
-            return Ok(e);
+            return Ok(_event);
         }
 
         /// <summary>
-        /// Get all tickets for 
+        /// Get all tickets for an event
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -67,20 +69,20 @@ namespace Nexpo.Controllers
         [ProducesResponseType(typeof(IEnumerable<NamedTicketDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetTicketsForEvent(int id)
         {
-            var e = await _eventRepo.Get(id);
-            if (e == null) {
+            var _event = await _eventRepo.Get(id);
+            if (_event == null) {
                 return NotFound();
             }
 
-            var tickets = await _ticketRepo.GetAllForEvent(e.Id.Value);
+            var tickets = await _ticketRepo.GetAllForEvent(_event.Id.Value);
             var namedTickets = new List<NamedTicketDto>();
-            foreach (var t in tickets){
-                var user = await _userRepository.Get(t.UserId);
+            foreach (var ticket in tickets){
+                var user = await _userRepository.Get(ticket.UserId);
                 var dto = new NamedTicketDto
                 {
-                    ticket = t,
+                    ticket        = ticket,
                     userFirstName = user.FirstName,
-                    userLastName = user.LastName
+                    userLastName  = user.LastName
                 };
                 namedTickets.Add(dto);
             }
@@ -89,7 +91,8 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Update information for an Event
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">The event id</param>
+        /// <param name="dto"></param>
         /// <returns></returns>
         [HttpPut]
         [Route("{id}")]
@@ -98,63 +101,67 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> UpdateEvent(int id, AddEventDto dto)
         {
 
-            var even = await _eventRepo.Get(id);
+            var _event = await _eventRepo.Get(id);
 
             if(!string.IsNullOrEmpty(dto.Name)){
-                even.Name = dto.Name; 
+                _event.Name = dto.Name; 
             }
             if(!string.IsNullOrEmpty(dto.Description)){
-                even.Description = dto.Description; 
+                _event.Description = dto.Description; 
             }
             if(!string.IsNullOrEmpty(dto.Date)){
-                even.Date = dto.Date; 
+                _event.Date = dto.Date; 
             }
             if(!string.IsNullOrEmpty(dto.Start)){
-                even.Start = dto.Start; 
+                _event.Start = dto.Start; 
             }
             if(!string.IsNullOrEmpty(dto.End)){
-                even.End = dto.End; 
+                _event.End = dto.End; 
             }
             if(!string.IsNullOrEmpty(dto.Location)){
-                even.Location = dto.Location; 
+                _event.Location = dto.Location; 
             }
             if(!string.IsNullOrEmpty(dto.Host)){
-                even.Host = dto.Host; 
+                _event.Host = dto.Host; 
             }
             if(!string.IsNullOrEmpty(dto.Language)){
-                even.Language = dto.Language; 
+                _event.Language = dto.Language; 
             }
             if(dto.Capacity != 0){
-                even.Capacity = dto.Capacity; 
+                _event.Capacity = dto.Capacity; 
             }
-            await _eventRepo.Update(even);
+            await _eventRepo.Update(_event);
 
-            return Ok(even);
+            return Ok(_event);
         }
 
+        /// <summary>
+        /// Add a new event
+        /// </summary>
+        /// <param name="dto"></param>
         [HttpPost]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         public async Task<ActionResult> AddNewEvent(AddEventDto dto)
         {
-            DateTime temp;
-            if(DateTime.TryParse(dto.Date, out temp) && DateTime.TryParse(dto.Start, out temp) && DateTime.TryParse(dto.End, out temp))
+            DateTime date;
+            if(DateTime.TryParse(dto.Date, out date) && DateTime.TryParse(dto.Start, out date) && DateTime.TryParse(dto.End, out date))
             {
-                var even = new Event
+                var _event = new Event
                 {
-                    Name = dto.Name,
+                    Name        = dto.Name,
                     Description = dto.Description,
-                    Date = dto.Date,
-                    Start = dto.Start,
-                    End = dto.End,
-                    Location = dto.Location,
-                    Host = dto.Host,
-                    Language = dto.Language,
-                    Capacity = dto.Capacity
+                    Date        = dto.Date,
+                    Start       = dto.Start,
+                    End         = dto.End,
+                    Location    = dto.Location,
+                    Host        = dto.Host,
+                    Language    = dto.Language,
+                    Capacity    = dto.Capacity
                 };
-                await _eventRepo.Add(even);
+                await _eventRepo.Add(_event);
 
-                return Ok(even);
+                return Ok(_event);
             }
             
             return BadRequest();
