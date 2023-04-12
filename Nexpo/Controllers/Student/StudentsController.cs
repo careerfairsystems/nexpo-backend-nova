@@ -19,7 +19,7 @@ namespace Nexpo.Controllers
 
         public StudentsController(IStudentRepository iStudentRepo, IStudentSessionApplicationRepository iApplicationRepo)
         {
-            _studentRepo = iStudentRepo;
+            _studentRepo     = iStudentRepo;
             _applicationRepo = iApplicationRepo;
         }
 
@@ -33,6 +33,7 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> GetStudent(int id)
         {
             var student = await _studentRepo.Get(id);
+
             if (student == null) 
             {
                 return NotFound();
@@ -109,7 +110,6 @@ namespace Nexpo.Controllers
                 student.Programme = dto.Programme.Value;
             }
             if (dto.LinkedIn != null && (dto.LinkedIn.StartsWith("https://www.linkedin.com/in/") || dto.LinkedIn.Equals("")))
-
             {
                 student.LinkedIn = dto.LinkedIn;
             }
