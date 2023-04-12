@@ -24,21 +24,21 @@ namespace Nexpo.Controllers
         private readonly IEmailService _emailService;
 
 
-        public StudentSessionsApplicationController(ICompanyRepository iCompanyRepository,
+        public StudentSessionsApplicationController(
+            ICompanyRepository iCompanyRepository,
             IStudentSessionTimeslotRepository iStudentSessionTimeslotRepository,
             IStudentSessionApplicationRepository iStudentSessionApplicationRepository,
             IStudentRepository iStudentRepository,
             IUserRepository iUserRepository,
             IEmailService iEmailService)
         {
-            _companyRepo = iCompanyRepository;
-            _timeslotRepo = iStudentSessionTimeslotRepository;
-            _applicationRepo = iStudentSessionApplicationRepository;
+            _companyRepo       = iCompanyRepository;
+            _timeslotRepo      = iStudentSessionTimeslotRepository;
+            _applicationRepo   = iStudentSessionApplicationRepository;
             _studentRepository = iStudentRepository;
-            _userRepository = iUserRepository;
-            _emailService = iEmailService;
+            _userRepository    = iUserRepository;
+            _emailService      = iEmailService;
         }
-
 
         /// <summary>
         /// Respond to a student session as a company representative
@@ -60,9 +60,11 @@ namespace Nexpo.Controllers
             {
                 return Forbid();
             }
+
             var oldStatus = application.Status;
             application.Status = dto.Status;
             await _applicationRepo.Update(application);
+
             if(application.Status != oldStatus && application.Status == StudentSessionApplicationStatus.Accepted)
             {
                 var company = await _companyRepo.Get(companyId);
@@ -71,6 +73,7 @@ namespace Nexpo.Controllers
 
                 await _emailService.SendApplicationAcceptedEmail(company, user);
             }
+
             return Ok(application);
         }
 
@@ -145,7 +148,6 @@ namespace Nexpo.Controllers
                 }
             }
 
-          
             return Ok(application);
         }
 
@@ -161,22 +163,25 @@ namespace Nexpo.Controllers
             var companyId = HttpContext.User.GetCompanyId().Value;
             var applications = await _applicationRepo.GetAllForCompany(companyId);
             var studentApplications = new List<StudentSessionApplicationDto>();
-            foreach (var a in applications){
-                var student = await _studentRepository.Get(a.StudentId);
+
+            foreach (var application in applications){
+                var student = await _studentRepository.Get(application.StudentId);
                 var user = await _userRepository.Get(student.UserId);
+
                 var dto = new StudentSessionApplicationDto
                 {
-                    Id = a.Id,
-                    Motivation = a.Motivation,
-                    Status = a.Status,
-                    StudentId = a.StudentId,
-                    CompanyId = a.CompanyId,
-                    Booked = a.Booked,
+                    Id               = application.Id,
+                    Motivation       = application.Motivation,
+                    Status           = application.Status,
+                    StudentId        = application.StudentId,
+                    CompanyId        = application.CompanyId,
+                    Booked           = application.Booked,
                     StudentFirstName = user.FirstName,
-                    StudentLastName = user.LastName,
-                    StudentYear = student.Year,
+                    StudentLastName  = user.LastName,
+                    StudentYear      = student.Year,
                     StudentProgramme = student.Programme
                 };
+
                 studentApplications.Add(dto);
             }
             return Ok(studentApplications);
@@ -207,13 +212,14 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> applicationAccepted(int id)
         {
             var studentId = HttpContext.User.GetStudentId().Value;
-            var exists = await _applicationRepo.ApplicationExists(studentId, id);
-            if (!exists)
+            var applicationExists = await _applicationRepo.ApplicationExists(studentId, id);
+
+            if (!applicationExists)
             {
                 return BadRequest();
             }
+
             var application = await _applicationRepo.GetByCompanyAndStudent(studentId, id);
-            
             if(application.Status != StudentSessionApplicationStatus.Accepted)
             {
                 return Ok(new ApplicationStatusDto
