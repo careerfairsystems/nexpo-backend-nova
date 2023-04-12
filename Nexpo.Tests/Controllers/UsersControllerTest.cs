@@ -20,7 +20,7 @@ namespace Nexpo.Tests.Controllers
 
             //Setup
             //Login as admin, in order to be able to update the role of a user
-            //Otherwise we'll receive "Unauthorized" as response from the client.PutAync
+            //Otherwise we'll receive "Forbidden" as response from the client.PutAync
             var client = await TestUtils.Login("admin");
 
             //Create a data transfer object (DTO) with the new role
@@ -86,6 +86,45 @@ namespace Nexpo.Tests.Controllers
             );
 
         }
+
+        [Fact]
+        public async Task AdminChangeNonExistingUserRole(){
+            var client = await TestUtils.Login("admin");
+            var updateRoleDto = new UpdateUserDto
+            {
+                Role = Role.Volunteer
+            };
+
+            var json = JsonConvert.SerializeObject(updateRoleDto);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+
+            var response = await client.PutAsync("api/users/-100", payload);
+
+            Assert.True(
+                response.StatusCode.Equals(HttpStatusCode.NotFound),
+                "Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString()
+            );
+        }
+
+        [Fact]
+        public async Task NonAdminChangeRole(){
+            var client = await TestUtils.Login("student1");
+            var updateRoleDto = new UpdateUserDto
+            {
+                Role = Role.Volunteer
+            };
+
+            var json = JsonConvert.SerializeObject(updateRoleDto);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+
+            var response = await client.PutAsync("api/users/-5", payload);
+
+            Assert.True(
+                response.StatusCode.Equals(HttpStatusCode.Forbidden),
+                "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString()
+            );
+        }
+        
         [Fact]
         public async Task AdminGetAllUsers()
         {
