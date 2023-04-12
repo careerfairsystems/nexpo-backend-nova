@@ -22,8 +22,8 @@ namespace Nexpo.Controllers
         public TicketsController(ITicketRepository iTicketRepo, IEventRepository iEventRepo, IUserRepository iUserRepo)
         {
             _ticketRepo = iTicketRepo;
-            _eventRepo = iEventRepo;
-            _userRepo = iUserRepo;
+            _eventRepo  = iEventRepo;
+            _userRepo   = iUserRepo;
         }
 
         /// <summary>
@@ -40,20 +40,21 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Create a new ticket to an event
+        /// Create a new ticket, for the user, to an event
         /// </summary>
+        /// <param name="dto"></param>
         [HttpPost]
         [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostTicket(CreateTicketDto dto)
         {
-            var e = await _eventRepo.Get(dto.EventId);
-            if (e == null)
+            var _event = await _eventRepo.Get(dto.EventId);
+            if (_event == null)
             {
                 return NotFound();
             }
 
-            if ((DateTime.Parse(e.Date) - DateTime.Today).TotalDays < 2) 
+            if ((DateTime.Parse(_event.Date) - DateTime.Today).TotalDays < 2) 
             {
                 return BadRequest();
             }
@@ -69,8 +70,9 @@ namespace Nexpo.Controllers
             {
                 PhotoOk = dto.PhotoOk,
                 EventId = dto.EventId,
-                UserId = userId,
+                UserId  = userId,
             };
+
             if(!await _ticketRepo.Add(ticket))
             {
                 return Conflict();
@@ -82,14 +84,15 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Create new ticket as admin to an event. Ignores capacity and startTime
         /// </summary>
+        /// <param name="dto"></param>
         [HttpPost]
         [Route("add")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostTicketAdmin(CreateTicketAdminDto dto)
         {
-            var e = await _eventRepo.Get(dto.EventId);
-            if (e == null)
+            var _event = await _eventRepo.Get(dto.EventId);
+            if (_event == null)
             {
                 return NotFound();
             }
@@ -104,7 +107,7 @@ namespace Nexpo.Controllers
             {
                 PhotoOk = dto.PhotoOk,
                 EventId = dto.EventId,
-                UserId = dto.UserId,
+                UserId  = dto.UserId,
             };
 
             await _ticketRepo.AddAdmin(ticket);
@@ -114,6 +117,8 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Update isConsumed on a ticket
+        /// <param name="id">Id of the ticket</param>
+        /// <param name="dto"></param>
         /// </summary>
         [HttpPut]
         [Route("{id}")]
@@ -124,12 +129,14 @@ namespace Nexpo.Controllers
             var ticket = await _ticketRepo.Get(id);
             ticket.isConsumed = dto.isConsumed;
             await _ticketRepo.Update(ticket);
+
             return Ok(ticket);
         }
 
         /// <summary>
-        /// Get a specific ticket by Guid
+        /// Get a specific ticket by Guid (Global Unique Identifier)
         /// </summary>
+        /// <param name="id">Globally Unique ID of the ticket</param>
         [HttpGet]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
@@ -137,6 +144,7 @@ namespace Nexpo.Controllers
         public async Task<ActionResult<Ticket>> GetTicket(Guid id)
         {
             var ticket = await _ticketRepo.GetByCode(id);
+
             if (ticket != null)
             {
                 return Ok(ticket);
@@ -150,6 +158,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Get a specific ticket by id 
         /// </summary>
+        /// <param name="id">Id of the ticket</param>
         [HttpGet]
         [Route("id/{id}")]
         [Authorize]
@@ -159,6 +168,7 @@ namespace Nexpo.Controllers
             var ticket = await _ticketRepo.Get(id);
             var userId = HttpContext.User.GetId();
             var userRole = HttpContext.User.GetRole();
+
             if (ticket != null && (ticket.UserId == userId || userRole == Role.Administrator))
             {
                 return Ok(ticket);
@@ -173,6 +183,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Delete/Unregister a ticket
         /// </summary>
+        /// <param name="id">Id of the ticket</param>
         [HttpDelete]
         [Route("{id}")]
         [Authorize]
@@ -190,8 +201,8 @@ namespace Nexpo.Controllers
 
             if(userRole != Role.Administrator)
             {
-                var e = await _eventRepo.Get(ticket.EventId);
-                if ((DateTime.Parse(e.Date) - DateTime.Today).TotalDays < 2)
+                var _event = await _eventRepo.Get(ticket.EventId);
+                if ((DateTime.Parse(_event.Date) - DateTime.Today).TotalDays < 2)
                 {
                     return BadRequest();
                 }
@@ -201,7 +212,7 @@ namespace Nexpo.Controllers
                     return Forbid();
                 }
             }
-           
+            
             await _ticketRepo.Remove(ticket);
             return NoContent();
         }
