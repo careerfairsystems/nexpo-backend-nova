@@ -6,6 +6,7 @@ namespace Nexpo.DTO
     {
         [Required]
         public int EventId { get; set; }
+        
         [Required]
         public bool PhotoOk { get; set; }
     }
