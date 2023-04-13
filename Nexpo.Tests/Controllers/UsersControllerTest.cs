@@ -54,10 +54,10 @@ namespace Nexpo.Tests.Controllers
             //Extract the content of the response and deserialize it to a User object
             var serializedUser = await response.Content.ReadAsStringAsync();
             var user = JsonConvert.DeserializeObject<User>(serializedUser);
-            
+
             //Check that the role of the user is now Volunteer
             Assert.True(
-                user.Role.Equals(Role.Volunteer), 
+                user.Role.Equals(Role.Volunteer),
                 "Wrong role. Expected: CompanyRepresentative. Received: " + user.Role.ToString()
             );
 
@@ -75,20 +75,21 @@ namespace Nexpo.Tests.Controllers
 
             var response2 = await client.PutAsync("api/users/-5", payload2);
             Assert.True(
-                response2.StatusCode.Equals(HttpStatusCode.OK), 
+                response2.StatusCode.Equals(HttpStatusCode.OK),
                 "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString()
             );
 
             var user2 = JsonConvert.DeserializeObject<User>(await response2.Content.ReadAsStringAsync());
             Assert.True(
-                user2.Role.Equals(Role.CompanyRepresentative), 
+                user2.Role.Equals(Role.CompanyRepresentative),
                 "Wrong role. Expected: CompanyRepresentative. Received: " + user2.Role.ToString()
             );
 
         }
 
         [Fact]
-        public async Task AdminChangeNonExistingUserRole(){
+        public async Task AdminChangeNonExistingUserRole()
+        {
             var client = await TestUtils.Login("admin");
             var updateRoleDto = new UpdateUserDto
             {
@@ -107,7 +108,8 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task NonAdminChangeRole(){
+        public async Task NonAdminChangeRole()
+        {
             var client = await TestUtils.Login("student1");
             var updateRoleDto = new UpdateUserDto
             {
@@ -124,7 +126,7 @@ namespace Nexpo.Tests.Controllers
                 "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString()
             );
         }
-        
+
         [Fact]
         public async Task AdminGetAllUsers()
         {
@@ -137,7 +139,7 @@ namespace Nexpo.Tests.Controllers
             var userStudent = responseList.Find(r => r.Id == -2);
             var userRep = responseList.Find(r => r.Id == -5);
 
-            Assert.True(responseList.Count == 9, "Wrong number of users. Expected: 9. Received: " + responseList.Count.ToString());
+            Assert.True(responseList.Count == 10, "Wrong number of users. Expected: 10. Received: " + responseList.Count.ToString());
             Assert.True(userAdmin.Role.Equals(Role.Administrator), "Wrong user role. Expected: admin. Received: " + userAdmin.Role.ToString());
             Assert.True(userStudent.FirstName.Equals("Alpha"), "Wrong user first name. Expected: Alpha. Received: " + userStudent.FirstName);
             Assert.True(userRep.CompanyId == -1, "Wrong company id. Expected: -1. Received: " + userRep.CompanyId.ToString());
