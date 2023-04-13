@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO
 {
+    /// <summary>
+    /// DTO for signing up
+    /// </summary>
     public class SignUpUserDto
     {
         [Required]

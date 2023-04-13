@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Nexpo.DTO
 {
     /// <summary>
-    /// DTO for inviting a representative to a company
+    /// DTO for inviting a representative to become a user
     /// </summary>
     public class InviteRepresentativeDto
     {

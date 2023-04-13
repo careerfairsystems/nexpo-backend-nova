@@ -2,6 +2,9 @@
 
 namespace Nexpo.DTO
 {
+    /// <summary>
+    /// DTO for a student session application
+    /// </summary>
     public class StudentSessionApplicationDto
     {
         public int? Id { get; set; }

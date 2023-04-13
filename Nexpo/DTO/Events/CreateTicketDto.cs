@@ -2,6 +2,12 @@
 
 namespace Nexpo.DTO
 {
+    /// <summary>
+    /// DTO for creating a ticket
+    /// </summary>
+    /// <remarks>
+    /// This DTO is used when creating a ticket by a user
+    /// </remarks>
     public class CreateTicketDto
     {
         [Required]

@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO
 {
+    /// <summary>
+    /// DTO for creating a student session timeslot
+    /// </summary>
     public class CreateStudentSessionTimeslotAdminDto
     { 
         [Required]

@@ -1,6 +1,12 @@
 ﻿
 namespace Nexpo.DTO
 {
+    /// <summary>
+    /// DTO for updating a company
+    /// </summary>
+    /// <remarks>
+    /// This DTO is used when updating a company by a admin
+    /// </remarks>
     public class UpdateCompanyDto
     {
         public string Description { get; set; }

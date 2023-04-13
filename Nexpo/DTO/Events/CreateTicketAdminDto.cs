@@ -3,6 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO
 {
+    /// <summary>
+    /// DTO for creating a ticket
+    /// </summary>
+    /// <remarks>
+    /// This DTO is used when creating a ticket by a admin
+    /// </remarks>
     public class CreateTicketAdminDto
     {
         [Required]
