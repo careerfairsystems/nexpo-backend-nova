@@ -26,6 +26,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Get a single student
         /// </summary>
+        /// <param name="id">The id of the student</param>
         [HttpGet]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.CompanyRepresentative))]
@@ -45,6 +46,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Update a student's information
         /// </summary>
+        /// <param name="id">The id of the student</param>
         [HttpPut]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]

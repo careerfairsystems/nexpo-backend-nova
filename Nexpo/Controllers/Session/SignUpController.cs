@@ -29,11 +29,11 @@ namespace Nexpo.Controllers
             TokenService tokenService,
             PasswordService passwordService)
         {
-            _userRepo = iUserRepo;
-            _companyRepo = iCompanyRepo;
-            _studentRepo = iStudentRepo;
-            _emailService = emailService;
-            _tokenService = tokenService;
+            _userRepo        = iUserRepo;
+            _companyRepo     = iCompanyRepo;
+            _studentRepo     = iStudentRepo;
+            _emailService    = emailService;
+            _tokenService    = tokenService;
             _passwordService = passwordService;
         }
 
@@ -56,10 +56,10 @@ namespace Nexpo.Controllers
 
             user = new User
             {
-                Role = Role.Student,
-                Email = dto.Email,
+                Role      = Role.Student,
+                Email     = dto.Email,
                 FirstName = dto.FirstName,
-                LastName = dto.LastName
+                LastName  = dto.LastName
             };
             await _userRepo.Add(user);
 
@@ -103,6 +103,8 @@ namespace Nexpo.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Invite a representative to become a new user (connected to a company)
         [HttpPost]
         [Route("representative")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.CompanyRepresentative))]
@@ -133,12 +135,13 @@ namespace Nexpo.Controllers
 
             user = new User
             {
-                Role = Role.CompanyRepresentative,
-                Email = dto.Email,
+                Role      = Role.CompanyRepresentative,
+                Email     = dto.Email,
                 FirstName = dto.FirstName,
-                LastName = dto.LastName,
+                LastName  = dto.LastName,
                 CompanyId = company.Id.Value
             };
+            
             await _userRepo.Add(user);
 
             await _emailService.SendCompanyInviteEmail(company, user);

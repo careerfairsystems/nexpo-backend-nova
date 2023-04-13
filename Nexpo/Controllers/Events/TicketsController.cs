@@ -42,7 +42,6 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Create a new ticket, for the user, to an event
         /// </summary>
-        /// <param name="dto"></param>
         [HttpPost]
         [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
@@ -84,7 +83,6 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Create new ticket as admin to an event. Ignores capacity and startTime
         /// </summary>
-        /// <param name="dto"></param>
         [HttpPost]
         [Route("add")]
         [Authorize(Roles = nameof(Role.Administrator))]
@@ -118,7 +116,6 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Update isConsumed on a ticket
         /// <param name="id">Id of the ticket</param>
-        /// <param name="dto"></param>
         /// </summary>
         [HttpPut]
         [Route("{id}")]
@@ -136,7 +133,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Get a specific ticket by Guid (Global Unique Identifier)
         /// </summary>
-        /// <param name="id">Globally Unique ID of the ticket</param>
+        /// <param name="id">Globally Unique ID (GUID) of the ticket</param>
         [HttpGet]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]

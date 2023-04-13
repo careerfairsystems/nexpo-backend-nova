@@ -31,7 +31,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Get all timeslots by company id
         /// </summary>
-        /// <returns></returns>
+        /// <param name="id">The id of the company</param>
         [HttpGet]
         [Route("company/{id}")]
         [Authorize]
@@ -45,6 +45,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Get a single timeslot
         /// </summary>
+        /// <param name="id">The id of the timeslot</param>
         [HttpGet]
         [Route("{id}")]
         [Authorize]
@@ -96,6 +97,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Book a timeslot
         /// </summary>
+        /// <param name="id">The id of the timeslot</param>
         [HttpPut]
         [Route("book/{id}")]
         [Authorize(Roles = nameof(Role.Student))]
@@ -143,6 +145,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Unbook a timeslot
         /// </summary>
+        /// <param name="id">The id of the timeslot</param>
         [HttpPut]
         [Route("unbook/{id}")]
         [Authorize(Roles = nameof(Role.Student))]
@@ -213,6 +216,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Delete a timeslot
         /// </summary>
+        /// <param name="id">The id of the timeslot</param>
         [HttpDelete]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
@@ -233,6 +237,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Update the location for a timeslot
         /// </summary>
+        /// <param name="id">The id of the timeslot</param> 
         [HttpPut]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]

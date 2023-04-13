@@ -41,7 +41,7 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Get a specific event
-        /// <param name="id"></param>
+        /// <param name="id">The event id</param>
         /// </summary>
         [HttpGet]
         [Route("{id}")]
@@ -61,7 +61,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Get all tickets for an event
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">The event id</param>
         /// <returns></returns>
         [HttpGet]
         [Route("{id}/tickets")]
@@ -138,7 +138,6 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Add a new event
         /// </summary>
-        /// <param name="dto"></param>
         [HttpPost]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]

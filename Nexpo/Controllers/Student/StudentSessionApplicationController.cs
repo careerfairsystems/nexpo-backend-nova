@@ -205,6 +205,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Checks if application exists for given companyId and is accepted and is booked
         /// </summary>
+        /// <param name="id">Company Id</param>
         [HttpGet]
         [Route("accepted/{id}")]
         [Authorize(Roles = nameof(Role.Student))]
@@ -238,6 +239,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Delete a student session application
         /// </summary>
+        /// <param name="id">Application Id</param>
         [HttpDelete]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]

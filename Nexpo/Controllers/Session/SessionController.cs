@@ -77,6 +77,7 @@ namespace Nexpo.Controllers
             {
                 var company = await _companyRepo.FindByUser(user.Id.Value);
                 claims.Add(new Claim(UserClaims.CompanyId, company.Id.ToString()));
+
             }
 
             var jwt = _tokenService.GenerateJWT(claims);
