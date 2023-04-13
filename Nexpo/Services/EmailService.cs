@@ -43,19 +43,19 @@ namespace Nexpo.Services
             }; 
             var signedToken = _tokenService.SignToken(signUpDto, DateTime.Now.AddDays(7)); // SignUp link is valid for a week
             var tokenString = Uri.EscapeDataString(signedToken);
-            var content = $"Join your company on the Arkad fair by finalizing your account.<br><br>" +
-                "This is needed to be able to connect with the studends during the fair with the Arkad-app<br>" +
-                $"Click on the following link and set a password and you are good to go: {baseUrl}/finalize_signup/{tokenString}" +
-                "<br><br>After you have finalized your account you need to download the app from the app store, search for \"arkad tlth\" and it should appear." +
-                "<br><br>Should you have any further questions regarding this, the app or how to connect with students, feel free to contact us at it.arkad@tlth.se";
+            var content =   $"Join your company on the Arkad fair by finalizing your account.<br><br>" 
+                            + "This is needed to be able to connect with the studends during the fair with the Arkad-app<br>" 
+                            + $"Click on the following link and set a password and you are good to go: {baseUrl}/finalize_signup/{tokenString}" 
+                            + "<br><br>After you have finalized your account you need to download the app from the app store, search for \"arkad tlth\" and it should appear." 
+                            + "<br><br>Should you have any further questions regarding this, the app or how to connect with students, feel free to contact us at it.arkad@tlth.se";
             return SendEmail(user.Email, "Join your company in the Arkad App", content, content);
         }
 
         public Task SendApplicationAcceptedEmail(Company company, User user)
         {
-            var content = "Congrats!<br>" + 
-                $"{company.Name} has just accepted your student session application!<br>" +
-                "Log in to the app to pick a timeslot";
+            var content =   "Congrats!<br>" 
+                            + $"{company.Name} has just accepted your student session application!<br>" 
+                            + "Log in to the app to pick a timeslot";
             return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
         }
 

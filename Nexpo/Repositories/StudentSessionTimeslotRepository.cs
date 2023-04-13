@@ -27,12 +27,12 @@ namespace Nexpo.Repositories
 
         public async Task<IEnumerable<StudentSessionTimeslot>> GetAllForCompany(int companyId)
         {
-            return await _context.StudentSessionTimeslots.Where(t => t.CompanyId == companyId).ToListAsync();
+            return await _context.StudentSessionTimeslots.Where(timeslot => timeslot.CompanyId == companyId).ToListAsync();
         }
 
         public async Task<StudentSessionTimeslot> Get(int id)
         {
-            return await _context.StudentSessionTimeslots.Where(e => e.Id == id).FirstOrDefaultAsync();
+            return await _context.StudentSessionTimeslots.Where(timeslot => timeslot.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task Add(StudentSessionTimeslot timeslot)
