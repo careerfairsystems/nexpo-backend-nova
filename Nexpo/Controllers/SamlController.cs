@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Sustainsys.Saml2.AspNetCore2;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -36,7 +35,7 @@ namespace Nexpo.Controllers
         [HttpGet("Logout")]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(Saml2Defaults.Scheme);
+            //await HttpContext.SignOutAsync(Saml2Defaults.Scheme);
 
             return this.Ok();
         }
