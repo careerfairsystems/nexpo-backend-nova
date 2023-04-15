@@ -24,6 +24,7 @@ using System.Security.Claims;
 using System.Linq;
 using System.Security.Cryptography;
 using System.IO;
+using System.Configuration;
 
 namespace Nexpo
 {
@@ -42,7 +43,7 @@ namespace Nexpo
 
         public static IServiceProvider ServiceProvider { get; }
 
-        public readonly string CorsPolicy = nameof(CorsPolicy);
+        public static readonly string CorsPolicy = nameof(CorsPolicy);
 
         public static class AuthenticationHelpers
         {
@@ -168,8 +169,8 @@ namespace Nexpo
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = false, // maybe false
-                    ValidateAudience = false, // maybe false
+                    ValidateIssuer = true, 
+                    ValidateAudience = true, 
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Config.JWTIssuer,
@@ -182,20 +183,20 @@ namespace Nexpo
             .AddSaml2(options =>
             {
                 options.SPOptions.EntityId = new EntityId(Config.SPEntityId);
-		        
-		        options.IdentityProviders.Add(
+                
+                options.IdentityProviders.Add(
                             new IdentityProvider(
                                 new EntityId(Config.IDPEntityId), options.SPOptions)
                             {
                                 LoadMetadata = true,
                                 //Binding = Saml2BindingType.HttpRedirect,
                                 AllowUnsolicitedAuthnResponse = true,
-			                    Binding = Sustainsys.Saml2.WebSso.Saml2BindingType.HttpRedirect
+                                Binding = Sustainsys.Saml2.WebSso.Saml2BindingType.HttpRedirect
 			
 			        //RelayStateUsedAsReturnUrl = true
                             });
 
-		        options.SPOptions.WantAssertionsSigned = false;
+                options.SPOptions.WantAssertionsSigned = false;
             
                 var certificate = X509Certificate2.CreateFromPemFile(Config.SPCertificatePath, Config.SPPrivateKeyPath);
 
@@ -237,15 +238,15 @@ namespace Nexpo
             }
 
             services.AddCors();
-            /*            services.AddCors(options =>
-                        {
-                            options.AddPolicy(name: CorsPolicy, builder =>
-                            {
-                                builder.AllowAnyMethod();
-                                builder.AllowAnyOrigin();
-                                builder.AllowAnyHeader();
-                            });
-                        });*/
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: CorsPolicy, builder =>
+                {
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyHeader();
+                });
+            });
 
             services.AddSwaggerGen(options =>
             {
@@ -259,11 +260,7 @@ namespace Nexpo
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext)
         {
             app.UseRouting();
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+            app.UseCors();
 
             if (env.IsDevelopment())
             {
@@ -278,14 +275,15 @@ namespace Nexpo
                 dbContext.Seed();
             }
     
-	                
-            //app.UseCookiePolicy();
+            app.UseCookiePolicy();
             
-	        app.UseAuthorization();
-	        
-	        app.UseSession();
+            app.UseAuthorization();
+
+            app.UseSession();
             app.UseAuthentication();
-	        
+
+            
+
             //app.UseHttpsRedirection();
 
         
