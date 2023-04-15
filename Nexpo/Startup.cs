@@ -226,7 +226,6 @@ namespace Nexpo
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
-            services.AddScoped<EmailService, EmailService>();
             
             if (Environment.IsDevelopment())
             {
@@ -272,8 +271,8 @@ namespace Nexpo
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nexpo v1"));
 
-                //dbContext.Database.Migrate();
-                //dbContext.Seed();
+                dbContext.Database.Migrate();
+                dbContext.Seed();
             }
     
 	                

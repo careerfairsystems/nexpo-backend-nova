@@ -5,6 +5,7 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
     <UserSecretsId>553055ae-54b1-44b5-a082-9be05eb2d088</UserSecretsId>
+    <UserSecretsId>553055ae-54b1-44b5-a082-9be05eb2d088</UserSecretsId> <!-- oklart vad id:et är till för -->
   </PropertyGroup>
 
   <ItemGroup>
