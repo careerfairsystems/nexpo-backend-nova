@@ -238,15 +238,15 @@ namespace Nexpo
             }
 
             services.AddCors();
-            services.AddCors(options =>
-            {
-                options.AddPolicy(name: CorsPolicy, builder =>
-                {
-                    builder.AllowAnyMethod();
-                    builder.AllowAnyOrigin();
-                    builder.AllowAnyHeader();
-                });
-            });
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy(name: CorsPolicy, builder =>
+            //    {
+            //        builder.AllowAnyMethod();
+            //        builder.AllowAnyOrigin();
+            //        builder.AllowAnyHeader();
+            //    });
+            //});
 
             services.AddSwaggerGen(options =>
             {
@@ -260,7 +260,12 @@ namespace Nexpo
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext)
         {
             app.UseRouting();
-            app.UseCors();
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+            );
+            
 
             if (env.IsDevelopment())
             {
@@ -274,6 +279,8 @@ namespace Nexpo
                 dbContext.Database.Migrate();
                 dbContext.Seed();
             }
+
+            
     
             app.UseCookiePolicy();
             
