@@ -247,9 +247,9 @@ namespace Nexpo
                             });
                         });*/
 
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Nexpo", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Nexpo", Version = "v1" });
                 
             });
 
@@ -269,7 +269,10 @@ namespace Nexpo
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nexpo v1"));
+                app.UseSwaggerUI(options => 
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Nexpo v1")
+                });
 
                 dbContext.Database.Migrate();
                 dbContext.Seed();
