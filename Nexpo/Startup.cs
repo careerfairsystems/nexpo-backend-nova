@@ -35,9 +35,12 @@ namespace Nexpo
         {
             Config = new Config(configuration);
             Environment = environment;
+            Configuration = configuration;
         }
 
         public static IConfig Config { get; set; }
+
+        public static IConfiguration Configuration { get; set; }
         
         public static IWebHostEnvironment Environment { get; set; }
 
@@ -158,13 +161,13 @@ namespace Nexpo
                 options.LowercaseUrls = true;
             });
 
-            services.AddAuthentication(o =>
+            services.AddAuthentication(options =>
             {
-                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 
-                o.DefaultScheme = ApplicationSamlConstants.Application;
-                o.DefaultSignInScheme = ApplicationSamlConstants.External;
+                options.DefaultScheme = ApplicationSamlConstants.Application;
+                options.DefaultSignInScheme = ApplicationSamlConstants.External;
             }).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -180,35 +183,43 @@ namespace Nexpo
             })
             .AddCookie(ApplicationSamlConstants.Application)
             .AddCookie(ApplicationSamlConstants.External)
+            
+            //with .addSaml2, we create an saml2 authentication scheme, which is used to authenticate the user
             .AddSaml2(options =>
             {
-                options.SPOptions.EntityId = new EntityId(Config.SPEntityId);
-                
-                options.IdentityProviders.Add(
-                            new IdentityProvider(
-                                new EntityId(Config.IDPEntityId), options.SPOptions)
-                            {
-                                LoadMetadata = true,
-                                //Binding = Saml2BindingType.HttpRedirect,
-                                AllowUnsolicitedAuthnResponse = true,
-                                Binding = Sustainsys.Saml2.WebSso.Saml2BindingType.HttpRedirect
-			
-			        //RelayStateUsedAsReturnUrl = true
-                            });
+                options.SPOptions.EntityId = new EntityId(Configuration["SAML:SP:SPEntityId"]);
+                options.SPOptions.ReturnUrl = new Uri(Configuration["SAML:SP:SPCallbackUrl"]);
+                //options.SPOptions.SingleLogoutDestination = new Uri(Configuration["SAML:SP:SPLogoutUrl"]);
+                //add öater
 
+                options.IdentityProviders.Add(
+                    new IdentityProvider(
+                        new EntityId(Configuration["SAML:IDP:IDPEntityId"]), options.SPOptions)
+                    {
+                        LoadMetadata = true,
+                        MetadataLocation = Configuration["SAML:IDP:MetadataLocation"],
+                        AllowUnsolicitedAuthnResponse = true,
+                        Binding = Sustainsys.Saml2.WebSso.Saml2BindingType.HttpRedirect,
+                        SingleSignOnServiceUrl = new Uri(Configuration["SAML:IDP:IDPSSOUrl"])
+                    });
+                
                 options.SPOptions.WantAssertionsSigned = false;
-            
+
+                //var certificate = new X509Certificate2(
+                //    Configuration["SAML:SP:SPCertificatePath"],
+                //    Configuration["SAML:SP:SPCertificatePassword"]
+                //    );
+                
                 var certificate = X509Certificate2.CreateFromPemFile(Config.SPCertificatePath, Config.SPPrivateKeyPath);
 
-                options.SPOptions.ServiceCertificates.Add(
-                            new ServiceCertificate
-                            {
-                                Certificate = certificate,
-                                Use = CertificateUse.Signing
-                            });
-
-                options.SPOptions.Saml2PSecurityTokenHandler = new CustomSecurityTokenHandler();
+                options.SPOptions.ServiceCertificates.Add(new ServiceCertificate
+                {
+                    Certificate = certificate,
+                    Use = CertificateUse.Signing
+                });
             });
+            
+
             //var serviceProviderOptions = new ServiceProviderOptions();
 
             //var serviceProvider = services.BuildServiceProvider();
@@ -260,13 +271,13 @@ namespace Nexpo
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext)
         {
             app.UseRouting();
+
             app.UseCors(builder => builder
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
             );
             
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -279,8 +290,6 @@ namespace Nexpo
                 dbContext.Database.Migrate();
                 dbContext.Seed();
             }
-
-            
     
             app.UseCookiePolicy();
             
