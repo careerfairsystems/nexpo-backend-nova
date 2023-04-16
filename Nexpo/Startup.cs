@@ -25,6 +25,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.IO;
 using System.Configuration;
+using Sustainsys.Saml2.AspNetCore2;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Nexpo
 {
@@ -158,39 +160,63 @@ namespace Nexpo
             services.AddScoped  <IAws3Services> (_ => new Aws3Services("AKIAX3BYI22ZD733TJZ3","Zz6i8UUK3FH003JjnvzqtQTjb7SMg9qxV2CSCfBK","eu-north-1","cvfiler")) ;
             services.AddRouting(options =>
             {
-                options.LowercaseUrls = true;
+                options.LowercaseUrls = true; //make all urls lowercase
             });
 
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    
+            //    options.DefaultScheme = ApplicationSamlConstants.Application;
+            //    options.DefaultSignInScheme = ApplicationSamlConstants.External;
+//
+            //}).AddJwtBearer(options =>
+            //{
+            //    options.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuer = true, 
+            //        ValidateAudience = true, 
+            //        ValidateLifetime = true,
+            //        ValidateIssuerSigningKey = true,
+            //        ValidIssuer = Config.JWTIssuer,
+            //        ValidAudience = Config.JWTAudience,
+            //        IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(Config.SecretKey))
+            //    };
+            //})
+            //.AddCookie(ApplicationSamlConstants.Application)
+            //.AddCookie(ApplicationSamlConstants.External)
+            
             services.AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme             = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme       = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignOutScheme      = CookieAuthenticationDefaults.AuthenticationScheme;
                 
-                options.DefaultScheme = ApplicationSamlConstants.Application;
-                options.DefaultSignInScheme = ApplicationSamlConstants.External;
-            }).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true, 
-                    ValidateAudience = true, 
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Config.JWTIssuer,
-                    ValidAudience = Config.JWTAudience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(Config.SecretKey))
-                };
+                options.DefaultChallengeScheme    = Saml2Defaults.Scheme;
+                options.DefaultAuthenticateScheme = Saml2Defaults.Scheme;
+
             })
-            .AddCookie(ApplicationSamlConstants.Application)
-            .AddCookie(ApplicationSamlConstants.External)
-            
+            .AddCookie() //this is required for the redirect to work
             //with .addSaml2, we create an saml2 authentication scheme, which is used to authenticate the user
             .AddSaml2(options =>
             {
                 options.SPOptions.EntityId = new EntityId(Configuration["SAML:SP:SPEntityId"]);
                 options.SPOptions.ReturnUrl = new Uri(Configuration["SAML:SP:SPCallbackUrl"]);
                 //options.SPOptions.SingleLogoutDestination = new Uri(Configuration["SAML:SP:SPLogoutUrl"]);
-                //add öater
+                //add later
+
+                options.SPOptions.WantAssertionsSigned = false;
+                
+                options.SPOptions.Saml2PSecurityTokenHandler = new CustomSecurityTokenHandler();
+
+                var certificate = X509Certificate2.CreateFromPemFile(Config.SPCertificatePath, Config.SPPrivateKeyPath);
+
+                options.SPOptions.ServiceCertificates.Add(new ServiceCertificate
+                {
+                    Certificate = certificate,
+                    Use = CertificateUse.Signing
+                });
 
                 options.IdentityProviders.Add(
                     new IdentityProvider(
@@ -201,22 +227,21 @@ namespace Nexpo
                         AllowUnsolicitedAuthnResponse = true,
                         Binding = Sustainsys.Saml2.WebSso.Saml2BindingType.HttpRedirect,
                         SingleSignOnServiceUrl = new Uri(Configuration["SAML:IDP:IDPSSOUrl"])
-                    });
+                    }
+                );
                 
-                options.SPOptions.WantAssertionsSigned = false;
+                
 
                 //var certificate = new X509Certificate2(
                 //    Configuration["SAML:SP:SPCertificatePath"],
                 //    Configuration["SAML:SP:SPCertificatePassword"]
                 //    );
                 
-                var certificate = X509Certificate2.CreateFromPemFile(Config.SPCertificatePath, Config.SPPrivateKeyPath);
+                
 
-                options.SPOptions.ServiceCertificates.Add(new ServiceCertificate
-                {
-                    Certificate = certificate,
-                    Use = CertificateUse.Signing
-                });
+                
+
+                
             });
             
 
