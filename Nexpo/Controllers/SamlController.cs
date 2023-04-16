@@ -28,6 +28,24 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
+        /// The Single Sign-On (SSO) Service endpoint
+        ///
+        /// The endpoint that sends and SSO request to the IdP to authenticate the user
+        /// </summary>
+        [EnableCors]
+        [AllowAnonymous]
+        [HttpGet("InitiateSingleSignOn")]
+        public IActionResult InitiateSingleSignOn()
+        {
+            
+            return Challenge();
+            
+            
+
+                
+        }
+
+        /// <summary>
         /// SSO SingleLogoutService (SLO) endpoint
         ///
         /// The endpoint the Identity Provider (IdP) sends logout requests to,

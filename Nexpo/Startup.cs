@@ -47,7 +47,7 @@ namespace Nexpo
 
         
         
-        //Flytta til folder
+        //Flytta till folder
         
         
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -81,16 +81,7 @@ namespace Nexpo
                     AuthenticationHelpers.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
             });
             
-            services.AddMvc((options) =>
-            {
-                options.RespectBrowserAcceptHeader = true;
-                options.ReturnHttpNotAcceptable = true;
-                options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
-                options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
-                options.FormatterMappings.SetMediaTypeMappingForFormat("json", "application/json");
-                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
-            })
-            .AddDataAnnotationsLocalization();
+            
             
             
             services.AddControllers();
@@ -126,7 +117,8 @@ namespace Nexpo
             //.AddCookie(ApplicationSamlConstants.Application)
             //.AddCookie(ApplicationSamlConstants.External)
             
-            services.AddAuthentication(options =>
+            services
+            .AddAuthentication(options =>
             {
                 options.DefaultScheme             = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme       = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -141,7 +133,7 @@ namespace Nexpo
             .AddSaml2(options =>
             {
                 options.SPOptions.EntityId = new EntityId(Configuration["SAML:SP:SPEntityId"]);
-                options.SPOptions.ReturnUrl = new Uri(Configuration["SAML:SP:SPCallbackUrl"]);
+                options.SPOptions.ReturnUrl = new Uri(Configuration["SAML:SP:SPACSUrl"]);
                 //options.SPOptions.SingleLogoutDestination = new Uri(Configuration["SAML:SP:SPLogoutUrl"]);
                 //add later
 
@@ -154,7 +146,7 @@ namespace Nexpo
                 //    Configuration["SAML:SP:SPCertificatePassword"]
                 //    );
 
-                var certificate = X509Certificate2.CreateFromPemFile(Config.SPCertificatePath, Config.SPPrivateKeyPath);
+                var certificate = X509Certificate2.CreateFromPemFile(Config.SPCertificatePath, Config.SPPrivateKeyPath);         
 
                 options.SPOptions.ServiceCertificates.Add(new ServiceCertificate
                 {
@@ -168,14 +160,28 @@ namespace Nexpo
                     {
                         LoadMetadata = true,
                         MetadataLocation = Configuration["SAML:IDP:MetadataLocation"],
-                        AllowUnsolicitedAuthnResponse = true,
-                        Binding = Sustainsys.Saml2.WebSso.Saml2BindingType.HttpRedirect,
-                        SingleSignOnServiceUrl = new Uri(Configuration["SAML:IDP:IDPSSOUrl"])
+                        //AllowUnsolicitedAuthnResponse = true,
+                        //Binding = Sustainsys.Saml2.WebSso.Saml2BindingType.HttpRedirect,
+                        //SingleSignOnServiceUrl = new Uri(Configuration["SAML:IDP:IDPSSOUrl"])
+                        //last 3 unnecesary due to loadMetadata?
                     }
                 );
 
                 
+
+                
             });
+
+            services.AddMvc((options) =>
+            {
+                options.RespectBrowserAcceptHeader = true;
+                options.ReturnHttpNotAcceptable = true;
+                options.InputFormatters.Add(new XmlSerializerInputFormatter(options));
+                options.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+                options.FormatterMappings.SetMediaTypeMappingForFormat("json", "application/json");
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
+            })
+            .AddDataAnnotationsLocalization();
 
             //var serviceProviderOptions = new ServiceProviderOptions();
 
