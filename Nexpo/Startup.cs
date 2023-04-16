@@ -22,6 +22,8 @@ using Sustainsys.Saml2.AspNetCore2;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Nexpo.Saml;
+using Microsoft.AspNetCore.Authentication;
+
 
 namespace Nexpo
 {
@@ -183,6 +185,8 @@ namespace Nexpo
             })
             .AddDataAnnotationsLocalization();
 
+            services.AddHttpContextAccessor();
+
             //var serviceProviderOptions = new ServiceProviderOptions();
 
             //var serviceProvider = services.BuildServiceProvider();
@@ -201,6 +205,8 @@ namespace Nexpo
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
+            services.AddScoped<IAuthenticationService, SamlAuthService>();
+
             
             if (Environment.IsDevelopment())
             {
