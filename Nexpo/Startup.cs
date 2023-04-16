@@ -75,6 +75,7 @@ namespace Nexpo
             }
         }
         
+        //Refactor this
         public class CustomSecurityTokenHandler : Sustainsys.Saml2.Saml2P.Saml2PSecurityTokenHandler
         {
             protected override ClaimsIdentity CreateClaimsIdentity(Saml2SecurityToken samlToken, string issuer, TokenValidationParameters validationParameters)
@@ -170,7 +171,7 @@ namespace Nexpo
             //    
             //    options.DefaultScheme = ApplicationSamlConstants.Application;
             //    options.DefaultSignInScheme = ApplicationSamlConstants.External;
-//
+
             //}).AddJwtBearer(options =>
             //{
             //    options.TokenValidationParameters = new TokenValidationParameters
@@ -210,6 +211,11 @@ namespace Nexpo
                 
                 options.SPOptions.Saml2PSecurityTokenHandler = new CustomSecurityTokenHandler();
 
+                //var certificate = new X509Certificate2(
+                //    Configuration["SAML:SP:SPCertificatePath"],
+                //    Configuration["SAML:SP:SPCertificatePassword"]
+                //    );
+
                 var certificate = X509Certificate2.CreateFromPemFile(Config.SPCertificatePath, Config.SPPrivateKeyPath);
 
                 options.SPOptions.ServiceCertificates.Add(new ServiceCertificate
@@ -229,21 +235,9 @@ namespace Nexpo
                         SingleSignOnServiceUrl = new Uri(Configuration["SAML:IDP:IDPSSOUrl"])
                     }
                 );
-                
-                
-
-                //var certificate = new X509Certificate2(
-                //    Configuration["SAML:SP:SPCertificatePath"],
-                //    Configuration["SAML:SP:SPCertificatePassword"]
-                //    );
-                
-                
 
                 
-
-                
-            });
-            
+            });  
 
             //var serviceProviderOptions = new ServiceProviderOptions();
 
