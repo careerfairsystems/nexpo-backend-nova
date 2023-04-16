@@ -61,6 +61,14 @@ namespace Nexpo.Controllers
         }
 
         [AllowAnonymous]
+        [HttpPost("ACS")]
+        [Authorize(AuthenticationSchemes = "Saml2")] //Forced to user to be authenticated with Saml2 before this endpoint is reached (tror detta ska göras)
+        public IActionResult AttributeConsumerService()
+        {
+            return this.Ok();
+        }
+
+        [AllowAnonymous]
         [HttpGet("Callback")]
         public async Task<IActionResult> LoginCallback(string returnUrl)
         {
@@ -126,10 +134,7 @@ namespace Nexpo.Controllers
             
         }
 
-
-
-
-
+        
     }
 
 }

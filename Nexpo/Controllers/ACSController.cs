@@ -24,7 +24,7 @@ namespace Nexpo.Controllers
         /// ACS is an abbreviation for AttributeConsumerService
         /// </summary>
         [AllowAnonymous]
-        [HttpPost("ACS")]
+        [HttpPost("ACSLegacy")]
         [Authorize(AuthenticationSchemes = "Saml2")] //Forced to user to be authenticated with Saml2 before this endpoint is reached (tror detta ska göras)
         public void AttributeConsumerService()
         {
