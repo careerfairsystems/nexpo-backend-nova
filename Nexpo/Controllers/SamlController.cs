@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 using Nexpo.Constants;
 using Microsoft.AspNetCore.Cors;
+using System.IO;
 
 namespace Nexpo.Controllers
 {
@@ -45,21 +46,21 @@ namespace Nexpo.Controllers
         [HttpGet("Callback")]
         public async Task<IActionResult> LoginCallback(string returnUrl)
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(ApplicationSamlConstants.External);
+            //var authenticateResult = await HttpContext.AuthenticateAsync(ApplicationSamlConstants.External);
 
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
+            //if (!authenticateResult.Succeeded)
+            //{
+            //    return Unauthorized();
+            //}
 
-            var token = this.CreateJwtSecurityToken(authenticateResult);
-            HttpContext.Session.SetString("JWT", new JwtSecurityTokenHandler().WriteToken(token));
+            //var token = this.CreateJwtSecurityToken(authenticateResult);
+            //HttpContext.Session.SetString("JWT", new JwtSecurityTokenHandler().WriteToken(token));
 
-            if (!string.IsNullOrEmpty(returnUrl))
-            {
-                return Redirect(returnUrl);
+            //if (!string.IsNullOrEmpty(returnUrl))
+            //{
+            //    return Redirect(returnUrl);
 
-            }
+            //}
 
             return this.Ok();
         }
@@ -94,11 +95,14 @@ namespace Nexpo.Controllers
         /// Plans to be used to generate metadata
         /// </summary>
         [HttpGet("SP")]
-        public Task<IActionResult> SP()
+        public ActionResult<string> SP()
         {
-            var metadataPath = "../../metadata.xml";
-            var xmlContent = System.IO.File.ReadAllText(metadataPath);
-            return Task.FromResult<IActionResult>(Content(xmlContent, "text/xml"));
+            string xmlData;
+            using (var reader = new StreamReader("../../metadata.xml"))
+            {
+                xmlData = reader.ReadToEnd();
+            }
+            return Content(xmlData, "text/xml");
 
             
             
