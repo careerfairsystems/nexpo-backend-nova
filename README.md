@@ -13,10 +13,3 @@ This is the backend that supports the [Nexpo app](https://github.com/careerfairs
 
 [Trello Board](https://trello.com/b/Mo2cpo31/backend): Provides an overview of all issues, their progress and who's responsible. 
 (Requires access)
-
-Welcome to the nexpo-backend-nova wiki!
-
-This wiki serves as a documentation portal, where the whole Nexpo system will be described.
-
-
-
