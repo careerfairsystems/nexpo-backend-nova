@@ -46,10 +46,12 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.MinimumSameSitePolicy = Unspecified;
+
                 options.OnAppendCookie = cookieContext =>
-                   CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+                    CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+
                 options.OnDeleteCookie = cookieContext =>
-                   CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+                    CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
             });
 
             return services;
@@ -93,7 +95,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // unknown values are NOT treated as strict anymore. Therefore we only
             // need to check version 12.
             if (userAgent.Contains("CPU iPhone OS 12")
-               || userAgent.Contains("iPad; CPU OS 12"))
+                || userAgent.Contains("iPad; CPU OS 12"))
             {
                 return true;
             }
@@ -110,8 +112,8 @@ namespace Microsoft.Extensions.DependencyInjection
             // 10.15 unknown values are NOT treated as strict anymore. Therefore we
             // only need to check version 10.14.
             if (userAgent.Contains("Safari")
-               && userAgent.Contains("Macintosh; Intel Mac OS X 10_14")
-               && userAgent.Contains("Version/"))
+                && userAgent.Contains("Macintosh; Intel Mac OS X 10_14")
+                && userAgent.Contains("Version/"))
             {
                 return true;
             }

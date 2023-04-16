@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sustainsys.Saml2.AspNetCore2;
 
-namespace Nexpo.Helpers
+namespace Nexpo.Saml
 {
     public class SamlHandler : Saml2Handler
     {

@@ -14,19 +14,14 @@ using System;
 using Nexpo.AWS;
 
 // adding for SAML feature
-using Nexpo.Constants;
 using Microsoft.AspNetCore.Http;
 using Sustainsys.Saml2;
 using Sustainsys.Saml2.Metadata;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.IdentityModel.Tokens.Saml2;
-using System.Security.Claims;
-using System.Linq;
-using System.Security.Cryptography;
-using System.IO;
-using System.Configuration;
 using Sustainsys.Saml2.AspNetCore2;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Nexpo.Saml;
 
 namespace Nexpo
 {
@@ -50,68 +45,10 @@ namespace Nexpo
 
         public static readonly string CorsPolicy = nameof(CorsPolicy);
 
-        public static class AuthenticationHelpers
-        {
-            public static void CheckSameSite(HttpContext httpContext, CookieOptions options)
-            {
-                if (options.SameSite != SameSiteMode.None)
-                    return;
-                string userAgent = httpContext.Request.Headers["User-Agent"].ToString();
-                if (httpContext.Request.IsHttps && !AuthenticationHelpers.DisallowsSameSiteNone(userAgent))
-                    return;
-                options.SameSite = SameSiteMode.Unspecified;
-            }
-
-            public static bool DisallowsSameSiteNone(string userAgent){
-                return (
-                userAgent.Contains("CPU iPhone OS 12") 
-                || userAgent.Contains("iPad; CPU OS 12") 
-                || userAgent.Contains("Macintosh; Intel Mac OS X 10_14") 
-                && userAgent.Contains("Version/") 
-                && userAgent.Contains("Safari") 
-                || userAgent.Contains("Chrome/5") 
-                || userAgent.Contains("Chrome/6")
-                );
-            }
-        }
         
-        //Refactor this
-        public class CustomSecurityTokenHandler : Sustainsys.Saml2.Saml2P.Saml2PSecurityTokenHandler
-        {
-            protected override ClaimsIdentity CreateClaimsIdentity(Saml2SecurityToken samlToken, string issuer, TokenValidationParameters validationParameters)
-            {
-                // Custom for SWAMID - add eduPersonPrincipalName, mail, givenName, sn
-                var claimsIdentity = base.CreateClaimsIdentity(samlToken, issuer, validationParameters);
-                var nameId = samlToken.Assertion.Subject.NameId;
-                var nameIdClaim = new Claim(ClaimTypes.NameIdentifier, nameId.Value);
-                claimsIdentity.AddClaim(nameIdClaim);
-                var eduPersonPrincipalName = samlToken.Assertion.Statements.OfType<Saml2AttributeStatement>().FirstOrDefault()?.Attributes.FirstOrDefault(x => x.Name == "eduPersonPrincipalName")?.Values.FirstOrDefault();
-                if (eduPersonPrincipalName != null)
-                {
-                    var eduPersonPrincipalNameClaim = new Claim(ClaimTypes.Name, eduPersonPrincipalName);
-                    claimsIdentity.AddClaim(eduPersonPrincipalNameClaim);
-                }
-                var mail = samlToken.Assertion.Statements.OfType<Saml2AttributeStatement>().FirstOrDefault()?.Attributes.FirstOrDefault(x => x.Name == "mail")?.Values.FirstOrDefault();
-                if (mail != null)
-                {
-                    var mailClaim = new Claim(ClaimTypes.Email, mail);
-                    claimsIdentity.AddClaim(mailClaim);
-                }
-                var givenName = samlToken.Assertion.Statements.OfType<Saml2AttributeStatement>().FirstOrDefault()?.Attributes.FirstOrDefault(x => x.Name == "givenName")?.Values.FirstOrDefault();
-                if (givenName != null)
-                {
-                    var givenNameClaim = new Claim(ClaimTypes.GivenName, givenName);
-                    claimsIdentity.AddClaim(givenNameClaim);
-                }
-                var sn = samlToken.Assertion.Statements.OfType<Saml2AttributeStatement>().FirstOrDefault()?.Attributes.FirstOrDefault(x => x.Name == "sn")?.Values.FirstOrDefault();
-                if (sn != null)
-                {
-                    var snClaim = new Claim(ClaimTypes.Surname, sn);
-                    claimsIdentity.AddClaim(snClaim);
-                }
-                return claimsIdentity;
-            }
-        }
+        
+        //Flytta til folder
+        
         
         // This method gets called by the runtime. Use this method to add services to the container.
         public static void ConfigureServices(IServiceCollection services)
@@ -143,7 +80,7 @@ namespace Nexpo
                 options.OnDeleteCookie = cookieContext =>
                     AuthenticationHelpers.CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
             });
-            /*
+            
             services.AddMvc((options) =>
             {
                 options.RespectBrowserAcceptHeader = true;
@@ -154,11 +91,12 @@ namespace Nexpo
                 options.FormatterMappings.SetMediaTypeMappingForFormat("xml", "application/xml");
             })
             .AddDataAnnotationsLocalization();
-            */
+            
             
             services.AddControllers();
             services.AddSingleton<IS3Configuration, S3Config>();
             services.AddScoped  <IAws3Services> (_ => new Aws3Services("AKIAX3BYI22ZD733TJZ3","Zz6i8UUK3FH003JjnvzqtQTjb7SMg9qxV2CSCfBK","eu-north-1","cvfiler")) ;
+
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true; //make all urls lowercase
@@ -237,7 +175,7 @@ namespace Nexpo
                 );
 
                 
-            });  
+            });
 
             //var serviceProviderOptions = new ServiceProviderOptions();
 
