@@ -1,13 +1,13 @@
 using System;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Xml;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 
-//Note: This class has not been tested to work yet
 namespace Nexpo.Controllers
 {
     [Route("api/Saml")]
@@ -25,12 +25,15 @@ namespace Nexpo.Controllers
         /// </summary>
         [AllowAnonymous]
         [HttpPost("ACS")]
-        public void AttributeConsumerService(HttpContext context)
-        {            
+        [Authorize(AuthenticationSchemes = "Saml2")] //Forced to user to be authenticated with Saml2 before this endpoint is reached (tror detta ska göras)
+        public void AttributeConsumerService()
+        {
+            var user = HttpContext.User;
+
             XmlDocument samlXML = new XmlDocument();
 
             // Get SAMLResponse from POST
-            var response = context.Request.Form["SAMLResponse"].ToString();
+            var response = HttpContext.Request.Form["SAMLResponse"].ToString();
             var responseBytes = Convert.FromBase64String(response);
             String SAMLResponseString = System.Text.Encoding.UTF8.GetString(responseBytes);
             samlXML.LoadXml(SAMLResponseString);
@@ -44,11 +47,11 @@ namespace Nexpo.Controllers
 
             // Extract SSO Data from SAMLResponse
             AssertionData SSOData = new AssertionData(samlXML);
-            
+
             // TODO: Still need to do something with the information
-            
+
             //Is this redirect correct? - nvm I want to log them in. Redo this
-            context.Response.Redirect(context.Request.Form["RelayState"].ToString());
+            HttpContext.Response.Redirect(HttpContext.Request.Form["RelayState"].ToString());
         }
 
         /// <summary>
@@ -92,6 +95,31 @@ namespace Nexpo.Controllers
             X509Certificate2 signingCert = new X509Certificate2(x509CertificateContent);
             
             return SignedSAML.CheckSignature(signingCert, true);
+
+            // USING SCHEME INSTEAD BUT NON WORKING
+            // Retrieve the signature from the SAMLResponse
+            //XmlNodeList XMLSignatures = SAMLResponse.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#");
+                       //// If there is no signature in the SAMLResponse, return false
+            //if (XMLSignatures.Count == 0)
+            //{
+            //    return false;
+            //}
+                       //// Load the signing certificate into an X509Certificate2 object
+            //XmlElement x509CertificateElement = (XmlElement)SAMLResponse.GetElementsByTagName("X509Certificate")[0];
+            //var x509CertificateContent = Convert.FromBase64String(x509CertificateElement.InnerText);
+            //X509Certificate2 signingCert = new X509Certificate2(x509CertificateContent);
+                       //// Initialize SAML validation parameters
+            //var samlValidationParameters = new Microsoft.IdentityModel.Tokens.Saml2.Saml2ValidationParameters
+            //{
+            //    AudienceUriMode = Microsoft.IdentityModel.Tokens.AudienceUriMode.Never,
+            //    CertificateValidator = System.IdentityModel.Selectors.X509CertificateValidator.None,
+            //    RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.NoCheck,
+            //};
+                       //// Create a SAML2 Security Token Handler and validate the SAMLResponse signature
+            //var samlSecurityTokenHandler = new Microsoft.IdentityModel.Tokens.Saml2.Saml2SecurityTokenHandler();
+            //var securityToken = samlSecurityTokenHandler.ReadToken(SAMLResponse.OuterXml);
+            //samlSecurityTokenHandler.ValidateToken(securityToken, samlValidationParameters);
+                       //return true;
         }
     }
 }
