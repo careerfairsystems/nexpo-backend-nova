@@ -18,58 +18,92 @@ namespace Nexpo.Services{
             _saml2Handler = saml2Handler;
         }
 
+        /// <summary>
+        /// Initialize the SAML2 authentication process
+        /// </summary>
+        /// <param name="scheme">The authentication scheme that should be used</param>
         public async Task<AuthenticateResult> AuthenticateAsync(HttpContext context, string scheme)
         {
-            /* // Check if the requested authentication scheme is supported
-            if (string.IsNullOrEmpty(scheme) || !scheme.Equals("Saml2", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                return AuthenticateResult.Fail("Unsupported authentication scheme");
-            } */
-            
-            // Attempt to extract the SAML response from the HTTP request
-            var saml2Auth = await context.AuthenticateAsync("Saml2");
-            //if (!saml2Auth.Succeeded)
-            //{
-            //    return AuthenticateResult.Fail("SAML authentication failed");
-            //}
-        
-            // Retrieve the claims from the SAML response
-            var claims = saml2Auth.Principal.Claims;
-        
-            // Create a new ClaimsIdentity containing the retrieved claims
-            var identity = new ClaimsIdentity(claims, scheme);
-        
-            // Create a new ClaimsPrincipal containing the retrieved identity
-            var principal = new ClaimsPrincipal(identity);
-        
-            // Return a successful authentication result containing the created principal
-            return AuthenticateResult.Success(new AuthenticationTicket(principal, scheme));
-}
+                // Call the AuthenticateAsync method to authenticate the user
+                var saml2Auth = await context.AuthenticateAsync(scheme);
 
+                // Check if the authentication result is successful
+                if (saml2Auth.Succeeded)
+                {
+                    return saml2Auth;
+                }
 
-        public Task ChallengeAsync(HttpContext context, string scheme, AuthenticationProperties properties)
-        {
-            
-            
-            return Task.CompletedTask;
+                // TODO Handle authentication failures appropriately
+
+                return AuthenticateResult.Fail("Authentication failed.");
+            }
+            catch (Exception ex)
+            {
+                // Log any errors that occur
+                Console.Error.WriteLine($"An error occurred during SAML2 authentication: {ex}");
+                throw;
+            }
         }
 
+        /// <summary>
+        /// This method is called when the user is not authenticated.
+        /// It initiates the SAML2 authentication process.
+        /// </summary>
+        /// <param name="scheme">The authentication scheme that should be used</param>
+        /// <param name="properties">Dictionary used to store state values about the authentication session</param>
+        public async Task ChallengeAsync(HttpContext context, string scheme, AuthenticationProperties properties)
+        {
+            try
+            {
+                // Call the ChallengeAsync method to initiate the SAML2 authentication process
+                await context.ChallengeAsync(scheme, properties);
+            }
+            catch (Exception ex)
+            {
+                // Log any errors that occur
+                Console.Error.WriteLine($"An error occurred during SAML2 authentication: {ex}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// This method is called when the user is not authorized to access a resource.
+        /// </summary>
+        /// <param name="scheme">The authentication scheme that should be used</param>
+        /// <param name="properties">Dictionary used to store state values about the authentication session</param>
         public Task ForbidAsync(HttpContext context, string scheme, AuthenticationProperties properties)
         {
-            
-            return Task.CompletedTask;
+            Console.WriteLine("you are not permitted to access this resource");
+            var saml2Forbid = context.ForbidAsync(scheme, properties);
+            return saml2Forbid;
         }
 
+        /// <summary>
+        /// Sign a principal in for the specified authentication scheme.
+        /// </summary>
+        /// <param name="scheme">The authentication scheme that should be used</param>
+        /// <param name="principal">A principal user (that has certain permission) within the application. 
+        ///                         It's claims are pieces of information that are associated with a user's identity.</param>
+        /// <param name="properties">Dictionary used to store state values about the authentication session</param>
         public Task SignInAsync(HttpContext context, string scheme, ClaimsPrincipal principal, AuthenticationProperties properties)
         {
-            
-            return Task.CompletedTask;
+            Console.WriteLine("c");
+            var saml2SignIn = context.SignInAsync(scheme, principal, properties);
+            return saml2SignIn;
         }
 
+        /// <summary>
+        /// Sign a principal out for the specified authentication scheme.
+        /// </summary>
+        /// <param name="scheme">The authentication scheme that should be used</param>
+        /// <param name="properties">Dictionary used to store state values about the authentication session</param>
         public Task SignOutAsync(HttpContext context, string scheme, AuthenticationProperties properties)
         {
-            
-            return Task.CompletedTask;
+            Console.WriteLine("d");
+            var saml2SignOut = context.SignOutAsync(scheme, properties);
+            return saml2SignOut;
         }
     }
 }
