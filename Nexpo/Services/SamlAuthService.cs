@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Sustainsys.Saml2;
 using Sustainsys.Saml2.AspNetCore2;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -17,11 +18,34 @@ namespace Nexpo.Services{
             _saml2Handler = saml2Handler;
         }
 
-        public Task<AuthenticateResult> AuthenticateAsync(HttpContext context, string scheme)
+        public async Task<AuthenticateResult> AuthenticateAsync(HttpContext context, string scheme)
         {
+            /* // Check if the requested authentication scheme is supported
+            if (string.IsNullOrEmpty(scheme) || !scheme.Equals("Saml2", StringComparison.OrdinalIgnoreCase))
+            {
+                return AuthenticateResult.Fail("Unsupported authentication scheme");
+            } */
             
-            return null;
-        }
+            // Attempt to extract the SAML response from the HTTP request
+            var saml2Auth = await context.AuthenticateAsync("Saml2");
+            //if (!saml2Auth.Succeeded)
+            //{
+            //    return AuthenticateResult.Fail("SAML authentication failed");
+            //}
+        
+            // Retrieve the claims from the SAML response
+            var claims = saml2Auth.Principal.Claims;
+        
+            // Create a new ClaimsIdentity containing the retrieved claims
+            var identity = new ClaimsIdentity(claims, scheme);
+        
+            // Create a new ClaimsPrincipal containing the retrieved identity
+            var principal = new ClaimsPrincipal(identity);
+        
+            // Return a successful authentication result containing the created principal
+            return AuthenticateResult.Success(new AuthenticationTicket(principal, scheme));
+}
+
 
         public Task ChallengeAsync(HttpContext context, string scheme, AuthenticationProperties properties)
         {
