@@ -26,12 +26,30 @@ namespace Nexpo.Controllers
         /// Get a list of all contacts
         /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Contact>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<Contact>), StatusCodes.Status200OK)]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
-        public async Task<ActionResult<IEnumerable<User>>> GetContacts()
+        public async Task<ActionResult<List<Contact>>> GetAll()
         {
             var contacts = await _contactRepo.GetAll();
             return Ok(contacts);
+        }
+
+        /// <summary>
+        /// Get information about a single contact
+        /// </summary>
+        [HttpGet("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
+        [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
+        public async Task<ActionResult<Contact>> GetContact(int id)
+        {
+            var contact = await _contactRepo.Get(id);
+
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(contact);
         }
 
 
@@ -41,10 +59,11 @@ namespace Nexpo.Controllers
         [HttpPut]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
         public async Task<IActionResult> PutContact(int id, UpdateContactDTO dto)
         {
             var contact = await _contactRepo.Get(id);
+
             if (contact == null)
             {
                 return NotFound();
@@ -64,6 +83,28 @@ namespace Nexpo.Controllers
             }
 
             await _contactRepo.Update(contact);
+
+            return Ok(contact);
+        }
+
+        /// <summary>
+        /// Create a new contact
+        /// </summary>
+        [HttpPost]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Contact), StatusCodes.Status201Created)]
+        public async Task<ActionResult<Contact>> PostContact(CreateContactDTO dto)
+        {
+            var contact = new Contact
+            {
+                FirstName   = dto.FirstName,
+                LastName    = dto.LastName,
+                Email       = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                RoleInArkad = dto.RoleInArkad
+            };
+
+            await _contactRepo.Add(contact);
 
             return Ok(contact);
         }

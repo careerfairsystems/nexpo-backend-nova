@@ -21,6 +21,11 @@ namespace Nexpo.Repositories
 
         private readonly ApplicationDbContext _context;
 
+        public ContactReposity(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<bool> ContactExists(int id)
         {
             return await _context.Contacts.AnyAsync(contact => contact.Id == id);
@@ -29,9 +34,8 @@ namespace Nexpo.Repositories
         public async Task<List<Contact>> GetAll()
         {
             
-            var contacts =   await _context.Contacts.OrderBy(contact => contact.FirstName)
-                                                    .ThenBy(u => u.LastName).ToListAsync();
-            //System.Console.WriteLine(contacts.Count);
+            var contacts = await _context.Contacts.OrderBy(contact => contact.FirstName).ThenBy(contact => contact.LastName).ToListAsync();
+            System.Console.WriteLine(contacts);
             return contacts;
         }
 

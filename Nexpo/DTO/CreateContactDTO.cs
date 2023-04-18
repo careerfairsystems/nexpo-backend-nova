@@ -3,11 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO
 {
-    public class CreateCOntactDTO
-    {
-        [Required]
-        public int Id { get; set; }
-        
+    public class CreateContactDTO
+    {   
         [Required]
         public string FirstName { get; set; }
 
