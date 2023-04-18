@@ -24,7 +24,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
         
             var responseList = JsonConvert.DeserializeObject<List<Event>>(await response.Content.ReadAsStringAsync());
-            Assert.True(responseList.Count == 5, "Wrong number of events. Expected: 5. Received: " + responseList.Count);
+            Assert.True(responseList.Count == 8, "Wrong number of events. Expected: 8. Received: " + responseList.Count);
 
             var firstEvent = responseList.Find(r => r.Id == -1);
             var secondEvent = responseList.Find(r => r.Id == -2);

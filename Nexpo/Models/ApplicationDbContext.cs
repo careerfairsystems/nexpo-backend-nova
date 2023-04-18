@@ -88,7 +88,7 @@ namespace Nexpo.Models
             var event3 = new Event { Id = -3, Name = "CV Workshop with Randstad", Description = "Make your CV look professional with the help of Randstad", Date = DateTime.Now.AddDays(12).Date.ToString(), Start = "13:30", End = "15:00", Host = "Randstad", Location = "E:A", Language = "Swedish", Capacity = 3 };
             var event4 = new Event { Id = -4, Name = "Inspirational lunch lecture", Description = "Get inspired and expand your horizons", Date = DateTime.Now.AddDays(14).Date.ToString(), Start = "12:15", End = "13:00", Host = "SYV", Location = "MA:3", Language = "Swedish", Capacity = 2 };
             var event5 = new Event { Id = -5, Name = "Pick apples with Apple", Description = "An apple a day keeps the doctor away", Date = DateTime.Now.AddDays(1).Date.ToString(), Start = "12:15", End = "13:00", Host = "Apple", Location = "M:B", Language = "English", Capacity = 200};
-            
+
             var event6 = new Event { Id = -6, Name = "Lunch For volunteers", Description = "A lunch for all volunteers to enjoy", Date = DateTime.Now.AddDays(15).Date.ToString(), Start = "12:15", End = "13:00", Host = "Teknologkåren", Location = "Hänget", Language = "Swrdish", Capacity = 300};
             var event7 = new Event { Id = -7, Name = "Lunch For Company Rep!", Description = "Com.reps get hungry aswell", Date = DateTime.Now.AddDays(15).Date.ToString(), Start = "12:15", End = "13:00", Host = "Teknologkåren", Location = "Perstorp", Language = "English", Capacity = 500};
 
@@ -109,14 +109,11 @@ namespace Nexpo.Models
             var ticket7 = new Ticket { Id = -7, Code = Guid.NewGuid(), PhotoOk = true, EventId = event4.Id.Value, UserId = user4.Id.Value };
 
             var ticket8 = new Ticket { Id = -8, Code = Guid.NewGuid(), PhotoOk = true, EventId = event5.Id.Value, UserId = user3.Id.Value };
-
             var ticket9 = new Ticket { Id = -9, Code = Guid.NewGuid(), PhotoOk = true, EventId = event6.Id.Value, UserId = user3.Id.Value };
-            var ticket10 = new Ticket { Id = -10, Code = Guid.NewGuid(), PhotoOk = true, EventId = event6.Id.Value, UserId = user5.Id.Value };
+            var ticket10 = new Ticket { Id = -10, Code = Guid.NewGuid(), PhotoOk = true, EventId = event6.Id.Value, UserId = user8.Id.Value };
             var ticket11 = new Ticket { Id = -11, Code = Guid.NewGuid(), PhotoOk = true, EventId = event7.Id.Value, UserId = user3.Id.Value };
-
-            var ticket12 = new Ticket { Id = -11, Code = Guid.NewGuid(), PhotoOk = true, EventId = event7.Id.Value, UserId = user3.Id.Value };
-            var ticket13 = new Ticket { Id = -12, Code = Guid.NewGuid(), PhotoOk = false, EventId = event7.Id.Value, UserId = user5.Id.Value };
-            Tickets.AddRange(ticket1, ticket2, ticket3, ticket4, ticket5, ticket6, ticket7, ticket8, ticket9, ticket10, ticket11, ticket12, ticket13);
+            var ticket12 = new Ticket { Id = -12, Code = Guid.NewGuid(), PhotoOk = false, EventId = event7.Id.Value, UserId = user9.Id.Value };
+            Tickets.AddRange(ticket1, ticket2, ticket3, ticket4, ticket5, ticket6, ticket7, ticket8, ticket9, ticket10, ticket11); 
             SaveChanges();
 
             // StudentSessionTimeslots
