@@ -27,8 +27,8 @@ namespace Nexpo.Tests.Controllers
                     json.Add("email", "admin@example.com");
                     json.Add("password", "password");
                     break;
-                case "volenteer":
-                    json.Add("email", "volenteer@example.com");
+                case "volunteer":
+                    json.Add("email", "volunteer@example.com");
                     json.Add("password", "password");
                     break;
                 case "student1":
