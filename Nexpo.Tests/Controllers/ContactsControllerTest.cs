@@ -10,12 +10,13 @@ using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Xunit;
 
+
 namespace Nexpo.Tests.Controllers
 { 
     public class ContactControllerTests
     {
         [Fact]
-        public async getAllContactsAsVounteerTest()
+        public async Task getAllContactsAsVounteerTest()
         {
             //Login
             var client = await TestUtils.Login("vounteer");
@@ -23,7 +24,7 @@ namespace Nexpo.Tests.Controllers
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             //Deserialize response
-            var responseList = JsonConvert.DeserializeObject<List<Contact>>(await response.Content.ReadAsStringAsync().AsyncToList());
+            var responseList = JsonConvert.DeserializeObject<List<Contact>>(await response.Content.ReadAsStringAsync());
             Assert.True(responseList.Count == 4, "Wrong number of contacts. Expected: 4. Received: " + responseList.Count);
 
             //Sample results
@@ -35,13 +36,13 @@ namespace Nexpo.Tests.Controllers
             Assert.True(firstContact.PhoneNumber == "001-111 11 11", "Wrong phone number. Expected: 001-111 11 11. Received: " + firstContact.PhoneNumber);
 
             //Check contact 2
-            Assert.True(secondContact.lastname == "Van IT", "Wrong last name. Expected: Van It. Received: " + secondContact.lastName);
+            Assert.True(secondContact.LastName == "Van IT", "Wrong last name. Expected: Van It. Received: " + secondContact.LastName);
             Assert.True(secondContact.Email == "contact2@example.com", "Wrong email. Expected: contact2@example.com. Received: " + secondContact.Email);
             Assert.True(secondContact.RoleInArkad == "Head of IT", "Wrong role in arkad. Expected: Head of IT. Received: " + secondContact.RoleInArkad);
         }
 
         [Fact]
-        public async getAllContactsAsAdminTest()
+        public async Task getAllContactsAsAdminTest()
         {
             //Login
             var client = await TestUtils.Login("admin");
@@ -49,7 +50,7 @@ namespace Nexpo.Tests.Controllers
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
             //Deserialize response
-            var responseList = JsonConvert.DeserializeObject<List<Contact>>(await response.Content.ReadAsStringAsync().AsyncToList());
+            var responseList = JsonConvert.DeserializeObject<List<Contact>>(await response.Content.ReadAsStringAsync());
 
             //Sample results
             var thirdContact = responseList.Find(contacts => contacts.Id == -3);
@@ -60,13 +61,13 @@ namespace Nexpo.Tests.Controllers
             Assert.True(thirdContact.PhoneNumber == "003-333 33 33", "Wrong phone number. Expected: 003-333 33 33. Received: " + thirdContact.PhoneNumber);
 
             //Check contact 4
-            Assert.True(fourthContact.lastname == "End", "Wrong last name. Expected: End. Received: " + fourthContact.lastName);
+            Assert.True(fourthContact.LastName == "End", "Wrong last name. Expected: End. Received: " + fourthContact.LastName);
             Assert.True(fourthContact.Email == "contact4@example.com", "Wrong email. Expected: contact4@example.com. Received: " + fourthContact.Email);
             Assert.True(fourthContact.RoleInArkad == "Backend Manager", "Wrong role in arkad. Expected: Backend Manager. Received: " + fourthContact.RoleInArkad);
         }
 
         [Fact]
-        public async getAllContactsAsStudentTest()
+        public async Task getAllContactsAsStudentTest()
         {
             //Login
             var client = await TestUtils.Login("student");
@@ -78,7 +79,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async getAllContactsWhileNotLoggedInTest()
+        public async Task getAllContactsWhileNotLoggedInTest()
         {
             //Create program and client
             var application = new WebApplicationFactory<Program>();
@@ -92,7 +93,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async NonAdminUpdateContactTest(){
+        public async Task NonAdminUpdateContactTest(){
             //LOgin
             var client = await TestUtils.Login("volunteer");
 
@@ -112,7 +113,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.ToString());
         }
         [Fact]
-        public async updateContactAsAdminTest()
+        public async Task updateContactAsAdminTest()
         {
             //Login
             var application = new WebApplicationFactory<Program>();
@@ -171,7 +172,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async getNonExistingContact()
+        public async Task getNonExistingContact()
         {
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/contacts/-100");
