@@ -215,6 +215,7 @@ namespace Nexpo.Tests.Controllers
                 { "firstName", "Rakel" },
                 { "password", "superdupersecret" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-6", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
@@ -226,6 +227,7 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep2@company1.example.com" },
                 { "password", "password" }
             };
+
             var testPayload = new StringContent(testJson.ToString(), Encoding.UTF8, "application/json");
             var testResponse = await testClient.PostAsync("/api/session/signin", testPayload);
             Assert.True(testResponse.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + testResponse.StatusCode.ToString());
@@ -237,6 +239,7 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep2@company1.example.com" },
                 { "password", "superdupersecret" }
             };
+
             var test2Payload = new StringContent(test2Json.ToString(), Encoding.UTF8, "application/json");
             var test2Response = await test2Client.PostAsync("/api/session/signin", test2Payload);
             Assert.True(test2Response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + test2Response.StatusCode.ToString());
@@ -248,6 +251,7 @@ namespace Nexpo.Tests.Controllers
                 { "lastName", null },
                 { "password", "password" }
             };
+
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/users/-6", payload2);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
@@ -259,6 +263,7 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep2@company1.example.com" },
                 { "password", "password" }
             };
+
             var verifyPayload = new StringContent(verifyJson.ToString(), Encoding.UTF8, "application/json");
             var verifyResponse = await verifyClient.PostAsync("/api/session/signin", verifyPayload);
             Assert.True(verifyResponse.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + verifyResponse.StatusCode.ToString());
@@ -289,6 +294,7 @@ namespace Nexpo.Tests.Controllers
             {
                 { "password", "test" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-2", payload);
 
@@ -304,6 +310,7 @@ namespace Nexpo.Tests.Controllers
                 { "firstName", "Rakel" },
                 { "lastName", "Spektakel" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-123", payload);
 
@@ -319,6 +326,7 @@ namespace Nexpo.Tests.Controllers
                 { "firstName", "Rakel" },
                 { "lastName", "Spektakel" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-2", payload);
 
@@ -385,6 +393,7 @@ namespace Nexpo.Tests.Controllers
                 { "lastName", "Spektakel" },
                 { "password", "superdupersecret" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/me", payload);
 
@@ -397,6 +406,7 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep1@company4.example.com" },
                 { "password", "password" }
             };
+
             var testPayload = new StringContent(testJson.ToString(), Encoding.UTF8, "application/json");
             var testResponse = await testClient.PostAsync("/api/session/signin", testPayload);
 
@@ -409,6 +419,7 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep1@company4.example.com" },
                 { "password", "superdupersecret" }
             };
+
             var test2Payload = new StringContent(test2Json.ToString(), Encoding.UTF8, "application/json");
             var test2Response = await test2Client.PostAsync("/api/session/signin", test2Payload);
 
@@ -421,6 +432,7 @@ namespace Nexpo.Tests.Controllers
                 { "lastName", "Rep" },
                 { "password", "password" }
             };
+
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/users/me", payload2);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
@@ -432,6 +444,7 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep1@company4.example.com" },
                 { "password", "password" }
             };
+
             var verifyPayload = new StringContent(verifyJson.ToString(), Encoding.UTF8, "application/json");
             var verifyResponse = await verifyClient.PostAsync("/api/session/signin", verifyPayload);
             Assert.True(verifyResponse.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + verifyResponse.StatusCode.ToString());
@@ -462,6 +475,7 @@ namespace Nexpo.Tests.Controllers
             {
                 { "password", "test" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/me", payload);
 
@@ -477,6 +491,7 @@ namespace Nexpo.Tests.Controllers
             {
                 { "password", "newSuperSecretPassword" }
             };
+            
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/me", payload);
 
