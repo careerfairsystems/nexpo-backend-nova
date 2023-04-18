@@ -9,7 +9,7 @@ namespace Nexpo.Repositories
     public interface IContactReposity
     {
         public Task<bool> ContactExists(int id);
-        public Task<IEnumerable<Contact>> GetAll();
+        public Task<List<Contact>> GetAll();
         public Task<Contact> Get(int id);
         public Task Add(Contact contact);
         public Task Remove(Contact contact);
@@ -23,17 +23,21 @@ namespace Nexpo.Repositories
 
         public async Task<bool> ContactExists(int id)
         {
-            return await _context.Contacts.AnyAsync(e => e.Id == id);
+            return await _context.Contacts.AnyAsync(contact => contact.Id == id);
         }
 
-        public async Task<IEnumerable<Contact>> GetAll()
+        public async Task<List<Contact>> GetAll()
         {
-            return await _context.Contacts.OrderBy(u => u.FirstName).ThenBy(u => u.LastName).ToListAsync();
+            
+            var contacts =   await _context.Contacts.OrderBy(contact => contact.FirstName)
+                                                    .ThenBy(u => u.LastName).ToListAsync();
+            //System.Console.WriteLine(contacts.Count);
+            return contacts;
         }
 
         public Task<Contact> Get(int id)
         {
-            return _context.Contacts.Where(u => u.Id == id).FirstOrDefaultAsync();
+            return _context.Contacts.Where(contact => contact.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task Add(Contact contact)

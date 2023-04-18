@@ -77,7 +77,7 @@ namespace Nexpo.Tests.Controllers
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
             var response = await client.GetAsync("/api/companies/-123");
-         
+        
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong StatusCode. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
 

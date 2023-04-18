@@ -16,10 +16,10 @@ namespace Nexpo.Tests.Controllers
     public class ContactControllerTests
     {
         [Fact]
-        public async Task getAllContactsAsVounteerTest()
+        public async Task getAllContactsAsVolunteerTest()
         {
             //Login
-            var client = await TestUtils.Login("vounteer");
+            var client = await TestUtils.Login("volunteer");
             var response = await client.GetAsync("/api/contacts");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -46,6 +46,7 @@ namespace Nexpo.Tests.Controllers
         {
             //Login
             var client = await TestUtils.Login("admin");
+
             var response = await client.GetAsync("/api/contacts");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -131,7 +132,7 @@ namespace Nexpo.Tests.Controllers
 
             // Verify that the contact is updated
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync("api/contact/-2", payload);
+            var response = await client.PutAsync("api/contacts/-2", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
 
             //var contact2 = new Contact { Id = -2, FirstName = "Head", LastName = "Van IT", RoleInArkad = "Head of IT", Email = "contact2@example.com", PhoneNumber = "002-222 22 22" };

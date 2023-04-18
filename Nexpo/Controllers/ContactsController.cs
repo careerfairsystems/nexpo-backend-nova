@@ -30,7 +30,8 @@ namespace Nexpo.Controllers
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
         public async Task<ActionResult<IEnumerable<User>>> GetContacts()
         {
-            return Ok(await _contactRepo.GetAll());
+            var contacts = await _contactRepo.GetAll();
+            return Ok(contacts);
         }
 
 
