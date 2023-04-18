@@ -15,6 +15,7 @@ namespace Nexpo.Models
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
         public DbSet<StudentSessionApplication> StudentSessionApplications { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
 
         private readonly PasswordService _passwordService;
 
@@ -132,6 +133,12 @@ namespace Nexpo.Models
             var application7 = new StudentSessionApplication { Id = -7, Motivation = "Music is a big passion of mine", StudentId = student2.Id.Value, CompanyId = company3.Id.Value };
             StudentSessionApplications.AddRange(application1, application2, application3, application4, application5, application6, application7);
             SaveChanges();
+
+            // Contacts
+            var contact1 = new Contact { Id = -1, FirstName = "PL", LastName = "Pappa", RoleInArkad = "Project Leader", Email = "contact1@example.com", PhoneNumber = "001-111 11 11" };
+            var contact2 = new Contact { Id = -2, FirstName = "Head", LastName = "Van IT", RoleInArkad = "Head of IT", Email = "contact2@example.com", PhoneNumber = "002-222 22 22" };
+            var contact3 = new Contact { Id = -3, FirstName = "Front", LastName = "End", RoleInArkad = "Frontend Manager", Email = "contact3@example.com", PhoneNumber = "003-333 33 33" };
+            var contact4 = new Contact { Id = -3, FirstName = "Back", LastName = "End", RoleInArkad = "Backend Manager", Email = "contact4@example.com", PhoneNumber = "004-444 44 44" };
 
         }
     }
