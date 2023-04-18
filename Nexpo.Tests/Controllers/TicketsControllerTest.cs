@@ -30,6 +30,9 @@ namespace Nexpo.Tests.Controllers
             Assert.True(!ticket2.PhotoOk, "Wrong PhotoOk value. Expected: false. Received: " + ticket2.PhotoOk.ToString());
         }
 
+
+        /// <summary>
+        
         [Fact]
         public async Task GetAllTicketsForCompanyWith0()
         {

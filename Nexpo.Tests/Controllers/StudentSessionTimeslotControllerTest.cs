@@ -385,11 +385,11 @@ namespace Nexpo.Tests.Controllers
             //Remove new timeslot
             var response3 = await client.DeleteAsync("api/timeslots/" + responseObject.Id);
             Assert.True(response3.StatusCode.Equals(HttpStatusCode.NoContent), "Wrong status code. Expected: NoContent. Received: " + response3.StatusCode);
-           
+        
             //Verify total number of timeslots 
             var response4 = await client.GetAsync("/api/timeslots/company/-3");
             Assert.True(response4.StatusCode.Equals(HttpStatusCode.OK), response4.StatusCode.ToString());
-           
+        
             //Verify
             Assert.True(responseObject.Location.Equals("At home"), "Wrong Location. Expected: At home. Received: " +  responseObject.Location.ToString());
             Assert.True(responseObject.StudentId == null, "Wrong student id. Expected: null. Received: " + responseObject.StudentId.ToString());
