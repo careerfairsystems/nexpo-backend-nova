@@ -1,0 +1,31 @@
+name: C# Linter and Formatter
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '7.0.x'
+    - name: Install Roslynator
+      run: dotnet tool install --global Roslynator.CommandLine
+    - name: Lint C# code
+      run: roslynator analyze "./**/*.cs" --report-format "github-action" > analysis.md
+    - name: Fix formatting errors
+      run: roslynator fix "./**/*.cs" --fix-analyzers --include "./**/*.cs"
+    - name: Lint C# code again to ensure all errors are fixed
+      run: roslynator analyze "./**/*.cs" --report-format "github-action" > analysis.md
+    - name: Create a comment with the analysis
+      uses: unsplash/comment-on-pr@v1
+      with:
+        message: 'Roslynator analysis results and formatted code:'
+        files: analysis.md
