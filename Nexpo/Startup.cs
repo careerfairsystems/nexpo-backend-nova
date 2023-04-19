@@ -49,7 +49,7 @@ namespace Nexpo
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateAudience = true, //gör så att man loggas in automatiskt
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Config.JWTIssuer,

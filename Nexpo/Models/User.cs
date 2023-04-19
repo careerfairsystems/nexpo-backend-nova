@@ -32,7 +32,7 @@ namespace Nexpo.Models
         [JsonIgnore]
         public Company Company { get; set; }
 
-        public bool hasCv {get; set;} 
+        public bool hasCv { get; set; }
 
         public string profilePictureUrl { get; set; }
     }
@@ -41,7 +41,8 @@ namespace Nexpo.Models
     {
         Administrator,
         Student,
-        CompanyRepresentative
+        CompanyRepresentative,
+        Volunteer
     }
 }
 

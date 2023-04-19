@@ -40,7 +40,7 @@ while getopts ":h:q:s" opt; do
         exit 1
         ;;
     c|compose)
-        # Implement compose instead
+        sudo docker-compose up -d
         exit 1
         ;;
     esac
