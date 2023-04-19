@@ -14,16 +14,17 @@ namespace Nexpo.Tests.Controllers
     public class UserControllerTest
     {
         [Fact]
-        public async Task AdminGetAllUsers()
+        public async Task GetAllAsAdmin()
         {
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/users/");
+
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             var responseList = JsonConvert.DeserializeObject<List<User>>(await response.Content.ReadAsStringAsync());
-            var userAdmin = responseList.Find(r => r.Id == -1);
-            var userStudent = responseList.Find(r => r.Id == -2);
-            var userRep = responseList.Find(r => r.Id == -5);
+            var userAdmin = responseList.Find(user => user.Id == -1);
+            var userStudent = responseList.Find(user => user.Id == -2);
+            var userRep = responseList.Find(user => user.Id == -5);
             
             Assert.True(responseList.Count == 9, "Wrong number of users. Expected: 9. Received: " + responseList.Count.ToString());
             Assert.True(userAdmin.Role.Equals(Role.Administrator), "Wrong user role. Expected: admin. Received: " + userAdmin.Role.ToString());
@@ -32,29 +33,32 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task StudentGetAllUsers()
+        public async Task GetAllUsersAStudent()
         {
             var client =  await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/users/");
 
+            // Verify response - Students should not be able to get all users
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task AdminGetUser()
+        public async Task GetAsAdmin()
         {
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/users/-5");
+
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             var responseUser = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+
             Assert.True(responseUser.CompanyId == -1, "Wrong company id. Expected: -1. Received: " + responseUser.CompanyId.ToString());
             Assert.True(responseUser.Email.Equals("rep1@company1.example.com"), "Wrong email. Expected: rep1@company1.example.com. Received: " + responseUser.Email);
             Assert.True(responseUser.Role.Equals(Role.CompanyRepresentative), "Wrong user role. Expected: CompanyRepresentative. Received: " + responseUser.Role.ToString());
         }
 
         [Fact]
-        public async Task CompanyGetUserLegit()
+        public async Task GetUserWithStudentApplicationAsCompany()
         {
             var client = await TestUtils.Login("company1");
             var response = await client.GetAsync("/api/users/-2");
@@ -67,44 +71,50 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task CompanyGetUserNotStudent()
-        {
-            var client = await TestUtils.Login("company1");
-            var response = await client.GetAsync("/api/users/-6");
-
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
-        }
-
-        [Fact]
-        public async Task CompanyGetUserNoStudentApplication()
+        public async Task GetUserNoStudentApplicationAsCompany()
         {
             var client =  await TestUtils.Login("company3");
             var response = await client.GetAsync("/api/users/-2");
 
+            // Verify response - Companies should not be able to get users who are have not applied for a student session
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task StudentGetUser()
+        public async Task GetUserNonStudentAsCompany()
+        {
+            var client = await TestUtils.Login("company1");
+            var response = await client.GetAsync("/api/users/-6");
+
+            // Verify response - Companies should not be able to get users who are not students
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task GetAsStudent()
         {
             var client =  await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/users/-2");
 
+            // Verify response - Students should not be able to get users
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task AdminUpdateUser()
+        public async Task UpdateAsAdmin()
         {
             var application = new WebApplicationFactory<Program>();
             var client =  await TestUtils.Login("admin");
+
             var json = new JsonObject
             {
                 { "firstName", "Rakel" },
                 { "password", "superdupersecret" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-6", payload);
+
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
 
             //Sign-in with old password
@@ -114,8 +124,10 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep2@company1.example.com" },
                 { "password", "password" }
             };
+
             var testPayload = new StringContent(testJson.ToString(), Encoding.UTF8, "application/json");
             var testResponse = await testClient.PostAsync("/api/session/signin", testPayload);
+
             Assert.True(testResponse.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + testResponse.StatusCode.ToString());
 
             //Sign-in with new password
@@ -125,8 +137,10 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep2@company1.example.com" },
                 { "password", "superdupersecret" }
             };
+
             var test2Payload = new StringContent(test2Json.ToString(), Encoding.UTF8, "application/json");
             var test2Response = await test2Client.PostAsync("/api/session/signin", test2Payload);
+
             Assert.True(test2Response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + test2Response.StatusCode.ToString());
 
             //Restore
@@ -138,6 +152,7 @@ namespace Nexpo.Tests.Controllers
             };
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/users/-6", payload2);
+
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
             
             //Sign-in with new password
@@ -147,12 +162,14 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep2@company1.example.com" },
                 { "password", "password" }
             };
+
             var verifyPayload = new StringContent(verifyJson.ToString(), Encoding.UTF8, "application/json");
             var verifyResponse = await verifyClient.PostAsync("/api/session/signin", verifyPayload);
             Assert.True(verifyResponse.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + verifyResponse.StatusCode.ToString());
 
             //Verify
             var responseObject = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+
             Assert.True(responseObject.Id == -6, "Wrong user id. Expected: -6. Received: " + responseObject.Id.ToString());
             Assert.True(responseObject.FirstName.Equals("Rakel"), "Wrong first name. Expected: Rakel. Received: " +  responseObject.FirstName);
             Assert.True(responseObject.LastName.Equals("Rep"), "Wrong last name. Expected: Rep. Received: " + responseObject.LastName);
@@ -161,6 +178,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.FoodPreferences == null, "Wrong food preferences. Expected: null. Received: " + responseObject.FoodPreferences);
 
             var responseObject2 = JsonConvert.DeserializeObject<User>(await response2.Content.ReadAsStringAsync());
+
             Assert.True(responseObject2.Id == -6, "Wrong user id. Expected: -6. Received: " + responseObject2.Id.ToString());
             Assert.True(responseObject2.FirstName.Equals("Alpha"), "Wrong first name. Expected: Alpha. Received: " + responseObject2.FirstName);
             Assert.True(responseObject2.LastName.Equals("Rep"), "Wrong last name. Expected: Rep. Received: " + responseObject2.LastName);
@@ -170,7 +188,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task AdminUpdateUserBadPassword()
+        public async Task UpdateWithBadPasswordAsAdmin()
         {
             var client = await TestUtils.Login("admin");
             var json = new JsonObject
@@ -180,11 +198,12 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-2", payload);
 
+            // Verify response - should be BadRequest because password is too short
             Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + response.ToString());
         }
 
         [Fact]
-        public async Task AdminUpdateUserNotExist()
+        public async Task UpdateNonExistingAsAdmin()
         {
             var client = await TestUtils.Login("admin");
             var json = new JsonObject
@@ -195,11 +214,12 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-123", payload);
 
+            // Verify response - should be NotFound because user of id -123 does not exist in the database
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong Status Code. Expected: NotFound. Received: " + response.ToString());
         }
 
         [Fact]
-        public async Task UnautherizedUpdateUser()
+        public async Task UpdateAsCompany()
         {
             var client =  await TestUtils.Login("company1");
             var json = new JsonObject
@@ -210,11 +230,12 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-2", payload);
 
+            // Verify response - should be Forbidden because company1 is not allowed to update user of id -2
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.ToString());
         }
 
         [Fact]
-        public async Task CompanyGetMe()
+        public async Task GetMeAsCompany()
         {
             var client = await TestUtils.Login("company1");
             var response = await client.GetAsync("/api/users/me");
@@ -227,7 +248,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task StudentGetMe()
+        public async Task GetMeAsStudent()
         {
             var client =  await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/users/me");
@@ -240,7 +261,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task AdminGetMe()
+        public async Task GetMeAsAdmin()
         {
             var client =  await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/users/me");
@@ -253,26 +274,62 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task UnauthorizedGetMe()
+        public async Task GetMeNotLoggedIn()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
             var response = await client.GetAsync("/api/users/me");
 
+            // Verify response - should be Unauthorized because user is not logged in
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong Status Code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task UserUpdateMe()
+        public async Task UpdateMeBadPasswordAsStudent()
+        {
+            var client = await TestUtils.Login("student1");
+            var json = new JsonObject
+            {
+                { "password", "test" }
+            };
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/users/me", payload);
+
+            // Verify response - should be BadRequest because password is too short
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + response.ToString());
+        }
+
+        [Fact]
+        public async Task UpdateMeNotLoggedIN()
+        {
+            var application = new WebApplicationFactory<Program>();
+            var client = application.CreateClient();
+
+            var json = new JsonObject
+            {
+                { "password", "newSuperSecretPassword" }
+            };
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/users/me", payload);
+
+            // Verify response - should be Unauthorized because user is not logged in
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong Status Code. Expected: Unauthorized. Received: " + response.ToString());
+        }
+
+        [Fact]
+        public async Task updateMe()
         {
             var application = new WebApplicationFactory<Program>();
             var client = await TestUtils.Login("company4");
+
             var json = new JsonObject
             {
                 { "firstName", "Rakel" },
                 { "lastName", "Spektakel" },
                 { "password", "superdupersecret" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/me", payload);
 
@@ -285,6 +342,7 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep1@company4.example.com" },
                 { "password", "password" }
             };
+            
             var testPayload = new StringContent(testJson.ToString(), Encoding.UTF8, "application/json");
             var testResponse = await testClient.PostAsync("/api/session/signin", testPayload);
 
@@ -297,6 +355,7 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep1@company4.example.com" },
                 { "password", "superdupersecret" }
             };
+
             var test2Payload = new StringContent(test2Json.ToString(), Encoding.UTF8, "application/json");
             var test2Response = await test2Client.PostAsync("/api/session/signin", test2Payload);
 
@@ -309,6 +368,7 @@ namespace Nexpo.Tests.Controllers
                 { "lastName", "Rep" },
                 { "password", "password" }
             };
+
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/users/me", payload2);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.ToString());
@@ -320,12 +380,15 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep1@company4.example.com" },
                 { "password", "password" }
             };
+
             var verifyPayload = new StringContent(verifyJson.ToString(), Encoding.UTF8, "application/json");
             var verifyResponse = await verifyClient.PostAsync("/api/session/signin", verifyPayload);
+
             Assert.True(verifyResponse.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + verifyResponse.StatusCode.ToString());
 
             //Verify
             var responseObject = JsonConvert.DeserializeObject<User>(await response.Content.ReadAsStringAsync());
+
             Assert.True(responseObject.Id == -9, "Wrong user id. Expected: -9. Received: " + responseObject.Id.ToString());
             Assert.True(responseObject.FirstName.Equals("Rakel"), "Wrong first name. Expected: Rakel. Received: " + responseObject.FirstName);
             Assert.True(responseObject.LastName.Equals("Spektakel"), "Wrong last name. Expected: Spektakel. Received: " + responseObject.LastName);
@@ -334,41 +397,13 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.FoodPreferences == null, "Wrong food preferences. Expected: null. Received: " + responseObject.FoodPreferences);
 
             var responseObject2 = JsonConvert.DeserializeObject<User>((await response2.Content.ReadAsStringAsync()));
+
             Assert.True(responseObject2.Id == -9, "Wrong user id. Expected: -9. Received: " + responseObject2.Id.ToString());
             Assert.True(responseObject2.FirstName.Equals("Epsilon"), "Wrong first name. Expected: Epsikon. Received: " + responseObject2.FirstName);
             Assert.True(responseObject2.LastName.Equals("Rep"), "Wrong last name. Expected: Rep. Received: " + responseObject2.LastName);
             Assert.True(responseObject2.Role.Equals(Role.CompanyRepresentative), "Wrong user role. Expected: CompanyRepresentative. Received: " + responseObject2.Role.ToString());
             Assert.True(responseObject2.PhoneNr == null, "Wrong phone number. Expected: null. Received: " + responseObject2.PhoneNr);
             Assert.True(responseObject2.FoodPreferences == null, "Wrong food preferences. Expected: null. Received: " + responseObject2.FoodPreferences);
-        }
-
-        [Fact]
-        public async Task StudentUpdateMeBadPassword()
-        {
-            var client = await TestUtils.Login("student1");
-            var json = new JsonObject
-            {
-                { "password", "test" }
-            };
-            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync("api/users/me", payload);
-
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + response.ToString());
-        }
-
-        [Fact]
-        public async Task UpdateMeUnautherized()
-        {
-            var application = new WebApplicationFactory<Program>();
-            var client = application.CreateClient();
-            var json = new JsonObject
-            {
-                { "password", "newSuperSecretPassword" }
-            };
-            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync("api/users/me", payload);
-
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong Status Code. Expected: Unauthorized. Received: " + response.ToString());
         }
     }
 }
