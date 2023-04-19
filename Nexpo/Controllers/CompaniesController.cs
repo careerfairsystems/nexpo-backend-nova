@@ -30,19 +30,19 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> GetCompanies()
         {
             var companies = await _companyRepo.GetAll();
-            var publicCompanies = companies.Select(c => new PublicCompanyDto
+            var publicCompanies = companies.Select(company => new PublicCompanyDto
             {
-                Id = c.Id.Value,
-                Name = c.Name,
-                Description = c.Description,
-                DidYouKnow = c.DidYouKnow,
-                Website = c.Website,
-                LogoUrl = c.LogoUrl,
-                DesiredDegrees = c.DesiredDegrees,
-                DesiredProgramme = c.DesiredProgramme,
-                Positions = c.Positions,
-                Industries = c.Industries,
-                StudentSessionMotivation = c.StudentSessionMotivation
+                Id                       = company.Id.Value,
+                Name                     = company.Name,
+                Description              = company.Description,
+                DidYouKnow               = company.DidYouKnow,
+                Website                  = company.Website,
+                LogoUrl                  = company.LogoUrl,
+                DesiredDegrees           = company.DesiredDegrees,
+                DesiredProgramme         = company.DesiredProgramme,
+                Positions                = company.Positions,
+                Industries               = company.Industries,
+                StudentSessionMotivation = company.StudentSessionMotivation
             });
 
             return Ok(publicCompanies);
@@ -64,16 +64,16 @@ namespace Nexpo.Controllers
 
             var publicCompany = new PublicCompanyDto
             {
-                Id = company.Id.Value,
-                Name = company.Name,
-                Description = company.Description,
-                DidYouKnow = company.DidYouKnow,
-                Website = company.Website,
-                LogoUrl = company.LogoUrl,
-                DesiredDegrees = company.DesiredDegrees,
-                DesiredProgramme = company.DesiredProgramme,
-                Positions = company.Positions,
-                Industries = company.Industries,
+                Id                       = company.Id.Value,
+                Name                     = company.Name,
+                Description              = company.Description,
+                DidYouKnow               = company.DidYouKnow,
+                Website                  = company.Website,
+                LogoUrl                  = company.LogoUrl,
+                DesiredDegrees           = company.DesiredDegrees,
+                DesiredProgramme         = company.DesiredProgramme,
+                Positions                = company.Positions,
+                Industries               = company.Industries,
                 StudentSessionMotivation = company.StudentSessionMotivation
 
             };
@@ -171,7 +171,7 @@ namespace Nexpo.Controllers
             return Ok(company);
         }
 
-         /// <summary>
+        /// <summary>
         /// Add new company
         /// </summary>
         [HttpPost]
@@ -181,20 +181,21 @@ namespace Nexpo.Controllers
         {
             
             var company = new Company {
-                Name = dto.Name,
-                Description = dto.Description,
-                DidYouKnow = dto.DidYouKnow,
-                LogoUrl = dto.LogoUrl,
-                Website = dto.Website,
-                DesiredDegrees= dto.DesiredDegrees,
-                DesiredProgramme= dto.DesiredProgramme,
-                Positions = dto.Positions,
-                Industries  = dto.Industries,
-                HostName = dto.HostName,
-                HostEmail = dto.HostEmail,
-                HostPhone = dto.HostPhone,
-                StudentSessionMotivation=dto.StudentSessionMotivation
+                Name                     = dto.Name,
+                Description              = dto.Description,
+                DidYouKnow               = dto.DidYouKnow,
+                LogoUrl                  = dto.LogoUrl,
+                Website                  = dto.Website,
+                DesiredDegrees           = dto.DesiredDegrees,
+                DesiredProgramme         = dto.DesiredProgramme,
+                Positions                = dto.Positions,
+                Industries               = dto.Industries,
+                HostName                 = dto.HostName,
+                HostEmail                = dto.HostEmail,
+                HostPhone                = dto.HostPhone,
+                StudentSessionMotivation = dto.StudentSessionMotivation
             };
+
             await _companyRepo.Add(company);
 
             return Ok(company);
@@ -202,18 +203,19 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Delete company by name
         /// </summary>
+        /// <param name="name">name of company</param>
         [HttpDelete]
         [Route("{name}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
         public async Task<ActionResult> DeleteCompany(string name)
         {
-            Company c = await _companyRepo.FindByName(name);
-            if(c == null)
+            Company company = await _companyRepo.FindByName(name);
+            if(company == null)
             {
                 return NotFound();
             }
-            await _companyRepo.Remove(c);
+            await _companyRepo.Remove(company);
             return Ok();
         }
     }
