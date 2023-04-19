@@ -201,7 +201,7 @@ namespace Nexpo.Controllers
                     return Forbid();
                 }
             }
-           
+            
             await _ticketRepo.Remove(ticket);
             return NoContent();
         }
