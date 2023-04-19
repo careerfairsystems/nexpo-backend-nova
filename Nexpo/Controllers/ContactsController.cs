@@ -71,6 +71,14 @@ namespace Nexpo.Controllers
             {
                 contact.FirstName = dto.FirstName;
             }
+            if(dto.PhoneNumber != null)
+            {
+                contact.PhoneNumber = dto.PhoneNumber;
+            }
+            if(dto.RoleInArkad != null)
+            {
+                contact.RoleInArkad = dto.RoleInArkad;
+            }
             if(dto.LastName != null)
             {
                 contact.LastName = dto.LastName;
@@ -89,22 +97,28 @@ namespace Nexpo.Controllers
         /// Create a new contact
         /// </summary>
         [HttpPost]
+        [Route("add")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Contact), StatusCodes.Status201Created)]
-        public async Task<ActionResult<Contact>> PostContact(CreateContactDTO dto)
+        public async Task<ActionResult> PostContact(CreateContactDTO dto)
         {
             var contact = new Contact
             {
                 FirstName   = dto.FirstName,
                 LastName    = dto.LastName,
+                RoleInArkad = dto.RoleInArkad,
                 Email       = dto.Email,
-                PhoneNumber = dto.PhoneNumber,
-                RoleInArkad = dto.RoleInArkad
+                PhoneNumber = dto.PhoneNumber
             };
+
+            if (await _contactRepo.ContactExists(dto.Email))
+            {
+                return Conflict();
+            }
 
             await _contactRepo.Add(contact);
 
-            return Ok(contact);
+            return CreatedAtAction(nameof(GetContact), new { id = contact.Id }, contact);
         }
 
         /// <summary>
