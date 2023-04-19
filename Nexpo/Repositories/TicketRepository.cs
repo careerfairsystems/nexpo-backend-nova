@@ -86,7 +86,7 @@ namespace Nexpo.Repositories
         public async Task Update(Ticket ticket)
         {
             _context.Entry(ticket).State = EntityState.Modified;
-             await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task Remove(Ticket ticket)
