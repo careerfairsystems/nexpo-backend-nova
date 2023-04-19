@@ -5,7 +5,7 @@ namespace Nexpo.DTO
 {
     /// <summary>
     /// DTO for updating a student session
-    public class UpdateSessionDto
+    public class UpdateSessionDTO
     {
         [Required]
         public StudentSessionApplicationStatus Status { get; set; }

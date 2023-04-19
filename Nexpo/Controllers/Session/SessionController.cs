@@ -43,8 +43,8 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpPost]
         [Route("signin")]
-        [ProducesResponseType(typeof(SignInResponseDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> PostSignIn(SignInRequestDto credentials)
+        [ProducesResponseType(typeof(SignInResponseDTO), StatusCodes.Status200OK)]
+        public async Task<IActionResult> PostSignIn(SignInRequestDTO credentials)
         {
             // Force lowercase email
             credentials.Email = credentials.Email.ToLower();
@@ -82,15 +82,15 @@ namespace Nexpo.Controllers
 
             var jwt = _tokenService.GenerateJWT(claims);
 
-            return Ok(new SignInResponseDto { Token = jwt });
+            return Ok(new SignInResponseDTO { Token = jwt });
         }
 
         [HttpPost]
         [Route("forgot_password")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> PostForgotPassword(ForgotPasswordDto dto)
+        public async Task<ActionResult> PostForgotPassword(ForgotPasswordDTO DTO)
         {
-            var user = await _userRepo.FindByEmail(dto.Email);
+            var user = await _userRepo.FindByEmail(DTO.Email);
             // Don't expose account existance
             if (user != null)
             {
@@ -104,23 +104,23 @@ namespace Nexpo.Controllers
         [HttpPost]
         [Route("reset_password")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> PostResetPassword(ResetPasswordDto dto)
+        public async Task<ActionResult> PostResetPassword(ResetPasswordDTO DTO)
         {
-            dto.Token = Uri.UnescapeDataString(dto.Token);
-            var token = _tokenService.ValidateToken<ResetPasswordDto.ResetPasswordTokenDto>(dto.Token);
+            DTO.Token = Uri.UnescapeDataString(DTO.Token);
+            var token = _tokenService.ValidateToken<ResetPasswordDTO.ResetPasswordTokenDTO>(DTO.Token);
             if (!token.IsValid)
             {
                 return Forbid();
             }
 
-            if (!_passwordService.IsStrongPassword(dto.Password))
+            if (!_passwordService.IsStrongPassword(DTO.Password))
             {
                 return BadRequest();
             }
 
             var userId = token.Value.UserId;
             var user = await _userRepo.Get(userId);
-            user.PasswordHash = _passwordService.HashPassword(dto.Password);
+            user.PasswordHash = _passwordService.HashPassword(DTO.Password);
             await _userRepo.Update(user);
 
             return NoContent();

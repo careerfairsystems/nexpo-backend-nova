@@ -6,7 +6,7 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for creating a student session timeslot
     /// </summary>
-    public class CreateStudentSessionTimeslotAdminDto
+    public class CreateStudentSessionTimeslotAdminDTO
     { 
         [Required]
         public DateTime Start { get; set; }

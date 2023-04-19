@@ -211,7 +211,7 @@ sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e 
 
 The overall architecture can currently be split into 6 components with different responsibilities. They are as follows: 
 
-**1. Controller:** Receives and responds to http-requests by calling on appropriate methods in the other components to generate the desired outcome. To control the format of the input and output, may requests and db responses be converted to dto:s before being forwarded to repositories or sent as a response.   
+**1. Controller:** Receives and responds to http-requests by calling on appropriate methods in the other components to generate the desired outcome. To control the format of the input and output, may requests and db responses be converted to DTO:s before being forwarded to repositories or sent as a response.   
 
 **2. Repository:** Responsible for translating requests into queries against the model and converting query results to relevant data objects before returning them. 
 

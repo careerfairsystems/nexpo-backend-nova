@@ -2,7 +2,7 @@
 
 namespace Nexpo.DTO
 {
-    public class SignInRequestDto
+    public class SignInRequestDTO
     {
         [Required]
         public string Email { get; set; }

@@ -13,16 +13,16 @@ using System;
 
 namespace Nexpo.Tests.Controllers
 {
-	public class EventsControllerTests
-	{
-		[Fact]
-		public async Task GetAllEventsNotLoggedIn()
-		{
+    public class EventsControllerTests
+    {
+        [Fact]
+        public async Task GetAllEventsNotLoggedIn()
+        {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
             var response = await client.GetAsync("/api/events");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
-           
+
             var responseList = JsonConvert.DeserializeObject<List<Event>>(await response.Content.ReadAsStringAsync());
             Assert.True(responseList.Count == 5, "Wrong number of events. Expected: 5. Received: " + responseList.Count);
 
@@ -48,7 +48,7 @@ namespace Nexpo.Tests.Controllers
             var responseObject = JsonConvert.DeserializeObject<Event>(await response.Content.ReadAsStringAsync());
             Assert.True(responseObject.Name.Equals("CV Workshop with Randstad"), "Wrong event name. Expected: CV Workshop with Randstad. Received: " + responseObject.Name);
             Assert.True(responseObject.Date.Equals(DateTime.Now.AddDays(12).Date.ToString()), "Wrong Date. Expected: " + DateTime.Now.AddDays(12).Date.ToString() + ". Received: " + responseObject.Date);
-            Assert.True(responseObject.End.Equals("15:00"), "Wrong end time. Expected: 15:00. Received: "  + responseObject.End );
+            Assert.True(responseObject.End.Equals("15:00"), "Wrong end time. Expected: 15:00. Received: " + responseObject.End);
             Assert.True(responseObject.Language.Equals("Swedish"), "Wrong Language. Expected: Swedish. Received: " + responseObject.Language);
         }
 
@@ -88,7 +88,7 @@ namespace Nexpo.Tests.Controllers
             var response = await client.GetAsync("/api/events/-1/tickets");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
-            var responseList = JsonConvert.DeserializeObject<List<NamedTicketDto>>(await response.Content.ReadAsStringAsync());
+            var responseList = JsonConvert.DeserializeObject<List<TicketInfoDTO>>(await response.Content.ReadAsStringAsync());
             Assert.True(responseList.Count == 3, "Wrong number of tickets. Expected: 3. Received: " + responseList.Count);
 
             var firstTicket = responseList.Find(r => r.ticket.Id == -1);
@@ -96,7 +96,7 @@ namespace Nexpo.Tests.Controllers
 
             Assert.True(firstTicket.userFirstName.Equals("Alpha"), "Wrong ticket first name. Expected: Alpha. Received: " + firstTicket.userFirstName.ToString());
             Assert.True(firstTicket.userLastName.Equals("Student"), "Wrong ticket last name. Expected: Student. Received: " + firstTicket.userLastName.ToString());
-            Assert.True(firstTicket.ticket.EventId == -1, "Wrong event id. Expected: -1. Received: " +  firstTicket.ticket.EventId.ToString());
+            Assert.True(firstTicket.ticket.EventId == -1, "Wrong event id. Expected: -1. Received: " + firstTicket.ticket.EventId.ToString());
             Assert.True(firstTicket.ticket.UserId == -2, "Wrong userID. Expected: -2. Received: " + firstTicket.ticket.UserId.ToString());
             Assert.True(thirdTicket.ticket.UserId == -4, "Wrong userID, Expected: -4. Reciéved: " + thirdTicket.ticket.UserId.ToString());
         }
@@ -109,7 +109,7 @@ namespace Nexpo.Tests.Controllers
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
-        
+
         [Fact]
         public async Task PutEvent()
         {
@@ -134,12 +134,12 @@ namespace Nexpo.Tests.Controllers
                 { "end", "10:00" },
                 { "language", "Swedish" },
                 { "capacity", 30 }
-            };           
+            };
             var response2 = await client.PutAsync("/api/events/-1", new StringContent(json.ToString(), Encoding.UTF8, "application/json"));
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
 
             //Verify
-            var responseObject = JsonConvert.DeserializeObject<AddEventDto>(await response.Content.ReadAsStringAsync());         
+            var responseObject = JsonConvert.DeserializeObject<AddEventDTO>(await response.Content.ReadAsStringAsync());
             Assert.True(responseObject.Description.Equals("New description"), "Wrong description. Expected: New Description. Received: " + responseObject.Description);
             Assert.True(responseObject.Date.Equals("2011-03-07"), "Wrong date. Expected: 2011-03-07. Received: " + responseObject.Date);
             Assert.True(responseObject.End.Equals("17:00"), "Wrong end time. Expected: 17:00. Received: " + responseObject.End);
@@ -159,25 +159,25 @@ namespace Nexpo.Tests.Controllers
             };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/events/-1", payload);
-           
+
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
 
             string responseText = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<AddEventDto>(responseText);
+            var responseObject = JsonConvert.DeserializeObject<AddEventDTO>(responseText);
             Assert.True(responseObject == null, "Returned Object was not null. Received: " + responseText);
         }
 
         [Fact]
         public async Task PutEmpty()
         {
-            var client = await TestUtils.Login("admin");            
+            var client = await TestUtils.Login("admin");
             var json = new JsonObject();
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/events/-4", payload);
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
 
-            var responseObject = JsonConvert.DeserializeObject<AddEventDto>(await response.Content.ReadAsStringAsync());         
+            var responseObject = JsonConvert.DeserializeObject<AddEventDTO>(await response.Content.ReadAsStringAsync());
             Assert.True(responseObject.Description.Equals("Get inspired and expand your horizons"), $"Wrong description. Received: {responseObject.Description}");
             Assert.True(responseObject.Date.Equals(DateTime.Now.AddDays(14).Date.ToString()), $"Wrong date. Received: {responseObject.Date}");
             Assert.True(responseObject.End.Equals("13:00"), $"Wrong end time. Expected: 13:00. Received: {responseObject.End}");

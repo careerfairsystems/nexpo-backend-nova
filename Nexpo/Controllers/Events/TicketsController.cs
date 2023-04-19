@@ -45,9 +45,9 @@ namespace Nexpo.Controllers
         [HttpPost]
         [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
-        public async Task<ActionResult> PostTicket(CreateTicketDto dto)
+        public async Task<ActionResult> PostTicket(CreateTicketDTO DTO)
         {
-            var _event = await _eventRepo.Get(dto.EventId);
+            var _event = await _eventRepo.Get(DTO.EventId);
             if (_event == null)
             {
                 return NotFound();
@@ -60,15 +60,15 @@ namespace Nexpo.Controllers
 
             // Only allow a user to register once
             var userId = HttpContext.User.GetId();
-            if (await _ticketRepo.TicketExists(dto.EventId, userId))
+            if (await _ticketRepo.TicketExists(DTO.EventId, userId))
             {
                 return Conflict();
             }
 
             var ticket = new Ticket
             {
-                PhotoOk = dto.PhotoOk,
-                EventId = dto.EventId,
+                PhotoOk = DTO.PhotoOk,
+                EventId = DTO.EventId,
                 UserId  = userId,
             };
 
@@ -87,25 +87,25 @@ namespace Nexpo.Controllers
         [Route("add")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
-        public async Task<ActionResult> PostTicketAdmin(CreateTicketAdminDto dto)
+        public async Task<ActionResult> PostTicketAdmin(CreateTicketAdminDTO DTO)
         {
-            var _event = await _eventRepo.Get(dto.EventId);
+            var _event = await _eventRepo.Get(DTO.EventId);
             if (_event == null)
             {
                 return NotFound();
             }
 
             // Only allow a user to register once
-            if (await _ticketRepo.TicketExists(dto.EventId, dto.UserId))
+            if (await _ticketRepo.TicketExists(DTO.EventId, DTO.UserId))
             {
                 return Conflict();
             }
 
             var ticket = new Ticket
             {
-                PhotoOk = dto.PhotoOk,
-                EventId = dto.EventId,
-                UserId  = dto.UserId,
+                PhotoOk = DTO.PhotoOk,
+                EventId = DTO.EventId,
+                UserId  = DTO.UserId,
             };
 
             await _ticketRepo.AddAdmin(ticket);
@@ -121,10 +121,10 @@ namespace Nexpo.Controllers
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PutTicket(int id, UpdateTicketDto dto)
+        public async Task<ActionResult> PutTicket(int id, UpdateTicketDTO DTO)
         {
             var ticket = await _ticketRepo.Get(id);
-            ticket.isConsumed = dto.isConsumed;
+            ticket.isConsumed = DTO.isConsumed;
             await _ticketRepo.Update(ticket);
 
             return Ok(ticket);

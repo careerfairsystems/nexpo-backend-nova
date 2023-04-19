@@ -5,7 +5,7 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for finalizing a sign up
     /// </summary>
-    public class FinalizeSignUpDto
+    public class FinalizeSignUpDTO
     {
         [Required]
         public string Token { get; set; }
@@ -14,7 +14,7 @@ namespace Nexpo.DTO
         public string Password { get; set; }
         
 
-        public class FinalizeSignUpTokenDto
+        public class FinalizeSignUpTokenDTO
         {
             public int UserId { get; set; }
         }

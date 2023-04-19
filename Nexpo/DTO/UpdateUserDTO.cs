@@ -5,7 +5,7 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for updating a user
     /// </summary>
-    public class UpdateUserDto
+    public class UpdateUserDTO
     {
         public string FirstName { get; set; }
 

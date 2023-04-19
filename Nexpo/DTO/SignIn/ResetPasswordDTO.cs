@@ -5,7 +5,7 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for resetting a password
     /// </summary>
-    public class ResetPasswordDto
+    public class ResetPasswordDTO
     {
         [Required]
         public string Token { get; set; }
@@ -13,7 +13,7 @@ namespace Nexpo.DTO
         [Required]
         public string Password { get; set; }
 
-        public class ResetPasswordTokenDto
+        public class ResetPasswordTokenDTO
         {
             public int UserId { get; set; }
         }

@@ -5,7 +5,7 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for adding a company to the database
     /// </summary>
-    public class AddCompanyDto
+    public class AddCompanyDTO
     {
         public string Name { get; set; }
 

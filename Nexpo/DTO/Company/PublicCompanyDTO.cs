@@ -6,7 +6,7 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for creating a new company
     /// </summary>
-    public class PublicCompanyDto
+    public class PublicCompanyDTO
     {
         [Required]
         public int Id { get; set; }

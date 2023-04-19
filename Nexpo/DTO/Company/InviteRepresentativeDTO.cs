@@ -6,7 +6,7 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for inviting a representative to become a user
     /// </summary>
-    public class InviteRepresentativeDto
+    public class InviteRepresentativeDTO
     {
         [Required]
         public int CompanyId { get; set; }

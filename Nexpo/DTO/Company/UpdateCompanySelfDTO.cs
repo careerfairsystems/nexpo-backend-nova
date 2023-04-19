@@ -8,7 +8,7 @@ namespace Nexpo.DTO
     /// <remarks>
     /// This DTO is used when updating a company by a company representative
     /// </remarks>
-    public class UpdateCompanySelfDto
+    public class UpdateCompanySelfDTO
     {
         public string Description { get; set; }
 

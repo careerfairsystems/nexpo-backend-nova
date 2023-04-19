@@ -6,7 +6,7 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for signing up
     /// </summary>
-    public class SignUpUserDto
+    public class SignUpUserDTO
     {
         [Required]
         public string Email { get; set; }

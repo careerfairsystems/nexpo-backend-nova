@@ -5,7 +5,7 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for updating a student
     /// </summary>
-    public class UpdateStudentDto
+    public class UpdateStudentDTO
     {
         public Programme? Programme { get; set; }
 

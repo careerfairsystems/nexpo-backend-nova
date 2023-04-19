@@ -8,7 +8,7 @@ namespace Nexpo.DTO
     /// <remarks>
     /// This DTO is used when creating a ticket by a user
     /// </remarks>
-    public class CreateTicketDto
+    public class CreateTicketDTO
     {
         [Required]
         public int EventId { get; set; }

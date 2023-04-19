@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO
 {
-    public class NamedTicketDto
+    public class TicketInfoDTO
     {
         [Required]
         public string userFirstName { get; set; }

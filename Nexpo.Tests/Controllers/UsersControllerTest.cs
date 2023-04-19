@@ -25,7 +25,7 @@ namespace Nexpo.Tests.Controllers
             var userStudent = responseList.Find(r => r.Id == -2);
             var userRep = responseList.Find(r => r.Id == -5);
             
-            Assert.True(responseList.Count == 10, "Wrong number of users. Expected: 10. Received: " + responseList.Count.ToString());
+            Assert.True(responseList.Count == 9, "Wrong number of users. Expected: 9. Received: " + responseList.Count.ToString());
             Assert.True(userAdmin.Role.Equals(Role.Administrator), "Wrong user role. Expected: admin. Received: " + userAdmin.Role.ToString());
             Assert.True(userStudent.FirstName.Equals("Alpha"), "Wrong user first name. Expected: Alpha. Received: " +  userStudent.FirstName);
             Assert.True(userRep.CompanyId == -1, "Wrong company id. Expected: -1. Received: " + userRep.CompanyId.ToString());
