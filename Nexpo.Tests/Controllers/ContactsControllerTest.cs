@@ -22,12 +22,13 @@ namespace Nexpo.Tests.Controllers
             var client = await TestUtils.Login("admin");
             
             //Create contact
-            var json = new CreateContactDTO()
+            var DTO = new CreateContactDTO()
             {
                 FirstName = "Test",
                 LastName = "Testsson",
                 PhoneNumber = "123-456 78 90",
-                Email = "test.testsson@example.com"
+                Email = "test.testsson@example.com",
+                RoleInArkad = "Tester"
             };
 
             //get number of contacts
@@ -35,8 +36,8 @@ namespace Nexpo.Tests.Controllers
             var contacts = JsonConvert.DeserializeObject<List<Contact>>(await getResponse.Content.ReadAsStringAsync());
             var numberOfContacts = contacts.Count;
 
-            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("/api/contacts/", payload);
+            var payload = new StringContent(DTO.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("/api/contacts/add", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             //Deserialize response
@@ -71,24 +72,22 @@ namespace Nexpo.Tests.Controllers
             //Login
             var client = await TestUtils.Login("volunteer");
 
-            var json = new CreateContactDTO()
+            var DTO = new CreateContactDTO()
             {
                 FirstName = "Test",
                 LastName = "Testsson",
                 PhoneNumber = "123-456 78 90",
-                Email = "test.testsson@example.com"
+                Email = "test.testsson@example.com",
+                RoleInArkad = "Tester"
             };
 
             //serialize json
-            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var payload = new StringContent(DTO.ToString(), Encoding.UTF8, "application/json");
 
             //Get contact and check status code
-            var response = await client.PutAsync("/api/contacts/-3", payload);
+            var response = await client.PutAsync("/api/contacts/add", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
-
-
-
 
         [Fact]
         public async Task volunteerGetContact()
@@ -112,22 +111,22 @@ namespace Nexpo.Tests.Controllers
         public async Task nonAuthorizedGetContact()
         {
             //Login
-            var client = await TestUtils.Login("student");
+            var client = await TestUtils.Login("student1");
 
             //Get contact and check status code
             var response = await client.GetAsync("/api/contacts/-1");
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
         public async Task retrieveNonExistingContact()
         {
             //Login
-            var client = await TestUtils.Login("student");
+            var client = await TestUtils.Login("volunteer");
 
             //Get contact and check status code
             var response = await client.GetAsync("/api/contacts/-100");
-            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong Status Code. Expected: NotFound. Received: " + response.StatusCode.ToString());
 
         }
         [Fact]
@@ -263,7 +262,7 @@ namespace Nexpo.Tests.Controllers
 
             // Restore from information
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
-            var response2 = await client.PutAsync("api/contacts/-1", payload2);
+            var response2 = await client.PutAsync("api/contacts/-2", payload2);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
 
             var responseObject = JsonConvert.DeserializeObject<Contact>(await response.Content.ReadAsStringAsync());
