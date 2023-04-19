@@ -222,7 +222,7 @@ namespace Nexpo.Tests.Controllers
 
             var response2 = await client.GetAsync("/api/tickets/id/" + newTicketId);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
-           
+            
             var response3 = await client.GetAsync("/api/tickets");
             Assert.True(response3.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response3.StatusCode.ToString());
 
@@ -273,7 +273,7 @@ namespace Nexpo.Tests.Controllers
 
             var response2 = await client.GetAsync("/api/tickets/id/" + newTicketId);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
-           
+            
             //Delete created ticket
             var response4 = await client.DeleteAsync("api/tickets/" + newTicketId);
             Assert.True(response4.StatusCode.Equals(HttpStatusCode.NoContent), "Wrong status code. Expected: NoContent. Received: " + response4.StatusCode.ToString());
@@ -350,7 +350,7 @@ namespace Nexpo.Tests.Controllers
             var response = await client.PostAsync("api/tickets/add", payload);
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.ToString());
-         }
+        }
 
         [Fact]
         public async Task AdminPostDublicateTicketToUser()

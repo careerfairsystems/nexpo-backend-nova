@@ -46,6 +46,7 @@ namespace Nexpo.Tests.Controllers
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/students/-123");
 
+            // Verify response - Not Found because the student of id -123 does not exist
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
 
@@ -66,6 +67,7 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             var response = await client.GetAsync("/api/students/-1");
 
+            // Verify response - Unauthorized because the user is not logged in
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong status code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
         }
 
@@ -89,6 +91,7 @@ namespace Nexpo.Tests.Controllers
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("api/students/me");
 
+            // Verify response - Forbidden because the user is not a student
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
@@ -99,11 +102,12 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             var response = await client.GetAsync("api/students/me");
 
+            // Verify response - Unauthorized because the user is not logged in
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong status code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
         }
 
                 [Fact]
-        public async Task UpdateMeSuccess()
+        public async Task UpdateMe()
         {
             //Setup
             var client = await TestUtils.Login("student1");
@@ -152,7 +156,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task UpdatePartialMeSuccess()
+        public async Task UpdateMePartial()
         {
             //Setup
             var client =  await TestUtils.Login("student2");
@@ -210,11 +214,12 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/students/-1", payload);
 
+            //Verify response - Forbidden because student1 is not authorized to put
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
                 [Fact]
-        public async Task UpdateAsAdminSuccess()
+        public async Task UpdateAsAdmin()
         {
             //Setup
             var client = await TestUtils.Login("admin");
@@ -258,7 +263,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task UpdatePartialAsAdminCorrect()
+        public async Task UpdatePartialAsAdmin()
         {
             //Setup
             var client = await TestUtils.Login("admin");
@@ -299,7 +304,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.UserId == -2, "Wrong User Id. Expected: -2. Received: " + responseObject.UserId.ToString());
             Assert.True(responseObject.MasterTitle.Equals("Math"), "Wrong master title. Expected: Math. Received: " + responseObject.MasterTitle.ToString());
 
-            //Verify Restore
+            // Verify Restore
             Assert.True(responseObject2.Id == -1, "Wrong Student Id. Expected: -1. Received: " + responseObject2.Id.ToString());
             Assert.True(responseObject2.Programme == Programme.Datateknik, "Wrong programme. Expected: 18. Received: " + responseObject2.Programme.ToString());
             Assert.True(responseObject2.Year == 4, "Wrong year. Expected: 4. Received: " + responseObject2.Year.ToString());
@@ -310,7 +315,7 @@ namespace Nexpo.Tests.Controllers
 
 
         [Fact]
-        public async Task UpdateStudentAsAdminNotFound()
+        public async Task UpdateAsAdminNotFound()
         {
             var client =  await TestUtils.Login("admin");
             var json = new JsonObject
@@ -321,11 +326,12 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/students/-123", payload);
 
+            // Verify response - Not found because student with id -123 does not exist in the database
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task UpdateStudentAsCompanyRepUsingIdForbidden()
+        public async Task UpdateAsCompanyRepUsingIdForbidden()
         {
             var client = await TestUtils.Login("company1");
             var json = new JsonObject
@@ -337,11 +343,12 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/students/-1", payload);
 
+            // Verify response - Forbidden because company1 is not allowed to update student
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task UpdateStudentAsCompanyRepUsingMeForbbiden()
+        public async Task UpdateAsCompanyRepUsingMeForbbiden()
         {
             var client = await TestUtils.Login("company1");
             var json = new JsonObject
@@ -353,6 +360,7 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/students/me", payload);
 
+            // Verify response - Forbidden because company1 is not a student
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 

@@ -16,7 +16,7 @@ namespace Nexpo.Tests.Controllers
     {
 
         [Fact]
-        public async Task GetAllSuccess()
+        public async Task GetAll()
         {
             // Non logged in
             var application = new WebApplicationFactory<Program>();
@@ -55,7 +55,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetSuccess()
+        public async Task Get()
         {
             // Non logged in
             var application = new WebApplicationFactory<Program>();
@@ -100,7 +100,7 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
             var response = await client.GetAsync("/api/companies/-123");
         
-            // Verify response
+            // Verify response - -123 is not in the database
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong StatusCode. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
 
@@ -133,14 +133,14 @@ namespace Nexpo.Tests.Controllers
             string responseText = await response.Content.ReadAsStringAsync();
             var responseObject = JsonConvert.DeserializeObject<PublicCompanyDTO>(responseText);
 
-            // Verify response
+            // Verify response - Admin is not a company
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
             Assert.True(responseObject == null, "Returned Object was not null. Received: " + responseText);
         }
 
 
         [Fact]
-        public async Task PutSuccess()
+        public async Task Put()
         {
             // Setup
             var client = await TestUtils.Login("admin");
@@ -187,7 +187,7 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/-1", payload);
 
-            // Verify response
+            // Verify response - Company1 is not admin
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
 
             // Get response
@@ -212,7 +212,7 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/-22", payload);
 
-            // Verify response
+            // Verify response - -22 is not in the database
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong Status Code. Expected: NotFound. Received: " +  response.StatusCode.ToString());
         }
 
@@ -264,7 +264,7 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/companies/me", payload);
 
-            // Verify response
+            // Verify response - Admin is not a company
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
 
             // Verify response

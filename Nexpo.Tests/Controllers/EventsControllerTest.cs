@@ -17,7 +17,7 @@ namespace Nexpo.Tests.Controllers
     {
 
         [Fact]
-        public async Task GetAllAdmin()
+        public async Task GetAllAsAdmin()
         {
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/events/-1/tickets");
@@ -37,7 +37,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetAllNotLoggedInSuccess()
+        public async Task GetAllNotLoggedIn()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
@@ -65,6 +65,7 @@ namespace Nexpo.Tests.Controllers
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
 
+            // Verify response - Unauthorized since not logged in
             var response = await client.GetAsync("/api/events/2/tickets");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong Status Code. Expected: Unautherized. Received: " + response.StatusCode.ToString());
         }
@@ -74,12 +75,13 @@ namespace Nexpo.Tests.Controllers
         {
             var client = await TestUtils.Login("company1");
 
+            // Verify response - Forbidden since not admin
             var response = await client.GetAsync("/api/events/-1/tickets");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong Status Code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task GetNotLoggedInSuccess()
+        public async Task GetNotLoggedIn()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
@@ -88,7 +90,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             var responseObject = JsonConvert.DeserializeObject<Event>(await response.Content.ReadAsStringAsync());
-            
+
             Assert.True(responseObject.Name.Equals("CV Workshop with Randstad"), "Wrong event name. Expected: CV Workshop with Randstad. Received: " + responseObject.Name);
             Assert.True(responseObject.Date.Equals(DateTime.Now.AddDays(12).Date.ToString()), "Wrong Date. Expected: " + DateTime.Now.AddDays(12).Date.ToString() + ". Received: " + responseObject.Date);
             Assert.True(responseObject.End.Equals("15:00"), "Wrong end time. Expected: 15:00. Received: " + responseObject.End);
@@ -101,6 +103,7 @@ namespace Nexpo.Tests.Controllers
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/events/-123/tickets");
 
+            // Verify response - Not Found since event of id -123 does not exist
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
 
@@ -110,12 +113,13 @@ namespace Nexpo.Tests.Controllers
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
 
+            // Verify response - Not Found since event of id -123 does not exist
             var response = await client.GetAsync("/api/events/-123");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong Status Code. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task PutEventSuccess()
+        public async Task PutEvent()
         {
             var client = await TestUtils.Login("admin");
             var json = new JsonObject
@@ -168,6 +172,7 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/events/-1", payload);
 
+            // Verify response - Forbidden since not admin
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
 
             string responseText = await response.Content.ReadAsStringAsync();
@@ -177,7 +182,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task PutEmptySuccess()
+        public async Task PutEmpty()
         {
             var client = await TestUtils.Login("admin");
             var json = new JsonObject();

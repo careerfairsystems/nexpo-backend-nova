@@ -14,7 +14,7 @@ namespace Nexpo.Tests.Controllers
     public class SessionControllerTest
     {
         [Fact]
-        public async Task PostSignInStudentSuccess()
+        public async Task PostSignInStudent()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
@@ -32,7 +32,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task PostSignInCompanySuccess()
+        public async Task PostSignInCompany()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
@@ -50,7 +50,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task PostSignInAdministratorSuccess()
+        public async Task PostSignInAdministrator()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
@@ -82,6 +82,7 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
 
+            // Verify response - Bad Request because of wrong password
             Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong status code. Expected: BadRequest. Received: " + response.StatusCode.ToString());
         }
 
@@ -100,6 +101,7 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
 
+            // Verify response - Bad Request because of wrong email
             Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong status code. Expected: BadRequest. Received: " + response.StatusCode.ToString());
         }
 
@@ -166,6 +168,7 @@ namespace Nexpo.Tests.Controllers
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PostAsync("/api/session/reset_password", payload2);
 
+            // Verify response - Forbidden because of wrong token
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response2.ToString());
         }
 
@@ -198,6 +201,7 @@ namespace Nexpo.Tests.Controllers
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PostAsync("/api/session/reset_password", payload2);
 
+            // Verify response - Forbidden because of wrong token and weak password
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response2.ToString());
         }
     }
