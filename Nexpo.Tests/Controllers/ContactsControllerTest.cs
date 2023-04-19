@@ -36,9 +36,10 @@ namespace Nexpo.Tests.Controllers
             var contacts = JsonConvert.DeserializeObject<List<Contact>>(await getResponse.Content.ReadAsStringAsync());
             var numberOfContacts = contacts.Count;
 
-            var payload = new StringContent(DTO.ToString(), Encoding.UTF8, "application/json");
+            var json = JsonConvert.SerializeObject(DTO);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/contacts/add", payload);
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Wrong Status Code. Expected: Created. Received: " + response.StatusCode.ToString());
 
             //Deserialize response
             var responseContact = JsonConvert.DeserializeObject<Contact>(await response.Content.ReadAsStringAsync());
@@ -54,7 +55,7 @@ namespace Nexpo.Tests.Controllers
             
             //Delete contact
             var deleteResponse = await client.DeleteAsync("/api/contacts/" + responseContact.Id);
-            Assert.True(deleteResponse.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + deleteResponse.StatusCode.ToString());
+            Assert.True(deleteResponse.StatusCode.Equals(HttpStatusCode.NoContent), "Wrong Status Code. Expected: NoContent. Received: " + deleteResponse.StatusCode.ToString());
 
             //Check that contact is deleted
             getResponse = await client.GetAsync("/api/contacts/" + responseContact.Id);
@@ -65,6 +66,29 @@ namespace Nexpo.Tests.Controllers
             contacts = JsonConvert.DeserializeObject<List<Contact>>(await getResponse.Content.ReadAsStringAsync());
             Assert.True(contacts.Count == numberOfContacts, "Wrong number of contacts. Expected: " + numberOfContacts + ". Received: " + contacts.Count);
         
+        }
+
+        [Fact]
+        public async Task addingDuplicateContact()
+        {
+            //Setup
+            var client = await TestUtils.Login("admin");
+
+            //Create contact
+            var DTO = new CreateContactDTO()
+            {
+                FirstName = "Back",
+                LastName = "End",
+                PhoneNumber = "004-444 44 44",
+                Email = "contact4@example.com",
+                RoleInArkad = "Backend Manager"
+            };
+
+            //add duplicate contact
+            var json = JsonConvert.SerializeObject(DTO);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("/api/contacts/add", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Conflict), "Wrong Status Code. Expected: Conflict. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
