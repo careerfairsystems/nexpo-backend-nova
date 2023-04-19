@@ -13,11 +13,9 @@ namespace Nexpo.Controllers
     [ApiController]
     public class ContactsController : ControllerBase
     {
-        private readonly IContactReposity _contactRepo;
+        private readonly IContactRepository _contactRepo;
 
-        public ContactsController(
-            IContactReposity iContactRepo
-            )
+        public ContactsController(IContactRepository iContactRepo)
         {
             _contactRepo = iContactRepo;
         }
@@ -26,9 +24,9 @@ namespace Nexpo.Controllers
         /// Get a list of all contacts
         /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(List<Contact>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Contact>), StatusCodes.Status200OK)]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
-        public async Task<ActionResult<List<Contact>>> GetAll()
+        public async Task<ActionResult> GetAll()
         {
             var contacts = await _contactRepo.GetAll();
             return Ok(contacts);
@@ -40,7 +38,7 @@ namespace Nexpo.Controllers
         [HttpGet("{id}")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
         [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Contact>> GetContact(int id)
+        public async Task<ActionResult> GetContact(int id)
         {
             var contact = await _contactRepo.Get(id);
 
