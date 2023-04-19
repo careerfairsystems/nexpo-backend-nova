@@ -4,7 +4,7 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
 using System.Threading.Tasks;
-using static Nexpo.DTO.FinalizeSignUpDto;
+using static Nexpo.DTO.FinalizeSignUpDTO;
 
 namespace Nexpo.Services
 {
@@ -25,11 +25,11 @@ namespace Nexpo.Services
 
         public Task SendSignUpEmail(User user)
         {
-            var signUpDto = new FinalizeSignUpTokenDto
+            var signUpDTO = new FinalizeSignUpTokenDTO
             {
                 UserId = user.Id.Value
             };
-            var signedToken = _tokenService.SignToken(signUpDto, DateTime.Now.AddDays(1)); // SignUp link is valid for one day
+            var signedToken = _tokenService.SignToken(signUpDTO, DateTime.Now.AddDays(1)); // SignUp link is valid for one day
             var tokenString = Uri.EscapeDataString(signedToken);
             var content = $"Verify your email by clicking on this link: {baseUrl}/finalize_signup/{tokenString}";
             return SendEmail(user.Email, "Complete the signup", content, content);
@@ -37,11 +37,11 @@ namespace Nexpo.Services
 
         public Task SendCompanyInviteEmail(Company company, User user)
         {
-            var signUpDto = new FinalizeSignUpTokenDto
+            var signUpDTO = new FinalizeSignUpTokenDTO
             {
                 UserId = user.Id.Value
             }; 
-            var signedToken = _tokenService.SignToken(signUpDto, DateTime.Now.AddDays(7)); // SignUp link is valid for a week
+            var signedToken = _tokenService.SignToken(signUpDTO, DateTime.Now.AddDays(7)); // SignUp link is valid for a week
             var tokenString = Uri.EscapeDataString(signedToken);
             var content =   $"Join your company on the Arkad fair by finalizing your account.<br><br>" 
                             + "This is needed to be able to connect with the studends during the fair with the Arkad-app<br>" 
@@ -61,11 +61,11 @@ namespace Nexpo.Services
 
         public Task SendPasswordResetEmail(User user)
         {
-            var passwordResetDto = new ResetPasswordDto.ResetPasswordTokenDto
+            var passwordResetDTO = new ResetPasswordDTO.ResetPasswordTokenDTO
             {
                 UserId = user.Id.Value
             };
-            var signedToken = _tokenService.SignToken(passwordResetDto, DateTime.Now.AddHours(1)); // Password reset link valid for an hour
+            var signedToken = _tokenService.SignToken(passwordResetDTO, DateTime.Now.AddHours(1)); // Password reset link valid for an hour
             var tokenString = Uri.EscapeDataString(signedToken);
             var content = $"Reset your password by following this link: {baseUrl}/reset_password/{tokenString} The link is valid for an hour.";
             return SendEmail(user.Email, "Reset your password", content, content);

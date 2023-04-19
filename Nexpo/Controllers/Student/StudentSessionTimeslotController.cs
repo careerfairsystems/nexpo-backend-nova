@@ -66,7 +66,7 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("companies")]
         [Authorize]
-        [ProducesResponseType(typeof(IEnumerable<PublicCompanyDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<PublicCompanyDTO>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetCompaniesWithTimeslot()
         {
             var allCompanies = await _companyRepo.GetAll();
@@ -82,7 +82,7 @@ namespace Nexpo.Controllers
                 }
             }
 
-            var publicCompanies = companiesWithTimeslots.Select(c => new PublicCompanyDto
+            var publicCompanies = companiesWithTimeslots.Select(c => new PublicCompanyDTO
             {
                 Id          = c.Id.Value,
                 Name        = c.Name,
@@ -197,14 +197,14 @@ namespace Nexpo.Controllers
         [Route("add")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status201Created)]
-        public async Task<ActionResult> PostTimeslotAdmin(CreateStudentSessionTimeslotAdminDto dto)
+        public async Task<ActionResult> PostTimeslotAdmin(CreateStudentSessionTimeslotAdminDTO DTO)
         {
             var timeslot = new StudentSessionTimeslot
             {
-                Start = dto.Start,
-                End = dto.End,
-                Location = dto.Location,
-                CompanyId = dto.CompanyId
+                Start = DTO.Start,
+                End = DTO.End,
+                Location = DTO.Location,
+                CompanyId = DTO.CompanyId
             };
 
             await _timeslotRepo.Add(timeslot);
@@ -242,7 +242,7 @@ namespace Nexpo.Controllers
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status200OK)]
-        public async Task<ActionResult> UpdateTimeslot(int id, UpdateStudentSessionLocationDto dto)
+        public async Task<ActionResult> UpdateTimeslot(int id, UpdateStudentSessionLocationDTO DTO)
         {
             var timeslot = await _timeslotRepo.Get(id);
             if (timeslot == null)
@@ -250,9 +250,9 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if(dto.Location != null)
+            if(DTO.Location != null)
             {
-                timeslot.Location = dto.Location;
+                timeslot.Location = DTO.Location;
             }
             
             await _timeslotRepo.Update(timeslot);

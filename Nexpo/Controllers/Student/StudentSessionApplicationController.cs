@@ -47,7 +47,7 @@ namespace Nexpo.Controllers
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(StudentSessionApplication), StatusCodes.Status200OK)]
-        public async Task<ActionResult> RespondToApplication(int id, UpdateSessionDto dto)
+        public async Task<ActionResult> RespondToApplication(int id, UpdateSessionDTO DTO)
         {
             var application = await _applicationRepo.Get(id);
             if (application == null)
@@ -62,7 +62,7 @@ namespace Nexpo.Controllers
             }
 
             var oldStatus = application.Status;
-            application.Status = dto.Status;
+            application.Status = DTO.Status;
             await _applicationRepo.Update(application);
 
             if(application.Status != oldStatus && application.Status == StudentSessionApplicationStatus.Accepted)
@@ -84,7 +84,7 @@ namespace Nexpo.Controllers
         [Route("company/{id}")]
         [Authorize(Roles = nameof(Role.Student))]
         [ProducesResponseType(typeof(StudentSessionApplication), StatusCodes.Status201Created)]
-        public async Task<ActionResult> PostApplication(int id, UpdateStudentSessionApplicationStudentDto dto)
+        public async Task<ActionResult> PostApplication(int id, UpdateStudentSessionApplicationStudentDTO DTO)
         {
             // Check that the company accepts applications
             var company = await _companyRepo.GetWithChildren(id);
@@ -98,7 +98,7 @@ namespace Nexpo.Controllers
             if (await _applicationRepo.ApplicationExists(studentId, id))
             {
                 var current = await _applicationRepo.GetByCompanyAndStudent(studentId, id);
-                current.Motivation = dto.Motivation;
+                current.Motivation = DTO.Motivation;
                 await _applicationRepo.Update(current);
                 return CreatedAtAction(nameof(GetApplicationStudent), new { id = current.Id }, current);
             }
@@ -106,7 +106,7 @@ namespace Nexpo.Controllers
             {
                 var application = new StudentSessionApplication
                 {
-                    Motivation = dto.Motivation,
+                    Motivation = DTO.Motivation,
                     CompanyId = id,
                     StudentId = studentId
                 };
@@ -157,18 +157,18 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("my/company")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
-        [ProducesResponseType(typeof(IEnumerable<StudentSessionApplicationDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<StudentSessionApplicationDTO>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetApplicationsForCompany()
         {
             var companyId = HttpContext.User.GetCompanyId().Value;
             var applications = await _applicationRepo.GetAllForCompany(companyId);
-            var studentApplications = new List<StudentSessionApplicationDto>();
+            var studentApplications = new List<StudentSessionApplicationDTO>();
 
             foreach (var application in applications){
                 var student = await _studentRepository.Get(application.StudentId);
                 var user = await _userRepository.Get(student.UserId);
 
-                var dto = new StudentSessionApplicationDto
+                var DTO = new StudentSessionApplicationDTO
                 {
                     Id               = application.Id,
                     Motivation       = application.Motivation,
@@ -182,7 +182,7 @@ namespace Nexpo.Controllers
                     StudentProgramme = student.Programme
                 };
 
-                studentApplications.Add(dto);
+                studentApplications.Add(DTO);
             }
             return Ok(studentApplications);
         }
@@ -209,7 +209,7 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("accepted/{id}")]
         [Authorize(Roles = nameof(Role.Student))]
-        [ProducesResponseType(typeof(ApplicationStatusDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApplicationStatusDTO), StatusCodes.Status200OK)]
         public async Task<ActionResult> applicationAccepted(int id)
         {
             var studentId = HttpContext.User.GetStudentId().Value;
@@ -223,13 +223,13 @@ namespace Nexpo.Controllers
             var application = await _applicationRepo.GetByCompanyAndStudent(studentId, id);
             if(application.Status != StudentSessionApplicationStatus.Accepted)
             {
-                return Ok(new ApplicationStatusDto
+                return Ok(new ApplicationStatusDTO
                 {
                     accepted = false,
                     booked = application.Booked
                 });
             }
-            return Ok(new ApplicationStatusDto
+            return Ok(new ApplicationStatusDTO
             {
                 accepted=true,
                 booked=application.Booked

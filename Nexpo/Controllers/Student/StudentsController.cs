@@ -51,7 +51,7 @@ namespace Nexpo.Controllers
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Student), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PutStudent(int id, UpdateStudentDto dto)
+        public async Task<ActionResult> PutStudent(int id, UpdateStudentDTO DTO)
         {
             var student = await _studentRepo.Get(id);
             if (student == null)
@@ -59,21 +59,21 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if (dto.Programme.HasValue && (int) dto.Programme.Value < Enum.GetNames(typeof(Programme)).Length)
+            if (DTO.Programme.HasValue && (int) DTO.Programme.Value < Enum.GetNames(typeof(Programme)).Length)
             {
-                student.Programme = dto.Programme.Value;
+                student.Programme = DTO.Programme.Value;
             }
-            if (dto.LinkedIn != null && (dto.LinkedIn.StartsWith("https://www.linkedin.com/in/") || dto.LinkedIn.Equals("")))
+            if (DTO.LinkedIn != null && (DTO.LinkedIn.StartsWith("https://www.linkedin.com/in/") || DTO.LinkedIn.Equals("")))
             {
-                student.LinkedIn = dto.LinkedIn;
+                student.LinkedIn = DTO.LinkedIn;
             }
-            if (dto.MasterTitle != null)
+            if (DTO.MasterTitle != null)
             {
-                student.MasterTitle = dto.MasterTitle;
+                student.MasterTitle = DTO.MasterTitle;
             }
-            if (dto.Year.HasValue && dto.Year <= 5)
+            if (DTO.Year.HasValue && DTO.Year <= 5)
             {
-                student.Year = dto.Year.Value;
+                student.Year = DTO.Year.Value;
             }
 
             await _studentRepo.Update(student);
@@ -102,26 +102,26 @@ namespace Nexpo.Controllers
         [Route("me")]
         [Authorize(Roles = nameof(Role.Student))]
         [ProducesResponseType(typeof(Student), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PutMe(UpdateStudentDto dto)
+        public async Task<ActionResult> PutMe(UpdateStudentDTO DTO)
         {
             var studentId = HttpContext.User.GetStudentId().Value;
             var student = await _studentRepo.Get(studentId);
 
-            if (dto.Programme.HasValue && (int) dto.Programme.Value < Enum.GetNames(typeof(Programme)).Length)
+            if (DTO.Programme.HasValue && (int) DTO.Programme.Value < Enum.GetNames(typeof(Programme)).Length)
             {
-                student.Programme = dto.Programme.Value;
+                student.Programme = DTO.Programme.Value;
             }
-            if (dto.LinkedIn != null && (dto.LinkedIn.StartsWith("https://www.linkedin.com/in/") || dto.LinkedIn.Equals("")))
+            if (DTO.LinkedIn != null && (DTO.LinkedIn.StartsWith("https://www.linkedin.com/in/") || DTO.LinkedIn.Equals("")))
             {
-                student.LinkedIn = dto.LinkedIn;
+                student.LinkedIn = DTO.LinkedIn;
             }
-            if (dto.MasterTitle != null)
+            if (DTO.MasterTitle != null)
             {
-                student.MasterTitle = dto.MasterTitle;
+                student.MasterTitle = DTO.MasterTitle;
             }
-            if (dto.Year.HasValue && dto.Year <= 5)
+            if (DTO.Year.HasValue && DTO.Year <= 5)
             {
-                student.Year = dto.Year.Value;
+                student.Year = DTO.Year.Value;
             }
 
             await _studentRepo.Update(student);

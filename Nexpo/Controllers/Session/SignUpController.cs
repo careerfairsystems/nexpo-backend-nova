@@ -43,12 +43,12 @@ namespace Nexpo.Controllers
         [HttpPost]
         [Route("initial")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> PostInitialSignUp(SignUpUserDto dto)
+        public async Task<ActionResult> PostInitialSignUp(SignUpUserDTO DTO)
         {
             // Force lowercase email
-            dto.Email = dto.Email.ToLower();
+            DTO.Email = DTO.Email.ToLower();
 
-            var user = await _userRepo.FindByEmail(dto.Email);
+            var user = await _userRepo.FindByEmail(DTO.Email);
             if (user != null)
             {
                 return Conflict();
@@ -57,9 +57,9 @@ namespace Nexpo.Controllers
             user = new User
             {
                 Role      = Role.Student,
-                Email     = dto.Email,
-                FirstName = dto.FirstName,
-                LastName  = dto.LastName
+                Email     = DTO.Email,
+                FirstName = DTO.FirstName,
+                LastName  = DTO.LastName
             };
             await _userRepo.Add(user);
 
@@ -80,23 +80,23 @@ namespace Nexpo.Controllers
         [HttpPost]
         [Route("finalize")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> PostFinalizedSignUp(FinalizeSignUpDto dto)
+        public async Task<ActionResult> PostFinalizedSignUp(FinalizeSignUpDTO DTO)
         {
-            var token = _tokenService.ValidateToken<FinalizeSignUpDto.FinalizeSignUpTokenDto>(dto.Token);
+            var token = _tokenService.ValidateToken<FinalizeSignUpDTO.FinalizeSignUpTokenDTO>(DTO.Token);
             if (!token.IsValid)
             {
                 return Forbid();
             }
 
             // Check password strength
-            if (!_passwordService.IsStrongPassword(dto.Password))
+            if (!_passwordService.IsStrongPassword(DTO.Password))
             {
                 return BadRequest();
             }
 
             var userId = token.Value.UserId;
             var user = await _userRepo.Get(userId);
-            var passwordHash = _passwordService.HashPassword(dto.Password);
+            var passwordHash = _passwordService.HashPassword(DTO.Password);
             user.PasswordHash = passwordHash;
             await _userRepo.Update(user);
 
@@ -109,25 +109,25 @@ namespace Nexpo.Controllers
         [Route("representative")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> PostInviteRepresentative(InviteRepresentativeDto dto)
+        public async Task<ActionResult> PostInviteRepresentative(InviteRepresentativeDTO DTO)
         {
             var userRole = HttpContext.User.GetRole();
             if (userRole == Role.CompanyRepresentative)
             {
                 var userCompanyId = HttpContext.User.GetCompanyId().Value;
-                if (dto.CompanyId != userCompanyId)
+                if (DTO.CompanyId != userCompanyId)
                 {
                     return Forbid();
                 }
             }
 
-            var user = await _userRepo.FindByEmail(dto.Email);
+            var user = await _userRepo.FindByEmail(DTO.Email);
             if (user != null)
             {
                 return Conflict();
             }
 
-            var company = await _companyRepo.Get(dto.CompanyId);
+            var company = await _companyRepo.Get(DTO.CompanyId);
             if (company == null)
             {
                 return NotFound();
@@ -136,9 +136,9 @@ namespace Nexpo.Controllers
             user = new User
             {
                 Role      = Role.CompanyRepresentative,
-                Email     = dto.Email,
-                FirstName = dto.FirstName,
-                LastName  = dto.LastName,
+                Email     = DTO.Email,
+                FirstName = DTO.FirstName,
+                LastName  = DTO.LastName,
                 CompanyId = company.Id.Value
             };
             
