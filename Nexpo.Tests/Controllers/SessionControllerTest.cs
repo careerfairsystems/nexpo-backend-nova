@@ -14,15 +14,17 @@ namespace Nexpo.Tests.Controllers
     public class SessionControllerTest
     {
         [Fact]
-        public async Task PostSignInWithCorrectCredentialsStudent()
+        public async Task PostSignInStudentSuccess()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var json = new JsonObject
             {
                 { "email", "student1@example.com" },
                 { "password", "password" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
 
@@ -30,15 +32,17 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task PostSignInWithCorrectCredentialsCompany()
+        public async Task PostSignInCompanySuccess()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var json = new JsonObject
             {
                 { "email", "rep1@company1.example.com" },
                 { "password", "password" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
 
@@ -46,15 +50,17 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task PostSignInWithCorrectCredentialsAdministrator()
+        public async Task PostSignInAdministratorSuccess()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var json = new JsonObject
             {
                 { "email", "admin@example.com" },
                 { "password", "password" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
 
@@ -62,15 +68,17 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task PostSignInWithIncorrectPassword()
+        public async Task PostSignIncorrectPassword()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var json = new JsonObject
             {
                 { "email", "student1@example.com" },
                 { "password", "Password" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
 
@@ -78,15 +86,17 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task PostSignInWithIncorrectEmail()
+        public async Task PostSignInIncorrectEmail()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var json = new JsonObject
             {
                 { "email", "student1@example.se" },
                 { "password", "password" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
 
@@ -94,14 +104,16 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task PostForgotPasswordShouldReturnNoContentCorrectEmail()
+        public async Task PostForgotPasswordCorrectEmail()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var json = new JsonObject
             {
                 { "email", "student1@example.com" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/forgot_password", payload);
 
@@ -109,14 +121,16 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task PostForgotPasswordShouldReturnNoContentIncorrectEmail()
+        public async Task PostForgotPasswordIncorrectEmail()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var json = new JsonObject
             {
                 { "email", "student1@example.se" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/forgot_password", payload);
 
@@ -124,15 +138,17 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task PostResetPasswordWithIllegitToken()
+        public async Task PostResetPasswordIllegitToken()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var json = new JsonObject
             {
                 { "email", "student1@example.com" },
                 { "password", "password" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
 
@@ -146,21 +162,25 @@ namespace Nexpo.Tests.Controllers
                 { "token", token },
                 { "password", "newPassword123" }
             };
+
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PostAsync("/api/session/reset_password", payload2);
+
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response2.ToString());
         }
 
         [Fact]
-        public async Task PostResetPasswordWithIllegitTokenAndWeakPassword()
+        public async Task PostResetPasswordIllegitTokenAndWeakPassword()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var json = new JsonObject
             {
                 { "email", "student1@example.com" },
                 { "password", "password" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/session/signin", payload);
 
@@ -174,8 +194,10 @@ namespace Nexpo.Tests.Controllers
                 { "token", token },
                 { "password", "newP" }
             };
+
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PostAsync("/api/session/reset_password", payload2);
+
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response2.ToString());
         }
     }
