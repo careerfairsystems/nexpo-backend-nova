@@ -6,16 +6,27 @@ namespace Nexpo.Models
 {
     public class Company
     {
+        /// <summary>
+        /// Represents a company
+        /// </summary>
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? Id { get; set; }
+
         [Required]
         public string Name { get; set; }
+
         public string Description { get; set; }
+
         public string DidYouKnow { get; set;}
+
         public string LogoUrl { get; set; }
+
         public string Website { get; set; }
+
         public string HostName { get; set; }
+
         public string HostEmail { get; set; }
+
         public string HostPhone { get; set; }
 
         public List<int> DesiredDegrees { get; set;}
@@ -25,8 +36,11 @@ namespace Nexpo.Models
         public List<int> Positions { get; set;}
 
         public List<int> Industries { get; set;}
+
         public IEnumerable<User> Representatives { get; set; }
+
         public IEnumerable<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
+        
         public string StudentSessionMotivation { get; set; }
 
     }

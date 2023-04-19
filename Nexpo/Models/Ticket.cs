@@ -5,6 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace Nexpo.Models
 {
+    /// <summary>
+    /// Represents a ticket for an event, lunch lecture, banquet
+    /// </summary>
     public class Ticket
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

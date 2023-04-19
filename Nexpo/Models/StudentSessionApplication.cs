@@ -3,6 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace Nexpo.Models
 {
+    /// <summary>
+    /// Represents a student's application to a company's session
+    /// </summary>
     public class StudentSessionApplication
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

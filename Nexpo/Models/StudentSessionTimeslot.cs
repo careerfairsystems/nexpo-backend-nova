@@ -5,6 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace Nexpo.Models
 {
+    /// <summary>
+    /// Represents a timeslot that a student can book a session in
+    /// </summary>
     public class StudentSessionTimeslot
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
