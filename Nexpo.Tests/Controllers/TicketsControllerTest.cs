@@ -350,7 +350,7 @@ namespace Nexpo.Tests.Controllers
             var response = await client.PostAsync("api/tickets/add", payload);
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.ToString());
-         }
+        }
 
         [Fact]
         public async Task AdminPostDublicateTicketToUser()
