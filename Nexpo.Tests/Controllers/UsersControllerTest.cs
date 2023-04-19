@@ -261,6 +261,7 @@ namespace Nexpo.Tests.Controllers
                 { "lastName", null },
                 { "password", "password" }
             };
+
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/users/-6", payload2);
 
@@ -306,6 +307,7 @@ namespace Nexpo.Tests.Controllers
             {
                 { "password", "test" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-2", payload);
 
@@ -322,6 +324,7 @@ namespace Nexpo.Tests.Controllers
                 { "firstName", "Rakel" },
                 { "lastName", "Spektakel" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-123", payload);
 
@@ -338,6 +341,7 @@ namespace Nexpo.Tests.Controllers
                 { "firstName", "Rakel" },
                 { "lastName", "Spektakel" }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/-2", payload);
 
@@ -515,6 +519,37 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject2.Role.Equals(Role.CompanyRepresentative), "Wrong user role. Expected: CompanyRepresentative. Received: " + responseObject2.Role.ToString());
             Assert.True(responseObject2.PhoneNr == null, "Wrong phone number. Expected: null. Received: " + responseObject2.PhoneNr);
             Assert.True(responseObject2.FoodPreferences == null, "Wrong food preferences. Expected: null. Received: " + responseObject2.FoodPreferences);
+        }
+
+        [Fact]
+        public async Task StudentUpdateMeBadPassword()
+        {
+            var client = await TestUtils.Login("student1");
+            var json = new JsonObject
+            {
+                { "password", "test" }
+            };
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/users/me", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong Status Code. Expected: BadRequest. Received: " + response.ToString());
+        }
+
+        [Fact]
+        public async Task UpdateMeUnautherized()
+        {
+            var application = new WebApplicationFactory<Program>();
+            var client = application.CreateClient();
+            var json = new JsonObject
+            {
+                { "password", "newSuperSecretPassword" }
+            };
+            
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/users/me", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong Status Code. Expected: Unauthorized. Received: " + response.ToString());
         }
     }
 }

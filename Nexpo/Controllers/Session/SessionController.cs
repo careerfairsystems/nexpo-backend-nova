@@ -80,6 +80,12 @@ namespace Nexpo.Controllers
 
             }
 
+            if (user.Role == Role.Volunteer)
+            {
+                var volunteer = await _userRepo.Get(user.Id.Value);
+                claims.Add(new Claim(UserClaims.VolunteerId, volunteer.Id.ToString()));
+            }
+
             var jwt = _tokenService.GenerateJWT(claims);
 
             return Ok(new SignInResponseDTO { Token = jwt });
@@ -136,6 +142,7 @@ namespace Nexpo.Controllers
         public static readonly string Role = ClaimTypes.Role; 
         public static readonly string CompanyId = nameof(CompanyId);
         public static readonly string StudentId = nameof(StudentId);
+        public static readonly string VolunteerId = nameof(VolunteerId);
     }
 }
 

@@ -67,11 +67,12 @@ namespace Nexpo
             services.AddScoped<ITicketRepository, TicketRepository>();
             services.AddScoped<IStudentSessionTimeslotRepository, StudentSessionTimeslotRepository>();
             services.AddScoped<IStudentSessionApplicationRepository, StudentSessionApplicationRepository>();
-
+            services.AddScoped<IContactRepository, ContactRepository>();
 
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
+            
             if (Environment.IsDevelopment())
             {
                 services.AddScoped<IEmailService, DevEmailService>();
