@@ -139,7 +139,9 @@ namespace Nexpo.Models
             var contact2 = new Contact { Id = -2, FirstName = "Head", LastName = "Van IT", RoleInArkad = "Head of IT", Email = "contact2@example.com", PhoneNumber = "002-222 22 22" };
             var contact3 = new Contact { Id = -3, FirstName = "Front", LastName = "End", RoleInArkad = "Frontend Manager", Email = "contact3@example.com", PhoneNumber = "003-333 33 33" };
             var contact4 = new Contact { Id = -3, FirstName = "Back", LastName = "End", RoleInArkad = "Backend Manager", Email = "contact4@example.com", PhoneNumber = "004-444 44 44" };
-
+            Contacts.AddRange(contact1, contact2, contact3, contact4);
+            SaveChanges();
+            
         }
     }
 }
