@@ -69,7 +69,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             var responseList = JsonConvert.DeserializeObject<List<PublicCompanyDTO>>(await response.Content.ReadAsStringAsync());
-            var app3 = responseList.Find(r => r.Id == -1);
+            var app3 = responseList.Find(timeslot => timeslot.Id == -1);
 
             Assert.True(responseList.Count == 3, "Wrong number of companies. Expected: 3. Received: " + responseList.Count);
             Assert.True(app3.Name.Equals("Apple"), "Wrong company name. Expected: Apple. Received: " + app3.Name);
