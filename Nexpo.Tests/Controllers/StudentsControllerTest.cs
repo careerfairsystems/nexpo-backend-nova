@@ -325,7 +325,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task UpdateStudentAsCompanyRepUsingId()
+        public async Task UpdateStudentAsCompanyRepUsingIdForbidden()
         {
             var client = await TestUtils.Login("company1");
             var json = new JsonObject
@@ -341,7 +341,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task UpdateStudentAsCompanyRepUsingMe()
+        public async Task UpdateStudentAsCompanyRepUsingMeForbbiden()
         {
             var client = await TestUtils.Login("company1");
             var json = new JsonObject
