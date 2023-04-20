@@ -80,6 +80,34 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
+        /// Get the type of ticket
+        /// </summary>
+        [HttpGet]
+        [Route("{id}/type")]
+        [Authorize]
+        [ProducesResponseType(typeof(EventType), StatusCodes.Status200OK)]
+        public async Task<ActionResult> GetTicketType(int id)
+        {
+            var ticket = await _ticketRepo.Get(id);
+            
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            var userId = HttpContext.User.GetId();
+
+            if(ticket.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            return Ok(await _ticketRepo.GetEventType(id));
+
+            
+        }
+
+        /// <summary>
         /// Create new ticket as admin to an event. Ignores capacity and startTime
         /// </summary>
         [HttpPost]
@@ -201,7 +229,7 @@ namespace Nexpo.Controllers
                     return Forbid();
                 }
             }
-           
+            
             await _ticketRepo.Remove(ticket);
             return NoContent();
         }
