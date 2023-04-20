@@ -11,6 +11,10 @@ namespace Nexpo.Models
         public int? Id { get; set; }
         [Required]
         public string Name { get; set; }
+
+        // Either "company event", "lunch", "banquet"
+        public string Type { get; set; }
+
         [Required]
         public string Description { get; set; }
         [Required]
