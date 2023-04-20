@@ -25,7 +25,7 @@ namespace Nexpo.Tests.Controllers
             var ticket1 = responseList.Find(r => r.Id == -1);
             var ticket2 = responseList.Find(r => r.Id == -4);
 
-            Assert.True(responseList.Count == 2, "Wrong number of ticket. Expected: 2. Received: " + responseList.Count.ToString());
+            Assert.True(responseList.Count == 3, "Wrong number of ticket. Expected: 3. Received: " + responseList.Count.ToString());
             Assert.True(ticket1.PhotoOk, "Wrong PhotoOk value. Expected: true. Received: " + ticket1.PhotoOk.ToString());
             Assert.True(!ticket2.PhotoOk, "Wrong PhotoOk value. Expected: false. Received: " + ticket2.PhotoOk.ToString());
         }
@@ -53,6 +53,55 @@ namespace Nexpo.Tests.Controllers
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong status code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
         }
+
+        [Fact]
+        public async Task getEventTypeOfTicketAsStudent(){
+            var client = await TestUtils.Login("student1");
+            var response = await client.GetAsync("/api/tickets/-11/type");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            var responseObject = JsonConvert.DeserializeObject<EventType>(await response.Content.ReadAsStringAsync());
+            Assert.True(responseObject == EventType.Lunch, "Wrong event type. Expected: Lunch. Received: " + responseObject.ToString());
+        }
+
+        [Fact]
+        public async Task getEventTypeOfTicketAsCompanyRepresentative()
+        {
+            var client = await TestUtils.Login("company4");
+            var response = await client.GetAsync("/api/tickets/-12/type");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            var responseObject = JsonConvert.DeserializeObject<EventType>(await response.Content.ReadAsStringAsync());
+            Assert.True(responseObject == EventType.Banquet, "Wrong event type. Expected: Banquet. Received: " + responseObject.ToString());
+        }
+        [Fact]
+        public async Task getEventTypeOfTicketNotLoggedIn()
+        {
+            var application = new WebApplicationFactory<Program>();
+            var client = application.CreateClient();
+            var response = await client.GetAsync("/api/tickets/-1/type");
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong status code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task getEventTypeOfTicketNotExisting()
+        {
+            var client = await TestUtils.Login("student1");
+            var response = await client.GetAsync("/api/tickets/-123/type");
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task getEventTypeOfTicketNotOwn()
+        {
+            var client = await TestUtils.Login("student2");
+            var response = await client.GetAsync("/api/tickets/-11/type");
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString());
+        }
+
 
         [Fact]
         public async Task GetSpecificTicketLegitimate()
@@ -225,7 +274,7 @@ namespace Nexpo.Tests.Controllers
 
             var response2 = await client.GetAsync("/api/tickets/id/" + newTicketId);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
-           
+            
             var response3 = await client.GetAsync("/api/tickets");
             Assert.True(response3.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response3.StatusCode.ToString());
 
@@ -247,10 +296,10 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.UserId == -2, "Wrong user id. Expected: -2. Received: " + responseObject.UserId.ToString());
 
             var responseList = JsonConvert.DeserializeObject<List<Ticket>>((await response3.Content.ReadAsStringAsync()));
-            Assert.True(responseList.Count == 3, "Wrong number of tickets. Expected: 3. Received: " + responseList.Count.ToString());
+            Assert.True(responseList.Count == 4, "Wrong number of tickets. Expected: 3. Received: " + responseList.Count.ToString());
 
             var responseList2 = JsonConvert.DeserializeObject<List<Ticket>>((await response5.Content.ReadAsStringAsync()));
-            Assert.True(responseList2.Count == 2, "Wrong number of tickets. Expected: 2. Received: " + responseList2.Count.ToString());
+            Assert.True(responseList2.Count == 3, "Wrong number of tickets. Expected: 3. Received: " + responseList2.Count.ToString());
         }
 
         [Fact]
@@ -276,7 +325,7 @@ namespace Nexpo.Tests.Controllers
 
             var response2 = await client.GetAsync("/api/tickets/id/" + newTicketId);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
-           
+            
             //Delete created ticket
             var response4 = await client.DeleteAsync("api/tickets/" + newTicketId);
             Assert.True(response4.StatusCode.Equals(HttpStatusCode.NoContent), "Wrong status code. Expected: NoContent. Received: " + response4.StatusCode.ToString());
@@ -353,7 +402,7 @@ namespace Nexpo.Tests.Controllers
             var response = await client.PostAsync("api/tickets/add", payload);
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.ToString());
-         }
+        }
 
         [Fact]
         public async Task AdminPostDublicateTicketToUser()
@@ -424,7 +473,7 @@ namespace Nexpo.Tests.Controllers
             //Verify
             var responseObject = JsonConvert.DeserializeObject<Ticket>(await response.Content.ReadAsStringAsync());
             Assert.True(responseObject.isConsumed, "Wrong isConsumed value. Expected: true. Received: " + responseObject.isConsumed.ToString());
-           
+            
             var responseObject2 = JsonConvert.DeserializeObject<Ticket>(await response2.Content.ReadAsStringAsync());
             Assert.True(!responseObject2.isConsumed, "Wrong isConsumed value. Expected: false. Received: " + responseObject2.isConsumed.ToString());
         }
