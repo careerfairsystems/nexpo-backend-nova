@@ -76,6 +76,7 @@ namespace Nexpo.Controllers
 
             var tickets = await _ticketRepo.GetAllForEvent(_event.Id.Value);
             var namedTickets = new List<TicketInfoDTO>();
+            
             foreach (var ticket in tickets){
                 var user = await _userRepository.Get(ticket.UserId);
                 var DTO = new TicketInfoDTO
