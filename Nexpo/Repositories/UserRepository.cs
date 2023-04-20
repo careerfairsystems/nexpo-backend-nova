@@ -33,18 +33,20 @@ namespace Nexpo.Repositories
 
         public async Task<IEnumerable<User>> GetAll()
         {
-            return await _context.Users.OrderBy(u => u.FirstName).ThenBy(u => u.LastName).ToListAsync();
+            return await  _context.Users.OrderBy(user => user.FirstName)
+                                        .ThenBy(user => user.LastName)
+                                        .ToListAsync();
         }
 
 
         public async Task<User> Get(int id)
         {
-            return await _context.Users.Where(u => u.Id == id).FirstOrDefaultAsync();
+            return await _context.Users.Where(user => user.Id == id).FirstOrDefaultAsync();
         }
 
         public Task<User> FindByEmail(string email)
         {
-            return _context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
+            return _context.Users.Where(user => user.Email == email).FirstOrDefaultAsync();
         }
 
         public async Task Add(User user)

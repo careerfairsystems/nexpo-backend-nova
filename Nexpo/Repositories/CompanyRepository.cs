@@ -30,32 +30,37 @@ namespace Nexpo.Repositories
 
         public async Task<IEnumerable<Company>> GetAll()
         {
-            return await _context.Companies.OrderBy(c => c.Name).ToListAsync();
+            return await _context.Companies.OrderBy(company => company.Name).ToListAsync();
         }
 
         public async Task<IEnumerable<Company>> GetAllWithTimeslots()
         {
-            return await _context.Companies.Where(c => c.StudentSessionTimeslots.Any()).OrderBy(c => c.Name).ToListAsync();
+            return await  _context.Companies.Where(company => company.StudentSessionTimeslots.Any())
+                                            .OrderBy(company => company.Name).ToListAsync();
         }
 
         public async Task<Company> Get(int id)
         {
-            return await _context.Companies.Where(c => c.Id == id).FirstOrDefaultAsync();
+            return await _context.Companies.Where(company => company.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<Company> GetWithChildren(int id)
         {
-            return await _context.Companies.Include(c => c.Representatives).Include(c => c.StudentSessionTimeslots)
-                .Where(c => c.Id == id).OrderBy(c => c.Name).FirstOrDefaultAsync();
+            return await  _context.Companies.Include(company => company.Representatives)
+                                            .Include(company => company.StudentSessionTimeslots)
+                                            .Where(company => company.Id == id)
+                                            .OrderBy(company => company.Name).FirstOrDefaultAsync();
         }
 
         public async Task<Company> FindByUser(int userId)
         {
-            return await _context.Companies.Where(c => c.Representatives.Any(u => u.Id == userId)).FirstOrDefaultAsync();
+            return await  _context.Companies.Where(company => company.Representatives
+                                            .Any(user => user.Id == userId))
+                                            .FirstOrDefaultAsync();
         }
         public async Task<Company> FindByName(string name)
         {
-            return await _context.Companies.Where(c => c.Name == name).FirstOrDefaultAsync();
+            return await _context.Companies.Where(company => company.Name == name).FirstOrDefaultAsync();
         }
         public async Task Add(Company company)
         {

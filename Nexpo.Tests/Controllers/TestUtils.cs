@@ -9,6 +9,13 @@ using System.Threading.Tasks;
 
 namespace Nexpo.Tests.Controllers
 {
+    /// <summary>
+    /// Contains helper methods for testing controllers
+    /// The user is matched with its credentials 
+    /// They are logged into the corresponding account in the mock database
+    /// </summary>
+    /// <param name="user">The user to log in</param>
+    /// <returns>HttpClient with the logged in user</returns>
     public static class TestUtils
     {
         public static async Task<HttpClient> Login(string user)

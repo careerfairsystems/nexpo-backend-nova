@@ -22,6 +22,11 @@ namespace Nexpo.AWS
             _awsS3Client = new AmazonS3Client(awsAccessKeyId, awsSecretAccessKey, RegionEndpoint.GetBySystemName(region));
         }
 
+        /// <summary>
+        /// Uploads a file to AWS S3
+        /// </summary>
+        /// <param name="file">The file to upload</param>
+        /// <param name="name">The name of the file</param>
         public async Task<bool> UploadFileAsync(IFormFile file, string name)
         {
             try
@@ -32,8 +37,8 @@ namespace Nexpo.AWS
                     var uploadRequest = new TransferUtilityUploadRequest
                     {
                         InputStream = newMemoryStream,
-                        Key = name,
-                        BucketName = _bucketName,
+                        Key         = name,
+                        BucketName  = _bucketName,
                         ContentType = file.ContentType
                     };
 
@@ -47,6 +52,11 @@ namespace Nexpo.AWS
                 throw;
             }
         }
+
+        /// <summary>
+        /// Downloads a file from AWS S3
+        /// </summary>
+        /// <param name="file">The name of the file to download</param>
         public async Task<byte[]> DownloadFileAsync(string file)
         {
             MemoryStream ms = null;
@@ -79,6 +89,10 @@ namespace Nexpo.AWS
             }
         }
 
+        /// <summary>
+        /// Deletes a file from AWS S3
+        /// </summary>
+        /// <param name="fileName">The name of the file to delete</param>
         [HttpDelete("{documentName}")]
         public async Task<bool> DeleteFileAsync(string fileName)
         {

@@ -21,6 +21,7 @@ show_help() {
     echo "-h, --help     Display this help message and exit"
     echo "-s, --standalone   Make a standalone docker run. Does not use docker-compose."
     echo "-q, --quick    Create an alias for this file. Is then run with \"git run\""
+    echo "test by sudo dotnet test Nexpo.Tests/"
     echo ""
 }
 
@@ -51,4 +52,3 @@ checkInstalled dotnet
 sudo docker rm -f nexpo_database
 sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
 dotnet run --project Nexpo
-

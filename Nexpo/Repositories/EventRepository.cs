@@ -10,8 +10,8 @@ namespace Nexpo.Repositories
     {
         public Task<IEnumerable<Event>> GetAll();
         public Task<Event> Get(int id);
-        public Task Add(Event even);
-        public Task Update(Event even);
+        public Task Add(Event _event);
+        public Task Update(Event _event);
     }
 
     public class EventRepository : IEventRepository
@@ -22,54 +22,59 @@ namespace Nexpo.Repositories
         {
             _context = context;
         }
-        
+
         public async Task<IEnumerable<Event>> GetAll()
         {
-            return await _context.Events.OrderBy(e => e.Date).ThenBy(e => e.Start).Select(e => new Event
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Description = e.Description,
-                Date = e.Date,
-                Start = e.Start,
-                End = e.End,
-                Location = e.Location,
-                Host = e.Host,
-                Language = e.Language,
-                Capacity = e.Capacity,
-                TicketCount = e.Tickets.Count()
-            }).ToListAsync();
+            return await _context.Events.OrderBy(_event => _event.Date)
+                                        .ThenBy(_event => _event.Start)
+                                        .Select(_event => new Event
+                                        {
+                                            Id = _event.Id,
+                                            Name = _event.Name,
+                                            Description = _event.Description,
+                                            Date = _event.Date,
+                                            Start = _event.Start,
+                                            End = _event.End,
+                                            Location = _event.Location,
+                                            Host = _event.Host,
+                                            Language = _event.Language,
+                                            Capacity = _event.Capacity,
+                                            TicketCount = _event.Tickets.Count()
+                                        })
+                                        .ToListAsync();
         }
 
-        
+
 
         public async Task<Event> Get(int id)
         {
-            return await _context.Events.Where(e => e.Id == id).Select(e => new Event
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Description = e.Description,
-                Date = e.Date,
-                Start = e.Start,
-                End = e.End,
-                Location = e.Location,
-                Host = e.Host,
-                Language = e.Language,
-                Capacity = e.Capacity,
-                TicketCount = e.Tickets.Count()
-            }).FirstOrDefaultAsync();
+            return await _context.Events.Where(_event => _event.Id == id)
+                                        .Select(_event => new Event
+                                        {
+                                            Id = _event.Id,
+                                            Name = _event.Name,
+                                            Description = _event.Description,
+                                            Date = _event.Date,
+                                            Start = _event.Start,
+                                            End = _event.End,
+                                            Location = _event.Location,
+                                            Host = _event.Host,
+                                            Language = _event.Language,
+                                            Capacity = _event.Capacity,
+                                            TicketCount = _event.Tickets.Count()
+                                        })
+                                        .FirstOrDefaultAsync();
         }
 
-        public async Task Add(Event even)
+        public async Task Add(Event _event)
         {
-            _context.Events.Add(even);
+            _context.Events.Add(_event);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Update(Event even)
+        public async Task Update(Event _event)
         {
-            _context.Entry(even).State = EntityState.Modified;
+            _context.Entry(_event).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
     }
