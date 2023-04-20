@@ -35,7 +35,7 @@ namespace Nexpo.Repositories
 
         public async Task<IEnumerable<Contact>> GetAll()
         {
-            var contacts = await _context.Contacts.OrderBy(contact => contact.FirstName).ThenBy(contact => contact.LastName).ToListAsync();
+            var contacts = await _context.Contacts.OrderBy(contact => contact.Id).ToListAsync();
             return contacts;
         }
 
