@@ -99,6 +99,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(firstTicket.ticket.EventId == -1, "Wrong event id. Expected: -1. Received: " +  firstTicket.ticket.EventId.ToString());
             Assert.True(firstTicket.ticket.UserId == -2, "Wrong userID. Expected: -2. Received: " + firstTicket.ticket.UserId.ToString());
             Assert.True(thirdTicket.ticket.UserId == -4, "Wrong userID, Expected: -4. Reciéved: " + thirdTicket.ticket.UserId.ToString());
+            Assert.True(thirdTicket.ticket.Event.Type == EventType.CompanyEvent, "Wrong event type. Expected: 1. Received: " + thirdTicket.ticket.Event.Type.ToString());
         }
 
         [Fact]
@@ -147,6 +148,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.Capacity == 25, "Wrong Capacity. Expected: 25. Received: " + responseObject.Capacity);
             Assert.True(responseObject.Name.Equals("Breakfast Mingle"), "Wrong name. Expected: Breakfast Mingle. Received: " + responseObject.Name);
             Assert.True(responseObject.Start.Equals("08:15"), "Wrong starttime. Expected: 08:15. Received: " + responseObject.Start);
+            Assert.True(responseObject.Type == EventType.CompanyEvent, "Wrong type. Expected: 1. Received: " + responseObject.Type);
         }
 
         [Fact]
@@ -159,7 +161,7 @@ namespace Nexpo.Tests.Controllers
             };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("/api/events/-1", payload);
-           
+            
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
 
             string responseText = await response.Content.ReadAsStringAsync();
@@ -186,6 +188,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.Name.Equals("Inspirational lunch lecture"), $"Wrong name. Received: {responseObject.Name}");
             Assert.True(responseObject.Start.Equals("12:15"), $"Wrong start time. Expected: 12:15. Received: {responseObject.Start}");
             Assert.True(responseObject.Location.Equals("MA:3"), $"Wrong location. Expected: MA:3. Received: {responseObject.Location}");
+            Assert.True(responseObject.Type == EventType.CompanyEvent, $"Wrong type. Expected: 1. Received: {responseObject.Type}");
         }
     }
 }

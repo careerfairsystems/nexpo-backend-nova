@@ -1,5 +1,4 @@
-
-
+using Nexpo.Models;
 
 namespace Nexpo.DTO
 {
@@ -7,7 +6,7 @@ namespace Nexpo.DTO
     {
         public string Name { get; set; }
 
-        public string Type { get; set; }
+        public EventType? Type { get; set; }
 
         public string Description { get; set; }
         public string Date { get; set; }

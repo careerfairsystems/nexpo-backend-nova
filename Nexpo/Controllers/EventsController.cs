@@ -124,8 +124,11 @@ namespace Nexpo.Controllers
             if(!string.IsNullOrEmpty(dto.Language)){
                 even.Language = dto.Language; 
             }
+            if(dto.Type.HasValue){
+                even.Type = (EventType)dto.Type; 
+            }
             if(dto.Capacity != 0){
-                even.Capacity = dto.Capacity; 
+                even.Capacity = dto.Capacity;
             }
             await _eventRepo.Update(even);
 
