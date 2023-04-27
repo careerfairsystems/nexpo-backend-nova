@@ -16,6 +16,9 @@ namespace Nexpo.Models
         public DbSet<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
         public DbSet<StudentSessionApplication> StudentSessionApplications { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<FrequentAskedQuestion> FrequentAskedQuestion { get; set; }
+
+#pragma warning restore format
 
         private readonly PasswordService _passwordService;
 
@@ -52,10 +55,10 @@ namespace Nexpo.Models
             }
 
             // Companies
-            var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company" , DidYouKnow = "Apples", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Datateknik,(int) Programme.Elektroteknik}, Industries = new List<int>(){(int)Industry.DataIT,(int) Industry.ElectricityEnergyPower}, Positions = new List<int>(){(int)Position.ForeignOppurtunity, (int)Position.Internship}, StudentSessionMotivation = "We are the greatest company in the world according to us!"};
-            var company2 = new Company { Id = -2, Name = "Google", Description = "You can find more about us by searching the web"  , DidYouKnow = "we are big", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Arkitekt,(int) Programme.Väg_och_vatttenbyggnad}, Industries = new List<int>(){(int)Industry.Industry,(int) Industry.DataIT}, Positions = new List<int>(){(int)Position.PartTime, (int)Position.Internship}};
-            var company3 = new Company { Id = -3, Name = "Spotify", Description = "We like music" ,  DidYouKnow = "we love music", DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Kemiteknik,(int) Programme.Industriell_ekonomi}, Industries = new List<int>(){(int)Industry.Coaching,(int) Industry.BankingFinance}, Positions = new List<int>(){(int)Position.ForeignOppurtunity, (int)Position.SummerJob}};
-            var company4 = new Company { Id = -4, Name = "Facebook", Description = "We have friends in common" , DidYouKnow = "Mark zuckerburg is an Alien", DesiredDegrees = new List<int>(){(int) Degree.PhD,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Byggteknik_med_Järnvägsteknik,(int) Programme.Teknisk_Fysik}, Industries = new List<int>(){(int)Industry.Environment,(int) Industry.ElectricityEnergyPower}, Positions = new List<int>(){(int)Position.Thesis, (int)Position.TraineeEmployment}, StudentSessionMotivation = "We are better than Apple!"};
+            var company1 = new Company { Id = -1, Name = "Apple", Description = "A fruit company", DidYouKnow = "Apples", DesiredDegrees = new List<int>() { (int)Degree.Bachelor, (int)Degree.Master }, DesiredProgramme = new List<int>() { (int)Programme.Datateknik, (int)Programme.Elektroteknik }, Industries = new List<int>() { (int)Industry.DataIT, (int)Industry.ElectricityEnergyPower }, Positions = new List<int>() { (int)Position.ForeignOppurtunity, (int)Position.Internship }, StudentSessionMotivation = "We are the greatest company in the world according to us!" };
+            var company2 = new Company { Id = -2, Name = "Google", Description = "You can find more about us by searching the web", DidYouKnow = "we are big", DesiredDegrees = new List<int>() { (int)Degree.Bachelor, (int)Degree.Master }, DesiredProgramme = new List<int>() { (int)Programme.Arkitekt, (int)Programme.Väg_och_vatttenbyggnad }, Industries = new List<int>() { (int)Industry.Industry, (int)Industry.DataIT }, Positions = new List<int>() { (int)Position.PartTime, (int)Position.Internship } };
+            var company3 = new Company { Id = -3, Name = "Spotify", Description = "We like music", DidYouKnow = "we love music", DesiredDegrees = new List<int>() { (int)Degree.Bachelor, (int)Degree.Master }, DesiredProgramme = new List<int>() { (int)Programme.Kemiteknik, (int)Programme.Industriell_ekonomi }, Industries = new List<int>() { (int)Industry.Coaching, (int)Industry.BankingFinance }, Positions = new List<int>() { (int)Position.ForeignOppurtunity, (int)Position.SummerJob } };
+            var company4 = new Company { Id = -4, Name = "Facebook", Description = "We have friends in common", DidYouKnow = "Mark zuckerburg is an Alien", DesiredDegrees = new List<int>() { (int)Degree.PhD, (int)Degree.Master }, DesiredProgramme = new List<int>() { (int)Programme.Byggteknik_med_Järnvägsteknik, (int)Programme.Teknisk_Fysik }, Industries = new List<int>() { (int)Industry.Environment, (int)Industry.ElectricityEnergyPower }, Positions = new List<int>() { (int)Position.Thesis, (int)Position.TraineeEmployment }, StudentSessionMotivation = "We are better than Apple!" };
             Companies.AddRange(company1, company2, company3, company4);
             SaveChanges();
 
@@ -71,7 +74,7 @@ namespace Nexpo.Models
             var user7 = new User { Id = -7, Email = "rep1@company2.example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyRepresentative, FirstName = "Gamma", LastName = "Rep", CompanyId = company2.Id.Value };
             var user8 = new User { Id = -8, Email = "rep1@company3.example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyRepresentative, FirstName = "Delta", LastName = "Rep", CompanyId = company3.Id.Value };
             var user9 = new User { Id = -9, Email = "rep1@company4.example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyRepresentative, FirstName = "Epsilon", LastName = "Rep", CompanyId = company4.Id.Value };
-            
+
             var user10 = new User { Id = -10, Email = "volunteer@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.Volunteer, FirstName = "Alpha", LastName = "Volunteer" };
             Users.AddRange(user1, user2, user3, user4, user5, user6, user7, user8, user9, user10);
             SaveChanges();
@@ -88,12 +91,12 @@ namespace Nexpo.Models
             var event2 = new Event { Id = -2, Name = "Bounce with Uber", Description = "Day event at Bounce with Uber", Date = DateTime.Now.AddDays(11).Date.ToString(), Start = "09:00", End = "16:00", Host = "Uber", Location = "Bounce Malmö", Language = "English", Capacity = 20 };
             var event3 = new Event { Id = -3, Name = "CV Workshop with Randstad", Description = "Make your CV look professional with the help of Randstad", Date = DateTime.Now.AddDays(12).Date.ToString(), Start = "13:30", End = "15:00", Host = "Randstad", Location = "E:A", Language = "Swedish", Capacity = 3 };
             var event4 = new Event { Id = -4, Name = "Inspirational lunch lecture", Description = "Get inspired and expand your horizons", Date = DateTime.Now.AddDays(14).Date.ToString(), Start = "12:15", End = "13:00", Host = "SYV", Location = "MA:3", Language = "Swedish", Capacity = 2 };
-            var event5 = new Event { Id = -5, Name = "Pick apples with Apple", Description = "An apple a day keeps the doctor away", Date = DateTime.Now.AddDays(1).Date.ToString(), Start = "12:15", End = "13:00", Host = "Apple", Location = "M:B", Language = "English", Capacity = 200};
+            var event5 = new Event { Id = -5, Name = "Pick apples with Apple", Description = "An apple a day keeps the doctor away", Date = DateTime.Now.AddDays(1).Date.ToString(), Start = "12:15", End = "13:00", Host = "Apple", Location = "M:B", Language = "English", Capacity = 200 };
             Events.AddRange(event1, event2, event3, event4, event5);
             SaveChanges();
 
             // Tickets
-            var ticket1 = new Ticket { Id = -1, Code = Guid.NewGuid(), PhotoOk = true, EventId = event1.Id.Value, UserId = user2.Id.Value , isConsumed = true};
+            var ticket1 = new Ticket { Id = -1, Code = Guid.NewGuid(), PhotoOk = true, EventId = event1.Id.Value, UserId = user2.Id.Value, isConsumed = true };
             var ticket2 = new Ticket { Id = -2, Code = Guid.NewGuid(), PhotoOk = false, EventId = event1.Id.Value, UserId = user3.Id.Value };
             var ticket3 = new Ticket { Id = -3, Code = Guid.NewGuid(), PhotoOk = true, EventId = event1.Id.Value, UserId = user4.Id.Value };
 
@@ -122,7 +125,7 @@ namespace Nexpo.Models
             SaveChanges();
 
             // StudentSessionApplications
-            var application1 = new StudentSessionApplication { Id = -1, Motivation = "Hej, jag är jättebra och tror att ni vill träffa mig!", StudentId = student1.Id.Value, CompanyId = company1.Id.Value};
+            var application1 = new StudentSessionApplication { Id = -1, Motivation = "Hej, jag är jättebra och tror att ni vill träffa mig!", StudentId = student1.Id.Value, CompanyId = company1.Id.Value };
             var application2 = new StudentSessionApplication { Id = -2, Motivation = "I love my MacBook", StudentId = student2.Id.Value, CompanyId = company1.Id.Value };
             var application3 = new StudentSessionApplication { Id = -3, Motivation = "User experience is very important for me", StudentId = student3.Id.Value, CompanyId = company1.Id.Value };
 
@@ -141,7 +144,7 @@ namespace Nexpo.Models
             var contact4 = new Contact { Id = -4, FirstName = "Back", LastName = "End", RoleInArkad = "Backend Manager", Email = "contact4@example.com", PhoneNumber = "004-444 44 44" };
             Contacts.AddRange(contact1, contact2, contact3, contact4);
             SaveChanges();
-            
+
         }
     }
 }

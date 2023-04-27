@@ -6,63 +6,51 @@ using System.Threading.Tasks;
 
 namespace Nexpo.Repositories
 {
-    public interface IContactRepository
+    public interface IFAQRepository
     {
-        public Task<bool> ContactExists(string email);
-        public Task<IEnumerable<Contact>> GetAll();
-        public Task<Contact> Get(int id);
-        public Task Add(Contact contact);
-        public Task Remove(Contact contact);
-        public Task Update(Contact contact);
+
+        public Task<IEnumerable<FrequentAskedQuestion>> GetAll();
+        public Task<FrequentAskedQuestion> Get(int id);
+        public Task Add(FrequentAskedQuestion question);
+        public Task Remove(FrequentAskedQuestion question);
+        public Task Update(FrequentAskedQuestion question);
     }
 
-    public class FAQRepository: IContactRepository
+    public class FAQRepository : IFAQRepository
 
     {
-
         private readonly ApplicationDbContext _context;
-
-        public ContactRepository(ApplicationDbContext context)
+        public Task Add(FrequentAskedQuestion question)
         {
-            _context = context;
-        }
-
-        public async Task<bool> ContactExists(string email)
-        {
-            return await _context.Contacts.AnyAsync(contact => contact.Email == email);
-        }
-        
-
-        public async Task<IEnumerable<Contact>> GetAll()
-        {
-            var contacts = await _context.Contacts.OrderBy(contact => contact.Id).ToListAsync();
-            return contacts;
-        }
-
-        public Task<Contact> Get(int id)
-        {
-            return _context.Contacts.Where(contact => contact.Id == id).FirstOrDefaultAsync();
-        }
-
-        public async Task Add(Contact contact)
-        {
-            _context.Contacts.Add(contact);
-            await _context.SaveChangesAsync();
-        }
-
-        public Task Remove(Contact contact)
-        {
-            _context.Contacts.Remove(contact);
-            return _context.SaveChangesAsync();
-        }
-
-        public async Task Update(Contact contact)
-        {
-            _context.Entry(contact).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            _context.FrequentAskedQuestion.add(question);
         }
 
 
 
+        public Task<FrequentAskedQuestion> Get(int id)
+        {
+            return _context.FrequentAskedQuestion.Where(faq => faq.Id == id).FirstOrDefaultAsync();
+        }
+
+        public Task<IEnumerable<FrequentAskedQuestion> GetAll()
+        {
+            var question = await _context.FrequentAskedQuestion.OrderBy(q => q.Id).ToListAsync();
+            return question;
+        }
+
+    public Task Remove(FrequentAskedQuestion question)
+    {
+        _context.FrequentAskedQuestion.Remove(question);
     }
+
+
+
+    public Task Update(FrequentAskedQuestion question)
+    {
+        _context.Entry(question).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+    }
+
+
+}
 }
