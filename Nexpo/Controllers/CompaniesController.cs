@@ -26,23 +26,23 @@ namespace Nexpo.Controllers
         /// Get a list of all companies
         /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<PublicCompanyDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<PublicCompanyDTO>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetCompanies()
         {
             var companies = await _companyRepo.GetAll();
-            var publicCompanies = companies.Select(c => new PublicCompanyDto
+            var publicCompanies = companies.Select(company => new PublicCompanyDTO
             {
-                Id = c.Id.Value,
-                Name = c.Name,
-                Description = c.Description,
-                DidYouKnow = c.DidYouKnow,
-                Website = c.Website,
-                LogoUrl = c.LogoUrl,
-                DesiredDegrees = c.DesiredDegrees,
-                DesiredProgramme = c.DesiredProgramme,
-                Positions = c.Positions,
-                Industries = c.Industries,
-                StudentSessionMotivation = c.StudentSessionMotivation
+                Id                       = company.Id.Value,
+                Name                     = company.Name,
+                Description              = company.Description,
+                DidYouKnow               = company.DidYouKnow,
+                Website                  = company.Website,
+                LogoUrl                  = company.LogoUrl,
+                DesiredDegrees           = company.DesiredDegrees,
+                DesiredProgramme         = company.DesiredProgramme,
+                Positions                = company.Positions,
+                Industries               = company.Industries,
+                StudentSessionMotivation = company.StudentSessionMotivation
             });
 
             return Ok(publicCompanies);
@@ -53,7 +53,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}")]
-        [ProducesResponseType(typeof(PublicCompanyDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PublicCompanyDTO), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetCompany(int id)
         {
             var company = await _companyRepo.Get(id);
@@ -62,18 +62,18 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            var publicCompany = new PublicCompanyDto
+            var publicCompany = new PublicCompanyDTO
             {
-                Id = company.Id.Value,
-                Name = company.Name,
-                Description = company.Description,
-                DidYouKnow = company.DidYouKnow,
-                Website = company.Website,
-                LogoUrl = company.LogoUrl,
-                DesiredDegrees = company.DesiredDegrees,
-                DesiredProgramme = company.DesiredProgramme,
-                Positions = company.Positions,
-                Industries = company.Industries,
+                Id                       = company.Id.Value,
+                Name                     = company.Name,
+                Description              = company.Description,
+                DidYouKnow               = company.DidYouKnow,
+                Website                  = company.Website,
+                LogoUrl                  = company.LogoUrl,
+                DesiredDegrees           = company.DesiredDegrees,
+                DesiredProgramme         = company.DesiredProgramme,
+                Positions                = company.Positions,
+                Industries               = company.Industries,
                 StudentSessionMotivation = company.StudentSessionMotivation
 
             };
@@ -87,7 +87,7 @@ namespace Nexpo.Controllers
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PutCompany(int id, UpdateCompanyDto dto)
+        public async Task<ActionResult> PutCompany(int id, UpdateCompanyAdminDTO DTO)
         {
             var company = await _companyRepo.Get(id);
             if (company == null)
@@ -95,33 +95,33 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if (!string.IsNullOrEmpty(dto.Description))
+            if (!string.IsNullOrEmpty(DTO.Description))
             {
-                company.Description = dto.Description;
+                company.Description = DTO.Description;
             }
-            if (!string.IsNullOrEmpty(dto.DidYouKnow))
+            if (!string.IsNullOrEmpty(DTO.DidYouKnow))
             {
-                company.DidYouKnow = dto.DidYouKnow;
+                company.DidYouKnow = DTO.DidYouKnow;
             }
-            if (!string.IsNullOrEmpty(dto.Website))
+            if (!string.IsNullOrEmpty(DTO.Website))
             {
-                company.Website = dto.Website;
+                company.Website = DTO.Website;
             }
-            if (!string.IsNullOrEmpty(dto.HostEmail))
+            if (!string.IsNullOrEmpty(DTO.HostEmail))
             {
-                company.HostEmail = dto.HostEmail;
+                company.HostEmail = DTO.HostEmail;
             }
-            if (!string.IsNullOrEmpty(dto.HostName))
+            if (!string.IsNullOrEmpty(DTO.HostName))
             {
-                company.HostName = dto.HostName;
+                company.HostName = DTO.HostName;
             }
-            if (!string.IsNullOrEmpty(dto.HostPhone))
+            if (!string.IsNullOrEmpty(DTO.HostPhone))
             {
-                company.HostPhone = dto.HostPhone;
+                company.HostPhone = DTO.HostPhone;
             }
-            if (!string.IsNullOrEmpty(dto.StudentSessionMotivation))
+            if (!string.IsNullOrEmpty(DTO.StudentSessionMotivation))
             {
-                company.StudentSessionMotivation = dto.StudentSessionMotivation;
+                company.StudentSessionMotivation = DTO.StudentSessionMotivation;
             }
             await _companyRepo.Update(company);
 
@@ -149,52 +149,53 @@ namespace Nexpo.Controllers
         [Route("me")]
         [Authorize(Roles = nameof(Role.CompanyRepresentative))]
         [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PutMe(UpdateCompanySelfDto dto)
+        public async Task<ActionResult> PutMe(UpdateCompanySelfDTO DTO)
         {
             var companyId = HttpContext.User.GetCompanyId().Value;
             var company = await _companyRepo.Get(companyId);
 
-            if (!string.IsNullOrEmpty(dto.Description))
+            if (!string.IsNullOrEmpty(DTO.Description))
             {
-                company.Description = dto.Description;
+                company.Description = DTO.Description;
             }
-            if (!string.IsNullOrEmpty(dto.DidYouKnow))
+            if (!string.IsNullOrEmpty(DTO.DidYouKnow))
             {
-                company.DidYouKnow = dto.DidYouKnow;
+                company.DidYouKnow = DTO.DidYouKnow;
             }
-            if (!string.IsNullOrEmpty(dto.Website))
+            if (!string.IsNullOrEmpty(DTO.Website))
             {
-                company.Website = dto.Website;
+                company.Website = DTO.Website;
             }
             await _companyRepo.Update(company);
 
             return Ok(company);
         }
 
-         /// <summary>
+        /// <summary>
         /// Add new company
         /// </summary>
         [HttpPost]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
-        public async Task<ActionResult> AddNewCompany(AddCompanyDto dto)
+        public async Task<ActionResult> AddNewCompany(AddCompanyDTO DTO)
         {
             
             var company = new Company {
-                Name = dto.Name,
-                Description = dto.Description,
-                DidYouKnow = dto.DidYouKnow,
-                LogoUrl = dto.LogoUrl,
-                Website = dto.Website,
-                DesiredDegrees= dto.DesiredDegrees,
-                DesiredProgramme= dto.DesiredProgramme,
-                Positions = dto.Positions,
-                Industries  = dto.Industries,
-                HostName = dto.HostName,
-                HostEmail = dto.HostEmail,
-                HostPhone = dto.HostPhone,
-                StudentSessionMotivation=dto.StudentSessionMotivation
+                Name                     = DTO.Name,
+                Description              = DTO.Description,
+                DidYouKnow               = DTO.DidYouKnow,
+                LogoUrl                  = DTO.LogoUrl,
+                Website                  = DTO.Website,
+                DesiredDegrees           = DTO.DesiredDegrees,
+                DesiredProgramme         = DTO.DesiredProgramme,
+                Positions                = DTO.Positions,
+                Industries               = DTO.Industries,
+                HostName                 = DTO.HostName,
+                HostEmail                = DTO.HostEmail,
+                HostPhone                = DTO.HostPhone,
+                StudentSessionMotivation = DTO.StudentSessionMotivation
             };
+
             await _companyRepo.Add(company);
 
             return Ok(company);
@@ -202,18 +203,19 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Delete company by name
         /// </summary>
+        /// <param name="name">name of company</param>
         [HttpDelete]
         [Route("{name}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
         public async Task<ActionResult> DeleteCompany(string name)
         {
-            Company c = await _companyRepo.FindByName(name);
-            if(c == null)
+            Company company = await _companyRepo.FindByName(name);
+            if(company == null)
             {
                 return NotFound();
             }
-            await _companyRepo.Remove(c);
+            await _companyRepo.Remove(company);
             return Ok();
         }
     }

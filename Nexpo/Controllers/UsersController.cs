@@ -95,7 +95,7 @@ namespace Nexpo.Controllers
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        public async Task<IActionResult> PutUser(int id, UpdateUserDto dto)
+        public async Task<IActionResult> PutUser(int id, UpdateUserDTO DTO)
         {
             var user = await _userRepo.Get(id);
             if (user == null)
@@ -104,36 +104,34 @@ namespace Nexpo.Controllers
             }
 
             // Update allowed fields
-            if (dto.FirstName != null)
+            if (DTO.FirstName != null)
             {
-                user.FirstName = dto.FirstName;
+                user.FirstName = DTO.FirstName;
             }
-            if (dto.LastName != null)
+            if (DTO.LastName != null)
             {
-                user.LastName = dto.LastName;
+                user.LastName = DTO.LastName;
             }
-            if (dto.PhoneNr != null)
+            if (DTO.PhoneNr != null)
             {
-                user.PhoneNr = dto.PhoneNr;
+                user.PhoneNr = DTO.PhoneNr;
             }
-            if (dto.FoodPreferences != null)
+            if (DTO.FoodPreferences != null)
             {
-                user.FoodPreferences = dto.FoodPreferences;
+                user.FoodPreferences = DTO.FoodPreferences;
             }
-            // Only update the role if it was present in the dto
-            if (dto.Role.HasValue)
+            if (!string.IsNullOrEmpty(DTO.Password))
             {
-                // Cast to Role from Role? is necessesary because Role must be mandatory in User
-                user.Role = (Role)dto.Role;
-            }
-
-            if (!string.IsNullOrEmpty(dto.Password))
-            {
-                if (!_passwordService.IsStrongPassword(dto.Password))
+                if (!_passwordService.IsStrongPassword(DTO.Password))
                 {
                     return BadRequest();
                 }
-                user.PasswordHash = _passwordService.HashPassword(dto.Password);
+                user.PasswordHash = _passwordService.HashPassword(DTO.Password);
+            }
+            if (DTO.Role.HasValue)
+            {
+                // Cast to Role from Role? is necessesary because Role must be mandatory in User
+                user.Role = (Role)DTO.Role;
             }
 
             await _userRepo.Update(user);
@@ -194,39 +192,39 @@ namespace Nexpo.Controllers
         [Route("me")]
         [Authorize]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        public async Task<IActionResult> PutMe(UpdateUserDto dto)
+        public async Task<IActionResult> PutMe(UpdateUserDTO DTO)
         {
             var userId = HttpContext.User.GetId();
             var user = await _userRepo.Get(userId);
 
             // Update allowed fields
-            if (dto.FirstName != null)
+            if (DTO.FirstName != null)
             {
-                user.FirstName = dto.FirstName;
+                user.FirstName = DTO.FirstName;
             }
-            if (dto.LastName != null)
+            if (DTO.LastName != null)
             {
-                user.LastName = dto.LastName;
+                user.LastName = DTO.LastName;
             }
-            if (dto.PhoneNr != null)
+            if (DTO.PhoneNr != null)
             {
-                user.PhoneNr = dto.PhoneNr;
+                user.PhoneNr = DTO.PhoneNr;
             }
-            if (dto.FoodPreferences != null)
+            if (DTO.FoodPreferences != null)
             {
-                user.FoodPreferences = dto.FoodPreferences;
+                user.FoodPreferences = DTO.FoodPreferences;
             }
-            if (!string.IsNullOrEmpty(dto.Password))
+            if (!string.IsNullOrEmpty(DTO.Password))
             {
-                if (!_passwordService.IsStrongPassword(dto.Password))
+                if (!_passwordService.IsStrongPassword(DTO.Password))
                 {
                     return BadRequest();
                 }
-                user.PasswordHash = _passwordService.HashPassword(dto.Password);
+                user.PasswordHash = _passwordService.HashPassword(DTO.Password);
             }
-            if (dto.profilePictureUrl != null)
+            if (DTO.profilePictureUrl != null)
             {
-                user.profilePictureUrl = dto.profilePictureUrl;
+                user.profilePictureUrl = DTO.profilePictureUrl;
             }
 
             await _userRepo.Update(user);

@@ -26,7 +26,7 @@ namespace Nexpo.Models
         public Event Event { get; set; }
 
         public int UserId { get; set; }
-
+        
         //TRAP
         [JsonIgnore]
         public User User { get; set; }

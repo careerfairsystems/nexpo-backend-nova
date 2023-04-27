@@ -5,6 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace Nexpo.Models
 {
+    /// <summary>
+    /// Represents a user of the system
+    /// </summary>
     public class User
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

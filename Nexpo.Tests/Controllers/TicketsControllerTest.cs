@@ -15,15 +15,17 @@ namespace Nexpo.Tests.Controllers
     public class TicketsControllerTest
     {
         [Fact]
-        public async Task GetAllTicketsForSignedInUser()
+        public async Task GetAllForStudent()
         {
             var client = await TestUtils.Login("student1");
             var response = await client.GetAsync("/api/tickets");
+
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             var responseList = JsonConvert.DeserializeObject<List<Ticket>>(await response.Content.ReadAsStringAsync());
-            var ticket1 = responseList.Find(r => r.Id == -1);
-            var ticket2 = responseList.Find(r => r.Id == -4);
+
+            var ticket1 = responseList.Find(ticket => ticket.Id == -1);
+            var ticket2 = responseList.Find(ticket => ticket.Id == -4);
 
             Assert.True(responseList.Count == 3, "Wrong number of ticket. Expected: 3. Received: " + responseList.Count.ToString());
             Assert.True(ticket1.PhotoOk, "Wrong PhotoOk value. Expected: true. Received: " + ticket1.PhotoOk.ToString());
@@ -34,10 +36,11 @@ namespace Nexpo.Tests.Controllers
         /// <summary>
         
         [Fact]
-        public async Task GetAllTicketsForCompanyWith0()
+        public async Task GetAllForCompanyWith0()
         {
             var client = await TestUtils.Login("company1");
             var response = await client.GetAsync("/api/tickets");
+
             var responseList = JsonConvert.DeserializeObject<List<Ticket>>(await response.Content.ReadAsStringAsync());
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
@@ -49,8 +52,10 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var response = await client.GetAsync("/api/tickets");
 
+            // Verify response - Unauthorized because non logged in user does not have tickets
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong status code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
         }
 
@@ -118,22 +123,25 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetSpecificTicketFromAnotherUser()
+        public async Task GetFromAnotherUser()
         {
             var client = await TestUtils.Login("company1");
             var response = await client.GetAsync("/api/tickets/id/-1");
 
+            // Verify response - Not found because the company does not have access to the ticket
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
 
         [Fact]
-        public async Task GetSpecificTicketLegitimateAsAdmin()
+        public async Task GetAsAdmin()
         {
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/tickets/id/-1");
+
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             var responseObject = JsonConvert.DeserializeObject<Ticket>(await response.Content.ReadAsStringAsync());
+
             Assert.True(responseObject.Id == -1, "Wrong ticket id. Expected: -1. Received: " + responseObject.Id.ToString());
             Assert.True(responseObject.PhotoOk, "Wrong PhotoOk value. Expected: true. Received: " + responseObject.PhotoOk.ToString());
             Assert.True(responseObject.EventId == -1, "Wrong event id. Expected: -1. Received: " + responseObject.EventId.ToString());
@@ -141,12 +149,34 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetNonExistingTicket()
+        public async Task GetNotFound()
         {
             var client = await TestUtils.Login("admin");
             var response = await client.GetAsync("/api/tickets/id/-123");
 
+            // Verify response - Not found because the ticket of id -123 does not exist in the database
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString());
+        }
+
+
+        [Fact]
+        public async Task GetIdAndGuid()
+        {
+            var client = await TestUtils.Login("admin");
+            var response = await client.GetAsync("/api/tickets/id/-1");
+
+            var responseObject = JsonConvert.DeserializeObject<Ticket>(await response.Content.ReadAsStringAsync());
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            var response2 = await client.GetAsync("/api/tickets/" + responseObject.Code);
+            var responseObject2 = JsonConvert.DeserializeObject<Ticket>(await response2.Content.ReadAsStringAsync());
+
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
+
+            Assert.True(responseObject.Id == responseObject2.Id, "Mismatch in ticket id. Recieved: " + responseObject.Id.ToString() + " & " + responseObject2.ToString());
+            Assert.True(responseObject.PhotoOk && responseObject2.PhotoOk, "Mismatch in PhotoOk value. Recieved: " + responseObject.PhotoOk.ToString() + " & " + responseObject2.PhotoOk.ToString());
+            Assert.True(responseObject.EventId == responseObject2.EventId, "Mismatch in event id. Recieved: " + responseObject.EventId.ToString() + " & " + responseObject2.EventId.ToString());
+            Assert.True(responseObject.UserId == responseObject2.UserId, "Mismatch in user id. Recieved: " + responseObject.UserId.ToString() + " & " + responseObject2.UserId.ToString());
         }
 
         [Fact]
@@ -158,14 +188,16 @@ namespace Nexpo.Tests.Controllers
                 { "eventid", -2 },
                 { "photook", true }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets", payload);
 
+            // Verify response - Conflict because the student already has a ticket for the event
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Conflict), "Wrong status code. Expected: Conflict. Received: " + response.ToString());
         }
 
         [Fact]
-        public async Task PostTicketToWrongIdEvent()
+        public async Task PostNotFoundEvent()
         {
             var client = await TestUtils.Login("student1");
             var json = new JsonObject
@@ -176,11 +208,12 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets", payload);
 
+            // Verify response - Not found because the event of id -123 does not exist in the database
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.ToString());
         }
 
         [Fact]
-        public async Task PostTicketToFullEvent()
+        public async Task PostToFullEvent()
         {
             var client = await TestUtils.Login("student1");
             var json = new JsonObject
@@ -188,9 +221,11 @@ namespace Nexpo.Tests.Controllers
                 { "eventid", -4 },
                 { "photook", true }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets", payload);
 
+            // Verify response - Conflict because the event is full
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Conflict), "Wrong status code. Expected: Conflict. Received: " + response.ToString());
         }
 
@@ -199,19 +234,22 @@ namespace Nexpo.Tests.Controllers
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
+
             var json = new JsonObject
             {
                 { "eventid", -1 },
                 { "photook", true }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets", payload);
 
+            // Verify response - Unauthorized because the user is not logged in
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong status code. Expected: Unauthorized. Received: " + response.ToString());
         }
 
         [Fact]
-        public async Task PostTicketLessThanTwoDaysBefore()
+        public async Task PostLessThanTwoDaysBeforeEvent()
         {
             var client = await TestUtils.Login("student1");
             var json = new JsonObject
@@ -222,38 +260,12 @@ namespace Nexpo.Tests.Controllers
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets", payload);
 
+            // Verify response - Conflict because the event is too close in time
             Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong status code. Expected: BadRequest. Received: " + response.ToString());
         }
 
         [Fact]
-        public async Task DeleteAnotherUsersTicket()
-        {
-            var client = await TestUtils.Login("student1");
-            var response = await client.DeleteAsync("api/tickets/-2");
-
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong status code. Expected: BadRequest. Received: " + response.ToString());
-        }
-
-        [Fact]
-        public async Task DeleteNonExistingTicket()
-        {
-            var client = await TestUtils.Login("student1");
-            var response = await client.DeleteAsync("api/tickets/-123");
-
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.ToString());
-        }
-
-        [Fact]
-        public async Task DeleteTicketCloseToEvent()
-        {
-            var client = await TestUtils.Login("student2");
-            var response = await client.DeleteAsync("api/tickets/-8");
-
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong status code. Expected: BadRequest. Received: " + response.ToString());
-        }
-
-        [Fact]
-        public async Task PostandDeleteTicketLegitimate()
+        public async Task PostandDelete()
         {
             var client =  await TestUtils.Login("student1");
 
@@ -303,7 +315,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task AdminPostandDeleteTicketCloseToEvent()
+        public async Task PostandDeleteAsAdminCloseToEvent()
         {
             var client = await TestUtils.Login("admin");
 
@@ -314,8 +326,10 @@ namespace Nexpo.Tests.Controllers
                 { "photook", true },
                 { "userid", -4 }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets/add", payload);
+
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Wrong status code. Expected: Created. Received: " + response.ToString());
 
             //Check response and db updated
@@ -341,8 +355,9 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.UserId == -4, "Wrong user id. Expected: -4. Received: " + responseObject.UserId.ToString());
         }
 
+
         [Fact]
-        public async Task AdminDeleteTicketConsumed()
+        public async Task DeleteConsumedTicketAsAdmin()
         {
             var client = await TestUtils.Login("admin");
 
@@ -353,20 +368,25 @@ namespace Nexpo.Tests.Controllers
                 { "photook", true },
                 { "userid", -3 }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets/add", payload);
+
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Wrong status code. Expected: Created. Received: " + response.ToString());
 
             //Set consumed & check response
             string responseText = await response.Content.ReadAsStringAsync();
             var parsedContent = JObject.Parse(responseText);
             var newTicketId = parsedContent.Value<string>("id");
+
             json = new JsonObject
             {
                 { "isConsumed", true }
             };
+
             payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/tickets/" + newTicketId, payload);
+
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
 
             //Delete created ticket
@@ -387,7 +407,37 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task AdminPostTicketWrongEventId()
+        public async Task DeleteCloseToEvent()
+        {
+            var client = await TestUtils.Login("student2");
+            var response = await client.DeleteAsync("api/tickets/-8");
+
+            // Verify response - Bad request because the event is too close in time
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong status code. Expected: BadRequest. Received: " + response.ToString());
+        }
+
+        [Fact]
+        public async Task DeleteAnotherUsersTicket()
+        {
+            var client = await TestUtils.Login("student1");
+            var response = await client.DeleteAsync("api/tickets/-2");
+
+            // Verify response - Bad request because the user is not allowed to delete another users ticket
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong status code. Expected: BadRequest. Received: " + response.ToString());
+        }
+
+        [Fact]
+        public async Task DeleteNonExisting()
+        {
+            var client = await TestUtils.Login("student1");
+            var response = await client.DeleteAsync("api/tickets/-123");
+
+            // Verify response - Not found because the ticket of id -123 does not exist in the database
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.ToString());
+        }
+
+        [Fact]
+        public async Task PostTicketWrongEventIdAsAdmin()
         {
             var client = await TestUtils.Login("admin");
 
@@ -398,14 +448,16 @@ namespace Nexpo.Tests.Controllers
                 { "photook", true },
                 { "userid", -4 }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets/add", payload);
 
+            // Verify response - Not Found because event of id -123 does not exist in database
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response.ToString());
         }
 
         [Fact]
-        public async Task AdminPostDublicateTicketToUser()
+        public async Task PostDuplicateTicketToUserAsAdmin()
         {
             var client = await TestUtils.Login("admin");
 
@@ -416,14 +468,16 @@ namespace Nexpo.Tests.Controllers
                 { "photook", true },
                 { "userid", -4 }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets/add", payload);
 
+            // Verify response - Conflict because user -4 already has a ticket for event -1
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Conflict), "Wrong status code. Expected: Conflict. Received: " + response.ToString());
         }
 
         [Fact]
-        public async Task StudentPostTicketWrongRoute()
+        public async Task PostWrongPathAsStudent()
         {
             var client = await TestUtils.Login("student2");
 
@@ -446,6 +500,7 @@ namespace Nexpo.Tests.Controllers
             var client =  await TestUtils.Login("student1");
             var response = await client.DeleteAsync("api/tickets/-1");
 
+            // Verify response - Forbidden because ticket is consumed and user can not delete consumed tickets
             Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong status code. Expected: BadRequest. Received: " + response.ToString());
         }
 
@@ -457,6 +512,7 @@ namespace Nexpo.Tests.Controllers
             {
                 { "isConsumed", true }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/tickets/-2", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
@@ -466,6 +522,7 @@ namespace Nexpo.Tests.Controllers
             {
                 { "isConsumed", false }
             };
+
             var payload2 = new StringContent(json2.ToString(), Encoding.UTF8, "application/json");
             var response2 = await client.PutAsync("api/tickets/-2", payload2);
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
@@ -476,24 +533,6 @@ namespace Nexpo.Tests.Controllers
             
             var responseObject2 = JsonConvert.DeserializeObject<Ticket>(await response2.Content.ReadAsStringAsync());
             Assert.True(!responseObject2.isConsumed, "Wrong isConsumed value. Expected: false. Received: " + responseObject2.isConsumed.ToString());
-        }
-
-        [Fact]
-        public async Task GetTicketIdAndGuidReturnSameTicket()
-        {
-            var client = await TestUtils.Login("admin");
-            var response = await client.GetAsync("/api/tickets/id/-1");
-            var responseObject = JsonConvert.DeserializeObject<Ticket>(await response.Content.ReadAsStringAsync());
-            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
-
-            var response2 = await client.GetAsync("/api/tickets/" + responseObject.Code);
-            var responseObject2 = JsonConvert.DeserializeObject<Ticket>(await response2.Content.ReadAsStringAsync());
-            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
-
-            Assert.True(responseObject.Id == responseObject2.Id, "Mismatch in ticket id. Recieved: " + responseObject.Id.ToString() + " & " + responseObject2.ToString());
-            Assert.True(responseObject.PhotoOk && responseObject2.PhotoOk, "Mismatch in PhotoOk value. Recieved: " + responseObject.PhotoOk.ToString() + " & " + responseObject2.PhotoOk.ToString());
-            Assert.True(responseObject.EventId == responseObject2.EventId, "Mismatch in event id. Recieved: " + responseObject.EventId.ToString() + " & " + responseObject2.EventId.ToString());
-            Assert.True(responseObject.UserId == responseObject2.UserId, "Mismatch in user id. Recieved: " + responseObject.UserId.ToString() + " & " + responseObject2.UserId.ToString());
         }
     }
 }

@@ -35,19 +35,24 @@ namespace Nexpo.Repositories
 
         public async Task<bool> TicketExists(int eventId, int userId)
         {
-            return await _context.Tickets.AnyAsync(t => t.EventId == eventId && t.UserId == userId);
+            return await _context.Tickets.AnyAsync(timeslot => timeslot.EventId == eventId && timeslot.UserId == userId);
         }
 
         public async Task<IEnumerable<Ticket>> GetAllForUser(int userId)
         {
-            return await _context.Tickets.Include(t => t.Event).Where(t => t.UserId == userId)
-                .OrderBy(t => t.Event.Date).ThenBy(t => t.Event.Start).ToListAsync();
+            return await    _context.Tickets.Include(ticket => ticket.Event)
+                                            .Where(ticket => ticket.UserId == userId)
+                                            .OrderBy(ticket => ticket.Event.Date)
+                                            .ThenBy(ticket => ticket.Event.Start)
+                                            .ToListAsync();
         }
 
         public async Task<IEnumerable<Ticket>> GetAllForEvent(int eventId)
         {
-            return await _context.Tickets.Where(t => t.EventId == eventId)
-                .OrderBy(t => t.User.FirstName).ThenBy(t => t.User.LastName).ToListAsync();
+            return await    _context.Tickets.Where(ticket => ticket.EventId == eventId)
+                                            .OrderBy(ticket => ticket.User.FirstName)
+                                            .ThenBy(ticket => ticket.User.LastName)
+                                            .ToListAsync();
         }
 
         public async Task<EventType> GetEventType(int ticketId)
@@ -58,12 +63,16 @@ namespace Nexpo.Repositories
 
         public async Task<Ticket> Get(int id)
         {
-            return await _context.Tickets.Include(t => t.Event).Where(t => t.Id == id).FirstOrDefaultAsync();
+            return await    _context.Tickets.Include(ticket => ticket.Event)
+                                            .Where(ticket => ticket.Id == id)
+                                            .FirstOrDefaultAsync();
         }
 
         public async Task<Ticket> GetByCode(Guid code)
         {
-            return await _context.Tickets.Include(t => t.Event).Where(t => t.Code == code).FirstOrDefaultAsync();
+            return await    _context.Tickets.Include(ticket => ticket.Event)
+                                            .Where(ticket => ticket.Code == code)
+                                            .FirstOrDefaultAsync();
         }
 
         public async Task<bool> Add(Ticket ticket)
@@ -73,13 +82,15 @@ namespace Nexpo.Repositories
                 var _event = await _eventRepo.Get(ticket.EventId);
                 
                 // Don't add ticket if limit is reached
-                if (_event.TicketCount >= _event.Capacity) {
+                if (_event.TicketCount >= _event.Capacity) 
+                {
                     return false;
                 }
                 
                 _context.Tickets.Add(ticket);
                 await _context.SaveChangesAsync();
                 dbContextTransaction.Commit();
+                
                 return true;
             }
         }

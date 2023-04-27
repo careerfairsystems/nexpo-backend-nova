@@ -15,6 +15,7 @@ namespace Nexpo.Models
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
         public DbSet<StudentSessionApplication> StudentSessionApplications { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
 
         private readonly PasswordService _passwordService;
 
@@ -71,7 +72,7 @@ namespace Nexpo.Models
             var user8 = new User { Id = -8, Email = "rep1@company3.example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyRepresentative, FirstName = "Delta", LastName = "Rep", CompanyId = company3.Id.Value };
             var user9 = new User { Id = -9, Email = "rep1@company4.example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyRepresentative, FirstName = "Epsilon", LastName = "Rep", CompanyId = company4.Id.Value };
             
-            var user10 = new User { Id = -10, Email = "volenteer@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.Volunteer, FirstName = "Alpha", LastName = "Volenteer" };
+            var user10 = new User { Id = -10, Email = "volunteer@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.Volunteer, FirstName = "Alpha", LastName = "Volunteer" };
             Users.AddRange(user1, user2, user3, user4, user5, user6, user7, user8, user9, user10);
             SaveChanges();
 
@@ -140,6 +141,14 @@ namespace Nexpo.Models
             StudentSessionApplications.AddRange(application1, application2, application3, application4, application5, application6, application7);
             SaveChanges();
 
+            // Contacts
+            var contact1 = new Contact { Id = -1, FirstName = "PL", LastName = "Pappa", RoleInArkad = "Project Leader", Email = "contact1@example.com", PhoneNumber = "001-111 11 11" };
+            var contact2 = new Contact { Id = -2, FirstName = "Head", LastName = "Van IT", RoleInArkad = "Head of IT", Email = "contact2@example.com", PhoneNumber = "002-222 22 22" };
+            var contact3 = new Contact { Id = -3, FirstName = "Front", LastName = "End", RoleInArkad = "Frontend Manager", Email = "contact3@example.com", PhoneNumber = "003-333 33 33" };
+            var contact4 = new Contact { Id = -4, FirstName = "Back", LastName = "End", RoleInArkad = "Backend Manager", Email = "contact4@example.com", PhoneNumber = "004-444 44 44" };
+            Contacts.AddRange(contact1, contact2, contact3, contact4);
+            SaveChanges();
+            
         }
     }
 }

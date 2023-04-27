@@ -30,7 +30,7 @@ namespace Nexpo.Repositories
 
         public async Task<Student> Get(int id)
         {
-            return await _context.Students.Where(s => s.Id == id).FirstOrDefaultAsync();
+            return await _context.Students.Where(student => student.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task Add(Student student)
@@ -42,7 +42,7 @@ namespace Nexpo.Repositories
         public async Task Update(Student student)
         {
             _context.Entry(student).State = EntityState.Modified;
-             await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task Remove(Student student)
