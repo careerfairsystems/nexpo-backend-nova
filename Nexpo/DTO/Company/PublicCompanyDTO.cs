@@ -22,6 +22,8 @@ namespace Nexpo.DTO
 
         public string Website { get; set; }
 
+        public List<int> DaysAtArkad { get; set;}
+
         public List<int> DesiredDegrees { get; set;}
 
         public List<int> DesiredProgramme { get; set;}

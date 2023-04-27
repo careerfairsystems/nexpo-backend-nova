@@ -38,6 +38,7 @@ namespace Nexpo.Controllers
                 DidYouKnow               = company.DidYouKnow,
                 Website                  = company.Website,
                 LogoUrl                  = company.LogoUrl,
+                DaysAtArkad              = company.DaysAtArkad,
                 DesiredDegrees           = company.DesiredDegrees,
                 DesiredProgramme         = company.DesiredProgramme,
                 Positions                = company.Positions,
@@ -70,6 +71,7 @@ namespace Nexpo.Controllers
                 DidYouKnow               = company.DidYouKnow,
                 Website                  = company.Website,
                 LogoUrl                  = company.LogoUrl,
+                DaysAtArkad              = company.DaysAtArkad,
                 DesiredDegrees           = company.DesiredDegrees,
                 DesiredProgramme         = company.DesiredProgramme,
                 Positions                = company.Positions,
@@ -93,6 +95,11 @@ namespace Nexpo.Controllers
             if (company == null)
             {
                 return NotFound();
+            }
+
+            if (!(DTO.DaysAtArkad.Any() || DTO.DaysAtArkad == null))
+            {
+                company.DaysAtArkad = DTO.DaysAtArkad;
             }
 
             if (!string.IsNullOrEmpty(DTO.Description))
@@ -154,6 +161,11 @@ namespace Nexpo.Controllers
             var companyId = HttpContext.User.GetCompanyId().Value;
             var company = await _companyRepo.Get(companyId);
 
+            if (!(DTO.DaysAtArkad.Any() || DTO.DaysAtArkad == null))
+            {
+                company.DaysAtArkad = DTO.DaysAtArkad;
+            }
+
             if (!string.IsNullOrEmpty(DTO.Description))
             {
                 company.Description = DTO.Description;
@@ -186,6 +198,7 @@ namespace Nexpo.Controllers
                 DidYouKnow               = DTO.DidYouKnow,
                 LogoUrl                  = DTO.LogoUrl,
                 Website                  = DTO.Website,
+                DaysAtArkad              = DTO.DaysAtArkad,
                 DesiredDegrees           = DTO.DesiredDegrees,
                 DesiredProgramme         = DTO.DesiredProgramme,
                 Positions                = DTO.Positions,

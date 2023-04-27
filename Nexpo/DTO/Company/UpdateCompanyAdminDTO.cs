@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace Nexpo.DTO
 {
     /// <summary>
@@ -9,6 +11,8 @@ namespace Nexpo.DTO
     /// </remarks>
     public class UpdateCompanyAdminDTO
     {
+        public List<int> DaysAtArkad { get; set;}
+        
         public string Description { get; set; }
 
         public string DidYouKnow { get; set; }
