@@ -38,6 +38,10 @@ namespace Nexpo.Tests.Controllers
             Assert.True(company.Description.Equals("We have friends in common"), "Wrong description. Received: " + company.Description);
             Assert.True(company.DidYouKnow.Equals("Mark zuckerburg is an Alien"), "Wrong DidYouKnow. Received: " + company.DidYouKnow);
 
+            Assert.True(company.DaysAtArkad.Count == 2, "Wrong, Received: " + company.DaysAtArkad.Count);
+            Assert.True(company.DaysAtArkad.Contains(DateTime.Parse("2023-01-01")), "Wrong, Received: " + company.DaysAtArkad[0]);
+            Assert.True(company.DaysAtArkad.Contains(DateTime.Parse("2023-01-02")), "Wrong, Received: " + company.DaysAtArkad[1]);
+
             Assert.True(company.DesiredDegrees.Contains((int) Degree.PhD), "Missing Desired Degree. Expected: PhD. Received: " + company.DesiredDegrees.ToString());
             Assert.True(company.DesiredDegrees.Contains((int)Degree.Master), "Missing Desired Degree. Expected: Master. Received: " + company.DesiredDegrees.ToString());
             Assert.True(company.DesiredDegrees.Count == 2, "Wrong number of Desired Degrees. Expected: 2. Received: " + company.DesiredDegrees.Count);
@@ -53,6 +57,16 @@ namespace Nexpo.Tests.Controllers
             Assert.True(company.Positions.Contains((int)Position.Thesis), "Missing Position. Expected: Thesis. Received: " + company.Positions.ToString());
             Assert.True(company.Positions.Contains((int)Position.TraineeEmployment), "Missing Industry. Expected: TrainingEmployment. Received: " + company.Positions.ToString());
             Assert.True(company.Positions.Count == 2, "Wrong number of Positions. Expected: 2. Received: " + company.Positions.Count);
+       
+            var company2 = responseList.Find(r => r.Id == -1);
+            Assert.True(company2.DaysAtArkad.Count == 3, "Wrong, Received: " + company2.DaysAtArkad.Count);
+            Assert.True(company2.DaysAtArkad.Contains(DateTime.Parse("2023-01-01")), "Wrong, Received: " + company2.DaysAtArkad[0]);
+            Assert.True(company2.DaysAtArkad.Contains(DateTime.Parse("2023-02-02")), "Wrong, Received: " + company2.DaysAtArkad[1]);
+            Assert.True(company2.DaysAtArkad.Contains(DateTime.Parse("2023-03-03")), "Wrong, Received: " + company2.DaysAtArkad[2]);
+       
+            var company3 = responseList.Find(r => r.Id == -2);
+            Assert.True(company3.DaysAtArkad.Count == 1, "Wrong, Received: " + company3.DaysAtArkad.Count);
+            Assert.True(company3.DaysAtArkad.Contains(DateTime.Parse("2023-01-01")), "Wrong, Received: " + company3.DaysAtArkad[0]);
         }
 
         [Fact]
@@ -75,8 +89,8 @@ namespace Nexpo.Tests.Controllers
             Assert.True(company.DidYouKnow.Equals("Mark zuckerburg is an Alien"), "Wrong DidYouKnow. Received: " + company.DidYouKnow);
 
             Assert.True(company.DaysAtArkad.Count == 2, "Wrong, Received: " + company.DaysAtArkad.Count);
-            Assert.True(company.DaysAtArkad.Contains(DateTime.Parse("2023-01-01 00:00")), "Wrong, Received: " + company.DaysAtArkad[0]);
-            Assert.True(company.DaysAtArkad.Contains(DateTime.Parse("2023-01-02 00:00")), "Wrong, Received: " + company.DaysAtArkad[1]);
+            Assert.True(company.DaysAtArkad.Contains(DateTime.Parse("2023-01-01")), "Wrong, Received: " + company.DaysAtArkad[0]);
+            Assert.True(company.DaysAtArkad.Contains(DateTime.Parse("2023-01-02")), "Wrong, Received: " + company.DaysAtArkad[1]);
 
 
             Assert.True(company.DesiredDegrees.Contains((int)Degree.PhD), "Missing Desired Degree. Expected: PhD. Received: " + company.DesiredDegrees.ToString());
@@ -128,10 +142,10 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.DidYouKnow.Equals("Apples"), "Wrong DidYouKnow. Received: " + responseObject.DidYouKnow);
             
             
-            Assert.True(responseObject.DaysAtArkad.Count == 2, "Wrong, Received: " + responseObject.DaysAtArkad.Count);
-            Assert.True(responseObject.DaysAtArkad.Contains(DateTime.Parse("2023-01-01 00:00")), "Wrong, Received: " + responseObject.DaysAtArkad[0]);
-            Assert.True(responseObject.DaysAtArkad.Contains(DateTime.Parse("2023-01-02 00:00")), "Wrong, Received: " + responseObject.DaysAtArkad[1]);
-      
+            Assert.True(responseObject.DaysAtArkad.Count == 3, "Wrong, Received: " + responseObject.DaysAtArkad.Count);
+            Assert.True(responseObject.DaysAtArkad.Contains(DateTime.Parse("2023-01-01")), "Wrong, Received: " + responseObject.DaysAtArkad[0]);
+            Assert.True(responseObject.DaysAtArkad.Contains(DateTime.Parse("2023-02-02")), "Wrong, Received: " + responseObject.DaysAtArkad[1]);
+            Assert.True(responseObject.DaysAtArkad.Contains(DateTime.Parse("2023-03-03")), "Wrong, Received: " + responseObject.DaysAtArkad[2]);
       
         }
 
@@ -334,6 +348,3 @@ namespace Nexpo.Tests.Controllers
         }
     }
 }
-
-//               { "start", DateTime.Parse("2021-11-15 12:45") },
-//               { "end", DateTime.Parse("2021-11-15 13:15") },
