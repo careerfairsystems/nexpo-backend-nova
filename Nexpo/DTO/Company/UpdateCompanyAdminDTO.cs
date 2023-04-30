@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using System.Collections.Generic;
 
 namespace Nexpo.DTO
@@ -10,9 +10,7 @@ namespace Nexpo.DTO
     /// This DTO is used when updating a company by a admin
     /// </remarks>
     public class UpdateCompanyAdminDTO
-    {
-        public List<int> DaysAtArkad { get; set;}
-        
+    {        
         public string Description { get; set; }
 
         public string DidYouKnow { get; set; }
@@ -24,7 +22,9 @@ namespace Nexpo.DTO
         public string HostEmail { get; set; }
 
         public string HostPhone { get; set; }
-        
+
         public string StudentSessionMotivation { get; set; }
+
+        public List<DateTime> DaysAtArkad { get; set;}
     }
 }

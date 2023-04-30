@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Nexpo.Migrations
@@ -7,10 +8,10 @@ namespace Nexpo.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<List<int>>(
+            migrationBuilder.AddColumn<List<DateTime>>(
                 name: "DaysAtArkad",
                 table: "Companies",
-                type: "integer[]",
+                type: "timestamp without time zone[]",
                 nullable: true);
         }
 

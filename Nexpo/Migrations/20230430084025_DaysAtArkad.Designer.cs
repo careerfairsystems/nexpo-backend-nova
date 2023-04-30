@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230427195514_DaysAtArkad")]
+    [Migration("20230430084025_DaysAtArkad")]
     partial class DaysAtArkad
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,8 +29,8 @@ namespace Nexpo.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<List<int>>("DaysAtArkad")
-                        .HasColumnType("integer[]");
+                    b.Property<List<DateTime>>("DaysAtArkad")
+                        .HasColumnType("timestamp without time zone[]");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");

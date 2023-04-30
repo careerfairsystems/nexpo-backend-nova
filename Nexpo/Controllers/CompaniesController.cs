@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -97,11 +98,6 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if (!(DTO.DaysAtArkad.Any() || DTO.DaysAtArkad == null))
-            {
-                company.DaysAtArkad = DTO.DaysAtArkad;
-            }
-
             if (!string.IsNullOrEmpty(DTO.Description))
             {
                 company.Description = DTO.Description;
@@ -130,6 +126,12 @@ namespace Nexpo.Controllers
             {
                 company.StudentSessionMotivation = DTO.StudentSessionMotivation;
             }
+            
+            if (DTO.DaysAtArkad != null)
+            {
+                company.DaysAtArkad = new List<DateTime>(DTO.DaysAtArkad);
+            }
+
             await _companyRepo.Update(company);
 
             return Ok(company);
@@ -161,11 +163,6 @@ namespace Nexpo.Controllers
             var companyId = HttpContext.User.GetCompanyId().Value;
             var company = await _companyRepo.Get(companyId);
 
-            if (!(DTO.DaysAtArkad.Any() || DTO.DaysAtArkad == null))
-            {
-                company.DaysAtArkad = DTO.DaysAtArkad;
-            }
-
             if (!string.IsNullOrEmpty(DTO.Description))
             {
                 company.Description = DTO.Description;
@@ -178,6 +175,12 @@ namespace Nexpo.Controllers
             {
                 company.Website = DTO.Website;
             }
+
+            if (DTO.DaysAtArkad != null)
+            {
+                company.DaysAtArkad = new List<DateTime>(DTO.DaysAtArkad);
+            }
+
             await _companyRepo.Update(company);
 
             return Ok(company);
@@ -231,6 +234,7 @@ namespace Nexpo.Controllers
             await _companyRepo.Remove(company);
             return Ok();
         }
+
     }
 }
 

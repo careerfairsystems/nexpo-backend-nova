@@ -27,8 +27,8 @@ namespace Nexpo.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<List<int>>("DaysAtArkad")
-                        .HasColumnType("integer[]");
+                    b.Property<List<DateTime>>("DaysAtArkad")
+                        .HasColumnType("timestamp without time zone[]");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
