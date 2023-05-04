@@ -23,9 +23,9 @@ namespace Nexpo.Controllers
         private readonly IEmailService _emailService;
 
         public SessionController(
-            IUserRepository iUserRepo, 
-            IStudentRepository iStudentRepo, 
-            ICompanyRepository iCompanyRepo, 
+            IUserRepository iUserRepo,
+            IStudentRepository iStudentRepo,
+            ICompanyRepository iCompanyRepo,
             PasswordService passwordService,
             TokenService tokenService,
             IEmailService iEmailService)
