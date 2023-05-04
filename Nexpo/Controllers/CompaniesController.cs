@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -38,6 +39,7 @@ namespace Nexpo.Controllers
                 DidYouKnow               = company.DidYouKnow,
                 Website                  = company.Website,
                 LogoUrl                  = company.LogoUrl,
+                DaysAtArkad              = company.DaysAtArkad,
                 DesiredDegrees           = company.DesiredDegrees,
                 DesiredProgramme         = company.DesiredProgramme,
                 Positions                = company.Positions,
@@ -70,6 +72,7 @@ namespace Nexpo.Controllers
                 DidYouKnow               = company.DidYouKnow,
                 Website                  = company.Website,
                 LogoUrl                  = company.LogoUrl,
+                DaysAtArkad              = company.DaysAtArkad,
                 DesiredDegrees           = company.DesiredDegrees,
                 DesiredProgramme         = company.DesiredProgramme,
                 Positions                = company.Positions,
@@ -123,6 +126,12 @@ namespace Nexpo.Controllers
             {
                 company.StudentSessionMotivation = DTO.StudentSessionMotivation;
             }
+            
+            if (DTO.DaysAtArkad != null)
+            {
+                company.DaysAtArkad = new List<DateTime>(DTO.DaysAtArkad);
+            }
+
             await _companyRepo.Update(company);
 
             return Ok(company);
@@ -166,6 +175,12 @@ namespace Nexpo.Controllers
             {
                 company.Website = DTO.Website;
             }
+
+            if (DTO.DaysAtArkad != null)
+            {
+                company.DaysAtArkad = new List<DateTime>(DTO.DaysAtArkad);
+            }
+
             await _companyRepo.Update(company);
 
             return Ok(company);
@@ -186,6 +201,7 @@ namespace Nexpo.Controllers
                 DidYouKnow               = DTO.DidYouKnow,
                 LogoUrl                  = DTO.LogoUrl,
                 Website                  = DTO.Website,
+                DaysAtArkad              = DTO.DaysAtArkad,
                 DesiredDegrees           = DTO.DesiredDegrees,
                 DesiredProgramme         = DTO.DesiredProgramme,
                 Positions                = DTO.Positions,
@@ -218,6 +234,7 @@ namespace Nexpo.Controllers
             await _companyRepo.Remove(company);
             return Ok();
         }
+
     }
 }
 
