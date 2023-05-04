@@ -17,32 +17,41 @@ namespace Nexpo.Repositories
 
 
     public class FAQRepository : IFAQRepository
+
     {
         private readonly ApplicationDbContext _context;
-        public Task Add(FrequentAskedQuestion question)
+
+        public FAQRepository(ApplicationDbContext context)
         {
-            _context.FrequentAskedQuestion.add(question);
+            _context = context;
+        }
+
+        public async Task Add(FrequentAskedQuestion question)
+        {
+            _context.FrequentAskedQuestion.Add(question);
+            await _context.SaveChangesAsync();
         }
 
         public Task<FrequentAskedQuestion> Get(int id)
         {
-            return _context.FrequentAskedQuestion.Where(faq => faq.Id == id).FirstOrDefaultAsync();
+            return _context.FrequentAskedQuestion.Where(q => q.Id == id).FirstOrDefaultAsync();
         }
 
         public Task Remove(FrequentAskedQuestion question)
         {
-            _context.FrequentAskedQuestion.Remove(question);
+            _context.Remove(question);
+            return _context.SaveChangesAsync();
         }
-        public Task Update(FrequentAskedQuestion question)
-        {
-            _context.Entry(question).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-        }
-
-        public Task<IEnumerable<FrequentAskedQuestion> GetAll()
+        public async Task<IEnumerable<FrequentAskedQuestion>> GetAll()
         {
             var question = await _context.FrequentAskedQuestion.OrderBy(q => q.Id).ToListAsync();
             return question;
         }
-}
+        public async Task Update(FrequentAskedQuestion question)
+        {
+            _context.Entry(question).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+    }
+
 }
