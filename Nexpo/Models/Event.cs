@@ -16,6 +16,10 @@ namespace Nexpo.Models
         [Required]
         public string Name { get; set; }
 
+        // Either "company event", "lunch", "banquet"
+        [Required]
+        public EventType Type { get; set; }
+
         [Required]
         public string Description { get; set; }
 
@@ -46,5 +50,13 @@ namespace Nexpo.Models
         [NotMapped]
         public int TicketCount { get; set; }
     }
+
+        public enum EventType
+    {
+        CompanyEvent,
+        Lunch,
+        Banquet
+    }
+
 }
 

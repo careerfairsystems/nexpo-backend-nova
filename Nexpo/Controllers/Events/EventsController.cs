@@ -127,6 +127,8 @@ namespace Nexpo.Controllers
             if(!string.IsNullOrEmpty(DTO.Language)){
                 _event.Language = DTO.Language; 
             }
+            if(DTO.Type.HasValue){
+                _event.Type = (EventType)DTO.Type;              }
             if(DTO.Capacity != 0){
                 _event.Capacity = DTO.Capacity; 
             }

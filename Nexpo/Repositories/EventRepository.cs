@@ -53,6 +53,7 @@ namespace Nexpo.Repositories
                                         {
                                             Id = _event.Id,
                                             Name = _event.Name,
+                                            Type = _event.Type,
                                             Description = _event.Description,
                                             Date = _event.Date,
                                             Start = _event.Start,
