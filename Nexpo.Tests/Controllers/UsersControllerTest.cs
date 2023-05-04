@@ -53,10 +53,10 @@ namespace Nexpo.Tests.Controllers
             //Extract the content of the response and deserialize it to a User object
             var serializedUser = await response.Content.ReadAsStringAsync();
             var user = JsonConvert.DeserializeObject<User>(serializedUser);
-            
+
             //Check that the role of the user is now Volunteer
             Assert.True(
-                user.Role.Equals(Role.Volunteer), 
+                user.Role.Equals(Role.Volunteer),
                 "Wrong role. Expected: CompanyRepresentative. Received: " + user.Role.ToString()
             );
 
@@ -74,20 +74,21 @@ namespace Nexpo.Tests.Controllers
 
             var response2 = await client.PutAsync("api/users/-5", payload2);
             Assert.True(
-                response2.StatusCode.Equals(HttpStatusCode.OK), 
+                response2.StatusCode.Equals(HttpStatusCode.OK),
                 "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString()
             );
 
             var user2 = JsonConvert.DeserializeObject<User>(await response2.Content.ReadAsStringAsync());
             Assert.True(
-                user2.Role.Equals(Role.CompanyRepresentative), 
+                user2.Role.Equals(Role.CompanyRepresentative),
                 "Wrong role. Expected: CompanyRepresentative. Received: " + user2.Role.ToString()
             );
 
         }
 
         [Fact]
-        public async Task AdminChangeNonExistingUserRole(){
+        public async Task AdminChangeNonExistingUserRole()
+        {
             var client = await TestUtils.Login("admin");
             var updateRoleDto = new UpdateUserDTO
             {
@@ -106,7 +107,8 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task NonAdminChangeRole(){
+        public async Task NonAdminChangeRole()
+        {
             var client = await TestUtils.Login("student1");
             var updateRoleDto = new UpdateUserDTO
             {
@@ -123,7 +125,7 @@ namespace Nexpo.Tests.Controllers
                 "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString()
             );
         }
-        
+
         [Fact]
         public async Task AdminGetAllUsers()
         {
@@ -136,8 +138,8 @@ namespace Nexpo.Tests.Controllers
             var userAdmin = responseList.Find(user => user.Id == -1);
             var userStudent = responseList.Find(user => user.Id == -2);
             var userRep = responseList.Find(user => user.Id == -5);
-            
-            Assert.True(responseList.Count == 10, "Wrong number of users. Expected: 10. Received: " + responseList.Count.ToString());
+
+            Assert.True(responseList.Count == 11, "Wrong number of users. Expected: 11. Received: " + responseList.Count.ToString());
             Assert.True(userAdmin.Role.Equals(Role.Administrator), "Wrong user role. Expected: admin. Received: " + userAdmin.Role.ToString());
             Assert.True(userStudent.FirstName.Equals("Alpha"), "Wrong user first name. Expected: Alpha. Received: " + userStudent.FirstName);
             Assert.True(userRep.CompanyId == -1, "Wrong company id. Expected: -1. Received: " + userRep.CompanyId.ToString());
@@ -215,7 +217,7 @@ namespace Nexpo.Tests.Controllers
         public async Task UpdateAsAdmin()
         {
             var application = new WebApplicationFactory<Program>();
-            var client =  await TestUtils.Login("admin");
+            var client = await TestUtils.Login("admin");
 
             var json = new JsonObject
             {
@@ -457,7 +459,7 @@ namespace Nexpo.Tests.Controllers
                 { "email", "rep1@company4.example.com" },
                 { "password", "password" }
             };
-            
+
             var testPayload = new StringContent(testJson.ToString(), Encoding.UTF8, "application/json");
             var testResponse = await testClient.PostAsync("/api/session/signin", testPayload);
 
@@ -545,7 +547,7 @@ namespace Nexpo.Tests.Controllers
             {
                 { "password", "newSuperSecretPassword" }
             };
-            
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PutAsync("api/users/me", payload);
 

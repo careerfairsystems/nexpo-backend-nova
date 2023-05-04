@@ -23,19 +23,19 @@ namespace Nexpo.Controllers
         private readonly IEmailService _emailService;
 
         public SessionController(
-            IUserRepository iUserRepo, 
-            IStudentRepository iStudentRepo, 
-            ICompanyRepository iCompanyRepo, 
+            IUserRepository iUserRepo,
+            IStudentRepository iStudentRepo,
+            ICompanyRepository iCompanyRepo,
             PasswordService passwordService,
             TokenService tokenService,
             IEmailService iEmailService)
         {
-            _userRepo        = iUserRepo;
-            _studentRepo     = iStudentRepo;
-            _companyRepo     = iCompanyRepo;
+            _userRepo = iUserRepo;
+            _studentRepo = iStudentRepo;
+            _companyRepo = iCompanyRepo;
             _passwordService = passwordService;
-            _tokenService    = tokenService;
-            _emailService    = iEmailService;
+            _tokenService = tokenService;
+            _emailService = iEmailService;
         }
 
         /// <summary>
@@ -84,6 +84,13 @@ namespace Nexpo.Controllers
             {
                 var volunteer = await _userRepo.Get(user.Id.Value);
                 claims.Add(new Claim(UserClaims.VolunteerId, volunteer.Id.ToString()));
+            }
+
+            if (user.Role == Role.CompanyHost)
+            {
+                // A CompanyHost is also a Volunteer
+                // TL;DR: This claim makes a CompanyHost authorized whenever [Authorize(Roles = nameof(Role.Volunteer))] is used
+                claims.Add(new Claim(UserClaims.Role, nameof(Role.Volunteer)));
             }
 
             var jwt = _tokenService.GenerateJWT(claims);
@@ -139,7 +146,7 @@ namespace Nexpo.Controllers
     public static class UserClaims
     {
         public static readonly string Id = nameof(Id);
-        public static readonly string Role = ClaimTypes.Role; 
+        public static readonly string Role = ClaimTypes.Role;
         public static readonly string CompanyId = nameof(CompanyId);
         public static readonly string StudentId = nameof(StudentId);
         public static readonly string VolunteerId = nameof(VolunteerId);

@@ -42,7 +42,7 @@ namespace Nexpo.Models
         Administrator,
         Student,
         CompanyRepresentative,
-        Volunteer
+        Volunteer,
+        CompanyHost,
     }
 }
-

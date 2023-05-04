@@ -38,6 +38,10 @@ namespace Nexpo.Tests.Controllers
                     json.Add("email", "volunteer@example.com");
                     json.Add("password", "password");
                     break;
+                case "companyHost":
+                    json.Add("email", "companyHost@example.com");
+                    json.Add("password", "password");
+                    break;
                 case "student1":
                     json.Add("email", "student1@example.com");
                     json.Add("password", "password");
@@ -71,7 +75,7 @@ namespace Nexpo.Tests.Controllers
                     json.Add("password", "password");
                     break;
                 default:
-                    return null; 
+                    return null;
             }
 
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
@@ -81,6 +85,6 @@ namespace Nexpo.Tests.Controllers
             token = "Bearer " + parser.Value<String>("token");
             client.DefaultRequestHeaders.Add("Authorization", token);
             return client;
-        } 
+        }
     }
 }
