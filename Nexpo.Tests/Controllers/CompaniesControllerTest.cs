@@ -224,6 +224,7 @@ namespace Nexpo.Tests.Controllers
 
             // Verify response
             Assert.True(responseObject == null, "Returned Object was not null. Received: " + responseText);
+
         }
 
         [Fact]
@@ -547,6 +548,35 @@ namespace Nexpo.Tests.Controllers
             Assert.True(company.DaysAtArkad.Contains(DateTime.Parse("2023-01-01")), "Wrong. Expected: True.  Received: " + company.DaysAtArkad.Contains(DateTime.Parse("2023-01-01")));
             Assert.True(company.DaysAtArkad.Contains(DateTime.Parse("2023-02-02")), "Wrong. Expected: True.  Received: " + company.DaysAtArkad.Contains(DateTime.Parse("2023-02-02")));
             Assert.True(company.DaysAtArkad.Contains(DateTime.Parse("2023-03-03")), "Wrong. Expected: True.  Received: " + company.DaysAtArkad.Contains(DateTime.Parse("2023-03-03")));
+        }
+
+
+        [Fact]
+        public async Task PutNotLoggedIn(){
+            var application = new WebApplicationFactory<Program>();
+
+            var client = application.CreateClient();
+       
+            var publicCompanyDTO = new PublicCompanyDTO
+            {
+                DaysAtArkad = new List<DateTime>()
+            };
+
+            var json = JsonConvert.SerializeObject(publicCompanyDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            var response = await client.PutAsync("/api/companies/-1", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong status code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
+
+
+            var updateCompanySelfDTO = new UpdateCompanySelfDTO
+            {
+                DaysAtArkad = new List<DateTime>()
+            };
+
+            var json2 = JsonConvert.SerializeObject(updateCompanySelfDTO);
+            var payload2 = new StringContent(json2, UnicodeEncoding.UTF8, "application/json");
+            var response2 = await client.PutAsync("/api/companies/-1", payload2);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong status code. Expected: Unauthorized. Received: " + response2.StatusCode.ToString());
         }
     }
 }
