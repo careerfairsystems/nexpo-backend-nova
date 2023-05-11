@@ -23,7 +23,7 @@ namespace Nexpo.Controllers
         public async Task<IActionResult> NotifyAll(NotificationDTO dto){
 
         }
-        {
+        
     }
     
 }
