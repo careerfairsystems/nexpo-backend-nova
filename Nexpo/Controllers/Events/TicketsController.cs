@@ -155,10 +155,7 @@ namespace Nexpo.Controllers
 
             ticket.isConsumed = DTO.isConsumed;
 
-            if (DTO.TakeAway != null)
-            {
-                ticket.TakeAway = DTO.TakeAway;
-            }
+            ticket.TakeAway = DTO.TakeAway;
 
             if (DTO.TakeAwayTime != null)
             {

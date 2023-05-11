@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230511170022_TakeAway")]
+    [Migration("20230511172853_TakeAway")]
     partial class TakeAway
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -271,7 +271,10 @@ namespace Nexpo.Migrations
                     b.Property<bool>("PhotoOk")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("TakeAway")
+                    b.Property<bool>("TakeAway")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TakeAwayTime")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")

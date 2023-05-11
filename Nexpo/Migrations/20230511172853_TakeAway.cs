@@ -8,8 +8,15 @@ namespace Nexpo.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<DateTime>(
+            migrationBuilder.AddColumn<bool>(
                 name: "TakeAway",
+                table: "Tickets",
+                type: "boolean",
+                nullable: false,
+                defaultValue: false);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "TakeAwayTime",
                 table: "Tickets",
                 type: "timestamp without time zone",
                 nullable: false,
@@ -33,6 +40,10 @@ namespace Nexpo.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "TakeAway",
+                table: "Tickets");
+
+            migrationBuilder.DropColumn(
+                name: "TakeAwayTime",
                 table: "Tickets");
 
             migrationBuilder.DropColumn(
