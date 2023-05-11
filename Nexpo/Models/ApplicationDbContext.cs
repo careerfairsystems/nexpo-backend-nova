@@ -74,9 +74,7 @@ namespace Nexpo.Models
 
             var user10 = new User { Id = -10, Email = "volunteer@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.Volunteer, FirstName = "Alpha", LastName = "Volunteer" };
 
-            var user11 = new User { Id = -11, Email = "companyHost@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyHost, FirstName = "Alpha", LastName = "CompanyHost" };
-
-
+            var user11 = new User { Id = -11, Email = "companyhost@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyHost, FirstName = "Alpha", LastName = "CompanyHost" };
             Users.AddRange(user1, user2, user3, user4, user5, user6, user7, user8, user9, user10, user11);
             SaveChanges();
 

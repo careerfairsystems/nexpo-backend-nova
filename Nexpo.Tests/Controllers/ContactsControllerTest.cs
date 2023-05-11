@@ -138,12 +138,38 @@ namespace Nexpo.Tests.Controllers
             // Make sure that CompanyHosts can access contacts, even though it's only explicitly authorized for Volunteers
 
             //Login as companyHost
-            var client = await TestUtils.Login("companyHost");
+            var client = await TestUtils.Login("companyhost");
 
             //Get contact and simply check status code
             var response = await client.GetAsync("/api/contacts/-3");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
+
+        [Fact]
+        public async Task companyHostPutContact()
+        {
+            //Login as companyHost
+            var client = await TestUtils.Login("companyhost");
+
+            var DTO = new CreateContactDTO()
+            {
+                FirstName = "Test",
+                LastName = "Testsson",
+                PhoneNumber = "123-456 78 90",
+                Email = "test.testsson@example.com",
+                RoleInArkad = "Tester"
+            };
+
+            //serialize json
+            var payload = new StringContent(DTO.ToString(), Encoding.UTF8, "application/json");
+
+            //Get contact and check status code
+            var response = await client.PutAsync("/api/contacts/add", payload);
+
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+
+        }
+        
 
         [Fact]
         public async Task nonAuthorizedGetContact()
