@@ -542,7 +542,7 @@ namespace Nexpo.Tests.Controllers
             var client =  await TestUtils.Login("me");
             var updateTicketDTO = new UpdateTicketDTO
             {
-                isConsumed = false,
+                isConsumed = true,
                 TakeAway = true,
                 TakeAwayTime = DateTime.Parse("2021-11-23 12:00")
             };
