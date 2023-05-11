@@ -539,7 +539,7 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task UpdateTakeAway()
         {
-            var client =  await TestUtils.Login("me");
+            var client =  await TestUtils.Login("admin");
             var updateTicketDTO = new UpdateTicketDTO
             {
                 isConsumed = true,
@@ -549,7 +549,7 @@ namespace Nexpo.Tests.Controllers
             var json = JsonConvert.SerializeObject(updateTicketDTO);
             var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
 
-            var response = await client.PutAsync("api/ticket/-1", payload);
+            var response = await client.PutAsync("api/tickets/-1", payload);
 
             //Assertions of response, meaning that check that the "put" request was successful
             Assert.True(

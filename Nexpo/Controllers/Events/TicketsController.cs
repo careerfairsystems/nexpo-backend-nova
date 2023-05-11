@@ -157,7 +157,7 @@ namespace Nexpo.Controllers
 
             ticket.TakeAway = DTO.TakeAway;
 
-            if (DTO.TakeAwayTime != null)
+            if (DTO.TakeAwayTime != null && ticket.TakeAway)
             {
                 ticket.TakeAwayTime = DTO.TakeAwayTime;
             }
