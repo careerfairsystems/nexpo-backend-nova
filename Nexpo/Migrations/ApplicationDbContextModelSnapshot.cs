@@ -269,6 +269,9 @@ namespace Nexpo.Migrations
                     b.Property<bool>("PhotoOk")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime>("TakeAway")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 

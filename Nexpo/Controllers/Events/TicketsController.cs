@@ -152,7 +152,14 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> PutTicket(int id, UpdateTicketDTO DTO)
         {
             var ticket = await _ticketRepo.Get(id);
+
             ticket.isConsumed = DTO.isConsumed;
+
+            if (DTO.TakeAway != null)
+            {
+                ticket.TakeAway = DTO.TakeAway;
+            }
+
             await _ticketRepo.Update(ticket);
 
             return Ok(ticket);
