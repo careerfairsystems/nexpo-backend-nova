@@ -14,6 +14,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using Nexpo.AWS;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using AspNetCoreHero.ToastNotification.Notyf;
+
 
 
 namespace Nexpo
@@ -66,7 +69,10 @@ namespace Nexpo
                     IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(Config.SecretKey))
                 };
             });
-
+            
+            services.AddControllersWithViews();
+            services.AddRazorPages();
+            services.AddScoped<INotyfService, NotyfService>();
             services.AddScoped<IConfig>(_ => Config);
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
             services.AddScoped<IUserRepository, UserRepository>();
@@ -82,7 +88,6 @@ namespace Nexpo
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
-            services.AddScoped<NotifyService, NotifyService>();
             
             if (Environment.IsDevelopment())
             {

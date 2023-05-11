@@ -7,6 +7,7 @@ using Nexpo.DTO;
 using Nexpo.Models;
 using Nexpo.Repositories;
 using Nexpo.Services;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace Nexpo.Controllers
 {
@@ -15,11 +16,10 @@ namespace Nexpo.Controllers
     public class NotificationController : ControllerBase
     {
 
-        private readonly NotifyService _notifyService;
-
-        public NotificationController(NotifyService notifyService)
+        private readonly INotyfService _notyf;
+        public NotificationController(INotyfService notyf)
         {
-            _notifyService = notifyService;
+            _notyf = notyf;
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace Nexpo.Controllers
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
         public async Task<IActionResult> NotifyAll(NotificationDTO dto){
-            _notifyService.NotifyAll(dto);
+            _notyf.Custom(dto.Message, 5);
             return Ok();
 
         }
