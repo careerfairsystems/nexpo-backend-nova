@@ -9,6 +9,8 @@ using Xunit;
 using Newtonsoft.Json;
 using Nexpo.Models;
 using System.Collections.Generic;
+using Nexpo.DTO;
+using System;
 
 namespace Nexpo.Tests.Controllers
 {
@@ -533,6 +535,42 @@ namespace Nexpo.Tests.Controllers
             
             var responseObject2 = JsonConvert.DeserializeObject<Ticket>(await response2.Content.ReadAsStringAsync());
             Assert.True(!responseObject2.isConsumed, "Wrong isConsumed value. Expected: false. Received: " + responseObject2.isConsumed.ToString());
-        }
-    }
+        }  
+        [Fact]
+        public async Task UpdateTakeAway()
+        {
+            var client =  await TestUtils.Login("me");
+            var updateTicketDTO = new UpdateTicketDTO
+            {
+                isConsumed = false,
+                TakeAway = true,
+                TakeAwayTime = DateTime.Parse("2021-11-23 12:00")
+            };
+            var json = JsonConvert.SerializeObject(updateTicketDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+
+            var response = await client.PutAsync("api/ticket/-1", payload);
+
+            //Assertions of response, meaning that check that the "put" request was successful
+            Assert.True(
+                response.StatusCode.Equals(HttpStatusCode.OK),
+                "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString()
+            );
+
+            var serializedUser = await response.Content.ReadAsStringAsync();
+            var ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
+            
+            
+            Assert.True(
+                ticket.TakeAway.Equals(true), 
+                "Wrong takeAway status. Expected: True. Received: "+ ticket.TakeAway.ToString()
+            );
+            Assert.True(
+                ticket.TakeAwayTime.Equals(DateTime.Parse("2021-11-23 12:00")), 
+                "Wrong takeAwayTime. Expected: 2021-11-23 12:00 . Received: " + ticket.TakeAwayTime.ToString()
+            );
+
+        } 
+
+    } 
 }
