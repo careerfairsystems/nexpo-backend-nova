@@ -37,7 +37,7 @@ namespace Nexpo.Controllers
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> NotifyAll(NotificationDTO dto){
-            _notyf.Custom(dto.Message, 5);
+            _notyf.Information(dto.Message, 5);
             return Ok();
 
         }
