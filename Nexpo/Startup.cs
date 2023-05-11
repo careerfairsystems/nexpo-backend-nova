@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
 using Microsoft.OpenApi.Models;
 using Nexpo.Models;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +36,13 @@ namespace Nexpo
 
             services.AddControllers();
             services.AddSingleton<IS3Configuration, S3Config>();
-            services.AddScoped  <IAws3Services> (_ => new Aws3Services("AKIAX3BYI22ZD733TJZ3","Zz6i8UUK3FH003JjnvzqtQTjb7SMg9qxV2CSCfBK","eu-north-1","cvfiler")) ;
+            services.AddScoped  <IAws3Services> (_ => new Aws3Services("AKIAX3BYI22ZD733TJZ3","Zz6i8UUK3FH003JjnvzqtQTjb7SMg9qxV2CSCfBK","eu-north-1","cvfiler"));
+            services.AddNotyf(o =>
+            {
+                o.DurationInSeconds = 10;
+                o.IsDismissable = true;
+                o.HasRippleEffect = true;
+            });
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;

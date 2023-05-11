@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Nexpo.DTO;
 using Nexpo.Models;
 using Nexpo.Repositories;
+using Nexpo.Services;
 
 namespace Nexpo.Controllers
 {
@@ -13,6 +14,14 @@ namespace Nexpo.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
+
+        private readonly NotifyService _notifyService;
+
+        public NotificationController(NotifyService notifyService)
+        {
+            _notifyService = notifyService;
+        }
+
         /// <summary>
         /// The api that the admin can use to send notifications to all users
         /// </summary>
