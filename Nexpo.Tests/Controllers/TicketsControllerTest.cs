@@ -537,16 +537,16 @@ namespace Nexpo.Tests.Controllers
             Assert.True(!responseObject2.isConsumed, "Wrong isConsumed value. Expected: false. Received: " + responseObject2.isConsumed.ToString());
         }  
 
-        
+
         [Fact]
         public async Task UpdateTakeAway()
         {
-            var client =  await TestUtils.Login("admin");
+            var client =  await TestUtils.Login("student1");
             var updateTicketDTO = new UpdateTicketDTO
             {
                 isConsumed = true,
                 TakeAway = true,
-                TakeAwayTime = DateTime.Parse("2021-11-23 12:00")
+                TakeAwayTime = DateTime.Parse("2023-05-11 12:00")
             };
             var json = JsonConvert.SerializeObject(updateTicketDTO);
             var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
@@ -568,11 +568,10 @@ namespace Nexpo.Tests.Controllers
                 "Wrong takeAway status. Expected: True. Received: "+ ticket.TakeAway.ToString()
             );
             Assert.True(
-                ticket.TakeAwayTime.Equals(DateTime.Parse("2021-11-23 12:00")), 
-                "Wrong takeAwayTime. Expected: 2021-11-23 12:00 . Received: " + ticket.TakeAwayTime.ToString()
+                ticket.TakeAwayTime.Equals(DateTime.Parse("2023-05-11 12:00")), 
+                "Wrong takeAwayTime. Expected: 2023-05-11 12:00 . Received: " + ticket.TakeAwayTime.ToString()
             );
 
         } 
-
     } 
 }

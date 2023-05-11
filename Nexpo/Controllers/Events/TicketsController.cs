@@ -155,13 +155,30 @@ namespace Nexpo.Controllers
 
             ticket.isConsumed = DTO.isConsumed;
 
-            ticket.TakeAway = DTO.TakeAway;
+            await _ticketRepo.Update(ticket);
 
-            if (DTO.TakeAwayTime != null && ticket.TakeAway)
+            return Ok(ticket);
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        [Authorize(Roles = nameof(Role.Student))]
+        [ProducesResponseType(typeof(Ticket), StatusCodes.Status200OK)]
+        public async Task<ActionResult> PutTakeAway(int id, UpdateTicketDTO DTO)
+        {
+            var ticket = await _ticketRepo.Get(id);
+
+            if (ticket.TakeAway && DTO.TakeAwayTime != null)
             {
+                ticket.TakeAway = DTO.TakeAway;
                 ticket.TakeAwayTime = DTO.TakeAwayTime;
             }
 
+            else if(!ticket.TakeAway) 
+            {
+                ticket.TakeAway = DTO.TakeAway;
+            }
+   
             await _ticketRepo.Update(ticket);
 
             return Ok(ticket);
