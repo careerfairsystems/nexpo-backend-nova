@@ -162,7 +162,6 @@ namespace Nexpo.Controllers
                 ticket.TakeAwayTime = DTO.TakeAwayTime;
             }
 
-
             await _ticketRepo.Update(ticket);
 
             return Ok(ticket);

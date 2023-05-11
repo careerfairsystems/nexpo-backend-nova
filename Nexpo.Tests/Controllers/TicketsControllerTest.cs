@@ -536,6 +536,8 @@ namespace Nexpo.Tests.Controllers
             var responseObject2 = JsonConvert.DeserializeObject<Ticket>(await response2.Content.ReadAsStringAsync());
             Assert.True(!responseObject2.isConsumed, "Wrong isConsumed value. Expected: false. Received: " + responseObject2.isConsumed.ToString());
         }  
+
+        
         [Fact]
         public async Task UpdateTakeAway()
         {
