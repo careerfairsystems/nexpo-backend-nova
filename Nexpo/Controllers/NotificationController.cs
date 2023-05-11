@@ -20,6 +20,7 @@ namespace Nexpo.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
+        //THIS CLASS REALLY NEEDS TO BE TESTED TO BE WORKING ON THE PHONE
 
         private readonly INotyfService _notyf;
         public NotificationController(INotyfService notyf)
@@ -33,7 +34,6 @@ namespace Nexpo.Controllers
         /// The api that the admin can use to send notifications to all users
         /// </summary>
         [HttpPut]
-        [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> NotifyAll(NotificationDTO dto){
@@ -65,7 +65,7 @@ namespace Nexpo.Controllers
         /// The api that the user can use to get the latest N notifications
         /// </summary>
         [HttpGet]
-        [Route("latest")]
+        [Route("latest/{N}")]
         [Authorize]
         [ProducesResponseType(typeof(IEnumerable<NotificationDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLatest(int N){
