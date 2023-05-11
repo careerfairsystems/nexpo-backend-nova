@@ -63,7 +63,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task AdminUpdateNonExistingRole(){
+        public async Task UpdateRoleNonExistingUserAsAdmin(){
             var client = await TestUtils.Login("admin");
             var updateRoleDto = new UpdateRoleDTO
             {
@@ -82,7 +82,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task NonAdminUpdateRole(){
+        public async Task UpdateRoleAsNonAdmin(){
             var client = await TestUtils.Login("student1");
             var updateRoleDto = new UpdateRoleDTO
             {
@@ -98,10 +98,26 @@ namespace Nexpo.Tests.Controllers
                 response.StatusCode.Equals(HttpStatusCode.Forbidden),
                 "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString()
             );
+
+            client = await TestUtils.Login("company1");
+            updateRoleDto = new UpdateRoleDTO
+            {
+                Role = Role.Volunteer
+            };
+
+            json = JsonConvert.SerializeObject(updateRoleDto);
+            payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+
+            response = await client.PutAsync("api/users/-5", payload);
+
+            Assert.True(
+                response.StatusCode.Equals(HttpStatusCode.Forbidden),
+                "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString()
+            );
         }
 
         [Fact]
-        public async Task UpdateUnautherized()
+        public async Task UpdateRoleAsUnautherized()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
