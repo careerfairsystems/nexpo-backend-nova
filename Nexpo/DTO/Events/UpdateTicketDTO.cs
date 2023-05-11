@@ -12,5 +12,6 @@ namespace Nexpo.DTO
         public bool isConsumed { set; get; }
 
         public DateTime TakeAway { get; set; }
+        public DateTime TakeAwayTime { get; set; }
     }
 }
