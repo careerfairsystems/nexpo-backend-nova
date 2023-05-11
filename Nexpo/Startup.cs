@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using Nexpo.AWS;
 
+
 namespace Nexpo
 {
     public class Startup
@@ -76,10 +77,12 @@ namespace Nexpo
             services.AddScoped<IStudentSessionTimeslotRepository, StudentSessionTimeslotRepository>();
             services.AddScoped<IStudentSessionApplicationRepository, StudentSessionApplicationRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
+            
 
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
+            services.AddScoped<NotifyService, NotifyService>();
             
             if (Environment.IsDevelopment())
             {
@@ -119,6 +122,7 @@ namespace Nexpo
                 dbContext.Database.Migrate();
                 dbContext.Seed();
             }
+            app.UseNotyf();
 
             app.UseRouting();
 

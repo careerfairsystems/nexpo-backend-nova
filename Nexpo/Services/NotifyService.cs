@@ -1,14 +1,36 @@
 using Nexpo.DTO;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
+using AspNetCoreHero.ToastNotification.Notyf;
+
+
 
 namespace Nexpo.Services
 {
     public class NotifyService
     {
-        public async Task NotifyAll(NotificationDTO dto)
+        protected readonly IConfig _config;
+        private readonly INotyfService _notyf;
+
+
+
+        NotifyService(IConfig iConfig, INotyfService notyf)
         {
-            throw new System.NotImplementedException();
+            _config = iConfig;
+            _notyf = notyf;
+
+            
         }
+
+        public void NotifyAll(NotificationDTO dto)
+        {
+            _notyf.Custom(dto.Message, 5);
+        }
+
+        // public async NotificationDTO GetPastNNotifications(int n)
+        // {
+            
+        // }
 
     }
 }
