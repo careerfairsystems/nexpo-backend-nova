@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
 
 using Nexpo.DTO;
 using Nexpo.Models;
@@ -33,7 +35,7 @@ namespace Nexpo.Controllers
         [HttpPut]
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
-        [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> NotifyAll(NotificationDTO dto){
             _notyf.Custom(dto.Message, 5);
             return Ok();
@@ -45,10 +47,18 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpGet]
         [Authorize]
-        [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<NotificationDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll(){
             var notifications = _notyf.GetNotifications();
-            return Ok(notifications);
+
+            var notificationDTOs = from notis in notifications
+                select new NotificationDTO{
+                    Message = notis.Message,
+
+                };
+
+
+            return Ok(notificationDTOs);
         }
 
         /// <summary>
@@ -57,7 +67,7 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("latest")]
         [Authorize]
-        [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<NotificationDTO>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLatest(int N){
             var notifications = _notyf.GetNotifications();
 
@@ -66,6 +76,12 @@ namespace Nexpo.Controllers
             }
 
             var latestN = notifications.TakeLast(N);
+
+            var notificationDTOs = from notis in latestN
+                select new NotificationDTO{
+                    Message = notis.Message,
+
+                };
 
             return Ok(latestN);
         }
