@@ -692,7 +692,7 @@ namespace Nexpo.Tests.Controllers
             // Try to update TakeAway to true without TakeAwayTime
             var updateTicketDTO = new UpdateTicketDTO
             {
-                isConsumed = false,
+                isConsumed = oldIsConsumed,
                 TakeAway = true,
             };
 
@@ -706,7 +706,7 @@ namespace Nexpo.Tests.Controllers
             var ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
         
             // Verify that TakeAway hasn't been changed
-            Assert.True(ticket.TakeAway.Equals(false), "Wrong takeAway status. Expected: False. Received: "+ ticket.TakeAway.ToString() + " " + updateTicketDTO.TakeAwayTime.Equals(default(DateTime)));
+            Assert.True(ticket.TakeAway.Equals(false), "Wrong takeAway status. Expected: False. Received: "+ ticket.TakeAway.ToString());
             Assert.True(ticket.TakeAwayTime.Equals(default(DateTime)), "Wrong takeAwayTime. Expected:  "+ default(DateTime) + "Received: " + ticket.TakeAwayTime.ToString());
 
             // Verify that nothing else has been changed
@@ -721,7 +721,7 @@ namespace Nexpo.Tests.Controllers
             // Try to update TakeAway and TakeAwayTime
             updateTicketDTO = new UpdateTicketDTO
             {
-                isConsumed = false,
+                isConsumed = oldIsConsumed,
                 TakeAway = true,
                 TakeAwayTime = DateTime.Parse("2023-12-12 12:00")
             };
@@ -750,7 +750,7 @@ namespace Nexpo.Tests.Controllers
             // Try to update TakeAway to false
             updateTicketDTO = new UpdateTicketDTO
             {
-                isConsumed = false,
+                isConsumed = oldIsConsumed,
                 TakeAway = false,
                 TakeAwayTime = DateTime.Parse("2022-10-10 10:00")
             };
@@ -794,7 +794,6 @@ namespace Nexpo.Tests.Controllers
             ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
 
             // Verify
-            //Assert.True(oldIsConsumed != ticket.isConsumed, "isConsumed: " + oldIsConsumed + " \n TakeAway: " + oldTakeAway + " \n TakeAwayTime: " + oldTakeAwayTime + " \n Id: " + oldId + " \n PhotoOk: " + oldPhotoOk + " \n EventId: " + oldEventId + " \n UserId: " + oldUserId);
             Assert.True(oldIsConsumed == ticket.isConsumed, "Wrong isConsumed. Expected: " + oldIsConsumed.ToString() + " Received: " + ticket.isConsumed.ToString());
             Assert.True(oldTakeAway == ticket.TakeAway, "Wrong TakeAway. Expected: " + oldTakeAway.ToString() + " Received: " + ticket.TakeAway.ToString());
             Assert.True(oldTakeAwayTime == ticket.TakeAwayTime, "Wrong TakeAwayTime. Expected: " + oldTakeAwayTime.ToString() + " Received: " + ticket.TakeAwayTime.ToString());
