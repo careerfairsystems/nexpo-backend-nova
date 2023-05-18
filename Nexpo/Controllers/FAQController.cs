@@ -21,7 +21,7 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Get a list of all contacts
+        /// Get a list of all FAQ
         /// </summary>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FrequentAskedQuestion>), StatusCodes.Status200OK)]
@@ -33,7 +33,7 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Get information about a single contact
+        /// Get information about a FAQ
         /// </summary>
         [HttpGet("{id}")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
@@ -52,7 +52,7 @@ namespace Nexpo.Controllers
 
 
         /// <summary>
-        /// Update a contats's information
+        /// Update FAQ
         /// </summary>
         [HttpPut]
         [Route("{id}")]
@@ -78,7 +78,7 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Create a new contact
+        /// Create a FAQ
         /// </summary>
         [HttpPost]
         [Route("add")]
@@ -100,7 +100,7 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Delete a contact
+        /// Delete a FAQ
         /// </summary>
         [HttpDelete]
         [Route("{id}")]
