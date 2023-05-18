@@ -15,34 +15,54 @@ namespace Nexpo.Tests.Controllers
     {
 
         [Fact]
-        public async Task GetAllContacts()
+        public async Task GetAll()
         {
 
         }
 
         [Fact]
-        public async Task GetContact()
+        public async Task Get()
         {
 
         }
 
         [Fact]
-        public async Task UpdateContact()
+        public async Task GetNonExisting()
         {
 
         }
 
         [Fact]
-        public async Task CreateContact()
+        public async Task GetUnautherized()
+        {
+
+        }
+
+
+        [Fact]
+        public async Task PostAsAdmin()
         {
 
         }
 
         [Fact]
-        public async Task DeleteContact()
+        public async Task PostUnautherized()
         {
 
         }
+
+        [Fact]
+        public async Task PostAndDeleteAsAdmin()
+        {
+
+        }
+
+        [Fact]
+        public async Task PostAndDeleteUnautherized()
+        {
+
+        }
+
 
     }
 }
