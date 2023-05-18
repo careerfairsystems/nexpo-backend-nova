@@ -31,17 +31,22 @@ namespace Nexpo.Tests.Controllers
             var client = application.CreateClient();
 
             // Get response
-            var response = await client.GetAsync("/api/companies/");
+            var response = await client.GetAsync("/api/FAQ");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong StatusCode. Expected: OK. Received: " + response.StatusCode.ToString());
 
             // Sample result
             var responseList = JsonConvert.DeserializeObject<List<FrequentAskedQuestion>>(await response.Content.ReadAsStringAsync());
+            var question = responseList.Find(r => r.Id == -1);
+            var question3 = responseList.Find(r => r.Id == -3);
             
             var numberOfQuestions = responseList.Count;
             Assert.True(numberOfQuestions == numberOfQuestions + 1, "Wrong number of question. Expected: " + (numberOfQuestions + 1) + ". Received: " + numberOfQuestions);
+            Assert.True(question.Question.Equals("Frequent Asked Question 1"), "Wrong question Expected:  Question 1 Received: " + question.Question);
+            Assert.True(question3.Question.Equals("Frequent Asked Question 2"), "Wrong question Expected:  Question 1 Received: " + question.Question);
             
-            // Verify result
-            
+            Assert.True(question.Id==(-1), "Wrong event id. Expected: -1. Received: " + question.Id);
+            Assert.True(question3.Id==(-2), "Wrong event id. Expected:-2. Received: " + question3.Id);
+    
         }
             
         
@@ -49,6 +54,15 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task Get()
         {
+            var client = await TestUtils.Login("admin");
+            var response = await client.GetAsync("/api/FAQ/-1");
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            var responseFAQ = JsonConvert.DeserializeObject<FrequentAskedQuestion>(await response.Content.ReadAsStringAsync());
+
+            Assert.True(responseFAQ.Id == -1, "Wrong question id. Expected: -1. Received: " + responseFAQ.Id.ToString());
+            Assert.True(responseFAQ.Question.Equals("Frequent Asked Question 1"), "Wrong question. Expected: Frequent Asked Question 1 Received: " + responseFAQ.Question.ToString());
 
         }
 
