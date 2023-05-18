@@ -7,7 +7,6 @@ namespace Nexpo.DTO
     /// </summary>
     public class UpdateFAQDTO
     {
-        public int Id { get; set; }
 
         public string Question { get; set; }
 

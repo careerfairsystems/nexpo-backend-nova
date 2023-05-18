@@ -67,12 +67,7 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if (dto.Id == null)
-            {
-                question.Id = dto.Id;
-            }
-
-            if (dto.Question == null)
+            if (dto.Question != null)
             {
                 question.Question = dto.Question;
             }
