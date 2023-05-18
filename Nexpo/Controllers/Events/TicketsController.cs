@@ -147,41 +147,40 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpPut]
         [Route("{id}")]
-        [Authorize(Roles = nameof(Role.Administrator))]
+        [Authorize]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status200OK)]
         public async Task<ActionResult> PutTicket(int id, UpdateTicketDTO DTO)
         {
             var ticket = await _ticketRepo.Get(id);
+            var userId = HttpContext.User.GetId();
+            var userRole = HttpContext.User.GetRole();
 
-            ticket.isConsumed = DTO.isConsumed;
-
-            await _ticketRepo.Update(ticket);
-
-            return Ok(ticket);
-        }
-
-        [HttpPut]
-        [Route("{id}")]
-        [Authorize(Roles = nameof(Role.Student))]
-        [ProducesResponseType(typeof(Ticket), StatusCodes.Status200OK)]
-        public async Task<ActionResult> PutTakeAway(int id, UpdateTicketDTO DTO)
-        {
-            var ticket = await _ticketRepo.Get(id);
-
-            if (ticket.TakeAway && DTO.TakeAwayTime != null)
+            if (ticket.UserId == userId || userRole == Role.Administrator)
             {
-                ticket.TakeAway = DTO.TakeAway;
-                ticket.TakeAwayTime = DTO.TakeAwayTime;
-            }
+                // Update both TakeAway and TakeAwayTime if TakeAway is true and TakeAwayTime is set
+                if (DTO.TakeAway && DTO.TakeAwayTime != default(DateTime))
+                {
+                    ticket.TakeAway = DTO.TakeAway;
+                    ticket.TakeAwayTime = DTO.TakeAwayTime;                    
+                }
 
-            else if(!ticket.TakeAway) 
-            {
-                ticket.TakeAway = DTO.TakeAway;
-            }
-   
-            await _ticketRepo.Update(ticket);
+                // Update TakeAway and set TakeAwayTime to default if TakeAway is false
+                else if(!DTO.TakeAway) 
+                {
+                    ticket.TakeAway = DTO.TakeAway;
+                    ticket.TakeAwayTime = default(DateTime);
+                }
 
-            return Ok(ticket);
+                // Only admin can update isConsumed
+                if(userRole == Role.Administrator)
+                {
+                    ticket.isConsumed = DTO.isConsumed;
+                }
+
+                await _ticketRepo.Update(ticket);
+                return Ok(ticket);
+            }
+            return Forbid();
         }
 
         /// <summary>

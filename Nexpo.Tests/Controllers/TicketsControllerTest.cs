@@ -539,39 +539,269 @@ namespace Nexpo.Tests.Controllers
 
 
         [Fact]
-        public async Task UpdateTakeAway()
+        public async Task UpdateTakeAwayAsStudent()
         {
             var client =  await TestUtils.Login("student1");
+
+            var responseOld = await client.GetAsync("/api/tickets/id/-1");
+            Assert.True(responseOld.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + responseOld.StatusCode.ToString());
+            var responseObject = JsonConvert.DeserializeObject<Ticket>(await responseOld.Content.ReadAsStringAsync());
+
+            // Save current values
+            var oldIsConsumed = responseObject.isConsumed;      // True
+            var oldTakeAway = responseObject.TakeAway;          // False
+            var oldTakeAwayTime = responseObject.TakeAwayTime;  // 1/1/0001 12:00:00 AM 
+            var oldId = responseObject.Id;                      // -1
+            var oldPhotoOk = responseObject.PhotoOk;            // True
+            var oldEventId = responseObject.EventId;            // -1
+            var oldUserId = responseObject.UserId;              // -2 
+
+
+            // Try to update TakeAway to true without TakeAwayTime
             var updateTicketDTO = new UpdateTicketDTO
             {
                 isConsumed = true,
                 TakeAway = true,
-                TakeAwayTime = DateTime.Parse("2023-05-11 12:00")
             };
+
             var json = JsonConvert.SerializeObject(updateTicketDTO);
             var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
-
             var response = await client.PutAsync("api/tickets/-1", payload);
 
-            //Assertions of response, meaning that check that the "put" request was successful
-            Assert.True(
-                response.StatusCode.Equals(HttpStatusCode.OK),
-                "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString()
-            );
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             var serializedUser = await response.Content.ReadAsStringAsync();
             var ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
-            
-            
-            Assert.True(
-                ticket.TakeAway.Equals(true), 
-                "Wrong takeAway status. Expected: True. Received: "+ ticket.TakeAway.ToString()
-            );
-            Assert.True(
-                ticket.TakeAwayTime.Equals(DateTime.Parse("2023-05-11 12:00")), 
-                "Wrong takeAwayTime. Expected: 2023-05-11 12:00 . Received: " + ticket.TakeAwayTime.ToString()
-            );
+        
+            // Verify that TakeAway hasn't been changed
+            Assert.True(ticket.TakeAway.Equals(false), "Wrong takeAway status. Expected: False. Received: "+ ticket.TakeAway.ToString());
+            Assert.True(ticket.TakeAwayTime.Equals(default(DateTime)), "Wrong takeAwayTime. Expected:  "+ default(DateTime) + "Received: " + ticket.TakeAwayTime.ToString());
 
+            // Verify that nothing else has been changed
+            Assert.True(oldIsConsumed == ticket.isConsumed, "Wrong isConsumed. Expected: " + oldIsConsumed.ToString() + " Received: " + ticket.isConsumed.ToString());
+            Assert.True(oldId == ticket.Id, "Wrong Id. Expected: " + oldId.ToString() + " Received: " + ticket.Id.ToString());
+            Assert.True(oldPhotoOk == ticket.PhotoOk, "Wrong PhotoOk. Expected: " + oldPhotoOk.ToString() + " Received: " + ticket.PhotoOk.ToString());
+            Assert.True(oldEventId == ticket.EventId, "Wrong EventId. Expected: " + oldEventId.ToString() + " Received: " + ticket.EventId.ToString());
+            Assert.True(oldUserId == ticket.UserId, "Wrong UserId. Expected: " + oldUserId.ToString() + " Received: " + ticket.UserId.ToString());
+
+
+            // Try to update TakeAway and TakeAwayTime
+            updateTicketDTO = new UpdateTicketDTO
+            {
+                isConsumed = true,
+                TakeAway = true,
+                TakeAwayTime = DateTime.Parse("2023-12-12 12:00")
+            };
+
+            json = JsonConvert.SerializeObject(updateTicketDTO);
+            payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            response = await client.PutAsync("api/tickets/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            serializedUser = await response.Content.ReadAsStringAsync();
+            ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
+        
+            // Verify change of TakeAway and TakeAwayTime
+            Assert.True(ticket.TakeAway.Equals(true), "Wrong takeAway status. Expected: True. Received: "+ ticket.TakeAway.ToString());
+            Assert.True(ticket.TakeAwayTime.Equals(DateTime.Parse("2023-12-12 12:00")), "Wrong takeAwayTime. Expected: 2023-12-12 12:00 . Received: " + ticket.TakeAwayTime.ToString());
+
+            // Verify that nothing else has been changed
+            Assert.True(oldIsConsumed == ticket.isConsumed, "Wrong isConsumed. Expected: " + oldIsConsumed.ToString() + " Received: " + ticket.isConsumed.ToString());
+            Assert.True(oldId == ticket.Id, "Wrong Id. Expected: " + oldId.ToString() + " Received: " + ticket.Id.ToString());
+            Assert.True(oldPhotoOk == ticket.PhotoOk, "Wrong PhotoOk. Expected: " + oldPhotoOk.ToString() + " Received: " + ticket.PhotoOk.ToString());
+            Assert.True(oldEventId == ticket.EventId, "Wrong EventId. Expected: " + oldEventId.ToString() + " Received: " + ticket.EventId.ToString());
+            Assert.True(oldUserId == ticket.UserId, "Wrong UserId. Expected: " + oldUserId.ToString() + " Received: " + ticket.UserId.ToString());
+
+
+
+            // Try to update TakeAway to false
+            updateTicketDTO = new UpdateTicketDTO
+            {
+                isConsumed = false,
+                TakeAway = false,
+                TakeAwayTime = DateTime.Parse("2022-10-10 10:00")
+            };
+
+            json = JsonConvert.SerializeObject(updateTicketDTO);
+            payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            response = await client.PutAsync("api/tickets/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            serializedUser = await response.Content.ReadAsStringAsync();
+            ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
+
+            // Verify change of TakeAway and that TakeAwayTime has been set to default
+            Assert.True(ticket.TakeAway.Equals(false), "Wrong takeAway status. Expected: False. Received: "+ ticket.TakeAway.ToString());
+            Assert.True(ticket.TakeAwayTime.Equals(default(DateTime)), "Wrong takeAwayTime. Expected:  "+ default(DateTime) + "Received: " + ticket.TakeAwayTime.ToString());
+
+            // Verify that nothing else has been changed
+            Assert.True(oldIsConsumed == ticket.isConsumed, "Wrong isConsumed. Expected: " + oldIsConsumed.ToString() + " Received: " + ticket.isConsumed.ToString());
+            Assert.True(oldId == ticket.Id, "Wrong Id. Expected: " + oldId.ToString() + " Received: " + ticket.Id.ToString());
+            Assert.True(oldPhotoOk == ticket.PhotoOk, "Wrong PhotoOk. Expected: " + oldPhotoOk.ToString() + " Received: " + ticket.PhotoOk.ToString());
+            Assert.True(oldEventId == ticket.EventId, "Wrong EventId. Expected: " + oldEventId.ToString() + " Received: " + ticket.EventId.ToString());
+            Assert.True(oldUserId == ticket.UserId, "Wrong UserId. Expected: " + oldUserId.ToString() + " Received: " + ticket.UserId.ToString());
+
+
+            // Reset to original values
+            updateTicketDTO = new UpdateTicketDTO
+            {
+                isConsumed = oldIsConsumed,
+                TakeAway = oldTakeAway,
+                TakeAwayTime = oldTakeAwayTime
+            };
+
+            json = JsonConvert.SerializeObject(updateTicketDTO);
+            payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            response = await client.PutAsync("api/tickets/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            serializedUser = await response.Content.ReadAsStringAsync();
+            ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
+
+            // Verify
+            Assert.True(oldIsConsumed == ticket.isConsumed, "Wrong isConsumed. Expected: " + oldIsConsumed.ToString() + " Received: " + ticket.isConsumed.ToString());
+            Assert.True(oldTakeAway == ticket.TakeAway, "Wrong TakeAway. Expected: " + oldTakeAway.ToString() + " Received: " + ticket.TakeAway.ToString());
+            Assert.True(oldTakeAwayTime == ticket.TakeAwayTime, "Wrong TakeAwayTime. Expected: " + oldTakeAwayTime.ToString() + " Received: " + ticket.TakeAwayTime.ToString());
+            Assert.True(oldId == ticket.Id, "Wrong Id. Expected: " + oldId.ToString() + " Received: " + ticket.Id.ToString());
+            Assert.True(oldPhotoOk == ticket.PhotoOk, "Wrong PhotoOk. Expected: " + oldPhotoOk.ToString() + " Received: " + ticket.PhotoOk.ToString());
+            Assert.True(oldEventId == ticket.EventId, "Wrong EventId. Expected: " + oldEventId.ToString() + " Received: " + ticket.EventId.ToString());
+            Assert.True(oldUserId == ticket.UserId, "Wrong UserId. Expected: " + oldUserId.ToString() + " Received: " + ticket.UserId.ToString());
+        } 
+
+        [Fact]
+        public async Task UpdateTakeAwayAsAdmin()
+        {
+            var client =  await TestUtils.Login("admin");
+
+            var responseOld = await client.GetAsync("/api/tickets/id/-1");
+            Assert.True(responseOld.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + responseOld.StatusCode.ToString());
+            var responseObject = JsonConvert.DeserializeObject<Ticket>(await responseOld.Content.ReadAsStringAsync());
+
+            // Save current values
+            var oldIsConsumed = responseObject.isConsumed;      // False
+            var oldTakeAway = responseObject.TakeAway;          // False
+            var oldTakeAwayTime = responseObject.TakeAwayTime;  // 1/1/0001 12:00:00 AM 
+            var oldId = responseObject.Id;                      // -1
+            var oldPhotoOk = responseObject.PhotoOk;            // True
+            var oldEventId = responseObject.EventId;            // -1
+            var oldUserId = responseObject.UserId;              // -2 
+
+            // Try to update TakeAway to true without TakeAwayTime
+            var updateTicketDTO = new UpdateTicketDTO
+            {
+                isConsumed = false,
+                TakeAway = true,
+            };
+
+            var json = JsonConvert.SerializeObject(updateTicketDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/tickets/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            var serializedUser = await response.Content.ReadAsStringAsync();
+            var ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
+        
+            // Verify that TakeAway hasn't been changed
+            Assert.True(ticket.TakeAway.Equals(false), "Wrong takeAway status. Expected: False. Received: "+ ticket.TakeAway.ToString() + " " + updateTicketDTO.TakeAwayTime.Equals(default(DateTime)));
+            Assert.True(ticket.TakeAwayTime.Equals(default(DateTime)), "Wrong takeAwayTime. Expected:  "+ default(DateTime) + "Received: " + ticket.TakeAwayTime.ToString());
+
+            // Verify that nothing else has been changed
+            Assert.True(oldIsConsumed == ticket.isConsumed, "Wrong isConsumed. Expected: " + oldIsConsumed.ToString() + " Received: " + ticket.isConsumed.ToString());
+            Assert.True(oldId == ticket.Id, "Wrong Id. Expected: " + oldId.ToString() + " Received: " + ticket.Id.ToString());
+            Assert.True(oldPhotoOk == ticket.PhotoOk, "Wrong PhotoOk. Expected: " + oldPhotoOk.ToString() + " Received: " + ticket.PhotoOk.ToString());
+            Assert.True(oldEventId == ticket.EventId, "Wrong EventId. Expected: " + oldEventId.ToString() + " Received: " + ticket.EventId.ToString());
+            Assert.True(oldUserId == ticket.UserId, "Wrong UserId. Expected: " + oldUserId.ToString() + " Received: " + ticket.UserId.ToString());
+
+
+
+            // Try to update TakeAway and TakeAwayTime
+            updateTicketDTO = new UpdateTicketDTO
+            {
+                isConsumed = false,
+                TakeAway = true,
+                TakeAwayTime = DateTime.Parse("2023-12-12 12:00")
+            };
+
+            json = JsonConvert.SerializeObject(updateTicketDTO);
+            payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            response = await client.PutAsync("api/tickets/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            serializedUser = await response.Content.ReadAsStringAsync();
+            ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
+        
+            // Verify change of TakeAway and TakeAwayTime
+            Assert.True(ticket.TakeAway.Equals(true), "Wrong takeAway status. Expected: True. Received: "+ ticket.TakeAway.ToString());
+            Assert.True(ticket.TakeAwayTime.Equals(DateTime.Parse("2023-12-12 12:00")), "Wrong takeAwayTime. Expected: 2023-12-12 12:00 . Received: " + ticket.TakeAwayTime.ToString());
+
+            // Verify that nothing else has been changed
+            Assert.True(oldIsConsumed == ticket.isConsumed, "Wrong isConsumed. Expected: " + oldIsConsumed.ToString() + " Received: " + ticket.isConsumed.ToString());
+            Assert.True(oldId == ticket.Id, "Wrong Id. Expected: " + oldId.ToString() + " Received: " + ticket.Id.ToString());
+            Assert.True(oldPhotoOk == ticket.PhotoOk, "Wrong PhotoOk. Expected: " + oldPhotoOk.ToString() + " Received: " + ticket.PhotoOk.ToString());
+            Assert.True(oldEventId == ticket.EventId, "Wrong EventId. Expected: " + oldEventId.ToString() + " Received: " + ticket.EventId.ToString());
+            Assert.True(oldUserId == ticket.UserId, "Wrong UserId. Expected: " + oldUserId.ToString() + " Received: " + ticket.UserId.ToString());
+
+
+            // Try to update TakeAway to false
+            updateTicketDTO = new UpdateTicketDTO
+            {
+                isConsumed = false,
+                TakeAway = false,
+                TakeAwayTime = DateTime.Parse("2022-10-10 10:00")
+            };
+
+            json = JsonConvert.SerializeObject(updateTicketDTO);
+            payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            response = await client.PutAsync("api/tickets/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            serializedUser = await response.Content.ReadAsStringAsync();
+            ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
+
+            // Verify change of TakeAway and that TakeAwayTime has been set to default
+            Assert.True(ticket.TakeAway.Equals(false), "Wrong takeAway status. Expected: False. Received: "+ ticket.TakeAway.ToString());
+            Assert.True(ticket.TakeAwayTime.Equals(default(DateTime)), "Wrong takeAwayTime. Expected:  "+ default(DateTime) + "Received: " + ticket.TakeAwayTime.ToString());
+
+            // Verify that nothing else has been changed
+            Assert.True(oldIsConsumed == ticket.isConsumed, "Wrong isConsumed. Expected: " + oldIsConsumed.ToString() + " Received: " + ticket.isConsumed.ToString());
+            Assert.True(oldId == ticket.Id, "Wrong Id. Expected: " + oldId.ToString() + " Received: " + ticket.Id.ToString());
+            Assert.True(oldPhotoOk == ticket.PhotoOk, "Wrong PhotoOk. Expected: " + oldPhotoOk.ToString() + " Received: " + ticket.PhotoOk.ToString());
+            Assert.True(oldEventId == ticket.EventId, "Wrong EventId. Expected: " + oldEventId.ToString() + " Received: " + ticket.EventId.ToString());
+            Assert.True(oldUserId == ticket.UserId, "Wrong UserId. Expected: " + oldUserId.ToString() + " Received: " + ticket.UserId.ToString());
+
+
+            // Reset to original values
+            updateTicketDTO = new UpdateTicketDTO
+            {
+                isConsumed = oldIsConsumed,
+                TakeAway = oldTakeAway,
+                TakeAwayTime = oldTakeAwayTime
+            };
+
+            json = JsonConvert.SerializeObject(updateTicketDTO);
+            payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            response = await client.PutAsync("api/tickets/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            serializedUser = await response.Content.ReadAsStringAsync();
+            ticket = JsonConvert.DeserializeObject<Ticket>(serializedUser);
+
+            // Verify
+            //Assert.True(oldIsConsumed != ticket.isConsumed, "isConsumed: " + oldIsConsumed + " \n TakeAway: " + oldTakeAway + " \n TakeAwayTime: " + oldTakeAwayTime + " \n Id: " + oldId + " \n PhotoOk: " + oldPhotoOk + " \n EventId: " + oldEventId + " \n UserId: " + oldUserId);
+            Assert.True(oldIsConsumed == ticket.isConsumed, "Wrong isConsumed. Expected: " + oldIsConsumed.ToString() + " Received: " + ticket.isConsumed.ToString());
+            Assert.True(oldTakeAway == ticket.TakeAway, "Wrong TakeAway. Expected: " + oldTakeAway.ToString() + " Received: " + ticket.TakeAway.ToString());
+            Assert.True(oldTakeAwayTime == ticket.TakeAwayTime, "Wrong TakeAwayTime. Expected: " + oldTakeAwayTime.ToString() + " Received: " + ticket.TakeAwayTime.ToString());
+            Assert.True(oldId == ticket.Id, "Wrong Id. Expected: " + oldId.ToString() + " Received: " + ticket.Id.ToString());
+            Assert.True(oldPhotoOk == ticket.PhotoOk, "Wrong PhotoOk. Expected: " + oldPhotoOk.ToString() + " Received: " + ticket.PhotoOk.ToString());
+            Assert.True(oldEventId == ticket.EventId, "Wrong EventId. Expected: " + oldEventId.ToString() + " Received: " + ticket.EventId.ToString());
+            Assert.True(oldUserId == ticket.UserId, "Wrong UserId. Expected: " + oldUserId.ToString() + " Received: " + ticket.UserId.ToString());
         } 
     } 
 }
