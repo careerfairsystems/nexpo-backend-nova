@@ -31,6 +31,7 @@ namespace Nexpo.Tests.Controllers
                 "Wrong role. Expected: CompanyRepresentative. Received: " + user.Role.ToString()
             );
         }
+        
 
         [Fact]
         public async Task GetRoleAsNonAdmin()
