@@ -13,6 +13,38 @@ namespace Nexpo.Tests.Controllers
     public class RoleControllerTest
     {
         [Fact]
+        public async Task GetRoleAsAdmin()
+        {
+            var client = await TestUtils.Login("admin");
+            var response = await client.GetAsync("api/users/-5");
+
+            Assert.True(
+                response.StatusCode.Equals(HttpStatusCode.OK),
+                "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString()
+            );
+
+            var serializedUser = await response.Content.ReadAsStringAsync();
+            var user = JsonConvert.DeserializeObject<User>(serializedUser);
+
+            Assert.True(
+                user.Role.Equals(Role.CompanyRepresentative),
+                "Wrong role. Expected: CompanyRepresentative. Received: " + user.Role.ToString()
+            );
+        }
+
+        [Fact]
+        public async Task GetRoleAsNonAdmin()
+        {
+            var client = await TestUtils.Login("student1");
+            var response = await client.GetAsync("api/users/-5");
+
+            Assert.True(
+                response.StatusCode.Equals(HttpStatusCode.Forbidden),
+                "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString()
+            );
+        }
+
+        [Fact]
         public async Task UpdateRoleAsAdmin()
         {
             var client = await TestUtils.Login("admin");

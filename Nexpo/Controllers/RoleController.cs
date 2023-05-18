@@ -11,6 +11,11 @@ using Nexpo.AWS;
 
 namespace Nexpo.Controllers
 {
+    /// <summary>
+    /// Controller for managing more complex role functionality
+    /// Currently only used for updating roles 
+    ///        - but could be expanded to include more complex role functionality
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class RoleController : ControllerBase
@@ -47,34 +52,19 @@ namespace Nexpo.Controllers
         /// Get information about a single user
         /// </summary>
         [HttpGet("{id}")]
-        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.CompanyRepresentative))]
+        [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<User>> GetRole(int id)
         {
-            //Only allow companies with an appliction from the student
-            var userRole = HttpContext.User.GetRole();
-            if (userRole == Role.CompanyRepresentative)
-            {
-                var companyId = HttpContext.User.GetCompanyId().Value;
-                var student = await _studentRepo.FindByUser(id);
-                if (student == null)
-                {
-                    return Forbid();
-                }
-                int studentId = student.Id.Value;
-                if (!await _applicationRepo.ApplicationExists(studentId, companyId))
-                {
-                    return Forbid();
-                }
-            }
-
             var user = await _userRepo.Get(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            return user;
+            var role = User.GetRole();
+
+            return Ok(role);
         }
 
         /// <summary>
@@ -84,7 +74,7 @@ namespace Nexpo.Controllers
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        public async Task<IActionResult> PutUser(int id, UpdateUserDTO DTO)
+        public async Task<IActionResult> PutRole(int id, UpdateUserDTO DTO)
         {
             var user = await _userRepo.Get(id);
             if (user == null)
@@ -104,6 +94,6 @@ namespace Nexpo.Controllers
         }
 
     }
-      
+
 }
 
