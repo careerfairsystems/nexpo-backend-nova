@@ -28,10 +28,10 @@ namespace Nexpo.Tests.Controllers
         {
             // Non logged in
             var application = new WebApplicationFactory<Program>();
-            var client = application.CreateClient();
-
+            
+            var client = await TestUtils.Login("admin");
             // Get response
-            var response = await client.GetAsync("/api/FAQ");
+            var response = await client.GetAsync("/api/faq/");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong StatusCode. Expected: OK. Received: " + response.StatusCode.ToString());
 
             // Sample result
