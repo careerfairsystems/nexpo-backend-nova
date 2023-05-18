@@ -145,6 +145,14 @@ namespace Nexpo.Models
             Contacts.AddRange(contact1, contact2, contact3, contact4);
             SaveChanges();
 
+            // FrequentAskedQuestion
+            var faq1 = new FrequentAskedQuestion { Id = -1, Question = "Frequent Asked Question 1"};
+            var faq2 = new FrequentAskedQuestion { Id = -2, Question = "Frequent Asked Question 2"};
+            var faq3 = new FrequentAskedQuestion { Id = -3, Question = "Frequent Asked Question 3"};
+            var faq4 = new FrequentAskedQuestion { Id = -4, Question = "Frequent Asked Question 4"};
+            FrequentAskedQuestion.AddRange(faq1, faq2, faq3, faq4);
+            SaveChanges();
+
         }
     }
 }
