@@ -7,6 +7,10 @@ using Nexpo.DTO;
 using Nexpo.Models;
 using Nexpo.Repositories;
 
+//Everyone get? notLoggedIn?? Only Admin, Volunteer, Company??
+//Company update?? Only Admin??
+//Associated with company??
+
 namespace Nexpo.Controllers
 {
     [Route("api/[controller]")]
@@ -15,39 +19,39 @@ namespace Nexpo.Controllers
     {
         private readonly IFAQRepository _questionsRepo;
 
-        public FAQController(IFAQRepository iquestions)
+        public FAQController(IFAQRepository iQuestions)
         {
-            _questionsRepo = iquestions;
+            _questionsRepo = iQuestions;
         }
 
         /// <summary>
         /// Get a list of all FAQ
         /// </summary>
+        //[Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FrequentAskedQuestion>), StatusCodes.Status200OK)]
-        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
-        public async Task<ActionResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var questions = await _questionsRepo.GetAll();
-            return Ok(questions);
+            var faq = await _questionsRepo.GetAll();
+            return Ok(faq);
         }
 
         /// <summary>
         /// Get information about a FAQ
         /// </summary>
+        //  [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
         [HttpGet("{id}")]
-        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
         [ProducesResponseType(typeof(FrequentAskedQuestion), StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetFAQ(int id)
+        public async Task<IActionResult> GetFAQ(int id)
         {
-            var question = await _questionsRepo.Get(id);
+            var faq = await _questionsRepo.Get(id);
 
-            if (question == null)
+            if (faq == null)
             {
                 return NotFound();
             }
 
-            return Ok(question);
+            return Ok(faq);
         }
 
 
@@ -60,21 +64,21 @@ namespace Nexpo.Controllers
         [ProducesResponseType(typeof(FrequentAskedQuestion), StatusCodes.Status200OK)]
         public async Task<IActionResult> PutFAQ(int id, UpdateFAQDTO dto)
         {
-            var question = await _questionsRepo.Get(id);
+            var faq = await _questionsRepo.Get(id);
 
-            if (question == null)
+            if (faq == null)
             {
                 return NotFound();
             }
 
             if (dto.Question != null)
             {
-                question.Question = dto.Question;
+                faq.Question = dto.Question;
             }
 
-            await _questionsRepo.Update(question);
+            await _questionsRepo.Update(faq);
 
-            return Ok(question);
+            return Ok(faq);
         }
 
         /// <summary>
@@ -84,19 +88,22 @@ namespace Nexpo.Controllers
         [Route("add")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(FrequentAskedQuestion), StatusCodes.Status201Created)]
-        public async Task<ActionResult> PostFAQ(CreateFAQDTO dto)
+        public async Task<IActionResult> PostFAQ(CreateFAQDTO dto)
         {
-            var frequentAskedQuestion = new FrequentAskedQuestion
+            if(await _questionsRepo.Get(dto.Id) != null)
+            {
+                return BadRequest();
+            }
+
+            var faq = new FrequentAskedQuestion
             {
                 Id = dto.Id,
                 Question = dto.Question
             };
 
+            await _questionsRepo.Add(faq);
 
-
-            await _questionsRepo.Add(frequentAskedQuestion);
-
-            return Ok(frequentAskedQuestion);
+            return CreatedAtAction(nameof(GetFAQ), new { id = faq.Id }, faq);
         }
 
         /// <summary>
@@ -108,14 +115,14 @@ namespace Nexpo.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> DeleteFAQ(int id)
         {
-            var question = await _questionsRepo.Get(id);
+            var faq = await _questionsRepo.Get(id);
 
-            if (question == null)
+            if (faq == null)
             {
                 return NotFound();
             }
 
-            await _questionsRepo.Remove(question);
+            await _questionsRepo.Remove(faq);
 
             return NoContent();
         }

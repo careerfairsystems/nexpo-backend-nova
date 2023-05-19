@@ -26,27 +26,28 @@ namespace Nexpo.Repositories
             _context = context;
         }
 
+        public async Task<IEnumerable<FrequentAskedQuestion>> GetAll()
+        {
+            return await _context.FrequentAskedQuestion.OrderBy(q => q.Id).ToListAsync();;
+        }
+
+        public async Task<FrequentAskedQuestion> Get(int id)
+        {
+            return await _context.FrequentAskedQuestion.Where(q => q.Id == id).FirstOrDefaultAsync();
+        }
+
         public async Task Add(FrequentAskedQuestion question)
         {
             _context.FrequentAskedQuestion.Add(question);
             await _context.SaveChangesAsync();
         }
 
-        public Task<FrequentAskedQuestion> Get(int id)
-        {
-            return _context.FrequentAskedQuestion.Where(q => q.Id == id).FirstOrDefaultAsync();
-        }
-
-        public Task Remove(FrequentAskedQuestion question)
+        public async Task Remove(FrequentAskedQuestion question)
         {
             _context.Remove(question);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
-        public async Task<IEnumerable<FrequentAskedQuestion>> GetAll()
-        {
-            var question = await _context.FrequentAskedQuestion.OrderBy(q => q.Id).ToListAsync();
-            return question;
-        }
+
         public async Task Update(FrequentAskedQuestion question)
         {
             _context.Entry(question).State = EntityState.Modified;

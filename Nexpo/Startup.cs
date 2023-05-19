@@ -68,6 +68,7 @@ namespace Nexpo
             services.AddScoped<IStudentSessionTimeslotRepository, StudentSessionTimeslotRepository>();
             services.AddScoped<IStudentSessionApplicationRepository, StudentSessionApplicationRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
+            services.AddScoped<IFAQRepository, FAQRepository>();
 
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();

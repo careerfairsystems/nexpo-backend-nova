@@ -415,7 +415,7 @@ namespace Nexpo.Tests.Controllers
         }
 
         [Fact]
-        public async Task UpdateMeNotLoggedIN()
+        public async Task UpdateMeNotLoggedIn()
         {
             var application = new WebApplicationFactory<Program>();
             var client = application.CreateClient();
