@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 if [ "$1" = "-start" ]; then
     # Check if the nexpo_database container exists
     if sudo docker ps -a --format '{{.Names}}' | grep -q "^nexpo_database$"; then
