@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Nexpo.Tests.Controllers
 { 
-    public class ContactControllerTests
+    public class ContactsControllerTest
     {
         [Fact]
         public async Task adminCreateAndDeleteContact()

@@ -13,7 +13,7 @@ using System;
 
 namespace Nexpo.Tests.Controllers
 {
-    public class EventsControllerTests
+    public class EventsControllerTest
     {
 
         [Fact]

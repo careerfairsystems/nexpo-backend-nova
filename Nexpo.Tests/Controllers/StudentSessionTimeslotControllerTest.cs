@@ -12,7 +12,7 @@ using Nexpo.DTO;
 
 namespace Nexpo.Tests.Controllers
 {
-    public class StudentSessionTimeslotTest
+    public class StudentSessionTimeslotControllerTest
     {
         [Fact]
         public async Task GetAllByCompanyId()
