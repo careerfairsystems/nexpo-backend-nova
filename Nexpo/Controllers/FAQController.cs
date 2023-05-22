@@ -7,9 +7,7 @@ using Nexpo.DTO;
 using Nexpo.Models;
 using Nexpo.Repositories;
 
-//Everyone get? notLoggedIn?? Only Admin, Volunteer, Company??
-//Company update?? Only Admin??
-//Associated with company??
+
 
 namespace Nexpo.Controllers
 {
@@ -27,7 +25,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Get a list of all FAQ
         /// </summary>
-        //[Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<FrequentAskedQuestion>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
@@ -39,7 +37,7 @@ namespace Nexpo.Controllers
         /// <summary>
         /// Get information about a FAQ
         /// </summary>
-        //  [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Volunteer))]
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(FrequentAskedQuestion), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetFAQ(int id)
