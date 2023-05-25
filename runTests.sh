@@ -8,9 +8,9 @@ if [ "$1" = "-start" ]; then
     fi
     sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
 elif [ "$1" = "-run" ]; then
-    if [ "$2" ]; then
-        # Check if the nexpo_database container is running
-        if [ "$(sudo docker ps -q -f name=nexpo_database)" ]; then
+    # Check if the nexpo_database container is running
+    if [ "$(sudo docker ps -q -f name=nexpo_database)" ]; then
+        if [ "$2" ]; then
             # Check if the test class ends with "ControllerTest"
             if [[ "$2" == *ControllerTest ]]; then
                 # Run the specific test class
@@ -25,10 +25,18 @@ elif [ "$1" = "-run" ]; then
                 sudo dotnet test Nexpo.Tests/ --filter "FullyQualifiedName~Nexpo.Tests.Controllers.$test_class"
             fi
         else
-            # Ask user if they want to continue without starting the database
-            read -p "Warning: nexpo_database container is not running. It is recommended to run ./test.sh -start first. Do you want to continue without starting it? (y/n): " choice
-            case "$choice" in
-                y|Y )
+            # Run all tests
+            sudo dotnet test Nexpo.Tests/
+        fi
+    else
+        # Prompt the user to start the database
+        read -p "Warning: nexpo_database container is not running. Do you want to start it? (y/n): " choice
+        case "$choice" in
+            y|Y )
+                # Start the database container
+                sudo docker start nexpo_database
+
+                if [ "$2" ]; then
                     # Check if the test class ends with "ControllerTest"
                     if [[ "$2" == *ControllerTest ]]; then
                         # Run the specific test class
@@ -42,14 +50,14 @@ elif [ "$1" = "-run" ]; then
                         test_class="$2ControllerTest"
                         sudo dotnet test Nexpo.Tests/ --filter "FullyQualifiedName~Nexpo.Tests.Controllers.$test_class"
                     fi
-                    ;;
-                n|N ) echo "Aborted.";;
-                * ) echo "Invalid choice. Aborted.";;
-            esac
-        fi
-    else
-        # Run all tests
-        sudo dotnet test Nexpo.Tests/
+                else
+                    # Run all tests
+                    sudo dotnet test Nexpo.Tests/
+                fi
+                ;;
+            n|N ) echo "Aborted.";;
+            * ) echo "Invalid choice. Aborted.";;
+        esac
     fi
 elif [ "$1" = "-help" ]; then
     # Print help message
