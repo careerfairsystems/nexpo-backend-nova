@@ -9,13 +9,13 @@ IF "%1"=="-start" (
     )
     docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
 ) ELSE IF "%1"=="-run" (
-    IF "%2"=="" (
-        REM Run all tests
-        dotnet test Nexpo.Tests/
-    ) ELSE (
-        REM Check if the nexpo_database container is running
-        docker inspect -f {{.State.Running}} nexpo_database >nul 2>&1
-        IF %errorlevel% EQU 0 (
+    REM Check if the nexpo_database container is running
+    docker inspect -f {{.State.Running}} nexpo_database >nul 2>&1
+    IF %errorlevel% EQU 0 (
+        IF "%2"=="" (
+            REM Run all tests
+            dotnet test Nexpo.Tests/
+        ) ELSE (
             REM Check if the test class ends with "ControllerTest"
             SET "test_class=%2"
             IF "%test_class:~-13%"=="controllertest" (
@@ -30,10 +30,15 @@ IF "%1"=="-start" (
                 SET "test_class=%test_class%controllerTest"
                 dotnet test Nexpo.Tests/ --filter "FullyQualifiedName~Nexpo.Tests.Controllers.%test_class%"
             )
-        ) ELSE (
-            REM Ask user if they want to continue without starting the database
-            set /p "choice=Warning: nexpo_database container is not running. It is recommended to run ./test.sh -start first. Do you want to continue without starting it? (y/n): "
-            IF /i "%choice%"=="y" (
+        )
+    ) ELSE (
+        REM Ask user if they want to continue without starting the database
+        set /p "choice=Warning: nexpo_database container is not running. It is recommended to run ./test.sh -start first. Do you want to continue without starting it? (y/n): "
+        IF /i "%choice%"=="y" (
+            IF "%2"=="" (
+                REM Run all tests
+                dotnet test Nexpo.Tests/
+            ) ELSE (
                 REM Check if the test class ends with "ControllerTest"
                 SET "test_class=%2"
                 IF "%test_class:~-13%"=="controllertest" (
@@ -48,11 +53,11 @@ IF "%1"=="-start" (
                     SET "test_class=%test_class%controllerTest"
                     dotnet test Nexpo.Tests/ --filter "FullyQualifiedName~Nexpo.Tests.Controllers.%test_class%"
                 )
-            ) ELSE IF /i "%choice%"=="n" (
-                echo Aborted.
-            ) ELSE (
-                echo Invalid choice. Aborted.
             )
+        ) ELSE IF /i "%choice%"=="n" (
+            echo Aborted.
+        ) ELSE (
+            echo Invalid choice. Aborted.
         )
     )
 ) ELSE IF "%1"=="-help" (
