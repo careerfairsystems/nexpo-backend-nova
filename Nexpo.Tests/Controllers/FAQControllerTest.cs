@@ -14,10 +14,9 @@ namespace Nexpo.Tests.Controllers
 {
     public class FAQControllerTest
     {
-
-        /// <summary>
+        ///
         /// GetAll Tests
-        /// </summary>
+        ///
         [Fact]
         public async Task GetAllAsAdmin()
         {   
@@ -108,9 +107,9 @@ namespace Nexpo.Tests.Controllers
         } 
         
 
-        /// <summary>
+        /// 
         /// Get Tests
-        /// </summary>
+        ///
         [Fact]
         public async Task GetAsAdmin()
         {
@@ -181,9 +180,9 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong StatusCode. Expected: NotFound. Received: " + response.StatusCode.ToString());
         }
 
-        /// <summary>
+        ///
         /// Put Tests
-        /// </summary>
+        ///
         [Fact]
         public async Task PutAsAdmin()
         {
@@ -286,9 +285,9 @@ namespace Nexpo.Tests.Controllers
         }
 
 
-        /// <summary>
+        ///
         /// Post and Delete Tests
-        /// </summary>
+        ///
         [Fact]
         public async Task PostAndDeleteAsAdmin()
         {
