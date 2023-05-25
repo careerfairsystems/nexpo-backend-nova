@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Nexpo.Tests.Controllers
 {
-    public class UserControllerTest
+    public class UsersControllerTest
     {
         [Fact]
         public async Task GetAllAsAdmin()
