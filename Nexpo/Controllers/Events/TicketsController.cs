@@ -147,15 +147,40 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpPut]
         [Route("{id}")]
-        [Authorize(Roles = nameof(Role.Administrator))]
+        [Authorize]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status200OK)]
         public async Task<ActionResult> PutTicket(int id, UpdateTicketDTO DTO)
         {
             var ticket = await _ticketRepo.Get(id);
-            ticket.isConsumed = DTO.isConsumed;
-            await _ticketRepo.Update(ticket);
+            var userId = HttpContext.User.GetId();
+            var userRole = HttpContext.User.GetRole();
 
-            return Ok(ticket);
+            if (ticket.UserId == userId || userRole == Role.Administrator)
+            {
+                // Update both TakeAway and TakeAwayTime if TakeAway is true and TakeAwayTime is set
+                if (DTO.TakeAway && DTO.TakeAwayTime != default(DateTime))
+                {
+                    ticket.TakeAway = DTO.TakeAway;
+                    ticket.TakeAwayTime = DTO.TakeAwayTime;                    
+                }
+
+                // Update TakeAway and set TakeAwayTime to default if TakeAway is false
+                else if(!DTO.TakeAway) 
+                {
+                    ticket.TakeAway = DTO.TakeAway;
+                    ticket.TakeAwayTime = default(DateTime);
+                }
+
+                // Only admin can update isConsumed
+                if(userRole == Role.Administrator)
+                {
+                    ticket.isConsumed = DTO.isConsumed;
+                }
+
+                await _ticketRepo.Update(ticket);
+                return Ok(ticket);
+            }
+            return Forbid();
         }
 
         /// <summary>
