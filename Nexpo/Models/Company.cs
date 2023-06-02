@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -28,6 +29,8 @@ namespace Nexpo.Models
         public string HostEmail { get; set; }
 
         public string HostPhone { get; set; }
+
+        public List<DateTime> DaysAtArkad { get; set;}
 
         public List<int> DesiredDegrees { get; set;}
 

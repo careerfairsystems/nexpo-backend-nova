@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 
 namespace Nexpo.DTO
 {
@@ -22,6 +23,8 @@ namespace Nexpo.DTO
         public string HostEmail { get; set; }
 
         public string HostPhone { get; set; }
+
+        public List<DateTime> DaysAtArkad { get; set;}
 
         public List<int> DesiredDegrees { get; set;}
 

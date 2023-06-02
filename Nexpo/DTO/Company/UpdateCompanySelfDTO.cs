@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
 
 namespace Nexpo.DTO
 {
@@ -15,5 +16,7 @@ namespace Nexpo.DTO
         public string DidYouKnow { get; set; }
         
         public string Website { get; set; }
+
+        public List<DateTime> DaysAtArkad { get; set;}
     }
 }

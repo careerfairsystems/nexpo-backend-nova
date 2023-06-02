@@ -18,6 +18,7 @@ namespace Nexpo.Repositories
         public Task AddAdmin(Ticket ticket);
         public Task Update(Ticket ticket);
         public Task Remove(Ticket ticket);
+        public Task<EventType> GetEventType(int ticketId);
 
     }
 
@@ -52,6 +53,12 @@ namespace Nexpo.Repositories
                                             .OrderBy(ticket => ticket.User.FirstName)
                                             .ThenBy(ticket => ticket.User.LastName)
                                             .ToListAsync();
+        }
+
+        public async Task<EventType> GetEventType(int ticketId)
+        {
+            return await _context.Tickets.Include(t => t.Event).Where(t => t.Id == ticketId).Select(t => t.Event.Type).FirstOrDefaultAsync();
+
         }
 
         public async Task<Ticket> Get(int id)

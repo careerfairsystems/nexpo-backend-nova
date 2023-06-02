@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO
@@ -21,6 +22,8 @@ namespace Nexpo.DTO
         public string LogoUrl { get; set; }
 
         public string Website { get; set; }
+
+        public List<DateTime> DaysAtArkad { get; set;}
 
         public List<int> DesiredDegrees { get; set;}
 

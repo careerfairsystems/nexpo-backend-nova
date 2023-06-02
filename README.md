@@ -256,7 +256,14 @@ Current relations between the tables in the model:
 
 
 ---
-
+  1.  
+```
+sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
+```
+  2.  
+```
+sudo dotnet test Nexpo.Tests/
+```
 # Testing and developing tools
 
 ## Setup Test Environment

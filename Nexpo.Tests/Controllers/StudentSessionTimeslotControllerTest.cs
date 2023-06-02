@@ -419,8 +419,49 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject2.StudentId == null, "Wrong student id. Expected: null. Receievd: " + responseObject2.StudentId.ToString());
         }
 
-                [Fact]
-        public async Task DeleteNonExisting()
+        [Fact]
+        public async Task CreateNewTimeslotAndDelete()
+        {
+            var client =  await TestUtils.Login("admin");
+
+            //Add new timeslot
+            var json = new JsonObject
+            {
+                { "start", DateTime.Parse("2021-11-15 12:45") },
+                { "end", DateTime.Parse("2021-11-15 13:15") },
+                { "companyid", "-3" },
+                { "location", "At home" }
+            };
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response1 = await client.PostAsync("api/timeslots/add", payload);
+            var responseObject = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response1.Content.ReadAsStringAsync());
+            Assert.True(response1.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response1.StatusCode);
+
+            //Verify new total number of timeslots
+            var response2 = await client.GetAsync("/api/timeslots/company/-3");
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
+
+            //Remove new timeslot
+            var response3 = await client.DeleteAsync("api/timeslots/" + responseObject.Id);
+            Assert.True(response3.StatusCode.Equals(HttpStatusCode.NoContent), "Wrong status code. Expected: NoContent. Received: " + response3.StatusCode);
+        
+            //Verify total number of timeslots 
+            var response4 = await client.GetAsync("/api/timeslots/company/-3");
+            Assert.True(response4.StatusCode.Equals(HttpStatusCode.OK), response4.StatusCode.ToString());
+        
+            //Verify
+            Assert.True(responseObject.Location.Equals("At home"), "Wrong Location. Expected: At home. Received: " +  responseObject.Location.ToString());
+            Assert.True(responseObject.StudentId == null, "Wrong student id. Expected: null. Received: " + responseObject.StudentId.ToString());
+
+            var responseList1 = JsonConvert.DeserializeObject<List<StudentSessionTimeslot>>(await response2.Content.ReadAsStringAsync());
+            Assert.True(responseList1.Count == 3, "Wrong number of timeslots. Expected: 2. Received: " + responseList1.Count.ToString());
+
+            var responseList2 = JsonConvert.DeserializeObject<List<StudentSessionTimeslot>>(await response4.Content.ReadAsStringAsync());
+            Assert.True(responseList2.Count == 2, "Wrong number of timeslots. Expected: 1. Received: " + responseList2.Count.ToString());
+        }
+
+        [Fact]
+        public async Task DeleteNonExistingTimeslot()
         {
             var client = await TestUtils.Login("admin");
             var response = await client.DeleteAsync("api/timeslots/-123");
