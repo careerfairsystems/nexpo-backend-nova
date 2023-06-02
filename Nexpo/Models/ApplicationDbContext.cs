@@ -93,16 +93,6 @@ namespace Nexpo.Models
             var event3 = new Event { Id = -3, Name = "CV Workshop with Randstad",   Type = EventType.CompanyEvent, Description = "Make your CV look professional with the help of Randstad", Date = DateTime.Now.AddDays(12).Date.ToString(), Start = "13:30", End = "15:00", Host = "Randstad",      Location = "E:A",          Language = "Swedish", Capacity = 3 };
             var event4 = new Event { Id = -4, Name = "Inspirational lunch lecture", Type = EventType.CompanyEvent, Description = "Get inspired and expand your horizons",                    Date = DateTime.Now.AddDays(14).Date.ToString(), Start = "12:15", End = "13:00", Host = "SYV",           Location = "MA:3",         Language = "Swedish", Capacity = 2 };
             var event5 = new Event { Id = -5, Name = "Pick apples with Apple",      Type = EventType.CompanyEvent, Description = "An apple a day keeps the doctor away",                     Date = DateTime.Now.AddDays(1).Date.ToString(),  Start = "12:15", End = "13:00", Host = "Apple",         Location = "M:B",          Language = "English", Capacity = 200};
-            Events.AddRange(event1, event2, event3, event4, event5);
-            SaveChanges();
-
-            // Tickets
-            var ticket1 = new Ticket { Id = -1, Code = Guid.NewGuid(), PhotoOk = true, EventId = event1.Id.Value, UserId = user2.Id.Value, isConsumed = true };
-            var ticket2 = new Ticket { Id = -2, Code = Guid.NewGuid(), PhotoOk = false, EventId = event1.Id.Value, UserId = user3.Id.Value };
-            var ticket3 = new Ticket { Id = -3, Code = Guid.NewGuid(), PhotoOk = true, EventId = event1.Id.Value, UserId = user4.Id.Value };
-
-            
-
             var event6 = new Event { Id = -6, Name = "Lunch For volunteers",        Type = EventType.Lunch,         Description = "A lunch for all volunteers to enjoy",                      Date = DateTime.Now.AddDays(15).Date.ToString(), Start = "12:15", End = "13:00", Host = "Teknologkåren", Location = "Hänget",   Language = "Swrdish", Capacity = 300};
             var event7 = new Event { Id = -7, Name = "Lunch For Company Rep!",      Type = EventType.Lunch,         Description = "Com.reps get hungry aswell",                               Date = DateTime.Now.AddDays(15).Date.ToString(), Start = "12:15", End = "13:00", Host = "Teknologkåren", Location = "Perstorp", Language = "English", Capacity = 500};
 
