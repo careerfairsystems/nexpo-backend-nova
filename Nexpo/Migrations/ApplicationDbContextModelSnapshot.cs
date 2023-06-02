@@ -157,6 +157,22 @@ namespace Nexpo.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("Nexpo.Models.FrequentAskedQuestion", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FrequentAskedQuestion");
+                });
+
             modelBuilder.Entity("Nexpo.Models.Student", b =>
                 {
                     b.Property<int?>("Id")
