@@ -3,6 +3,7 @@ using Nexpo.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Nexpo.DTO.FinalizeSignUpDTO;
 
@@ -88,11 +89,33 @@ namespace Nexpo.Services
                 $"Please show the QR-code below at the entrance to get in.<br><br>" +
                 $"<img src=\"{qrImage}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
 
-            return SendEmail(targetMail, $"Arkad Ticket: {name}", content, content);
-
-
+            return SendEmail(targetMail, $"Arkad Ticket for {name}", content, content);
 
         }
+
+        public Task SendTicketAsQRViaEmail(string mail, List<Ticket> tickets, Event _event)
+        {
+            var name = _event.Name;
+            var location = _event.Location;
+            var host = _event.Host;
+
+            var date = _event.Date;
+            var start = _event.Start;
+            var end = _event.End;
+
+            string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=";
+
+            var content = $"You and your collegues have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
+                $"Please show the QR-codes below at the entrance to get in.<br><br>";
+
+            foreach (var ticket in tickets)
+            {
+                content += $"<img src=\"{qrImage}{ticket.Id}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
+            }
+
+            return SendEmail(mail, $"Arkad Tickets for {name}", content, content);
+        }
+        
     }
 
     public class EmailService : IEmailService

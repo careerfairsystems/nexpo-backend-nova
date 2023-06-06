@@ -274,14 +274,16 @@ namespace Nexpo.Controllers
             return NoContent();
         }
 
+
+
         /// <summary>
-        /// Send a QR code interpretation of the ticket to mail
+        /// Send many QR code interpretations of the ticket(s) to a event to mail
         /// </summary>
         [HttpPost]
-        [Route("send")]
+        [Route("sendMany")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult> SendTicketToMailAsync(SendTickerViaMailDTO DTO)
+        public async Task<ActionResult> SendManyTicketsToMailAsync(SendTicketViaMailDTO DTO)
         {
             var eventId = DTO.eventId;
 
@@ -291,16 +293,46 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            var ticket = new Ticket
+            if (DTO.numberOfTickets <= 0)
             {
-                PhotoOk = true,
-                EventId = eventId,
-                UserId = -1,
-            };
+                return BadRequest();
+            }
+            else if (DTO.numberOfTickets == 1)
+            {
+                var ticket = new Ticket
+                {
+                    PhotoOk = true,
+                    EventId = eventId,
+                    UserId = -1,
+                };
 
-            _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, ticket.Code, _event);
-            return Ok();
+                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, ticket.Code, _event);
+                return Ok();
+
+            }
+            else {
+                var tickets = new List<Ticket>();
+
+                for (int i = 0; i < DTO.numberOfTickets; i++)
+                {
+                    var ticket = new Ticket
+                    {
+                        PhotoOk = true,
+                        EventId = eventId,
+                        UserId = -1,
+                    };
+
+                    tickets.Add(ticket);
+                    
+                }
+                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, tickets, _event);
+
+                return Ok();
+            }
+
+            
         }
+
     }
 }
 

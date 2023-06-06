@@ -6,12 +6,16 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for sending a ticket via mail
     /// </summary>
-    public class SendTickerViaMailDTO
+    public class SendTicketViaMailDTO
     {
         [Required]
         public string mail { get; set; }
 
         [Required]
         public int eventId { get; set; }
+
+        [Required]
+        public int numberOfTickets { get; set; }
+
     }
 }
