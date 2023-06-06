@@ -93,7 +93,7 @@ namespace Nexpo.Services
 
         }
 
-        public Task SendTicketAsQRViaEmail(string mail, List<Ticket> tickets, Event _event)
+        public Task SendTicketAsQRViaEmail(string targetMail, List<Ticket> tickets, Event _event)
         {
             var name = _event.Name;
             var location = _event.Location;
@@ -110,10 +110,10 @@ namespace Nexpo.Services
 
             foreach (var ticket in tickets)
             {
-                content += $"<img src=\"{qrImage}{ticket.Id}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
+                content += $"<img src=\"{qrImage}{ticket.Code}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
             }
 
-            return SendEmail(mail, $"Arkad Tickets for {name}", content, content);
+            return SendEmail(targetMail, $"Arkad Tickets for {name}", content, content);
         }
         
     }

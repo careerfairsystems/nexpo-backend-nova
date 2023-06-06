@@ -31,6 +31,7 @@ namespace Nexpo.Controllers
             _ticketRepo = iTicketRepo;
             _eventRepo  = iEventRepo;
             _userRepo   = iUserRepo;
+            _emailService = iEmailService;
         }
 
         /// <summary>
