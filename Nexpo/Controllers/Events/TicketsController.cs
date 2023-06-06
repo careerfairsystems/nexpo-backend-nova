@@ -8,6 +8,7 @@ using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
+using Nexpo.Services;
 
 namespace Nexpo.Controllers
 {
@@ -18,8 +19,14 @@ namespace Nexpo.Controllers
         private readonly ITicketRepository _ticketRepo;
         private readonly IEventRepository _eventRepo;
         private readonly IUserRepository _userRepo;
+        private readonly IEmailService _emailService;
 
-        public TicketsController(ITicketRepository iTicketRepo, IEventRepository iEventRepo, IUserRepository iUserRepo)
+        public TicketsController(
+            ITicketRepository iTicketRepo, 
+            IEventRepository iEventRepo, 
+            IUserRepository iUserRepo,
+            IEmailService iEmailService
+            )
         {
             _ticketRepo = iTicketRepo;
             _eventRepo  = iEventRepo;
@@ -265,6 +272,34 @@ namespace Nexpo.Controllers
             
             await _ticketRepo.Remove(ticket);
             return NoContent();
+        }
+
+        /// <summary>
+        /// Send a QR code interpretation of the ticket to mail
+        /// </summary>
+        [HttpPost]
+        [Route("send")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> SendTicketToMailAsync(SendTickerViaMailDTO DTO)
+        {
+            var eventId = DTO.EventId;
+
+            var _event = await _eventRepo.Get(eventId);
+            if (_event == null)
+            {
+                return NotFound();
+            }
+
+            var ticket = new Ticket
+            {
+                PhotoOk = true,
+                EventId = eventId,
+                UserId = -1,
+            };
+
+            _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, DTO.QRCode, _event);
+            return Ok();
         }
     }
 }

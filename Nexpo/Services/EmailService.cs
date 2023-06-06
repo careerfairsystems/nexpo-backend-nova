@@ -70,6 +70,26 @@ namespace Nexpo.Services
             var content = $"Reset your password by following this link: {baseUrl}/reset_password/{tokenString} The link is valid for an hour.";
             return SendEmail(user.Email, "Reset your password", content, content);
         }
+
+        public Task SendTicketAsQRViaEmail(string targetMail, string qrCode, Event _event)
+        {
+            var name = _event.Name;
+            var location = _event.Location;
+            var host = _event.Host;
+
+            var date = _event.Date;
+            var start = _event.Start;
+            var end = _event.End;
+
+            var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
+                $"Please show the QR-code below at the entrance to get in.<br><br>" +
+                $"<img src=\"{qrCode}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
+
+            return SendEmail(targetMail, $"Arkad Ticket: {name}", content, content);
+
+
+
+        }
     }
 
     public class EmailService : IEmailService
