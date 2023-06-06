@@ -12,6 +12,6 @@ namespace Nexpo.DTO
         public string mail { get; set; }
 
         [Required]
-        public int EventId { get; set; }
+        public int eventId { get; set; }
     }
 }

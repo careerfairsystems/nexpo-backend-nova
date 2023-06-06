@@ -283,7 +283,7 @@ namespace Nexpo.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> SendTicketToMailAsync(SendTickerViaMailDTO DTO)
         {
-            var eventId = DTO.EventId;
+            var eventId = DTO.eventId;
 
             var _event = await _eventRepo.Get(eventId);
             if (_event == null)
