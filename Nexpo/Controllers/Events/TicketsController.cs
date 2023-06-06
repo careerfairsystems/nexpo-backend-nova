@@ -274,13 +274,11 @@ namespace Nexpo.Controllers
             return NoContent();
         }
 
-
-
         /// <summary>
-        /// Send many QR code interpretations of the ticket(s) to a event to mail
+        /// Send many QR code interpretations of the tickets to a event to mail
         /// </summary>
         [HttpPost]
-        [Route("sendMany")]
+        [Route("send")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> SendManyTicketsToMailAsync(SendTicketViaMailDTO DTO)
