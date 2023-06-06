@@ -298,7 +298,7 @@ namespace Nexpo.Controllers
                 UserId = -1,
             };
 
-            _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, DTO.QRCode, _event);
+            _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, ticket.Code, _event);
             return Ok();
         }
     }

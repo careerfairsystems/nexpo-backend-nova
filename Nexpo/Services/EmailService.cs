@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using static Nexpo.DTO.FinalizeSignUpDTO;
 
+
 namespace Nexpo.Services
 {
     public abstract class IEmailService
@@ -71,7 +72,7 @@ namespace Nexpo.Services
             return SendEmail(user.Email, "Reset your password", content, content);
         }
 
-        public Task SendTicketAsQRViaEmail(string targetMail, string qrCode, Event _event)
+        public Task SendTicketAsQRViaEmail(string targetMail, Guid ticketId, Event _event)
         {
             var name = _event.Name;
             var location = _event.Location;
@@ -81,9 +82,11 @@ namespace Nexpo.Services
             var start = _event.Start;
             var end = _event.End;
 
+            string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + ticketId;
+
             var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
                 $"Please show the QR-code below at the entrance to get in.<br><br>" +
-                $"<img src=\"{qrCode}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
+                $"<img src=\"{qrImage}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
 
             return SendEmail(targetMail, $"Arkad Ticket: {name}", content, content);
 

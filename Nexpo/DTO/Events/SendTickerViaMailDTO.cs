@@ -12,9 +12,6 @@ namespace Nexpo.DTO
         public string mail { get; set; }
 
         [Required]
-        public string QRCode { get; set; }
-
-        [Required]
         public int EventId { get; set; }
     }
 }
