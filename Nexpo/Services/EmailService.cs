@@ -103,9 +103,11 @@ namespace Nexpo.Services
             var start = _event.Start;
             var end = _event.End;
 
+            var numberOfTickets = tickets.Count;
+
             string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=";
 
-            var content = $"You and your collegues have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
+            var content = $"You and your {numberOfTickets-1} collegue(s) have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
                 $"Please show the QR-codes below at the entrance to get in.<br><br>";
 
             foreach (var ticket in tickets)
