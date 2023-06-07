@@ -820,6 +820,8 @@ namespace Nexpo.Tests.Controllers
             var response = await client.PostAsync("api/tickets/send", payload);
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            
         }
 
         [Fact]
@@ -957,6 +959,6 @@ namespace Nexpo.Tests.Controllers
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized),"Wrong status code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
         }
-        
+
     } 
 }
