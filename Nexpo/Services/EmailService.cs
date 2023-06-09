@@ -86,8 +86,10 @@ namespace Nexpo.Services
             string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + ticketId;
 
             var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
-                $"Please show the QR-code below at the entrance to get in.<br><br>" +
-                $"<img src=\"{qrImage}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
+                $"Please show the QR-code below at the entrance to get in.<br><br>" + qrImage;
+            //var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
+            //    $"Please show the QR-code below at the entrance to get in.<br><br>" +
+            //    $"<img src=\"{qrImage}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
 
             return SendEmail(targetMail, $"Arkad Ticket for {name}", content, content);
 
@@ -112,7 +114,8 @@ namespace Nexpo.Services
 
             foreach (var ticket in tickets)
             {
-                content += $"<img src=\"{qrImage}{ticket.Code}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
+                content += qrImage+ticket.Code+"<br><br>";
+                //content += $"<img src=\"{qrImage}{ticket.Code}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
             }
 
             return SendEmail(targetMail, $"Arkad Tickets for {name}", content, content);
