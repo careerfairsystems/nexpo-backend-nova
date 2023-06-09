@@ -207,25 +207,48 @@ sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e 
 ----
 
 # System Overview
-## Overall Architecture
+## Central Architecture
 
 The overall architecture can currently be split into 6 components with different responsibilities. They are as follows: 
 
-**1. Controller:** Receives and responds to http-requests by calling on appropriate methods in the other components to generate the desired outcome. To control the format of the input and output, may requests and db responses be converted to DTO:s before being forwarded to repositories or sent as a response.   
+**1. Controller:** \\
+Receives and responds to http-requests by calling on appropriate methods in the other components to generate the desired outcome. To control the format of the input and output, may requests and db responses be converted to DTO:s before being forwarded to repositories or sent as a response.   
 
-**2. Repository:** Responsible for translating requests into queries against the model and converting query results to relevant data objects before returning them. 
+**2. Repository:** \\
+ Responsible for translating requests into queries against the model and converting query results to relevant data objects before returning them. 
 
-**3. Model:** C# representation of the the database tables. 
+**3. Model:** \\
+C# representation of the the database tables. 
 
-**4. DTO:** Data Transfer Object that converts data to an object consisting of only relevant data. Can be used to prevent data leakage in http-responses or as an simplified method of moving data between different components.  
+**4. DTO:** \\
+ Data Transfer Object that converts data to an object consisting of only relevant data. Can be used to prevent data leakage in http-responses or as an simplified method of moving data between different components.  
 
-**5. Services:** Responsible for functionality outside the manipulation and gathering of data in the database. This entails token & file management, password validation and email services.
+**5. Services:** \\
+Responsible for functionality outside the manipulation and gathering of data in the database. This entails token & file management, password validation and email services.
 
-**6. Helpers:** Consists of helper functions for the controller. Currently only converts claims to intelligible data. 
+**6. Helpers:** \\
+Consists of helper functions for the controller. Currently only converts claims to intelligible data. 
 
 ![Overall_Architecture drawio (4)](https://user-images.githubusercontent.com/47223000/191040681-7c0c9409-48ca-4187-8ee0-023d1d1fc913.png)
 
-**More in-depth resources:**
+## Other resources
+**1. UploadToDB:**
+Responsible for download and uploading files to the database.
+- More documentation to come
+
+**2. Scripts:**
+- The project has Bash and Bat scripts for running the backend. The scripts are located in the root folder of the project. 
+- There are also Bash and Bat scripts for running the tests. (More information regarding is given when running the corresponding help command, eg: ./runTest.sh -h)These scripts have the ability to:
+  1. Start the database in a docker container
+    - This also creates or updates the mock data in the database
+  2. Run all tests
+    - Note that the tests will fail during the first run of the tests, since the container has likely not had time to start up completly. Simply run the tests again.
+  3. Run some of the tests, by specifing the class or controller to test. 
+**3. Tests**
+- The tests are located in the Nexpo.Tests project. They currently only test the controller and services, and assumes that everything else (which is dependent) works as intended. 
+- There is a TestUtils available, which is helper class for logging in to the system while testing. These are dependent on the mockdata in ApplicationDBContext
+
+## More in-depth resources:
 
 [Architecting-Modern-Web-Applications-with-ASP.NET-Core-and-Azure.pdf](https://github.com/careerfairsystems/nexpo-backend-nova/files/9549955/Architecting-Modern-Web-Applications-with-ASP.NET-Core-and-Azure.pdf)
 
