@@ -14,6 +14,13 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Secrets, such as password or key files
+# Notification configuration file - includes keys, tokens, etc
+google-services.json
+
+# Service account key - includes keys, tokens, etc
+serviceAccountKey.json
+
 # Mono auto generated files
 mono_crash.*
 

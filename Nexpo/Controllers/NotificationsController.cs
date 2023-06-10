@@ -1,5 +1,6 @@
 using FirebaseAdmin.Messaging;
 
+
 namespace Nexpo.Controllers
 {
     [Route("api/[controller]")]
@@ -18,8 +19,8 @@ namespace Nexpo.Controllers
             {
                 Notification = new Notification
                 {
-                    Title = "Notification Title",
-                    Body = "Notification Body",
+                    Title = dto.Title,
+                    Body = dto.Message,
                 },
                 Topic = "all",
             };

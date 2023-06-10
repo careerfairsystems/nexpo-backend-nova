@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using Nexpo.AWS;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 namespace Nexpo
 {
@@ -56,6 +58,15 @@ namespace Nexpo
                     ValidAudience = Config.JWTAudience,
                     IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(Config.SecretKey))
                 };
+            });
+
+            // Load the service account credentials
+            var credentials = GoogleCredential.FromFile("../ServiceAccountKey.json");
+
+            // Initialize the FirebaseApp
+            FirebaseApp.Create(new AppOptions
+            {
+                Credential = credentials
             });
 
             services.AddScoped<IConfig>(_ => Config);
