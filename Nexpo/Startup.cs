@@ -14,6 +14,13 @@ using System;
 using Nexpo.AWS;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+﻿using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Nexpo
 {
@@ -31,7 +38,7 @@ namespace Nexpo
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public async void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllers();
@@ -61,13 +68,18 @@ namespace Nexpo
             });
 
             // Load the service account credentials
-            var credentials = GoogleCredential.FromFile("../ServiceAccountKey.json");
+            var credentials = GoogleCredential.FromFile("../serviceAccountKey.json");
 
             // Initialize the FirebaseApp
-            FirebaseApp.Create(new AppOptions
+            var fbApp = FirebaseApp.Create(new AppOptions
             {
                 Credential = credentials
             });
+
+            //Console.WriteLine(fbApp.Name); // "[DEFAULT]"
+
+            
+
 
             services.AddScoped<IConfig>(_ => Config);
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
