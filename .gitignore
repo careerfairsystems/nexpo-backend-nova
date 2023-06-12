@@ -17,6 +17,9 @@
 # Mono auto generated files
 mono_crash.*
 
+# Project secrets
+secrets.json
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
