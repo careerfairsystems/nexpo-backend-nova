@@ -16,5 +16,8 @@ namespace Nexpo.Tests
         public string JWTExpires { get; set; }
         
         public string ConnectionString { get; set; }
+        public string AwsAccessKey { get; set; }
+        public string AwsSecretAccessKey { get; set; }
+        
     }
 }
