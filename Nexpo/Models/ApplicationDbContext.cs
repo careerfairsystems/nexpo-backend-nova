@@ -61,7 +61,8 @@ namespace Nexpo.Models
             var company2 = new Company { Id = -2, Name = "Google", Description = "You can find more about us by searching the web"  , DidYouKnow = "we are big", DaysAtArkad = new List<DateTime>(){DateTime.Parse("2023-01-01")}, DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Arkitekt,(int) Programme.Väg_och_vatttenbyggnad}, Industries = new List<int>(){(int)Industry.Industry,(int) Industry.DataIT}, Positions = new List<int>(){(int)Position.PartTime, (int)Position.Internship}};
             var company3 = new Company { Id = -3, Name = "Spotify", Description = "We like music" ,  DidYouKnow = "we love music", DaysAtArkad = new List<DateTime>(){DateTime.Parse("2023-01-01"), DateTime.Parse("2023-01-02")}, DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Kemiteknik,(int) Programme.Industriell_ekonomi}, Industries = new List<int>(){(int)Industry.Coaching,(int) Industry.BankingFinance}, Positions = new List<int>(){(int)Position.ForeignOppurtunity, (int)Position.SummerJob}};
             var company4 = new Company { Id = -4, Name = "Facebook", Description = "We have friends in common" , DidYouKnow = "Mark zuckerburg is an Alien", DaysAtArkad = new List<DateTime>(){DateTime.Parse("2023-01-01"), DateTime.Parse("2023-01-02")}, DesiredDegrees = new List<int>(){(int) Degree.PhD,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Byggteknik_med_Järnvägsteknik,(int) Programme.Teknisk_Fysik}, Industries = new List<int>(){(int)Industry.Environment,(int) Industry.ElectricityEnergyPower}, Positions = new List<int>(){(int)Position.Thesis, (int)Position.TraineeEmployment}, StudentSessionMotivation = "We are better than Apple!"};
-            Companies.AddRange(company1, company2, company3, company4);
+            var company5 = new Company { Id = -5, Name = "VentureLab", Description = "We want motivations for our events", DidYouKnow = "Motivations are motivating", DaysAtArkad = new List<DateTime>(){DateTime.Parse("2023-01-01"), DateTime.Parse("2023-01-02")}, DesiredDegrees = new List<int>(){(int) Degree.Bachelor,(int) Degree.Master}, DesiredProgramme = new List<int>(){(int) Programme.Byggteknik_med_Järnvägsteknik,(int) Programme.Teknisk_Fysik}, Industries = new List<int>(){(int)Industry.Environment,(int) Industry.ElectricityEnergyPower}, Positions = new List<int>(){(int)Position.Thesis, (int)Position.TraineeEmployment}, StudentSessionMotivation = "We are better than Apple!"};
+            Companies.AddRange(company1, company2, company3, company4, company5);
             SaveChanges();
 
             // Users
@@ -99,6 +100,7 @@ namespace Nexpo.Models
             var event7 = new Event { Id = -7, Name = "Lunch For Company Rep!",      Type = EventType.Lunch,         Description = "Com.reps get hungry aswell",                               Date = DateTime.Now.AddDays(15).Date.ToString(), Start = "12:15", End = "13:00", Host = "Teknologkåren", Location = "Perstorp", Language = "English", Capacity = 500};
 
             var event8 = new Event { Id = -8, Name = "The final banquet",           Type = EventType.Banquet,       Description = "The final banquet for all volunteers, company hosts, and company reps", Date = DateTime.Now.AddDays(15).Date.ToString(), Start = "12:15", End = "13:00", Host = "Teknologkåren", Location = "Hänget", Language = "English", Capacity = 300};
+
             Events.AddRange(event1, event2, event3, event4, event5, event6, event7, event8);
             SaveChanges();
 
@@ -118,6 +120,11 @@ namespace Nexpo.Models
             var ticket11 = new Ticket { Id = -11, Code = Guid.NewGuid(), PhotoOk = true, EventId = event6.Id.Value, UserId = user2.Id.Value };
             var ticket12 = new Ticket { Id = -12, Code = Guid.NewGuid(), PhotoOk = false, EventId = event8.Id.Value, UserId = user9.Id.Value };
             Tickets.AddRange(ticket1, ticket2, ticket3, ticket4, ticket5, ticket6, ticket7, ticket8, ticket9, ticket10, ticket11, ticket12); 
+            SaveChanges();
+
+            // EventApplications
+            var EventApplication1 = new EventApplication { Motivation = "I want to learn more about the company", StudentId = user2.Id.Value, EventId = event7.Id.Value, CompanyId = company5.Id.Value };
+            EventApplications.Add(EventApplication1);
             SaveChanges();
 
             // StudentSessionTimeslots
@@ -154,13 +161,15 @@ namespace Nexpo.Models
             Contacts.AddRange(contact1, contact2, contact3, contact4);
             SaveChanges();
 
-            // FrequentAskedQuestion
+            // FrequentAskedQuestions
             var faq1 = new FrequentAskedQuestion { Id = -1, Question = "Frequent Asked Question 1"};
             var faq2 = new FrequentAskedQuestion { Id = -2, Question = "Frequent Asked Question 2"};
             var faq3 = new FrequentAskedQuestion { Id = -3, Question = "Frequent Asked Question 3"};
             var faq4 = new FrequentAskedQuestion { Id = -4, Question = "Frequent Asked Question 4"};
             FrequentAskedQuestion.AddRange(faq1, faq2, faq3, faq4);
             SaveChanges();
+
+            
 
         }
     }
