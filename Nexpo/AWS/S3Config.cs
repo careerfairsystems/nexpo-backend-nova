@@ -6,19 +6,16 @@ namespace Nexpo.AWS
     {
         // Keep the following details in appsettings.config file or DB or Enivironment variable
         // Get those values from it and assign to the below varibales. Based on the approach , modify the below code.
-        public S3Config(IConfiguration configuration)
+        public S3Config(IConfig configuration)
         {
             BucketName = "cvfiler";
             Region = "eu-north-1";
 
-            // These are stored as user secrets in the project. 
-            // Should currently be available via bitwarden
-            Console.WriteLine("...");
-            Console.WriteLine("AWS Access Key: " + configuration["AwsAccessKey"]);
-            Console.WriteLine("AWS Secret Access Key: " + configuration["AwsSecretAccessKey"]);
-
-            AwsAccessKey = configuration["AWS:AwsAccessKey"];
-            AwsSecretAccessKey = configuration["AWS:AwsSecretAccessKey"];
+            // These keys are read from user secrets. The "secrets.json" file is not included in the repository.
+            // It has to be added manually to the project (in the same level as startup.cs, ergo in the Nexpo folder). 
+            // It is currently available via bitwarden.
+            AwsAccessKey = configuration.AwsAccessKey;
+            AwsSecretAccessKey = configuration.AwsSecretAccessKey;
 
         }
 
