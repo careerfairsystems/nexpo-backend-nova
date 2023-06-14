@@ -12,11 +12,13 @@ namespace Nexpo.Models
         public DbSet<Student> Students { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Event> Events { get; set; }
+        public DbSet<EventApplication> EventApplications { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
         public DbSet<StudentSessionApplication> StudentSessionApplications { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<FrequentAskedQuestion> FrequentAskedQuestion { get; set; }
+
 
 #pragma warning restore format
 

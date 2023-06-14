@@ -59,6 +59,14 @@ namespace Nexpo.Services
             return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
         }
 
+        public Task SendEventApplicationAcceptedEmail(Company company, Event _event, User user)
+        {
+            var content =   "Congrats!<br>" 
+                            + $"{company.Name} has just accepted your application to {_event.Name}!<br>" 
+                            + "Log in to the app to pick a timeslot";
+            return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
+        }
+
         public Task SendPasswordResetEmail(User user)
         {
             var passwordResetDTO = new ResetPasswordDTO.ResetPasswordTokenDTO
