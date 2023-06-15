@@ -5,7 +5,7 @@ namespace Nexpo.DTO
     /// <summary>
     /// DTO for adding an event to the database
     /// </summary>
-    public class AddEventDTO
+    public class CreateEventDTO
     {
         public string Name { get; set; }
 
