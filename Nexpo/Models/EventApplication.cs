@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using System;
 
 namespace Nexpo.Models
 {
@@ -12,6 +13,8 @@ namespace Nexpo.Models
         public int? Id { get; set; }
         
         public string Motivation { get; set; }
+
+        public Boolean PhotoOk { get; set; }
 
         public EventApplicationStatus Status { get; set; } = EventApplicationStatus.NoResponse;
 
