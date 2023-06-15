@@ -22,6 +22,7 @@ namespace Nexpo.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
         private readonly ICompanyRepository _companyRepository;
+        private readonly ITicketRepository _ticketRepository;
 
 
         public EventsApplicationController(
@@ -30,7 +31,8 @@ namespace Nexpo.Controllers
             IStudentRepository iStudentRepository,
             IUserRepository iUserRepository,
             IEmailService iEmailService,
-            ICompanyRepository iCompanyRepository
+            ICompanyRepository iCompanyRepository,
+            ITicketRepository iTicketRepository
             )
         {
             _eventRepository   = iEventRepository;
@@ -38,7 +40,9 @@ namespace Nexpo.Controllers
             _applicationRepo   = iEventApplicationRepository;
             _studentRepository = iStudentRepository;
             _userRepository    = iUserRepository;
+            _ticketRepository  = iTicketRepository;
             _emailService      = iEmailService;
+
         }
 
         /// <summary>
@@ -73,6 +77,8 @@ namespace Nexpo.Controllers
                 var student = await _studentRepository.Get(application.StudentId);
                 var user = await _userRepository.Get(student.UserId);
                 var _event = await _eventRepository.Get(application.EventId);
+
+                
 
                 await _emailService.SendEventApplicationAcceptedEmail(company, _event, user);
             }

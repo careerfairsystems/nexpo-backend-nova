@@ -98,7 +98,7 @@ namespace Nexpo.Controllers
         [Route("{id}")]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
-        public async Task<ActionResult> UpdateEvent(int id, AddEventDTO DTO)
+        public async Task<ActionResult> UpdateEvent(int id, CreateEventDTO DTO)
         {
 
             var _event = await _eventRepo.Get(id);
@@ -143,7 +143,7 @@ namespace Nexpo.Controllers
         [HttpPost]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
-        public async Task<ActionResult> AddNewEvent(AddEventDTO DTO)
+        public async Task<ActionResult> AddNewEvent(CreateEventDTO DTO)
         {
             DateTime date;
             if(DateTime.TryParse(DTO.Date, out date) && DateTime.TryParse(DTO.Start, out date) && DateTime.TryParse(DTO.End, out date))
