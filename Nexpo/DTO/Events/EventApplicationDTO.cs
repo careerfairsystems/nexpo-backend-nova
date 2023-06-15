@@ -3,7 +3,7 @@ using Nexpo.Models;
 namespace Nexpo.DTO
 {
     /// <summary>
-    /// DTO for an event application
+    /// DTO for an event application. Dont mix this up with events. It is an application for an event, not an event.
     /// </summary>
     public class EventApplicationDTO
     {

@@ -14,7 +14,7 @@ namespace Nexpo.Models
         
         public string Motivation { get; set; }
 
-        public Boolean PhotoOk { get; set; }
+        public bool PhotoOk { get; set; }
 
         public EventApplicationStatus Status { get; set; } = EventApplicationStatus.NoResponse;
 

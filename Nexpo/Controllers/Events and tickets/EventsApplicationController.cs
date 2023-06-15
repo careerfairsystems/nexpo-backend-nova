@@ -78,7 +78,14 @@ namespace Nexpo.Controllers
                 var user = await _userRepository.Get(student.UserId);
                 var _event = await _eventRepository.Get(application.EventId);
 
-                
+                var ticket = new Ticket
+                {
+                    PhotoOk = application.PhotoOk,
+                    EventId = application.EventId,
+                    UserId = student.UserId
+                };
+
+                await _ticketRepository.Add(ticket);
 
                 await _emailService.SendEventApplicationAcceptedEmail(company, _event, user);
             }
