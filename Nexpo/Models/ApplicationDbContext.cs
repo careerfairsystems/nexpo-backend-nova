@@ -100,7 +100,6 @@ namespace Nexpo.Models
             var event7 = new Event { Id = -7, Name = "Lunch For Company Rep!",      Type = EventType.Lunch,         Description = "Com.reps get hungry aswell",                               Date = DateTime.Now.AddDays(15).Date.ToString(), Start = "12:15", End = "13:00", Host = "Teknologkåren", Location = "Perstorp", Language = "English", Capacity = 500};
 
             var event8 = new Event { Id = -8, Name = "The final banquet",           Type = EventType.Banquet,       Description = "The final banquet for all volunteers, company hosts, and company reps", Date = DateTime.Now.AddDays(15).Date.ToString(), Start = "12:15", End = "13:00", Host = "Teknologkåren", Location = "Hänget", Language = "English", Capacity = 300};
-
             Events.AddRange(event1, event2, event3, event4, event5, event6, event7, event8);
             SaveChanges();
 
@@ -123,7 +122,7 @@ namespace Nexpo.Models
             SaveChanges();
 
             // EventApplications
-            var EventApplication1 = new EventApplication { Motivation = "I want to learn more about the company", StudentId = user2.Id.Value, EventId = event7.Id.Value, CompanyId = company5.Id.Value };
+            var EventApplication1 = new EventApplication { Motivation = "I want to learn more about the company", PhotoOk = true, StudentId = student1.Id.Value, EventId = event7.Id.Value, CompanyId = company5.Id.Value };
             EventApplications.Add(EventApplication1);
             SaveChanges();
 

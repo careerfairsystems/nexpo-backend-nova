@@ -10,5 +10,14 @@ namespace Nexpo.DTO
     {
         [Required]
         public string Motivation { get; set; }
+
+        [Required]
+        public int EventId { get; set; }
+
+        [Required]
+        public int CompanyId { get; set; }
+
+        [Required]
+        public bool PhotoOk { get; set; }
     }
 }

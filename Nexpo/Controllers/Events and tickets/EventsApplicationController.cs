@@ -82,7 +82,7 @@ namespace Nexpo.Controllers
                 {
                     PhotoOk = application.PhotoOk,
                     EventId = application.EventId,
-                    UserId = student.UserId
+                    UserId  = student.UserId
                 };
 
                 await _ticketRepository.Add(ticket);
@@ -97,12 +97,12 @@ namespace Nexpo.Controllers
         /// Create a new application for a event as a student
         /// </summary>
         [HttpPost]
-        [Route("event/{eventId}/{companyId}")]
+        [Route("apply")]
         [Authorize(Roles = nameof(Role.Student))]
         [ProducesResponseType(typeof(EventApplication), StatusCodes.Status201Created)]
-        public async Task<ActionResult> PostApplication(int eventId, int companyId, UpdateEventApplicationStudentDTO DTO)
+        public async Task<ActionResult> PostApplication(UpdateEventApplicationStudentDTO DTO)
         {
-            var _event = await _eventRepository.Get(eventId);
+            var _event = await _eventRepository.Get(DTO.EventId);
             if(_event == null)
             {
                 return NotFound();
@@ -110,9 +110,9 @@ namespace Nexpo.Controllers
 
             var studentId = HttpContext.User.GetStudentId().Value;
 
-            if (await _applicationRepo.ApplicationExists(studentId, eventId))
+            if (await _applicationRepo.ApplicationExists(studentId, DTO.EventId))
             {
-                var current = await _applicationRepo.GetByEventAndStudent(studentId, eventId);
+                var current = await _applicationRepo.GetByEventAndStudent(studentId, DTO.EventId);
                 current.Motivation = DTO.Motivation;
                 await _applicationRepo.Update(current);
                 return CreatedAtAction(nameof(GetApplicationStudent), new { id = current.Id }, current);
@@ -123,8 +123,9 @@ namespace Nexpo.Controllers
                 {
                     Motivation = DTO.Motivation,
                     StudentId = studentId,
-                    EventId = eventId,
-                    CompanyId = companyId
+                    EventId = DTO.EventId,
+                    CompanyId = DTO.CompanyId,
+                    PhotoOk = DTO.PhotoOk,
                 };
                 await _applicationRepo.Add(application);
                 return CreatedAtAction(nameof(GetApplicationStudent), new { id = application.Id }, application);
@@ -220,6 +221,7 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Checks if application exists for given eventId and is accepted and is booked
+        /// Lite konstig IMO. Kanske inte ha med? Eller gör om? Ta även in studentId
         /// </summary>
         /// <param name="id">Event Id</param>
         [HttpGet]
@@ -253,7 +255,7 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Delete a student session application
+        /// Delete a student event application
         /// </summary>
         /// <param name="id">Application Id</param>
         [HttpDelete]
