@@ -149,7 +149,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
 
             //Verify
-            var responseObject = JsonConvert.DeserializeObject<AddEventDTO>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<CreateEventDTO>(await response.Content.ReadAsStringAsync());
 
             Assert.True(responseObject.Description.Equals("New description"), "Wrong description. Expected: New Description. Received: " + responseObject.Description);
             Assert.True(responseObject.Date.Equals("2011-03-07"), "Wrong date. Expected: 2011-03-07. Received: " + responseObject.Date);
@@ -177,7 +177,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
 
             string responseText = await response.Content.ReadAsStringAsync();
-            var responseObject = JsonConvert.DeserializeObject<AddEventDTO>(responseText);
+            var responseObject = JsonConvert.DeserializeObject<CreateEventDTO>(responseText);
 
             Assert.True(responseObject == null, "Returned Object was not null. Received: " + responseText);
         }
@@ -193,7 +193,7 @@ namespace Nexpo.Tests.Controllers
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), response.StatusCode.ToString());
 
-            var responseObject = JsonConvert.DeserializeObject<AddEventDTO>(await response.Content.ReadAsStringAsync());
+            var responseObject = JsonConvert.DeserializeObject<CreateEventDTO>(await response.Content.ReadAsStringAsync());
 
             Assert.True(responseObject.Description.Equals("Get inspired and expand your horizons"), $"Wrong description. Received: {responseObject.Description}");
             Assert.True(responseObject.Date.Equals(DateTime.Now.AddDays(14).Date.ToString()), $"Wrong date. Received: {responseObject.Date}");
