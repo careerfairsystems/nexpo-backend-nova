@@ -34,7 +34,12 @@ namespace Nexpo.Controllers
             _studentRepo = studentRepo;
         }
 
-        [HttpGet("InitiateSingleSignOn")]
+        /// <summary>
+        /// Initiate a SAML login.
+        /// Redirects the user to the SAML IDP.
+        /// </summary>
+        [HttpGet]
+        [Route("InitiateSingleSignOn")]
         public IActionResult InitiateSingleSignOn()
         {
             //The SAML provider url, aka "Endpoint"
@@ -48,8 +53,12 @@ namespace Nexpo.Controllers
             return Redirect(request.GetRedirectUrl(samlEndpoint));
         }
 
-        // Where the provider should redirect users after authenticating
-        [HttpPost("ACS")]
+        /// <summary>
+        /// Assertion Consumer Service.
+        /// Where the IDP should redirect users after authenticating.
+        /// </summary>
+        [HttpPost]
+        [Route("ACS")]
         public async Task<IActionResult> ACS()
         {
             // The certificate of our SAML idp
@@ -129,59 +138,46 @@ namespace Nexpo.Controllers
                     claims.Add(new Claim(UserClaims.VolunteerId, volunteer.Id.ToString()));
                 }
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var jwt = _tokenService.GenerateJWT(claims);
 
-                var authProperties = new AuthenticationProperties
-                {
-                    ExpiresUtc = null, 
-                    IsPersistent = false,
-                    AllowRefresh = true
-                };
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
-                return Redirect("https://www.nexpo.arkadtlth.se/api/companies");
+                return Redirect("https://www.nexpo.arkadtlth.se/api/Saml/" + jwt);
             }
 
             return Content("Unauthorized");
         }
 
+        /// <summary>
+        /// Currently just a placeholder to hold the JWT,
+        /// so it can be collected by the frontend.
+        /// However, can be used to instatly replace the JWT with a new,
+        /// that has not been exposed to the used (may cause security issues?)
+        /// </summary>
+        [HttpGet]
+        [Route("{jwt}")]
+        public async Task JWT(){
 
-
-
-        [HttpGet("Logout")]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Redirect("~/");
         }
 
 
-        [HttpGet("SP")]
+
+        [HttpGet]
+        [Route("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+
+            return Redirect("~/");
+        }
+
+        /// <summary>
+        /// Mostly exists to visualize the entity ID as a endpoint. 
+        /// The certificate of us (the service provider)
+        /// </summary>
+        [HttpGet]
+        [Route("SP")]
         public String SP()
         {
             // The certificate of us (the service provider)
-            return @"
-            MIIDozCCAosCFH1wAolC0dp70/NUOpUCzeeYMWNNMA0GCSqGSIb3DQEBCwUAMIGN
-            MQswCQYDVQQGEwJTRTEPMA0GA1UECAwGU2NhbmlhMQ0wCwYDVQQHDARMdW5kMQ4w
-            DAYDVQQKDAVBUktBRDELMAkGA1UECwwCSVQxFzAVBgNVBAMMDkJhY2tlbmRNYW5h
-            Z2VyMSgwJgYJKoZIhvcNAQkBFhliYWNrZW5kLmFya2FkQGJveC50bHRoLnNlMB4X
-            DTIzMDQwNzIzNTY1OVoXDTI0MDQwNjIzNTY1OVowgY0xCzAJBgNVBAYTAlNFMQ8w
-            DQYDVQQIDAZTY2FuaWExDTALBgNVBAcMBEx1bmQxDjAMBgNVBAoMBUFSS0FEMQsw
-            CQYDVQQLDAJJVDEXMBUGA1UEAwwOQmFja2VuZE1hbmFnZXIxKDAmBgkqhkiG9w0B
-            CQEWGWJhY2tlbmQuYXJrYWRAYm94LnRsdGguc2UwggEiMA0GCSqGSIb3DQEBAQUA
-            A4IBDwAwggEKAoIBAQDVIpys4RySPfjnlbnU2IQzDRy5rMIbhhqztt47W0udkoNa
-            TTNDyKnWq7jPw3fuwzglbqFEN+VQhOP79IBnilO8XnkcIPERj/Rfvc6f4/hAnQUR
-            keTw/XHkj1YNoYbQ0YabHDW8EdEGQ/nlfUkN0+JAoU6tXGYqDpnxcxPcIhay3pgo
-            pBO2vr+XDpD1tmc2L18Y4PoLduOE1DpXhRr/qWf0il/zlcSqiU212nWFNc0g6mGM
-            NdfmADgA8e+R0SCwfUblJRofLisX534mhyhrHjV/XzGQnMzQXAGhIwC5izndUWtw
-            Bs/sKcOWjDUu8+B8vzCLRKJu0gK1yheRywXsCfTNAgMBAAEwDQYJKoZIhvcNAQEL
-            BQADggEBAJdkiZn/Ps+uDF743IsJr7HHTG904BzyZDFkkdW313QP/dBwpGfpGxxl
-            vnpHlqNBxvB1+nRNcxN7ZQ1oPvl2sq1xAcqIYeLm9zQBL4Qy68R7rIhKnIdNi4l6
-            qAsLHryLeBhlU+Gkc9bgMtgp5zegNuNBLsTGZ4+zQFN/iNoUtK1q5gct4aoOKZMT
-            7/5OKGgXnyI6wf+4VNU/w9L9GPSzK9DgfTst+B4sllubAFdUMK4cfUYa5ueNo0zr
-            1YP3bxLPE21hOPXW0UA82rFpXm9E+HNSIjARLTPRLrUGStb3+t3a+wYplGpCr4aD
-            f4WQ/6968/Njivn1i+eAKEwSP004hPc=";
+            return @"NOT AVAILABLE ON GITHUB";
 
 
         }
