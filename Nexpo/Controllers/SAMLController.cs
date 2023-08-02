@@ -40,13 +40,14 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpGet]
         [Route("InitiateSingleSignOn")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult InitiateSingleSignOn()
         {
             //The SAML provider url, aka "Endpoint"
             var samlEndpoint = "https://idpv4.lu.se/idp/profile/SAML2/Redirect/SSO";
 
             var request = new AuthRequest(
-                "https://www.nexpo.arkadtlth.se/api/Saml/SP", //our app's "entity ID" here
+                "https://www.nexpo.arkadtlth.se/api/saml/SP", //our app's "entity ID" here
                 "https://www.nexpo.arkadtlth.se/api/Saml/ACS" //our Assertion Consumer URL
             );
 
@@ -155,10 +156,8 @@ namespace Nexpo.Controllers
         [HttpGet]
         [Route("{jwt}")]
         public async Task JWT(){
-
+            
         }
-
-
 
         [HttpGet]
         [Route("Logout")]
