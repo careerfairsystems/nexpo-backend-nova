@@ -55,6 +55,11 @@ namespace Nexpo.Controllers
                 return BadRequest();
             }
 
+            if(user.PasswordHash == null)
+            {
+                return BadRequest();
+            }
+
             if (!_passwordService.ValidatePassword(credentials.Password, user.PasswordHash))
             {
                 return BadRequest();
@@ -97,6 +102,7 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> PostForgotPassword(ForgotPasswordDTO DTO)
         {
             var user = await _userRepo.FindByEmail(DTO.Email);
+
             // Don't expose account existance
             if (user != null)
             {

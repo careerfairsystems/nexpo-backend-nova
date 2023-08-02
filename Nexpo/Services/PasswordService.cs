@@ -1,4 +1,6 @@
-﻿using BCryptNet = BCrypt.Net.BCrypt;
+﻿using System;
+using BCryptNet = BCrypt.Net.BCrypt;
+
 
 namespace Nexpo.Services
 {
@@ -23,5 +25,6 @@ namespace Nexpo.Services
         {
             return BCryptNet.HashPassword(password);
         }
+
     }
 }

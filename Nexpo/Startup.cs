@@ -70,6 +70,7 @@ namespace Nexpo
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IFAQRepository, FAQRepository>();
 
+
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
