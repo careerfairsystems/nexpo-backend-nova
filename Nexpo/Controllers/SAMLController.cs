@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Nexpo.DTO;
 using Nexpo.Models;
 using Nexpo.Repositories;
 using Nexpo.Services;
@@ -20,32 +19,20 @@ namespace Nexpo.Controllers
     {
         private readonly IUserRepository _userRepo;
 
-        private readonly SessionController _sessionController;
-
-        private readonly SignUpController _signUpController;
-
         protected readonly TokenService _tokenService;
-        
-        private readonly StudentRepository _studentRepo;
+
+        private readonly IStudentRepository _studentRepo;
 
         public SAMLController(
             IUserRepository iUserRepo,
-            SessionController sessionController,
-            SignUpController signUpController,
             TokenService tokenService,
-            StudentRepository studentRepo
-
+            IStudentRepository studentRepo
         )
         {
             _userRepo = iUserRepo;
-            _sessionController = sessionController;
-            _signUpController = signUpController;
             _tokenService = tokenService;
             _studentRepo = studentRepo;
         }
-
-
-
 
         [HttpGet("InitiateSingleSignOn")]
         public IActionResult InitiateSingleSignOn()
@@ -130,7 +117,6 @@ namespace Nexpo.Controllers
                     new Claim(UserClaims.Role, user.Role.ToString()),
                 };
 
-
                 if (user.Role == Role.Student)
                 {
                     var student = await _studentRepo.FindByUser(user.Id.Value);
@@ -143,15 +129,25 @@ namespace Nexpo.Controllers
                     claims.Add(new Claim(UserClaims.VolunteerId, volunteer.Id.ToString()));
                 }
 
-                var jwt = _tokenService.GenerateJWT(claims);
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                // Needs to be sent to frontend.
+                var authProperties = new AuthenticationProperties
+                {
+                    ExpiresUtc = null, 
+                    IsPersistent = false,
+                    AllowRefresh = true
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
                 return Redirect("https://www.nexpo.arkadtlth.se/api/companies");
             }
 
             return Content("Unauthorized");
         }
+
+
+
 
         [HttpGet("Logout")]
         public async Task<IActionResult> Logout()
@@ -160,7 +156,7 @@ namespace Nexpo.Controllers
             return Redirect("~/");
         }
 
-    
+
         [HttpGet("SP")]
         public String SP()
         {
