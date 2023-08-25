@@ -16,6 +16,9 @@ namespace Nexpo.Models
         [Required]
         public string Question { get; set; }
 
+        [Required]
+        public string Answer { get; set; }
+
         
     }
 }
