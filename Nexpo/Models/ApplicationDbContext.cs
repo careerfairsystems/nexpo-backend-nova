@@ -156,7 +156,7 @@ namespace Nexpo.Models
             var faq1 = new FrequentAskedQuestion { Id = -1, Question = "Frequent Asked Question 1", Answer = "Gooooddd answerrr!!!"};
             var faq2 = new FrequentAskedQuestion { Id = -2, Question = "Frequent Asked Question 2", Answer = "Ye probably"};
             var faq3 = new FrequentAskedQuestion { Id = -3, Question = "Frequent Asked Question 3", Answer = "Hehe nop"};
-            var faq4 = new FrequentAskedQuestion { Id = -4, Question = "Frequent Asked Question 4", Answer = "Copilot generated: What is the meaning of life?"};
+            var faq4 = new FrequentAskedQuestion { Id = -4, Question = "Frequent Asked Question 4", Answer = "ChatGPT says: What is the meaning of life?"};
             FrequentAskedQuestion.AddRange(faq1, faq2, faq3, faq4);
             SaveChanges();
 
