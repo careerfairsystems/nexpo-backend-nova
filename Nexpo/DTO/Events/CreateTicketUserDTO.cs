@@ -15,5 +15,9 @@ namespace Nexpo.DTO
         
         [Required]
         public bool PhotoOk { get; set; }
+
+        public bool TakeAway { get; set; }
+
+        public DateTime TakeAwayTime { get; set; }
     }
 }
