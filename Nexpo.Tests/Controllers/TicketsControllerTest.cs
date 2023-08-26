@@ -29,7 +29,7 @@ namespace Nexpo.Tests.Controllers
             var ticket1 = responseList.Find(ticket => ticket.Id == -1);
             var ticket2 = responseList.Find(ticket => ticket.Id == -4);
 
-            Assert.True(responseList.Count == 3, "Wrong number of ticket. Expected: 3. Received: " + responseList.Count.ToString());
+            Assert.True(responseList.Count == 3, "Wrong number of tickets. Expected: 3. Received: " + responseList.Count.ToString());
             Assert.True(ticket1.PhotoOk, "Wrong PhotoOk value. Expected: true. Received: " + ticket1.PhotoOk.ToString());
             Assert.True(!ticket2.PhotoOk, "Wrong PhotoOk value. Expected: false. Received: " + ticket2.PhotoOk.ToString());
         }
@@ -46,7 +46,7 @@ namespace Nexpo.Tests.Controllers
             var responseList = JsonConvert.DeserializeObject<List<Ticket>>(await response.Content.ReadAsStringAsync());
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
-            Assert.True(responseList.Count == 0, "Wrong number of ticket. Expected: 0. Receivd: " + responseList.Count.ToString());
+            Assert.True(responseList.Count == 0, "Wrong number of tickets. Expected: 0. Receivd: " + responseList.Count.ToString());
         }
 
         [Fact]
