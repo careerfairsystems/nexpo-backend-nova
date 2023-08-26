@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO

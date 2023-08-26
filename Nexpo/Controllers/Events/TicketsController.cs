@@ -65,9 +65,14 @@ namespace Nexpo.Controllers
                 return Conflict();
             }
 
-            var isTakeAway = string.IsNullOrEmpty(DTO.TakeAway) ? false : DTO.TakeAway;
+            var ticket = new Ticket
+            {
+                PhotoOk = DTO.PhotoOk,
+                EventId = DTO.EventId,
+                UserId  = userId,
+            };
 
-            if (isTakeAway)
+            if (DTO.TakeAway)
             {
                 if (DTO.TakeAwayTime == default(DateTime))
                 {
@@ -84,23 +89,8 @@ namespace Nexpo.Controllers
                     return BadRequest();
                 }
 
-                var ticket = new Ticket
-                {
-                    PhotoOk      = DTO.PhotoOk,
-                    EventId      = DTO.EventId,
-                    UserId       = userId,
-                    TakeAway     = DTO.TakeAway,
-                    TakeAwayTime = DTO.TakeAwayTime,
-                };
-            }
-            else
-            {
-                var ticket = new Ticket
-                {
-                    PhotoOk = DTO.PhotoOk,
-                    EventId = DTO.EventId,
-                    UserId = userId,
-                };
+                ticket.TakeAway = DTO.TakeAway;
+                ticket.TakeAwayTime = DTO.TakeAwayTime;
             }
 
 
@@ -162,9 +152,14 @@ namespace Nexpo.Controllers
                 return Conflict();
             }
 
-            var isTakeAway = string.IsNullOrEmpty(DTO.TakeAway) ? false : DTO.TakeAway;
+            var ticket = new Ticket
+            {
+                PhotoOk = DTO.PhotoOk,
+                EventId = DTO.EventId,
+                UserId  = DTO.UserId,
+            };
 
-            if (isTakeAway)
+            if (DTO.TakeAway)
             {
                 if (DTO.TakeAwayTime == default(DateTime))
                 {
@@ -181,23 +176,8 @@ namespace Nexpo.Controllers
                     return BadRequest();
                 }
 
-                var ticket = new Ticket
-                {
-                    PhotoOk = DTO.PhotoOk,
-                    EventId = DTO.EventId,
-                    UserId = userId,
-                    TakeAway = DTO.TakeAway,
-                    TakeAwayTime = DTO.TakeAwayTime,
-                };
-            }
-            else
-            {
-                var ticket = new Ticket
-                {
-                    PhotoOk = DTO.PhotoOk,
-                    EventId = DTO.EventId,
-                    UserId  = userId,
-                };
+                ticket.TakeAway = DTO.TakeAway;
+                ticket.TakeAwayTime = DTO.TakeAwayTime;
             }
 
             await _ticketRepo.AddAdmin(ticket);
