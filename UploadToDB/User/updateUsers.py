@@ -27,7 +27,7 @@ headers = {
 }
 
 fields_to_update = {
-    "phonenr": "111111111"  
+    "phonenr": "111111111"
 }
 
 response = requests.put(url, headers=headers, json=fields_to_update)
