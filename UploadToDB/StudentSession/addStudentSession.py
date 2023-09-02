@@ -1,10 +1,18 @@
 import json
-import login
 import pandas as pd
 import requests
 
-jsonfile = 'example.json'
-url = 'http://{localhost}/api/timeslots/add'
+import sys
+sys.path.append("..")
+import login
+
+"""
+Creates a student session timeslot for a company, using JSON
+"""
+
+jsonfile = '/home/alexander/uni/Arkad/json objects/SSTest.json'
+# url = 'http://{localhost}/api/timeslots/add'
+url = 'https://www.nexpo.arkadtlth.se/api/timeslots/add'
 
 token = login.get_token()
 
@@ -15,7 +23,7 @@ headers = {
     }
 
 def findMinute(x):
-    if (x %2) == 0:
+    if (x%2) == 0:
         miniute = "00"
     else:
         miniute = "30"
@@ -31,8 +39,7 @@ for row in range(len(df)):
     companyId = studentSession[2]
     date = studentSession [0]
 
-    for x in range(12):
-        
+    for x in range(2):
         hour = 10 + int(x/2) 
         miniute = findMinute(x)
         start = '"' + date + "T" + str(hour) +":" + str(miniute) + 'Z"'
@@ -41,6 +48,6 @@ for row in range(len(df)):
         end = '"' + str(date) + "T" + str(hour) +":" + str(miniute) + 'Z"'
         data = '{ "start":'+ start + ', "end":'+ end + ', "location":' + location + ', "companyId": ' + str(companyId)  + '}'
         r = requests.post(url, data=data.encode('utf-8'), headers=headers)
-        print(r)
+        print("got " + str(r))
         #print(r.content)
 

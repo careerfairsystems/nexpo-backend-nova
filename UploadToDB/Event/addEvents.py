@@ -1,12 +1,15 @@
 import json
-import login
 import pandas as pd
 import requests
 
+import sys
+sys.path.append("..")
+import login
 
-jsonfile = '{event}.json'
-url = 'http://{localhost}/api/events'
-loginUrl = 'http://{localhost}/api/session/signin'
+
+jsonfile = '/home/alexander/uni/Arkad/json objects/event.json' 
+url = 'https://www.nexpo.arkadtlth.se/api/events'
+loginUrl = 'https://www.nexpo.arkadtlth.se/api/session/signin'
 
 token = login.get_token()
 
