@@ -1,0 +1,24 @@
+[
+    {
+        "name": "Test Event",
+        "description": "This is my event description.",
+        "date": "2023-09-03",
+        "start": "10:00:00",
+        "end": "12:00:00",
+        "location": "Kårhuset",
+        "host": "Test",
+        "language": "English",
+        "capacity": 100
+    },
+    {
+        "name": "Test Event",
+        "description": "This is an event description.",
+        "date": "2023-09-01",
+        "start": "10:00:00",
+        "end": "12:00:00",
+        "location": "Kårhuset",
+        "host": "Test",
+        "language": "English",
+        "capacity": 100
+    }
+]

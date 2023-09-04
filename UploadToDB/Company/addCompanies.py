@@ -11,7 +11,7 @@ Add a one or several companies to the database, using JSON
 - It is reccomended to export this data from Jexpo
 """
 
-jsonfile = '/home/alexander/uni/Arkad/json objects/arkadCompany.json'
+jsonfile = '../jsonTemplate/arkadCompany.json'
 url = 'https://www.nexpo.arkadtlth.se/api/companies'
 s3BucketUrl = 'https://nexpo-bucket.s3.eu-north-1.amazonaws.com/'
 

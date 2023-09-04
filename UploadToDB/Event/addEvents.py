@@ -7,7 +7,7 @@ sys.path.append("..")
 import login
 
 
-jsonfile = '/home/alexander/uni/Arkad/json objects/event.json' 
+jsonfile = '../jsonTemplate/event.json' 
 url = 'https://www.nexpo.arkadtlth.se/api/events'
 loginUrl = 'https://www.nexpo.arkadtlth.se/api/session/signin'
 
