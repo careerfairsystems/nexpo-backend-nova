@@ -10,7 +10,7 @@ import login
 Creates a student session timeslot for a company, using JSON
 """
 
-jsonfile = '/home/alexander/uni/Arkad/json objects/SSTest.json'
+jsonfile = '../jsonTemplate/SSTest.json'
 # url = 'http://{localhost}/api/timeslots/add'
 url = 'https://www.nexpo.arkadtlth.se/api/timeslots/add'
 
