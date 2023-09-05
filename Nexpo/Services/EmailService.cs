@@ -3,8 +3,10 @@ using Nexpo.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using static Nexpo.DTO.FinalizeSignUpDTO;
+
 
 namespace Nexpo.Services
 {
@@ -70,6 +72,55 @@ namespace Nexpo.Services
             var content = $"Reset your password by following this link: {baseUrl}/reset_password/{tokenString} The link is valid for an hour.";
             return SendEmail(user.Email, "Reset your password", content, content);
         }
+
+        public Task SendTicketAsQRViaEmail(string targetMail, Guid ticketId, Event _event)
+        {
+            var name = _event.Name;
+            var location = _event.Location;
+            var host = _event.Host;
+
+            var date = _event.Date;
+            var start = _event.Start;
+            var end = _event.End;
+
+            string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + ticketId;
+
+            var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
+                $"Please show the QR-code below at the entrance to get in.<br><br>" + qrImage;
+            //var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
+            //    $"Please show the QR-code below at the entrance to get in.<br><br>" +
+            //    $"<img src=\"{qrImage}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
+
+            return SendEmail(targetMail, $"Arkad Ticket for {name}", content, content);
+
+        }
+
+        public Task SendTicketAsQRViaEmail(string targetMail, List<Ticket> tickets, Event _event)
+        {
+            var name = _event.Name;
+            var location = _event.Location;
+            var host = _event.Host;
+
+            var date = _event.Date;
+            var start = _event.Start;
+            var end = _event.End;
+
+            var numberOfTickets = tickets.Count;
+
+            string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=";
+
+            var content = $"You and your {numberOfTickets-1} collegue(s) have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
+                $"Please show the QR-codes below at the entrance to get in.<br><br>";
+
+            foreach (var ticket in tickets)
+            {
+                content += qrImage+ticket.Code+"<br><br>";
+                //content += $"<img src=\"{qrImage}{ticket.Code}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
+            }
+
+            return SendEmail(targetMail, $"Arkad Tickets for {name}", content, content);
+        }
+        
     }
 
     public class EmailService : IEmailService
