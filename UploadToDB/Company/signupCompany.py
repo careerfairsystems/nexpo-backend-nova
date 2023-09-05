@@ -27,7 +27,7 @@ def send_invitations(auth_token, representatives):
 
 if __name__ == "__main__":
     auth_token = login.get_token()
-    filename = "../jsonTemplate/signupRep.json"  # Or any filename you choose
+    filename = "../jsonTemplate/signupRep.json"
     
     representatives = read_json_file(filename)
     send_invitations(auth_token, representatives)
