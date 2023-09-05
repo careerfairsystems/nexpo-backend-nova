@@ -53,7 +53,7 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if ((DateTime.Parse(_event.Date) - DateTime.Today).TotalDays < 2) 
+            if ((DateTime.Parse(_event.Date) - DateTime.Today).TotalDays < 2)
             {
                 return BadRequest();
             }
@@ -72,7 +72,30 @@ namespace Nexpo.Controllers
                 UserId  = userId,
             };
 
-            if(!await _ticketRepo.Add(ticket))
+            if (DTO.TakeAway)
+            {
+                if (DTO.TakeAwayTime == default(DateTime))
+                {
+                    return BadRequest();
+                }
+
+                if (DTO.TakeAwayTime < DateTime.Now)
+                {
+                    return BadRequest();
+                }
+
+                if (_event.Type != EventType.Lunch)
+                {
+                    return BadRequest();
+                }
+
+                ticket.TakeAway = DTO.TakeAway;
+                ticket.TakeAwayTime = DTO.TakeAwayTime;
+            }
+
+
+
+            if (!await _ticketRepo.Add(ticket))
             {
                 return Conflict();
             }
@@ -90,7 +113,7 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> GetTicketType(int id)
         {
             var ticket = await _ticketRepo.Get(id);
-            
+
             if (ticket == null)
             {
                 return NotFound();
@@ -98,14 +121,14 @@ namespace Nexpo.Controllers
 
             var userId = HttpContext.User.GetId();
 
-            if(ticket.UserId != userId)
+            if (ticket.UserId != userId)
             {
                 return Forbid();
             }
 
             return Ok(await _ticketRepo.GetEventType(id));
 
-            
+
         }
 
         /// <summary>
@@ -136,10 +159,31 @@ namespace Nexpo.Controllers
                 UserId  = DTO.UserId,
             };
 
+            if (DTO.TakeAway)
+            {
+                if (DTO.TakeAwayTime == default(DateTime))
+                {
+                    return BadRequest();
+                }
+
+                if (DTO.TakeAwayTime < DateTime.Now)
+                {
+                    return BadRequest();
+                }
+
+                if (_event.Type != EventType.Lunch)
+                {
+                    return BadRequest();
+                }
+
+                ticket.TakeAway = DTO.TakeAway;
+                ticket.TakeAwayTime = DTO.TakeAwayTime;
+            }
+
             await _ticketRepo.AddAdmin(ticket);
 
             return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, ticket);
-        } 
+        }
 
         /// <summary>
         /// Update isConsumed on a ticket
@@ -161,18 +205,18 @@ namespace Nexpo.Controllers
                 if (DTO.TakeAway && DTO.TakeAwayTime != default(DateTime))
                 {
                     ticket.TakeAway = DTO.TakeAway;
-                    ticket.TakeAwayTime = DTO.TakeAwayTime;                    
+                    ticket.TakeAwayTime = DTO.TakeAwayTime;
                 }
 
                 // Update TakeAway and set TakeAwayTime to default if TakeAway is false
-                else if(!DTO.TakeAway) 
+                else if (!DTO.TakeAway)
                 {
                     ticket.TakeAway = DTO.TakeAway;
                     ticket.TakeAwayTime = default(DateTime);
                 }
 
                 // Only admin can update isConsumed
-                if(userRole == Role.Administrator)
+                if (userRole == Role.Administrator)
                 {
                     ticket.isConsumed = DTO.isConsumed;
                 }
@@ -262,7 +306,7 @@ namespace Nexpo.Controllers
                     return Forbid();
                 }
             }
-            
+
             await _ticketRepo.Remove(ticket);
             return NoContent();
         }
