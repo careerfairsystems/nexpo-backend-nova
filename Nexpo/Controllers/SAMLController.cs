@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Nexpo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class SAMLController : ControllerBase
     {
@@ -39,7 +39,7 @@ namespace Nexpo.Controllers
         /// Redirects the user to the SAML IDP.
         /// </summary>
         [HttpGet]
-        [Route("InitiateSingleSignOn")]
+        [Route("saml/InitiateSingleSignOn")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult InitiateSingleSignOn()
         {
@@ -59,9 +59,10 @@ namespace Nexpo.Controllers
         /// Where the IDP should redirect users after authenticating.
         /// </summary>
         [HttpPost]
-        [Route("ACS")]
+        [Route("Saml/ACS")]
         public async Task<IActionResult> ACS()
         {
+            Console.WriteLine("...");
             // The certificate of our SAML idp
             string samlCertificate =
             @"
@@ -141,7 +142,7 @@ namespace Nexpo.Controllers
 
                 var jwt = _tokenService.GenerateJWT(claims);
 
-                return Redirect("https://www.nexpo.arkadtlth.se/api/Saml/" + jwt);
+                return Redirect("https://www.nexpo.arkadtlth.se/api/saml/" + jwt);
             }
 
             return Content("Unauthorized");
@@ -154,13 +155,13 @@ namespace Nexpo.Controllers
         /// that has not been exposed to the used (may cause security issues?)
         /// </summary>
         [HttpGet]
-        [Route("{jwt}")]
+        [Route("saml/{jwt}")]
         public async Task JWT(){
             
         }
 
         [HttpGet]
-        [Route("Logout")]
+        [Route("saml/Logout")]
         public async Task<IActionResult> Logout()
         {
 
@@ -172,7 +173,7 @@ namespace Nexpo.Controllers
         /// The certificate of us (the service provider)
         /// </summary>
         [HttpGet]
-        [Route("SP")]
+        [Route("saml/SP")]
         public String SP()
         {
             // The certificate of us (the service provider)
