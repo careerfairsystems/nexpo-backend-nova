@@ -23,28 +23,17 @@ namespace Nexpo.Controllers
         private readonly IUserRepository _userRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
         private readonly IStudentRepository _studentRepo;
-        private readonly PasswordService _passwordService;
 
-        private IS3Configuration _appConfiguration;
-        private IAws3Services _aws3Services;
-        private IS3Configuration _s3Configuration;
 
         public RoleController(
             IUserRepository iUserRepo,
             IStudentSessionApplicationRepository iApplicationRepo,
-            IStudentRepository iStudentRepository,
-            PasswordService passwordService,
-            IS3Configuration iAppConfiguration,
-            IAws3Services iAws3Services,
-            IS3Configuration s3Configuration
+            IStudentRepository iStudentRepository
             )
         {
             _userRepo = iUserRepo;
             _applicationRepo = iApplicationRepo;
             _studentRepo = iStudentRepository;
-            _passwordService = passwordService;
-            _appConfiguration = iAppConfiguration;
-            _s3Configuration = s3Configuration;
         }
 
 
