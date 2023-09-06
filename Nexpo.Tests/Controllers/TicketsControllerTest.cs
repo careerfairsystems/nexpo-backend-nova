@@ -29,7 +29,7 @@ namespace Nexpo.Tests.Controllers
             var ticket1 = responseList.Find(ticket => ticket.Id == -1);
             var ticket2 = responseList.Find(ticket => ticket.Id == -4);
 
-            Assert.True(responseList.Count == 3, "Wrong number of ticket. Expected: 3. Received: " + responseList.Count.ToString());
+            Assert.True(responseList.Count == 3, "Wrong number of tickets. Expected: 3. Received: " + responseList.Count.ToString());
             Assert.True(ticket1.PhotoOk, "Wrong PhotoOk value. Expected: true. Received: " + ticket1.PhotoOk.ToString());
             Assert.True(!ticket2.PhotoOk, "Wrong PhotoOk value. Expected: false. Received: " + ticket2.PhotoOk.ToString());
         }
@@ -46,7 +46,7 @@ namespace Nexpo.Tests.Controllers
             var responseList = JsonConvert.DeserializeObject<List<Ticket>>(await response.Content.ReadAsStringAsync());
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
-            Assert.True(responseList.Count == 0, "Wrong number of ticket. Expected: 0. Receivd: " + responseList.Count.ToString());
+            Assert.True(responseList.Count == 0, "Wrong number of tickets. Expected: 0. Receivd: " + responseList.Count.ToString());
         }
 
         [Fact]
@@ -277,6 +277,7 @@ namespace Nexpo.Tests.Controllers
                 { "eventid", -3 },
                 { "photook", true }
             };
+
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Wrong status code. Expected: Created. Received: " + response.ToString());
@@ -314,6 +315,100 @@ namespace Nexpo.Tests.Controllers
 
             var responseList2 = JsonConvert.DeserializeObject<List<Ticket>>((await response5.Content.ReadAsStringAsync()));
             Assert.True(responseList2.Count == 3, "Wrong number of tickets. Expected: 3. Received: " + responseList2.Count.ToString());
+        }
+
+        [Fact]
+        public async Task PostandDeleteTakeaway()
+        {
+            var client =  await TestUtils.Login("student1");
+            var time = DateTime.Now.AddDays(1);
+            //Add new ticket
+            var json = new JsonObject
+            {
+                { "eventid", -7 },
+                { "photook", true },
+                { "takeaway", true },
+                { "takeawaytime", time }
+            };
+            
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Wrong status code. Expected: Created. Received: " + response.ToString());
+            
+            //Check response and db updated
+            string responseText = await response.Content.ReadAsStringAsync();
+            var parsedContent = JObject.Parse(responseText);
+            var newTicketId = parsedContent.Value<string>("id");
+
+            var response2 = await client.GetAsync("/api/tickets/id/" + newTicketId);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
+            
+            var response3 = await client.GetAsync("/api/tickets");
+            Assert.True(response3.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response3.StatusCode.ToString());
+
+            //Delete created ticket
+            var response4 = await client.DeleteAsync("api/tickets/" + newTicketId);
+            Assert.True(response4.StatusCode.Equals(HttpStatusCode.NoContent), "Wrong status code. Expected: NoContent. Received: " + response4.StatusCode.ToString());
+
+            //Check ticket does not exist and users total nbr. of tickets
+            var response5 = await client.GetAsync("/api/tickets");
+            Assert.True(response5.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response5.StatusCode.ToString());
+
+            var response6 = await client.GetAsync("/api/tickets/id/" + newTicketId);
+            Assert.True(response6.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response6.StatusCode.ToString());
+
+            //Verify
+            var responseObject = JsonConvert.DeserializeObject<Ticket>(await response2.Content.ReadAsStringAsync());
+            Assert.True(responseObject.PhotoOk, "Wrong PhotoOk value. Expected: true. Received: " + responseObject.PhotoOk.ToString());
+            Assert.True(responseObject.EventId == -7, "Wrong event id. Expected: -7. Received: " + responseObject.EventId.ToString());
+            Assert.True(responseObject.UserId == -2, "Wrong user id. Expected: -2. Received: " + responseObject.UserId.ToString());
+            Assert.True(responseObject.TakeAway, "Wrong TakeAway value. Expected: true. Received: " + responseObject.TakeAway.ToString());
+            Assert.True(responseObject.TakeAwayTime.Day == time.Day, "Wrong TakeAwayTime value. Expected: " + time.ToString() + ". Received: " + responseObject.TakeAwayTime.ToString());
+
+
+            var responseList = JsonConvert.DeserializeObject<List<Ticket>>((await response3.Content.ReadAsStringAsync()));
+            Assert.True(responseList.Count == 4, "Wrong number of tickets. Expected: 4. Received: " + responseList.Count.ToString());
+
+            var responseList2 = JsonConvert.DeserializeObject<List<Ticket>>((await response5.Content.ReadAsStringAsync()));
+            Assert.True(responseList2.Count == 3, "Wrong number of tickets. Expected: 3. Received: " + responseList2.Count.ToString());
+        }
+
+        [Fact]
+        public async Task PostandDeleteTakeawayToNonLunch()
+        {
+            var client =  await TestUtils.Login("student1");
+
+            //Add new ticket
+            var json = new JsonObject
+            {
+                { "eventid", -3 },
+                { "photook", true },
+                { "takeaway", true },
+                { "takeawaytime", DateTime.Now.AddDays(1) }
+            };
+            
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong status code. Expected: BadRequest. Received: " + response.ToString());
+
+        }
+
+        [Fact]
+        public async Task PostandDeleteTakeawayWithoutTime()
+        {
+            var client =  await TestUtils.Login("student1");
+
+            //Add new ticket
+            var json = new JsonObject
+            {
+                { "eventid", -3 },
+                { "photook", true },
+                { "takeaway", true },
+            };
+            
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets", payload);
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest), "Wrong status code. Expected: BadRequest. Received: " + response.ToString());
         }
 
         [Fact]
@@ -355,6 +450,51 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.PhotoOk, "Wrong PhotoOk value. Expected: true. Received: " + responseObject.PhotoOk.ToString());
             Assert.True(responseObject.EventId == -5, "Wrong event id. Expected: -5. Received: " + responseObject.EventId.ToString());
             Assert.True(responseObject.UserId == -4, "Wrong user id. Expected: -4. Received: " + responseObject.UserId.ToString());
+        }
+
+        [Fact]
+        public async Task PostandDeleteTakeawayAsAdminCloseToEvent()
+        {
+            var client = await TestUtils.Login("admin");
+            var time = DateTime.Now.AddDays(1);
+            //Add new ticket
+            var json = new JsonObject
+            {
+                { "eventid", -7 },
+                { "photook", true },
+                { "userid", -4 },
+                { "takeaway", true },
+                { "takeawaytime", time }
+            };
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/add", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Created), "Wrong status code. Expected: Created. Received: " + response.ToString());
+
+            //Check response and db updated
+            string responseText = await response.Content.ReadAsStringAsync();
+            var parsedContent = JObject.Parse(responseText);
+            var newTicketId = parsedContent.Value<string>("id");
+
+            var response2 = await client.GetAsync("/api/tickets/id/" + newTicketId);
+            Assert.True(response2.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response2.StatusCode.ToString());
+            
+            //Delete created ticket
+            var response4 = await client.DeleteAsync("api/tickets/" + newTicketId);
+            Assert.True(response4.StatusCode.Equals(HttpStatusCode.NoContent), "Wrong status code. Expected: NoContent. Received: " + response4.StatusCode.ToString());
+
+            //Check ticket does not exist
+            var response6 = await client.GetAsync("/api/tickets/id/" + newTicketId);
+            Assert.True(response6.StatusCode.Equals(HttpStatusCode.NotFound), "Wrong status code. Expected: NotFound. Received: " + response6.StatusCode.ToString());
+
+            //Verify
+            var responseObject = JsonConvert.DeserializeObject<Ticket>(await response2.Content.ReadAsStringAsync());
+            Assert.True(responseObject.PhotoOk, "Wrong PhotoOk value. Expected: true. Received: " + responseObject.PhotoOk.ToString());
+            Assert.True(responseObject.EventId == -7, "Wrong event id. Expected: -7. Received: " + responseObject.EventId.ToString());
+            Assert.True(responseObject.UserId == -4, "Wrong user id. Expected: -4. Received: " + responseObject.UserId.ToString());
+            Assert.True(responseObject.TakeAway, "Wrong TakeAway value. Expected: true. Received: " + responseObject.TakeAway.ToString());
+            Assert.True(responseObject.TakeAwayTime.Day == time.Day, "Wrong TakeAwayTime value. Expected: " + DateTime.Now.AddDays(1).ToString() + ". Received: " + responseObject.TakeAwayTime.ToString());
         }
 
 

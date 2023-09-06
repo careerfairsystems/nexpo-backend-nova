@@ -107,13 +107,13 @@ namespace Nexpo.Models
 
             var ticket4 = new  Ticket { Id = -4,  Code = Guid.NewGuid(), PhotoOk = false, EventId = event2.Id.Value, UserId = user2.Id.Value };
 
-            var ticket5 = new  Ticket { Id = -5,  Code = Guid.NewGuid(), PhotoOk = true, EventId = event3.Id.Value, UserId = user3.Id.Value };
-            var ticket6 = new  Ticket { Id = -6,  Code = Guid.NewGuid(), PhotoOk = true, EventId = event4.Id.Value, UserId = user3.Id.Value };
-            var ticket7 = new  Ticket { Id = -7,  Code = Guid.NewGuid(), PhotoOk = true, EventId = event4.Id.Value, UserId = user4.Id.Value };
-            var ticket8 = new  Ticket { Id = -8,  Code = Guid.NewGuid(), PhotoOk = true, EventId = event5.Id.Value, UserId = user3.Id.Value };
-            var ticket9 = new  Ticket { Id = -9,  Code = Guid.NewGuid(), PhotoOk = true, EventId = event6.Id.Value, UserId = user3.Id.Value };
-            var ticket10 = new Ticket { Id = -10, Code = Guid.NewGuid(), PhotoOk = true, EventId = event7.Id.Value, UserId = user8.Id.Value };
-            var ticket11 = new Ticket { Id = -11, Code = Guid.NewGuid(), PhotoOk = true, EventId = event6.Id.Value, UserId = user2.Id.Value };
+            var ticket5  = new  Ticket { Id = -5, Code = Guid.NewGuid(), PhotoOk = true,  EventId = event3.Id.Value, UserId = user3.Id.Value };
+            var ticket6  = new  Ticket { Id = -6, Code = Guid.NewGuid(), PhotoOk = true,  EventId = event4.Id.Value, UserId = user3.Id.Value };
+            var ticket7  = new  Ticket { Id = -7, Code = Guid.NewGuid(), PhotoOk = true,  EventId = event4.Id.Value, UserId = user4.Id.Value };
+            var ticket8  = new  Ticket { Id = -8, Code = Guid.NewGuid(), PhotoOk = true,  EventId = event5.Id.Value, UserId = user3.Id.Value };
+            var ticket9  = new  Ticket { Id = -9, Code = Guid.NewGuid(), PhotoOk = true,  EventId = event6.Id.Value, UserId = user3.Id.Value };
+            var ticket10 = new Ticket { Id = -10, Code = Guid.NewGuid(), PhotoOk = true,  EventId = event7.Id.Value, UserId = user8.Id.Value };
+            var ticket11 = new Ticket { Id = -11, Code = Guid.NewGuid(), PhotoOk = true,  EventId = event6.Id.Value, UserId = user2.Id.Value };
             var ticket12 = new Ticket { Id = -12, Code = Guid.NewGuid(), PhotoOk = false, EventId = event8.Id.Value, UserId = user9.Id.Value };
             Tickets.AddRange(ticket1, ticket2, ticket3, ticket4, ticket5, ticket6, ticket7, ticket8, ticket9, ticket10, ticket11, ticket12); 
             SaveChanges();
@@ -153,10 +153,10 @@ namespace Nexpo.Models
             SaveChanges();
 
             // FrequentAskedQuestion
-            var faq1 = new FrequentAskedQuestion { Id = -1, Question = "Frequent Asked Question 1"};
-            var faq2 = new FrequentAskedQuestion { Id = -2, Question = "Frequent Asked Question 2"};
-            var faq3 = new FrequentAskedQuestion { Id = -3, Question = "Frequent Asked Question 3"};
-            var faq4 = new FrequentAskedQuestion { Id = -4, Question = "Frequent Asked Question 4"};
+            var faq1 = new FrequentAskedQuestion { Id = -1, Question = "Frequent Asked Question 1", Answer = "Gooooddd answerrr!!!"};
+            var faq2 = new FrequentAskedQuestion { Id = -2, Question = "Frequent Asked Question 2", Answer = "Ye probably"};
+            var faq3 = new FrequentAskedQuestion { Id = -3, Question = "Frequent Asked Question 3", Answer = "Hehe nop"};
+            var faq4 = new FrequentAskedQuestion { Id = -4, Question = "Frequent Asked Question 4", Answer = "ChatGPT says: What is the meaning of life?"};
             FrequentAskedQuestion.AddRange(faq1, faq2, faq3, faq4);
             SaveChanges();
 

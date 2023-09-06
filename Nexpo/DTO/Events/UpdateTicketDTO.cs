@@ -8,7 +8,7 @@ namespace Nexpo.DTO
     /// </summary>
     public class UpdateTicketDTO
     {
-       // [Required]
+        // [Required]
         public bool isConsumed { set; get; }
 
         public bool TakeAway { get; set; }
