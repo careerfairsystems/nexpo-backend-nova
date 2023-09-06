@@ -16,6 +16,9 @@ namespace Nexpo.Models
         public DbSet<StudentSessionTimeslot> StudentSessionTimeslots { get; set; }
         public DbSet<StudentSessionApplication> StudentSessionApplications { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<FrequentAskedQuestion> FrequentAskedQuestion { get; set; }
+
+#pragma warning restore format
 
         private readonly PasswordService _passwordService;
 
@@ -71,7 +74,7 @@ namespace Nexpo.Models
             var user7 = new User { Id = -7, Email = "rep1@company2.example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyRepresentative, FirstName = "Gamma", LastName = "Rep", CompanyId = company2.Id.Value };
             var user8 = new User { Id = -8, Email = "rep1@company3.example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyRepresentative, FirstName = "Delta", LastName = "Rep", CompanyId = company3.Id.Value };
             var user9 = new User { Id = -9, Email = "rep1@company4.example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.CompanyRepresentative, FirstName = "Epsilon", LastName = "Rep", CompanyId = company4.Id.Value };
-            
+
             var user10 = new User { Id = -10, Email = "volunteer@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.Volunteer, FirstName = "Alpha", LastName = "Volunteer" };
             Users.AddRange(user1, user2, user3, user4, user5, user6, user7, user8, user9, user10);
             SaveChanges();
@@ -84,12 +87,12 @@ namespace Nexpo.Models
             SaveChanges();
 
             // Events
+
             var event1 = new Event { Id = -1, Name = "Breakfast Mingle",            Type = EventType.CompanyEvent, Description = "Breakfast with SEB",                                       Date = DateTime.Now.AddDays(10).Date.ToString(), Start = "08:15", End = "10:00", Host = "SEB",           Location = "Cornelis",     Language = "Swedish", Capacity = 30 };
             var event2 = new Event { Id = -2, Name = "Bounce with Uber",            Type = EventType.CompanyEvent, Description = "Day event at Bounce with Uber",                            Date = DateTime.Now.AddDays(11).Date.ToString(), Start = "09:00", End = "16:00", Host = "Uber",          Location = "Bounce Malmö", Language = "English", Capacity = 20 };
             var event3 = new Event { Id = -3, Name = "CV Workshop with Randstad",   Type = EventType.CompanyEvent, Description = "Make your CV look professional with the help of Randstad", Date = DateTime.Now.AddDays(12).Date.ToString(), Start = "13:30", End = "15:00", Host = "Randstad",      Location = "E:A",          Language = "Swedish", Capacity = 3 };
             var event4 = new Event { Id = -4, Name = "Inspirational lunch lecture", Type = EventType.CompanyEvent, Description = "Get inspired and expand your horizons",                    Date = DateTime.Now.AddDays(14).Date.ToString(), Start = "12:15", End = "13:00", Host = "SYV",           Location = "MA:3",         Language = "Swedish", Capacity = 2 };
             var event5 = new Event { Id = -5, Name = "Pick apples with Apple",      Type = EventType.CompanyEvent, Description = "An apple a day keeps the doctor away",                     Date = DateTime.Now.AddDays(1).Date.ToString(),  Start = "12:15", End = "13:00", Host = "Apple",         Location = "M:B",          Language = "English", Capacity = 200};
-
             var event6 = new Event { Id = -6, Name = "Lunch For volunteers",        Type = EventType.Lunch,         Description = "A lunch for all volunteers to enjoy",                      Date = DateTime.Now.AddDays(15).Date.ToString(), Start = "12:15", End = "13:00", Host = "Teknologkåren", Location = "Hänget",   Language = "Swrdish", Capacity = 300};
             var event7 = new Event { Id = -7, Name = "Lunch For Company Rep!",      Type = EventType.Lunch,         Description = "Com.reps get hungry aswell",                               Date = DateTime.Now.AddDays(15).Date.ToString(), Start = "12:15", End = "13:00", Host = "Teknologkåren", Location = "Perstorp", Language = "English", Capacity = 500};
 
@@ -129,7 +132,7 @@ namespace Nexpo.Models
             SaveChanges();
 
             // StudentSessionApplications
-            var application1 = new StudentSessionApplication { Id = -1, Motivation = "Hej, jag är jättebra och tror att ni vill träffa mig!", StudentId = student1.Id.Value, CompanyId = company1.Id.Value};
+            var application1 = new StudentSessionApplication { Id = -1, Motivation = "Hej, jag är jättebra och tror att ni vill träffa mig!", StudentId = student1.Id.Value, CompanyId = company1.Id.Value };
             var application2 = new StudentSessionApplication { Id = -2, Motivation = "I love my MacBook", StudentId = student2.Id.Value, CompanyId = company1.Id.Value };
             var application3 = new StudentSessionApplication { Id = -3, Motivation = "User experience is very important for me", StudentId = student3.Id.Value, CompanyId = company1.Id.Value };
 
@@ -148,7 +151,15 @@ namespace Nexpo.Models
             var contact4 = new Contact { Id = -4, FirstName = "Back", LastName = "End", RoleInArkad = "Backend Manager", Email = "contact4@example.com", PhoneNumber = "004-444 44 44" };
             Contacts.AddRange(contact1, contact2, contact3, contact4);
             SaveChanges();
-            
+
+            // FrequentAskedQuestion
+            var faq1 = new FrequentAskedQuestion { Id = -1, Question = "Frequent Asked Question 1"};
+            var faq2 = new FrequentAskedQuestion { Id = -2, Question = "Frequent Asked Question 2"};
+            var faq3 = new FrequentAskedQuestion { Id = -3, Question = "Frequent Asked Question 3"};
+            var faq4 = new FrequentAskedQuestion { Id = -4, Question = "Frequent Asked Question 4"};
+            FrequentAskedQuestion.AddRange(faq1, faq2, faq3, faq4);
+            SaveChanges();
+
         }
     }
 }
