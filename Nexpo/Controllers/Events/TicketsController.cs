@@ -8,6 +8,7 @@ using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
+using Nexpo.Services;
 
 namespace Nexpo.Controllers
 {
@@ -18,12 +19,19 @@ namespace Nexpo.Controllers
         private readonly ITicketRepository _ticketRepo;
         private readonly IEventRepository _eventRepo;
         private readonly IUserRepository _userRepo;
+        private readonly IEmailService _emailService;
 
-        public TicketsController(ITicketRepository iTicketRepo, IEventRepository iEventRepo, IUserRepository iUserRepo)
+        public TicketsController(
+            ITicketRepository iTicketRepo, 
+            IEventRepository iEventRepo, 
+            IUserRepository iUserRepo,
+            IEmailService iEmailService
+            )
         {
             _ticketRepo = iTicketRepo;
             _eventRepo  = iEventRepo;
             _userRepo   = iUserRepo;
+            _emailService = iEmailService;
         }
 
         /// <summary>
@@ -310,6 +318,64 @@ namespace Nexpo.Controllers
             await _ticketRepo.Remove(ticket);
             return NoContent();
         }
+
+        /// <summary>
+        /// Send many QR code interpretations of the tickets to a event to mail
+        /// </summary>
+        [HttpPost]
+        [Route("send")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> SendManyTicketsToMailAsync(SendTicketViaMailDTO DTO)
+        {
+            var eventId = DTO.eventId;
+
+            var _event = await _eventRepo.Get(eventId);
+            if (_event == null)
+            {
+                return NotFound();
+            }
+
+            if (DTO.numberOfTickets <= 0)
+            {
+                return BadRequest();
+            }
+            else if (DTO.numberOfTickets == 1)
+            {
+                var ticket = new Ticket
+                {
+                    PhotoOk = true,
+                    EventId = eventId,
+                    UserId = -1,
+                };
+
+                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, ticket.Code, _event);
+                return Ok();
+
+            }
+            else {
+                var tickets = new List<Ticket>();
+
+                for (int i = 0; i < DTO.numberOfTickets; i++)
+                {
+                    var ticket = new Ticket
+                    {
+                        PhotoOk = true,
+                        EventId = eventId,
+                        UserId = -1,
+                    };
+
+                    tickets.Add(ticket);
+                    
+                }
+                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, tickets, _event);
+
+                return Ok();
+            }
+
+            
+        }
+
     }
 }
 

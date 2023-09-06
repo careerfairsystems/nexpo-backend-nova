@@ -942,5 +942,163 @@ namespace Nexpo.Tests.Controllers
             Assert.True(oldEventId == ticket.EventId, "Wrong EventId. Expected: " + oldEventId.ToString() + " Received: " + ticket.EventId.ToString());
             Assert.True(oldUserId == ticket.UserId, "Wrong UserId. Expected: " + oldUserId.ToString() + " Received: " + ticket.UserId.ToString());
         } 
+
+        [Fact]
+        public async Task SendTicketViaEmailAdmin()
+        {
+            var client =  await TestUtils.Login("admin");
+
+            var sendTickerViaMailDTO = new SendTicketViaMailDTO
+            {
+                mail = "test.testsson@gmail.com",
+                eventId = -1,
+                numberOfTickets = 1
+            };
+
+            var json = JsonConvert.SerializeObject(sendTickerViaMailDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/send", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            
+        }
+
+        [Fact]
+        public async Task SendTicketViaEmailNotLoggedIn()
+        {
+            var application = new WebApplicationFactory<Program>();
+            var client = application.CreateClient();
+
+            var sendTickerViaMailDTO = new SendTicketViaMailDTO
+            {
+                mail = "test.testsson@gmail.com",
+                eventId = -1,
+                numberOfTickets = 1
+
+            };
+
+            var json = JsonConvert.SerializeObject(sendTickerViaMailDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+
+            var response = await client.PostAsync("api/tickets/send", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized),"Wrong status code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task SendTicketViaEmailNotAdmin()
+        {
+            var client =  await TestUtils.Login("student1");
+
+            var sendTickerViaMailDTO = new SendTicketViaMailDTO
+            {
+                mail = "test.testsson@gmail.com",
+                eventId = -1,
+                numberOfTickets = 1
+                
+            };
+
+            var json = JsonConvert.SerializeObject(sendTickerViaMailDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/send", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden),"Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
+            
+        }
+
+        [Fact]
+        public async Task sendTicketViaEmailEventNotFound(){
+            var client =  await TestUtils.Login("admin");
+
+            var sendTickerViaMailDTO = new SendTicketViaMailDTO
+            {
+                mail = "test.testsson@gmail.com",
+                eventId = -100,
+                numberOfTickets = 1
+            };
+
+            var json = JsonConvert.SerializeObject(sendTickerViaMailDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/send", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound),"Wrong status code. Expected: NotFound. Received: " + response.StatusCode.ToString());
+
+        }
+
+        [Fact]
+        public async Task sendTicketViaEmailLessThanOneTicket(){
+            var client =  await TestUtils.Login("admin");
+
+            var sendTickerViaMailDTO = new SendTicketViaMailDTO
+            {
+                mail = "test.testsson@gmail.com",
+                eventId = -1,
+                numberOfTickets = 0
+            };
+
+            var json = JsonConvert.SerializeObject(sendTickerViaMailDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/send", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.BadRequest),"Wrong status code. Expected: BadRequest. Received: " + response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task sendTicketViaEmailSeveralTickets(){
+            var client =  await TestUtils.Login("admin");
+
+            var sendTickerViaMailDTO = new SendTicketViaMailDTO
+            {
+                mail = "test.testsson@gmail.com",
+                eventId = -1,
+                numberOfTickets = 2
+            };
+
+            var json = JsonConvert.SerializeObject(sendTickerViaMailDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/send", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+        }
+
+        [Fact]
+        public async Task sendTicketViaEmailSeveralTicketsNonAdmin(){
+            var client =  await TestUtils.Login("student1");
+
+            var sendTickerViaMailDTO = new SendTicketViaMailDTO
+            {
+                mail = "test.testsson@gmail.com",
+                eventId = -1,
+                numberOfTickets = 2
+            };
+
+            var json = JsonConvert.SerializeObject(sendTickerViaMailDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/send", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden),"Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
+
+        }
+
+        [Fact]
+        public async Task sendTicketViaEmailSeveralTicketsNonLoggedIn(){
+            var application = new WebApplicationFactory<Program>();
+            var client = application.CreateClient();
+
+            var sendTickerViaMailDTO = new SendTicketViaMailDTO
+            {
+                mail = "test.testsson@gmail.com",   
+                eventId = -1,
+                numberOfTickets = 2
+            };
+
+            var json = JsonConvert.SerializeObject(sendTickerViaMailDTO);
+            var payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets/send", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized),"Wrong status code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
+        }
+
     } 
 }
