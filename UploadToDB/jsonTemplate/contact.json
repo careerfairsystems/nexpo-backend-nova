@@ -1,0 +1,26 @@
+[
+    {
+      "id": 1,
+      "first_name": "FirstName1",
+      "last_name": "LastName1",
+      "role_in_arkad": "Administrator",
+      "email": "name1@arkad.com",
+      "phone_number": "0710101010"
+    },
+    {
+      "id": 2,
+      "first_name": "FirstName2",
+      "last_name": "LastName2",
+      "role_in_arkad": "Volunteer",
+      "email": "name2@arkad.com",
+      "phone_number": "0720202020"
+    },
+    {
+      "id": 3,
+      "first_name": "FirstName3",
+      "last_name": "LastName3",
+      "role_in_arkad": "Student",
+      "email": "name3@arkad.com",
+      "phone_number": "0730303030"
+    }
+]
