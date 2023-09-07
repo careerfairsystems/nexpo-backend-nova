@@ -1,0 +1,22 @@
+[
+    {
+      "id": "1",
+      "question": "Question written on this card nbr 1",
+      "answer": "Answer to this card's question"
+    },
+    {
+      "id": "2",
+      "question": "Question written on this card nbr 2",
+      "answer": "Answer to this card's question"
+    },
+    {
+      "id": "3",
+      "question": "Question written on this card nbr 3",
+      "answer": "Answer to this card's question"
+    },
+    {
+      "id": "4",
+      "question": "Question written on this card nbr 4",
+      "answer": "Answer to this card's question"
+    }
+]
