@@ -32,16 +32,8 @@ for row in range(len(df)):
     headers = {
         'accept': 'text/plain',
         'Content-Type': 'application/json',
-        'Authorization': token,
-    }
+        'Authorization' : token,}
 
-    data = {
-        'id': id,
-        'question': question,
-        'answer': answer
-    }
-
-    data_str = json.dumps(data)
-    r = requests.post(url, data=data_str.encode('utf-8'), headers=headers)
-    print(r)
-    print(r.content)
+data = '{ "id":' + str(id) + ', "question":' + question +', "answer":' + answer + '}'
+r = requests.post(url, data=data.encode('utf-8'), headers=headers)
+print(r)
