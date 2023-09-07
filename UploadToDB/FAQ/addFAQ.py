@@ -21,8 +21,6 @@ with open(jsonfile, encoding="utf-8") as d:
 
 df = pd.DataFrame(dictData)
 
-# ...
-
 for row in range(len(df)):
     faq = df.iloc[row]
     id = faq['id']
@@ -32,8 +30,17 @@ for row in range(len(df)):
     headers = {
         'accept': 'text/plain',
         'Content-Type': 'application/json',
-        'Authorization' : token,}
+        'Authorization': token,
+    }
 
-data = '{ "id":' + str(id) + ', "question":' + question +', "answer":' + answer + '}'
-r = requests.post(url, data=data.encode('utf-8'), headers=headers)
-print(r)
+    data = {
+        'id': id,
+        'question': question,
+        'answer': answer
+    }
+
+    data_str = json.dumps(data)
+    r = requests.post(url, data=data_str.encode('utf-8'), headers=headers)
+    print(r)
+    print(r.content)
+
