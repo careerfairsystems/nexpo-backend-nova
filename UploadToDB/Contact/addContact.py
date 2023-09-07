@@ -30,16 +30,23 @@ for row in range(len(df)):
     email = contact['email']
     phoneNumber = contact['phoneNumber']
 
-headers = {'Content-Type': 'application/json',
-        'Authorization' : token,}
 
-data = { 'id' : id,
-        'firstName': firstName,
-        'lastName': lastName,
-        'roleInArkad': roleInArkad,
-        'email': email,
-        'phoneNumber': phoneNumber
-        }
 
-r = requests.post(url, data, headers)
-print(r)
+data = { 
+    'id' : int(id),
+    'firstName': str(firstName),
+    'lastName': str(lastName),
+    'roleInArkad': str(roleInArkad),
+    'email': str(email),
+    'phoneNumber': str(phoneNumber)
+}
+
+headers = {
+    'accept': 'text/plain',
+    'Content-Type': 'application/json',
+    'Authorization': token,
+}
+
+r = requests.post(url, json.dumps(data), headers=headers)  # Use json.dumps to serialize the dictionary
+#print(r.status_code)
+#print(r.content)
