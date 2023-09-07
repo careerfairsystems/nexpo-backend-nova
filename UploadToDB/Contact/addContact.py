@@ -7,7 +7,7 @@ sys.path.append("..")
 import login
 
 """
-Add a one or several FAQ cards to the database, using JSON
+Add Contact to the database, using JSON
 """
 
 jsonfile = '../jsonTemplate/contact.json'
@@ -24,17 +24,22 @@ df = pd.DataFrame(dictData)
 for row in range(len(df)):
     contact = df.iloc[row]
     id = contact['id']
-    firstName = contact['first_name']
-    lastName = contact['last_name']
-    roleInArkad = contact['role_in_arkad']
+    firstName = contact['firstName']
+    lastName = contact['lastName']
+    roleInArkad = contact['roleInArkad']
     email = contact['email']
-    phoneNumber = contact['phone_number']
+    phoneNumber = contact['phoneNumber']
 
-headers = {
-        'accept': 'text/plain',
-        'Content-Type': 'application/json',
+headers = {'Content-Type': 'application/json',
         'Authorization' : token,}
 
-data = '{ "id":' + str(id) + ', "first_name":' + firstName +', "last_name":' + lastName +', "role_in_arkad":' + roleInArkad +', "email":' + email +', "phone_number":' + phoneNumber + '}'
-r = requests.post(url, data=data.encode('utf-8'), headers=headers)
+data = { 'id' : id,
+        'firstName': firstName,
+        'lastName': lastName,
+        'roleInArkad': roleInArkad,
+        'email': email,
+        'phoneNumber': phoneNumber
+        }
+
+r = requests.post(url, data, headers)
 print(r)

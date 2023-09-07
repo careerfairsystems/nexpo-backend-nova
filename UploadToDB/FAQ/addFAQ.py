@@ -32,6 +32,9 @@ headers = {
         'Content-Type': 'application/json',
         'Authorization' : token,}
 
-data = '{ "id":' + str(id) + ', "question":' + question +', "answer":' + answer + '}'
-r = requests.post(url, data=data.encode('utf-8'), headers=headers)
+data = { 'id': id,
+        'question': question,
+        'answer': answer}
+
+r = requests.post(url, data=data.encode('utf-8'), headers = headers)
 print(r)
