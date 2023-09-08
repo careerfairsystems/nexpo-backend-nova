@@ -73,7 +73,7 @@ namespace Nexpo.Services
         {
             var content =   "Congrats!<br>" 
                             + $"{company.Name} has just accepted your student session application!<br>" 
-                            + "Log in to the app to pick a timeslot";
+                            + $"Log in to the app and choose {company.name} in Student Sessions to pick a timeslot";
             return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
         }
 
