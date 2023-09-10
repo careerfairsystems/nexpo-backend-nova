@@ -6,51 +6,86 @@ def parse_json_file(input_file, output_file):
         with open(input_file, 'r') as json_file:
             # Read the JSON data from the original file
             data = json.load(json_file)
+        
+        output_data = []
 
-            name = data[0]['prereg']['name']
-            we_Offer = data[0]['profile']['weOffer']
-            desiredDegree = data[0]['profile']['desiredDegree']
-            industry = data[0]['profile']['industry']
-            desiredProgramme = data[0]['profile']['desiredProgramme']
+        for item in data:
             try:
-                didYouKnow = data[0]['profile']['didYouKnow']
+                name = item['prereg']['name']
+            except KeyError:
+                name = ""
+            
+            try:
+                we_Offer = item['profile']['weOffer']
+            except KeyError:
+                we_Offer = ""
+            
+            try:
+                desiredDegree = item['profile']['desiredDegree']
+            except KeyError:
+                desiredDegree = ""
+            
+            try:
+                industry = item['profile']['industry']
+            except KeyError:
+                industry = ""
+            
+            try:
+                desiredProgramme = item['profile']['desiredProgramme']
+            except KeyError:
+                desiredProgramme = ""
+            
+            try:
+                didYouKnow = item['profile']['didYouKnow']
             except KeyError:
                 didYouKnow = ""
-            aboutUs = data[0]['profile']['aboutUs']
-            urlWebsite = data[0]['profile']['urlWebsite']
-            logotype = data[0]['exhibition']['logotype']
+            
             try:
-                companyHosts = data[0]['profile']['companyHosts']
+                aboutUs = item['profile']['aboutUs']
+            except KeyError:
+                aboutUs = ""
+            
+            try:
+                urlWebsite = item['profile']['urlWebsite']
+            except KeyError:
+                urlWebsite = ""
+            
+            try:
+                logotype = item['exhibition']['logotype']
+            except KeyError:
+                logotype = ""
+            
+            try:
+                companyHosts = item['profile']['companyHosts']
             except KeyError:
                 companyHosts = ""
-
-        output_data = [
-    {
-        "profile": {
-            "name": name,
-            "weOffer": [we_Offer],
-            "desiredDegree": [desiredDegree],
-            "industry": [industry],
-            "desiredProgramme": [desiredProgramme],
-            "didYouKnow": didYouKnow,
-            "aboutUs": aboutUs,
-            "urlWebsite": urlWebsite,
-            "logotype":logotype
             
-        },
-        "companyHosts": [
-            {
-                "email": companyHosts
-            }
-        ]
-    }
-]
-
+            output_data.append(
+                {
+                    "profile": {
+                        "name": name,
+                        "weOffer": [we_Offer],
+                        "desiredDegree": [desiredDegree],
+                        "industry": [industry],
+                        "desiredProgramme": [desiredProgramme],
+                        "didYouKnow": didYouKnow,
+                        "aboutUs": aboutUs,
+                        "urlWebsite": urlWebsite,
+                        "logotype": logotype
+                    },
+                    "companyHosts": [
+                        {
+                            "email": companyHosts
+                        }
+                    ]
+                }
+            )
+        
         # Open the new JSON file for writing
         with open(output_file, 'w') as new_json_file:
             # Write the JSON data to the new file
             json.dump(output_data, new_json_file, indent=4)
-        print("Company Name:", data[0]['prereg']['name'])
+        
         print(f'Successfully duplicated {input_file} to {output_file}')
     except FileNotFoundError:
         print(f"Error: {input_file} not found.")
@@ -59,7 +94,7 @@ def parse_json_file(input_file, output_file):
 
 if __name__ == "__main__":
     # Input and output file names
-    input_file = '../jsonTemplate/arkad_20231009_183832.json' # Replace with the name of your original JSON file
+    input_file = '../jsonTemplate/real.json' # Replace with the name of your original JSON file
     output_file = "parsedCompany.json"  # Replace with the name of the new JSON file
 
     # Parse the JSON file
