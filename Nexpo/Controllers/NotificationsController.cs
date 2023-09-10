@@ -2,16 +2,13 @@ using FirebaseAdmin.Messaging;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-
+using Google.Apis.Auth.OAuth2;
 using Nexpo.DTO;
-using Nexpo.Helpers;
 using Nexpo.Models;
-using Nexpo.Repositories;
-
+using FirebaseAdmin;
 
 namespace Nexpo.Controllers
 {
@@ -37,7 +34,6 @@ namespace Nexpo.Controllers
                 return BadRequest("Token is required.");
             }
 
-            // Initialize Firebase Admin SDK if not already initialized
             var app = FirebaseApp.DefaultInstance ?? FirebaseApp.Create(new AppOptions
             {
                 Credential = GoogleCredential.FromFile("path/to/your/firebase/credentials.json"),
@@ -45,7 +41,6 @@ namespace Nexpo.Controllers
 
             string topic = dto.Topic;
 
-            // Register the provided token to the topic
             var messaging = FirebaseMessaging.DefaultInstance;
             var registrationTokens = new List<string>
             {
@@ -90,8 +85,7 @@ namespace Nexpo.Controllers
 
             var messaging = FirebaseMessaging.DefaultInstance;
             var result = await messaging.SendAsync(message);
-            Console.WriteLine(result); //projects/myapp/messages/2492588335721724324
-
+            Console.WriteLine(result);
 
 
             return Ok();
