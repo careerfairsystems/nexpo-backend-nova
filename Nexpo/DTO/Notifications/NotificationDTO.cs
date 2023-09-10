@@ -11,7 +11,7 @@ namespace Nexpo.DTO
         public string Message { get; set; }
 
         [Required]
-        public string Date { get; set; }
+        public string Topic { get; set; }
 
         
     }
