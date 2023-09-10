@@ -24,6 +24,11 @@ namespace Nexpo.Controllers
             });
         }
 
+        /// <summary>
+        /// Register a token to receive notifications of a specific topic
+        /// 
+        /// The standard topics are current "All" and "Volunteer"
+        /// </summary>
         [HttpPost("register")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -53,7 +58,10 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// The api that the admin can use to send notifications to all users
+        /// The api that the admin can use to send notifications to all users, 
+        /// registerred to a specific topic
+        /// 
+        /// The standard topics are current "All" and "Volunteer"
         /// </summary>
         [HttpPut]
         [Authorize(Roles = nameof(Role.Administrator))]
@@ -82,11 +90,8 @@ namespace Nexpo.Controllers
                 Topic = dto.Topic
             };
 
-
             var messaging = FirebaseMessaging.DefaultInstance;
             var result = await messaging.SendAsync(message);
-            Console.WriteLine(result);
-
 
             return Ok();
 
