@@ -89,28 +89,6 @@ namespace Nexpo.Controllers
 
             var jwt = _tokenService.GenerateJWT(claims);
 
-            // Abstract this away to a service when it is working
-            //string userAgent = Request.Headers["User-Agent"].ToString();
-            //
-            //bool isAndroid = userAgent.Contains("Android");
-            //bool isiOS = userAgent.Contains("iPhone") || userAgent.Contains("iPad") || userAgent.Contains("iPod");
-//
-            //if(isAndroid){
-            //    // Retrieve the registration token - this is specific to android
-            //    String fcmToken = FirebaseInstanceId.getInstance().getToken();
-            //}else if(isiOS){
-            //    
-            //}else {
-//
-            //}
-
-            
-
-
-
-
-            
-
             return Ok(new SignInResponseDTO { Token = jwt });
         }
 
