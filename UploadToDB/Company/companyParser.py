@@ -1,6 +1,6 @@
 import json
 
-def duplicate_json_file(input_file, output_file):
+def parse_json_file(input_file, output_file):
     try:
         # Open the original JSON file for reading
         with open(input_file, 'r') as json_file:
@@ -24,9 +24,6 @@ def duplicate_json_file(input_file, output_file):
             except KeyError:
                 companyHosts = ""
 
-
-
-    
         output_data = [
     {
         "profile": {
@@ -63,7 +60,7 @@ def duplicate_json_file(input_file, output_file):
 if __name__ == "__main__":
     # Input and output file names
     input_file = '../jsonTemplate/arkad_20231009_183832.json' # Replace with the name of your original JSON file
-    output_file = "duplicated.json"  # Replace with the name of the new JSON file
+    output_file = "parsedCompany.json"  # Replace with the name of the new JSON file
 
-    # Duplicate the JSON file
-    duplicate_json_file(input_file, output_file)
+    # Parse the JSON file
+    parse_json_file(input_file, output_file)
