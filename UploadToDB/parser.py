@@ -98,52 +98,52 @@ def parseCompany(input_file):
         try:
             name = item['prereg']['name']
         except KeyError:
-            name = ""
+            name = "name"
         
         try:
             we_Offer = item['profile']['weOffer']
         except KeyError:
-            we_Offer = ""
+            we_Offer = "we_Offer"
         
         try:
             desiredDegree = item['profile']['desiredDegree']
         except KeyError:
-            desiredDegree = ""
+            desiredDegree = "desiredDegree"
         
         try:
             industry = item['profile']['industry']
         except KeyError:
-            industry = ""
+            industry = "industry"
         
         try:
             desiredProgramme = item['profile']['desiredProgramme']
         except KeyError:
-            desiredProgramme = ""
+            desiredProgramme = "desiredProgramme"
         
         try:
             didYouKnow = item['profile']['didYouKnow']
         except KeyError:
-            didYouKnow = ""
+            didYouKnow = "didYouKnow"
         
         try:
             aboutUs = item['profile']['aboutUs']
         except KeyError:
-            aboutUs = ""
+            aboutUs = "aboutUs"
         
         try:
             urlWebsite = item['profile']['urlWebsite']
         except KeyError:
-            urlWebsite = ""
+            urlWebsite = "urlWebsite"
         
         try:
             logotype = item['exhibition']['logotype']['name']
         except KeyError:
-            logotype = ""
+            logotype = "logotype"
         
         try:
             companyHosts = item['profile']['companyHosts']
         except KeyError:
-            companyHosts = ""
+            companyHosts = "companyHosts"
         
         output_data.append(
             {
