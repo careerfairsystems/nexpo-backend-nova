@@ -29,22 +29,22 @@ def parseEvent(input_file):
             name = "name"
         
         try:
-            description = item['order'][2]['description']
+            description = item['order']['rows'][2]['description']
         except KeyError:
             description = "description"
         
         try:
-            date = item['order'][2]['date']
+            date = item['order']['rows'][2]['date']
         except KeyError:
             date = "date"
         
         try:
-            start = item['order'][2]['start']
+            start = item['order']['rows'][2]['start']
         except KeyError:
             start = "start"
         
         try:
-            end = item['order'][2]['end']
+            end = item['order']['rows'][2]['end']
         except KeyError:
             end = "end"
         
@@ -54,7 +54,7 @@ def parseEvent(input_file):
             location = "location"
         
         try:
-            host = item['order'][2]['host']
+            host = item['order']['rows'][2]['host']
         except KeyError:
             host = "host"
         
@@ -64,7 +64,7 @@ def parseEvent(input_file):
             language = "language"
         
         try:
-            capacity = item['order'][2]['capacity']
+            capacity = item['order']['rows'][2]['capacity']
         except KeyError:
             capacity = "capacity"
         
