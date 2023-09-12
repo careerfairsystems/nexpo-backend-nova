@@ -20,7 +20,7 @@ namespace Nexpo.Controllers
         {
             FirebaseApp.Create(new AppOptions()
             {
-                Credential = GoogleCredential.FromFile("Downloads/nexpo-backend-nova-firebase-adminsdk-htt81-ef3542f973.json"),
+                Credential = GoogleCredential.FromFile("Fill/in/json-adress here"),
             });
         }
 
