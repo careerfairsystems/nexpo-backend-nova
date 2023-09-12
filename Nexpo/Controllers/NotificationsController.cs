@@ -16,13 +16,6 @@ namespace Nexpo.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
-        public NotificationController()
-        {
-            FirebaseApp.Create(new AppOptions()
-            {
-                Credential = GoogleCredential.FromFile("Fill/in/json-adress here"),
-            });
-        }
 
         /// <summary>
         /// Register a token to receive notifications of a specific topic
