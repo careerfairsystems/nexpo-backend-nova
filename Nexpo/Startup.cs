@@ -35,7 +35,7 @@ namespace Nexpo
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public async void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllers();
@@ -66,7 +66,7 @@ namespace Nexpo
 
             FirebaseApp.Create(new AppOptions()
             {
-                Credential = GoogleCredential.FromFile("your-credentials.json"),
+                Credential = GoogleCredential.FromFile("/home/alexander/Downloads/nexpo-backend-nova-firebase-adminsdk-htt81-ef3542f973.json"),
             });
 
             services.AddScoped<IConfig>(_ => Config);

@@ -42,7 +42,7 @@ namespace Nexpo.Controllers
 
                 return Ok(new { success = true, detail = "Successfully registered for topic" });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, detail = "An error occurred while registering for topic" });
             }
@@ -81,7 +81,7 @@ namespace Nexpo.Controllers
                 var result = await messaging.SendAsync(message);
                 return Ok(new { success = true, detail = "Successfully sent notification" });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, detail = "An error occurred while sending notification" });
             }
