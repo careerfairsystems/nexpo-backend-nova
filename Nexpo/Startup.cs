@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using Nexpo.AWS;
-using Firebase.Messaging;
+using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using System.Collections.Generic;
@@ -64,20 +64,10 @@ namespace Nexpo
                 };
             });
 
-            // Load the service account credentials
-            var credentials = GoogleCredential.FromFile("../serviceAccountKey.json");
-
-            // Initialize the FirebaseApp
-            var fbApp = FirebaseApp.Create(new AppOptions
+            FirebaseApp.Create(new AppOptions()
             {
-                Credential = credentials
+                Credential = GoogleCredential.FromFile("your-credentials.json"),
             });
-
-            // Retrieve the token via the POST body
-            var token = await FirebaseMessaging.DefaultInstance.GetTokenAsync();
-            
-            Console.WriteLine("FCM Token: " + token);
-
 
             services.AddScoped<IConfig>(_ => Config);
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
