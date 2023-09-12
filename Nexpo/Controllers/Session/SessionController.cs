@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Nexpo.DTO;
 using Nexpo.Models;
 using Nexpo.Repositories;
-using FirebaseAdmin.Messaging;
 using Nexpo.Services;
 
 namespace Nexpo.Controllers
