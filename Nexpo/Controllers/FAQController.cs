@@ -74,6 +74,11 @@ namespace Nexpo.Controllers
                 faq.Question = dto.Question;
             }
 
+            if (dto.Answer != null)
+            {
+                faq.Answer = dto.Answer;
+            }
+
             await _questionsRepo.Update(faq);
 
             return Ok(faq);
@@ -96,7 +101,8 @@ namespace Nexpo.Controllers
             var faq = new FrequentAskedQuestion
             {
                 Id = dto.Id,
-                Question = dto.Question
+                Question = dto.Question,
+                Answer = dto.Answer
             };
 
             await _questionsRepo.Add(faq);

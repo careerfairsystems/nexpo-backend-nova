@@ -10,5 +10,7 @@ namespace Nexpo.DTO
 
         public string Question { get; set; }
 
+        public string Answer { get; set; }
+
     }
 }
