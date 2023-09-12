@@ -1,14 +1,14 @@
 using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
+using FirebaseAdmin;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Google.Apis.Auth.OAuth2;
 using Nexpo.DTO;
 using Nexpo.Models;
-using FirebaseAdmin;
 
 namespace Nexpo.Controllers
 {
@@ -20,7 +20,7 @@ namespace Nexpo.Controllers
         {
             FirebaseApp.Create(new AppOptions()
             {
-                Credential = GoogleCredential.FromFile("path/to/your/firebase/credentials.json"),
+                Credential = GoogleCredential.FromFile("Downloads/nexpo-backend-nova-firebase-adminsdk-htt81-ef3542f973.json"),
             });
         }
 
@@ -38,11 +38,6 @@ namespace Nexpo.Controllers
             {
                 return BadRequest("Token is required.");
             }
-
-            var app = FirebaseApp.DefaultInstance ?? FirebaseApp.Create(new AppOptions
-            {
-                Credential = GoogleCredential.FromFile("path/to/your/firebase/credentials.json"),
-            });
 
             string topic = dto.Topic;
 
