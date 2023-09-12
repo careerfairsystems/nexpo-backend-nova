@@ -39,17 +39,20 @@ namespace Nexpo.Controllers
                 return BadRequest("Token is required.");
             }
 
-            string topic = dto.Topic;
-
-            var messaging = FirebaseMessaging.DefaultInstance;
-            var registrationTokens = new List<string>
+            try
             {
-                dto.Token
-            };
+                var messaging = FirebaseMessaging.DefaultInstance;
 
-            TopicManagementResponse response = await messaging.SubscribeToTopicAsync(registrationTokens, topic);
+                var registrationTokens = new List<string> { dto.Token };
 
-            return Ok();
+                TopicManagementResponse response = await messaging.SubscribeToTopicAsync(registrationTokens, dto.Topic);
+
+                return Ok(new { success = true, detail = "Successfully registered for topic" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, detail = "An error occurred while registering for topic" });
+            }
         }
 
         /// <summary>
@@ -65,31 +68,30 @@ namespace Nexpo.Controllers
         {
             if (string.IsNullOrEmpty(dto.Topic))
             {
-                return BadRequest("Topic is required.");
+                return BadRequest("Topic is required input.");
             }
 
-            if (String.IsNullOrEmpty(dto.Message))
+            if (string.IsNullOrEmpty(dto.Message))
             {
-                return BadRequest();
+                return BadRequest("Message is required input.");
             }
 
-            var message = new Message()
+            try
             {
-
-                Notification = new Notification
+                var messaging = FirebaseMessaging.DefaultInstance;
+                var message = new Message
                 {
-                    Title = dto.Title,
-                    Body = dto.Message,
-                },
-
-                Topic = dto.Topic
-            };
-
-            var messaging = FirebaseMessaging.DefaultInstance;
-            var result = await messaging.SendAsync(message);
-
-            return Ok();
-
+                    Notification = new Notification { Title = dto.Title, Body = dto.Message },
+                    Topic = dto.Topic
+                };
+                
+                var result = await messaging.SendAsync(message);
+                return Ok(new { success = true, detail = "Successfully sent notification" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, detail = "An error occurred while sending notification" });
+            }
         }
 
     }
