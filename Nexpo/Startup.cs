@@ -64,7 +64,7 @@ namespace Nexpo
                 };
             });
 
-            if (false && FirebaseApp.DefaultInstance == null)
+            if (FirebaseApp.DefaultInstance == null)
             {
                 FirebaseApp.Create(new AppOptions()
                 {
