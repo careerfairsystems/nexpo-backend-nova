@@ -64,10 +64,14 @@ namespace Nexpo
                 };
             });
 
-            FirebaseApp.Create(new AppOptions()
+            if (false && FirebaseApp.DefaultInstance == null)
             {
-                Credential = GoogleCredential.FromFile("/home/alexander/Downloads/nexpo-backend-nova-firebase-adminsdk-htt81-ef3542f973.json"),
-            });
+                FirebaseApp.Create(new AppOptions()
+                {
+                    Credential = GoogleCredential.FromFile("/home/alexander/Downloads/nexpo-backend-nova-firebase-adminsdk-htt81-ef3542f973.json"),
+                });
+            }
+            
 
             services.AddScoped<IConfig>(_ => Config);
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
@@ -80,7 +84,7 @@ namespace Nexpo
             services.AddScoped<IStudentSessionApplicationRepository, StudentSessionApplicationRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IFAQRepository, FAQRepository>();
-            
+
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
