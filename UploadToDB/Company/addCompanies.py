@@ -200,6 +200,11 @@ for row in range(len(df)):
         else:
             logoUrl  =  '"' +""+ '"' 
 
+        if 'daysAtArkad' in prof and prof['daysAtArkad'] != None:
+            daysAtArkad = prof['daysAtArkad']
+        else:
+            daysAtArkad = "[]"
+
         if type(companyHost) == list:
             if len(companyHost) > 0:
                 companyHostsEmail:str = '"' + companyHost[0]['email'] + '"'
@@ -215,7 +220,7 @@ for row in range(len(df)):
             'Content-Type': 'application/json',
             'Authorization' : token,
         }
-        data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ',"desiredDegrees":' + json.dumps(desiredDegree) + ',"desiredProgramme":' + json.dumps(list(desiredProgrammeResult)) + ',"positions":' + json.dumps(list(positions)) + ',"industries":' + json.dumps(list(industryResult)) + ',"hostEmail":' + companyHostsEmail + '}'
+        data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ',"desiredDegrees":' + json.dumps(desiredDegree) + ',"desiredProgramme":' + json.dumps(list(desiredProgrammeResult)) + ',"positions":' + json.dumps(list(positions)) + ',"industries":' + json.dumps(list(industryResult)) + ',"hostEmail":' + companyHostsEmail + ',"daysAtArkad":' + daysAtArkad + '}'
         r = requests.post(url, data=data.encode('utf-8'), headers=headers)
         print(r)
         print(r.content)

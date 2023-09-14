@@ -11,6 +11,10 @@
             "urlWebsite": "http://company-a.com",
             "logotype": {
                 "name": "arkad.jpeg"
+            },
+            "daysAtArkad": {
+                "2023-09-14",
+                "2023-09-15"
             }
         },
         "companyHosts": [
