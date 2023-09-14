@@ -17,6 +17,14 @@ namespace Nexpo.Controllers
     public class NotificationController : ControllerBase
     {
 
+        private static Queue<NotificationDTO> history;
+
+        static NotificationController()
+        {
+            history = new Queue<NotificationDTO>(10);
+            history.Enqueue(new NotificationDTO { Title = "Welcome", Message = "Welcome to the app", Topic = "all" });
+        }
+
         /// <summary>
         /// Register a token to receive notifications of a specific topic
         /// 
@@ -77,14 +85,33 @@ namespace Nexpo.Controllers
                     Notification = new Notification { Title = dto.Title, Body = dto.Message },
                     Topic = dto.Topic
                 };
-                
+
                 var result = await messaging.SendAsync(message);
+
+                if (history.Count >= 10)
+                {
+                    history.Dequeue(); 
+                }
+                history.Enqueue(dto);
+
                 return Ok(new { success = true, detail = "Successfully sent notification" });
             }
             catch (Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, detail = "An error occurred while sending notification" });
             }
+        }
+
+        /// <summary>
+        /// Returns the past few notifications
+        /// At most 10 notifications will be stored at once
+        /// </summary>
+        [HttpGet]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetLastNotifications()
+        {
+            return Ok(history); 
         }
 
     }
