@@ -1,0 +1,14 @@
+[
+    {
+        "email": "student1@example.com",
+        "role": 0
+    },
+    {
+        "email": "student2@example.com",
+        "role": 2
+    },
+    {
+        "email": "student3@example.com",
+        "role": 0
+    }
+]
