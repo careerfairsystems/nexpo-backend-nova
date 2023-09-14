@@ -1,6 +1,13 @@
 [
   {
     "name": "Test2",
-    "weOffer": ["Thesis"],
+    "positions": [1],
+    "hostName": "my name is jeffrey",
+    "hostEmails": "example@gmail.com",
+    "daysAtArkad": ["2023-09-14T08:30:00", "2023-09-15T08:30:00"]
+  },
+  {
+    "name": "Test",
+    "website": "www.google.com"
   }
 ]
