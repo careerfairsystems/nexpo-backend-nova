@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO
 {
@@ -7,7 +8,11 @@ namespace Nexpo.DTO
     /// </summary>
     public class UpdateTicketDTO
     {
-        [Required]
+        // [Required]
         public bool isConsumed { set; get; }
+
+        public bool TakeAway { get; set; }
+
+        public DateTime TakeAwayTime { get; set; }
     }
 }

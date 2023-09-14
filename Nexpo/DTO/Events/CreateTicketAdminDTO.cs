@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO
@@ -19,5 +19,9 @@ namespace Nexpo.DTO
         
         [Required]
         public int UserId { get; set; }
+
+        public bool TakeAway { get; set; }
+
+        public DateTime TakeAwayTime { get; set; }
     }
 }

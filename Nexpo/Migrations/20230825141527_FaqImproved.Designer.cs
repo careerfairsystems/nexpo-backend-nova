@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230430084025_DaysAtArkad")]
-    partial class DaysAtArkad
+    [Migration("20230825141527_FaqImproved")]
+    partial class FaqImproved
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -151,9 +151,32 @@ namespace Nexpo.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("Nexpo.Models.FrequentAskedQuestion", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FrequentAskedQuestion");
                 });
 
             modelBuilder.Entity("Nexpo.Models.Student", b =>
@@ -267,6 +290,12 @@ namespace Nexpo.Migrations
 
                     b.Property<bool>("PhotoOk")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("TakeAway")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TakeAwayTime")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");

@@ -146,7 +146,7 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.DaysAtArkad.Contains(DateTime.Parse("2023-01-01")), "Wrong, Received: " + responseObject.DaysAtArkad[0]);
             Assert.True(responseObject.DaysAtArkad.Contains(DateTime.Parse("2023-02-02")), "Wrong, Received: " + responseObject.DaysAtArkad[1]);
             Assert.True(responseObject.DaysAtArkad.Contains(DateTime.Parse("2023-03-03")), "Wrong, Received: " + responseObject.DaysAtArkad[2]);
-      
+
         }
 
         [Fact]

@@ -2,23 +2,23 @@
 
 namespace Nexpo.Migrations
 {
-    public partial class ChangedTicket : Migration
+    public partial class FaqImproved : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "Type",
-                table: "Events",
-                type: "integer",
+            migrationBuilder.AddColumn<string>(
+                name: "Answer",
+                table: "FrequentAskedQuestion",
+                type: "text",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: "");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Type",
-                table: "Events");
+                name: "Answer",
+                table: "FrequentAskedQuestion");
         }
     }
 }

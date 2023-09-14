@@ -157,6 +157,26 @@ namespace Nexpo.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("Nexpo.Models.FrequentAskedQuestion", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FrequentAskedQuestion");
+                });
+
             modelBuilder.Entity("Nexpo.Models.Student", b =>
                 {
                     b.Property<int?>("Id")
@@ -268,6 +288,12 @@ namespace Nexpo.Migrations
 
                     b.Property<bool>("PhotoOk")
                         .HasColumnType("boolean");
+
+                    b.Property<bool>("TakeAway")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("TakeAwayTime")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
