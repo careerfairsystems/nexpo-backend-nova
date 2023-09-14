@@ -1,35 +1,9 @@
-print(dir())
-
 import json
 import requests
 import sys
-import getpass
 
 sys.path.append("..")
-
-LOGIN_URL = "https://www.nexpo.arkadtlth.se/api/session/signin"
-
-def get_token():
-    while True:
-        password = getpass.getpass("Please enter your app admin password: ") 
-
-        ADMIN_USER = {
-            "email": "axel.tobieson@gmail.com",
-            "password": password
-        }
-
-        response = requests.post(LOGIN_URL, headers={"Content-Type": "application/json"},
-                                data=json.dumps(ADMIN_USER))
-        
-        if response.status_code == 200:
-            print("Successfully authenticated.")
-            return f"Bearer {response.json()['token']}"
-        elif response.status_code == 400:
-            print("Unauthorized. Incorrect password, please try again.")
-        else:
-            print(f"Failed to get token. Status code: {response.status_code}")
-            print(response.text)
-            break
+import login
 
 def read_json_file(filename):
     with open(filename, 'r') as f:
@@ -46,12 +20,16 @@ def update_companies(auth_token, companies):
     all_companies = requests.get(url, headers=headers).json()
 
     for company in companies:
-        print(company)
         company_name = company.get("name")
+
         filtered_companies = list(filter(lambda c : (c.get("name") == company_name), all_companies))
         if len(filtered_companies) == 0:
-            print(f"Company with name {company_name} not found in DB")
+            print(f"Company with name {company_name} not found in database")
             continue
+        elif len(filtered_companies) > 1:
+            print(f"Multiple companies with name {company_name} found in database")
+            continue
+
         company_by_name = filtered_companies[0]
         company_id = company_by_name.get("id")
 
@@ -68,7 +46,7 @@ def update_companies(auth_token, companies):
 
 
 if __name__ == "__main__":
-    auth_token = get_token()
+    auth_token = login.get_token()
     filename = "../jsonTemplate/updateCompanies.json"
     
     users = read_json_file(filename)
