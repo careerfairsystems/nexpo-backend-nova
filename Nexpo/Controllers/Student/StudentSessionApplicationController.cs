@@ -83,7 +83,6 @@ namespace Nexpo.Controllers
                         await _emailService.SendApplicationPendingEmail(company, user);
                         break;
                     default:
-                        Console.WriteLine("Invalid status received from Student Sessions Application: " + application.Status);
                         break;
                 }
             }

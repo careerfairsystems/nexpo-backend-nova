@@ -73,8 +73,8 @@ namespace Nexpo.Services
         {
             var content =   "Congrats!<br>" 
                             + $"{company.Name} has just accepted your student session application!<br>" 
-                            + $"Log in to the app and choose {company.name} in Student Sessions to pick a timeslot";
-            return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
+                            + $"Log in to the app and choose {company.Name} in Student Sessions to pick a timeslot";
+            return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
         }
 
         public Task SendPasswordResetEmail(User user)
