@@ -24,6 +24,11 @@ serviceAccountKey.json
 # Mono auto generated files
 mono_crash.*
 
+# Project secrets
+secrets.json
+*firebase-adminsdk-*.json
+
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
