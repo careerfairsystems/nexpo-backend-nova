@@ -40,8 +40,6 @@ namespace Nexpo
 
             services.AddControllers();
             
-            services.AddSingleton<IS3Configuration, S3Config>();
-            services.AddScoped<IAws3Services>(_ => new Aws3Services("AKIAX3BYI22ZD733TJZ3", "Zz6i8UUK3FH003JjnvzqtQTjb7SMg9qxV2CSCfBK", "eu-north-1", "cvfiler"));
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;
@@ -86,7 +84,6 @@ namespace Nexpo
                 }
             }
 
-            services.AddScoped<IConfig>(_ => Config);
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
