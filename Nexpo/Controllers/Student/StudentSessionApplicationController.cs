@@ -65,13 +65,26 @@ namespace Nexpo.Controllers
             application.Status = DTO.Status;
             await _applicationRepo.Update(application);
 
-            if(application.Status != oldStatus && application.Status == StudentSessionApplicationStatus.Accepted)
+            if (application.Status != oldStatus)
             {
                 var company = await _companyRepo.Get(companyId);
                 var student = await _studentRepository.Get(application.StudentId);
                 var user = await _userRepository.Get(student.UserId);
 
-                await _emailService.SendApplicationAcceptedEmail(company, user);
+                switch (application.Status)
+                {
+                    case StudentSessionApplicationStatus.Accepted:
+                        await _emailService.SendApplicationAcceptedEmail(company, user);
+                        break;
+                    case StudentSessionApplicationStatus.Declined:
+                        await _emailService.SendApplicationRejectedEmail(company, user);
+                        break;
+                    case StudentSessionApplicationStatus.Pending:
+                        await _emailService.SendApplicationPendingEmail(company, user);
+                        break;
+                    default:
+                        break;
+                }
             }
 
             return Ok(application);

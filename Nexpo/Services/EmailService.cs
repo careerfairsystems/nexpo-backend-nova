@@ -71,12 +71,28 @@ namespace Nexpo.Services
             return SendEmail(user.Email, "Join the Arkad App", content, content);
         }
 
+        public Task SendApplicationPendingEmail(Company company, User user)
+        {
+            var content =   "Application successfully sent in!<br>" 
+                            + $"{company.Name} has received your student session application!<br>" 
+                            + "You will receive an email when your application has been accepted or rejected.";
+            return SendEmail(user.Email, $"{company.Name} have received your application!", content, content);
+        }
+
+        public Task SendApplicationRejectedEmail(Company company, User user)
+        {
+            var content =   "Your application have been rejected.<br>" 
+                            + $"{company.Name} has just rejected your student session application.<br>" 
+                            + "Better luck next time!";
+            return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
+        }
+
         public Task SendApplicationAcceptedEmail(Company company, User user)
         {
             var content =   "Congrats!<br>" 
                             + $"{company.Name} has just accepted your student session application!<br>" 
-                            + "Log in to the app to pick a timeslot";
-            return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
+                            + $"Log in to the app and choose {company.Name} in Student Sessions to pick a timeslot";
+            return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
         }
 
         public Task SendPasswordResetEmail(User user)
