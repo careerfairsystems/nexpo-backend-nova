@@ -26,6 +26,8 @@ mono_crash.*
 
 # Project secrets
 secrets.json
+*firebase-adminsdk-*.json
+
 
 # Build results
 [Dd]ebug/
