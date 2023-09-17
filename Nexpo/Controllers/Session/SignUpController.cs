@@ -105,6 +105,7 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Invite a representative to become a new user (connected to a company)
+        /// </summary>
         [HttpPost]
         [Route("representative")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.CompanyRepresentative))]
@@ -145,6 +146,42 @@ namespace Nexpo.Controllers
             await _userRepo.Add(user);
 
             await _emailService.SendCompanyInviteEmail(company, user);
+
+            return NoContent();
+        }
+        
+    
+
+        /// <summary>
+        /// Invite a volunteer to become a new user
+        /// Bit funky that you need to give firstname and lastname as arguments,
+        /// but alot is built around that requirement - better than nothing
+        /// </summary>
+        [HttpPost]
+        [Route("volunteer")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> PostInviteVolunteer(InviteRepresentativeDTO DTO)
+        {
+
+            var user = await _userRepo.FindByEmail(DTO.Email);
+            
+            if (user != null)
+            {
+                return Conflict();
+            }
+
+            user = new User
+            {
+                Role      = Role.Volunteer,
+                Email     = DTO.Email,
+                FirstName = DTO.FirstName,
+                LastName  = DTO.LastName,
+            };
+            
+            await _userRepo.Add(user);
+
+            await _emailService.SendVolunteerInviteEmail(user);
 
             return NoContent();
         }

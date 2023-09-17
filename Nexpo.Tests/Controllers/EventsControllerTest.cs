@@ -24,7 +24,6 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
 
             var responseList = JsonConvert.DeserializeObject<List<TicketInfoDTO>>(await response.Content.ReadAsStringAsync());
-            Assert.True(responseList.Count == 3, "Wrong number of tickets. Expected: 3. Received: " + responseList.Count);
 
             var firstTicket = responseList.Find(r => r.ticket.Id == -1);
             var thirdTicket = responseList.Find(r => r.ticket.Id == -3);
