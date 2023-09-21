@@ -6,7 +6,7 @@ import login
 
 token = login.get_token()
 
-url = "https://www.nexpo.arkadtlth.se/api/events"
+url = "http://localhost:5000/api/events"
 
 headers = {
     "Authorization": f"Bearer {token}"
@@ -19,7 +19,7 @@ response = requests.get(url, headers=headers)
 if response.status_code == 200:
     data = response.json()
     for event in data:
-        my_array.append(event['id'])
+        print(event['id'])
 else:
     print(f"Failed to retrieve data. Status code: {response.status_code}")
 

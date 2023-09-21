@@ -12,14 +12,14 @@ WARNING!!! Update this file with an account with admin credentials.
 Make sure to keep the password out of version control if you enter it.
 '''
 
-LOGIN_URL = "https://www.nexpo.arkadtlth.se/api/session/signin"
+LOGIN_URL = "http://localhost:5000/api/session/signin"
 
 def get_token():
     while True:
         password = getpass.getpass("Please enter your app admin password: ") 
 
         ADMIN_USER = {
-            "email": "axel.tobieson@gmail.com",
+            "email": "admin@example.com",
             "password": password
         }
 
