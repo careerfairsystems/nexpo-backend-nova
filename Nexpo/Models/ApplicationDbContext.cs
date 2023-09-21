@@ -115,7 +115,8 @@ namespace Nexpo.Models
             var ticket10 = new Ticket { Id = -10, Code = Guid.NewGuid(), PhotoOk = true,  EventId = event7.Id.Value, UserId = user8.Id.Value };
             var ticket11 = new Ticket { Id = -11, Code = Guid.NewGuid(), PhotoOk = true,  EventId = event6.Id.Value, UserId = user2.Id.Value };
             var ticket12 = new Ticket { Id = -12, Code = Guid.NewGuid(), PhotoOk = false, EventId = event8.Id.Value, UserId = user9.Id.Value };
-            Tickets.AddRange(ticket1, ticket2, ticket3, ticket4, ticket5, ticket6, ticket7, ticket8, ticket9, ticket10, ticket11, ticket12); 
+            var ticket13 = new Ticket { Id = -13, Code = Guid.NewGuid(), PhotoOk = true, EventId = event3.Id.Value, UserId = user3.Id.Value };
+            Tickets.AddRange(ticket1, ticket2, ticket3, ticket4, ticket5, ticket6, ticket7, ticket8, ticket9, ticket10, ticket11, ticket12, ticket13); 
             SaveChanges();
 
             // StudentSessionTimeslots
