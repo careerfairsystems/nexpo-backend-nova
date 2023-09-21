@@ -100,7 +100,6 @@ namespace Nexpo.Controllers
         [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
         public async Task<ActionResult> UpdateEvent(int id, AddEventDTO DTO)
         {
-
             var _event = await _eventRepo.Get(id);
 
             if(!string.IsNullOrEmpty(DTO.Name)){
@@ -167,8 +166,25 @@ namespace Nexpo.Controllers
             
             return BadRequest();
         }
+        /// <summary>
+        /// Delete an Event
+        /// </summary>
+        [HttpDelete]
+        [Route("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> DeleteEvent(int id)
+        {
+            var _event = await _eventRepo.Get(id);
+
+            if (_event == null)
+            {
+                return NotFound();
+            }
+
+            await _eventRepo.Remove(_event);
+
+            return NoContent();
+        }
     }
-
-
 }
-
