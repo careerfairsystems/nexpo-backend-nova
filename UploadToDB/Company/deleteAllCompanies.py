@@ -7,7 +7,7 @@ import login
 token = login.get_token()
 
 # Retrieve a list of all companies first
-list_url = "https://www.nexpo.arkadtlth.se/api/companies"
+list_url = "https://localhost:5000/api/companies"
 headers = {
     'Authorization': token,
 }
