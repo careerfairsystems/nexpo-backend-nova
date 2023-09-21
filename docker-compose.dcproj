@@ -5,7 +5,7 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>da24fd2a-d76b-4e91-9ec7-cca53e1124bf</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
+    <DockerServiceUrl>{Scheme}://https://nexpo.arkadtlth.se/api:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>nexpo</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
