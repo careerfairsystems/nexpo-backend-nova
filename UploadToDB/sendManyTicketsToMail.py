@@ -1,6 +1,5 @@
 import json
 import requests
-
 import sys
 sys.path.append("..")
 import login
@@ -21,21 +20,23 @@ def send_tickets_to_email(email, ticket_info):
         "email": email,
         "tickets": ticket_info
     }
-    
+
+    response = requests.post(api_endpoint, json=payload, headers=headers)
+
+    if response.status_code == 200:
+        print("Tickets sent successfully.")
+    else:
+        print(f"Failed to send tickets. Status code: {response.status_code}")
+        print(response.text)
 
 with open(jsonfile, encoding="utf-8") as d:
-    try:
-        dictData = json.load(d)
+    data = json.load(d)
 
-        for entry in d:
-            email = entry['tickets']['email']
-            ticket_info = {
-                "lunch_tickets_day1": entry['tickets']['lunch_tickets_day1'],
-                "lunch_tickets_day2": entry['tickets']['lunch_tickets_day2'],
-                "banquet_tickets": entry['tickets']['banquet_tickets']
-            }
-            send_tickets_to_email(email, ticket_info)
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON: {e}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    for entry in data:
+        email = entry['mail']
+        ticket_info = {
+            "lunch_tickets_day1": entry['lunch_tickets_day1'],
+            "lunch_tickets_day2": entry['lunch_tickets_day2'],
+            "banquet_tickets": entry['banquet_tickets']
+        }
+        send_tickets_to_email(email, ticket_info)
