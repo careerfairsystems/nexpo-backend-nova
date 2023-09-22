@@ -12,6 +12,7 @@ namespace Nexpo.Repositories
         public Task<Event> Get(int id);
         public Task Add(Event _event);
         public Task Update(Event _event);
+        public Task Remove(Event _event);
     }
 
     public class EventRepository : IEventRepository
@@ -76,6 +77,12 @@ namespace Nexpo.Repositories
         public async Task Update(Event _event)
         {
             _context.Entry(_event).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Remove(Event _event)
+        {
+            _context.Events.Remove(_event);
             await _context.SaveChangesAsync();
         }
     }

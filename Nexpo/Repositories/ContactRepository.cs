@@ -50,10 +50,10 @@ namespace Nexpo.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task Remove(Contact contact)
+        public async Task Remove(Contact contact)
         {
             _context.Contacts.Remove(contact);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task Update(Contact contact)
@@ -61,8 +61,5 @@ namespace Nexpo.Repositories
             _context.Entry(contact).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
-
-
-
     }
 }
