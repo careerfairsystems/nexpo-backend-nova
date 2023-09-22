@@ -1,7 +1,6 @@
 import json
 import pandas as pd
 import requests
-
 import sys
 sys.path.append("..")
 import login
@@ -9,10 +8,8 @@ import login
 """
 Add a one or several FAQ cards to the database, using JSON
 """
-
 jsonfile = '../jsonTemplate/FAQ.json'
 url = 'https://www.nexpo.arkadtlth.se/api/faq/add'
-
 
 token = login.get_token()
 
@@ -23,7 +20,7 @@ df = pd.DataFrame(dictData)
 
 for row in range(len(df)):
     faq = df.iloc[row]
-    id = faq['id']
+    id = int(faq['id'])  # Convert 'id' to integer
     question = faq['question']
     answer = faq['answer']
 
@@ -43,4 +40,3 @@ for row in range(len(df)):
     r = requests.post(url, data=data_str.encode('utf-8'), headers=headers)
     print(r)
     print(r.content)
-
