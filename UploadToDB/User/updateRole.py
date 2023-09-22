@@ -5,14 +5,12 @@ import sys
 sys.path.append("..")
 import login
 
-token = login.get_token()
 jsonfile = '../jsonTemplate/updateRole.json'
 
 with open(jsonfile, 'r') as f:
     jsonObjects = json.load(f)
 
-#url = "https://www.nexpo.arkadtlth.se/api/users" 
-url_user = "http://localhost:5000/api/users"
+url_user = "https://www.nexpo.arkadtlth.se/api/users" 
 
 token = login.get_token()
 
@@ -34,7 +32,7 @@ for jsonObj in jsonObjects:
         for user in users:
             if user.get('email') == user_email:
                 user_id = user['id']
-                url_role = f"http://localhost:5000/api/role/{user_id}"
+                url_role = f"https://www.nexpo.arkadtlth.se/api/role/{user_id}"
 
                 response_role = requests.put(url_role, headers=headers, json={"role": new_role})
         
