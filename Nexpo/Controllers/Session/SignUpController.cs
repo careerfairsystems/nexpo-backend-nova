@@ -39,6 +39,7 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Initiate a student signup.
+        /// As a futher development - I would also log in the current user.
         /// </summary>
         [HttpPost]
         [Route("initial")]

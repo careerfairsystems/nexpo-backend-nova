@@ -87,6 +87,7 @@ namespace Nexpo
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
+            
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ITicketRepository, TicketRepository>();
@@ -94,6 +95,7 @@ namespace Nexpo
             services.AddScoped<IStudentSessionApplicationRepository, StudentSessionApplicationRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IFAQRepository, FAQRepository>();
+
 
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
