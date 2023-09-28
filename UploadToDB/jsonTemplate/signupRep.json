@@ -1,0 +1,14 @@
+[
+    {
+        "email": "backend.arkad@box.tlth.se",
+        "firstname": "Backend",
+        "lastname": "Arkad",
+        "companyid": 180
+    },
+    {
+        "email": "another.email@box.tlth.se",
+        "firstname": "Another",
+        "lastname": "User",
+        "companyid": 180
+    }
+]

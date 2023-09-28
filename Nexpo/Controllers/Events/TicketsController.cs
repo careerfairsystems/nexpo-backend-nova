@@ -8,6 +8,7 @@ using Nexpo.DTO;
 using Nexpo.Helpers;
 using Nexpo.Models;
 using Nexpo.Repositories;
+using Nexpo.Services;
 
 namespace Nexpo.Controllers
 {
@@ -18,12 +19,19 @@ namespace Nexpo.Controllers
         private readonly ITicketRepository _ticketRepo;
         private readonly IEventRepository _eventRepo;
         private readonly IUserRepository _userRepo;
+        private readonly IEmailService _emailService;
 
-        public TicketsController(ITicketRepository iTicketRepo, IEventRepository iEventRepo, IUserRepository iUserRepo)
+        public TicketsController(
+            ITicketRepository iTicketRepo, 
+            IEventRepository iEventRepo, 
+            IUserRepository iUserRepo,
+            IEmailService iEmailService
+            )
         {
             _ticketRepo = iTicketRepo;
             _eventRepo  = iEventRepo;
             _userRepo   = iUserRepo;
+            _emailService = iEmailService;
         }
 
         /// <summary>
@@ -53,7 +61,7 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if ((DateTime.Parse(_event.Date) - DateTime.Today).TotalDays < 2) 
+            if ((DateTime.Parse(_event.Date) - DateTime.Today).TotalDays < 2)
             {
                 return BadRequest();
             }
@@ -72,7 +80,30 @@ namespace Nexpo.Controllers
                 UserId  = userId,
             };
 
-            if(!await _ticketRepo.Add(ticket))
+            if (DTO.TakeAway)
+            {
+                if (DTO.TakeAwayTime == default(DateTime))
+                {
+                    return BadRequest();
+                }
+
+                if (DTO.TakeAwayTime < DateTime.Now)
+                {
+                    return BadRequest();
+                }
+
+                if (_event.Type != EventType.Lunch)
+                {
+                    return BadRequest();
+                }
+
+                ticket.TakeAway = DTO.TakeAway;
+                ticket.TakeAwayTime = DTO.TakeAwayTime;
+            }
+
+
+
+            if (!await _ticketRepo.Add(ticket))
             {
                 return Conflict();
             }
@@ -90,7 +121,7 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> GetTicketType(int id)
         {
             var ticket = await _ticketRepo.Get(id);
-            
+
             if (ticket == null)
             {
                 return NotFound();
@@ -98,14 +129,14 @@ namespace Nexpo.Controllers
 
             var userId = HttpContext.User.GetId();
 
-            if(ticket.UserId != userId)
+            if (ticket.UserId != userId)
             {
                 return Forbid();
             }
 
             return Ok(await _ticketRepo.GetEventType(id));
 
-            
+
         }
 
         /// <summary>
@@ -136,10 +167,31 @@ namespace Nexpo.Controllers
                 UserId  = DTO.UserId,
             };
 
+            if (DTO.TakeAway)
+            {
+                if (DTO.TakeAwayTime == default(DateTime))
+                {
+                    return BadRequest();
+                }
+
+                if (DTO.TakeAwayTime < DateTime.Now)
+                {
+                    return BadRequest();
+                }
+
+                if (_event.Type != EventType.Lunch)
+                {
+                    return BadRequest();
+                }
+
+                ticket.TakeAway = DTO.TakeAway;
+                ticket.TakeAwayTime = DTO.TakeAwayTime;
+            }
+
             await _ticketRepo.AddAdmin(ticket);
 
             return CreatedAtAction(nameof(GetTicket), new { id = ticket.Id }, ticket);
-        } 
+        }
 
         /// <summary>
         /// Update isConsumed on a ticket
@@ -161,18 +213,18 @@ namespace Nexpo.Controllers
                 if (DTO.TakeAway && DTO.TakeAwayTime != default(DateTime))
                 {
                     ticket.TakeAway = DTO.TakeAway;
-                    ticket.TakeAwayTime = DTO.TakeAwayTime;                    
+                    ticket.TakeAwayTime = DTO.TakeAwayTime;
                 }
 
                 // Update TakeAway and set TakeAwayTime to default if TakeAway is false
-                else if(!DTO.TakeAway) 
+                else if (!DTO.TakeAway)
                 {
                     ticket.TakeAway = DTO.TakeAway;
                     ticket.TakeAwayTime = default(DateTime);
                 }
 
                 // Only admin can update isConsumed
-                if(userRole == Role.Administrator)
+                if (userRole == Role.Administrator)
                 {
                     ticket.isConsumed = DTO.isConsumed;
                 }
@@ -262,10 +314,79 @@ namespace Nexpo.Controllers
                     return Forbid();
                 }
             }
-            
+
             await _ticketRepo.Remove(ticket);
             return NoContent();
         }
+
+        /// <summary>
+        /// Send many QR code interpretations of the tickets to a event to mail
+        /// 
+        /// The ticket is connected to a user if they can be found.
+        /// Otherwise the ticket is just given to user -1
+        /// </summary>
+        [HttpPost]
+        [Route("send")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> SendManyTicketsToMailAsync(SendTicketViaMailDTO DTO)
+        {
+            var eventId = DTO.eventId;
+
+            var user = await _userRepo.FindByEmail(DTO.mail);
+            
+            int userID = user?.Id ?? -1;
+
+            var _event = await _eventRepo.Get(eventId);
+            if (_event == null)
+            {
+                return NotFound();
+            }
+
+            if (DTO.numberOfTickets <= 0)
+            {
+                return BadRequest();
+            }
+            else if (DTO.numberOfTickets == 1)
+            {
+                var ticket = new Ticket
+                {
+                    PhotoOk = true,
+                    EventId = eventId,
+                    UserId = userID
+                };
+
+                await _ticketRepo.Add(ticket);
+
+                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, ticket.Code, _event);
+                return Ok();
+
+            }
+            else {
+                var tickets = new List<Ticket>();
+
+                for (int i = 0; i < DTO.numberOfTickets; i++)
+                {
+                    var ticket = new Ticket
+                    {
+                        PhotoOk = true,
+                        EventId = eventId,
+                        UserId = userID,
+                    };
+
+                    await _ticketRepo.Add(ticket);
+
+                    tickets.Add(ticket);
+                    
+                }
+                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, tickets, _event);
+
+                return Ok();
+            }
+
+            
+        }
+
     }
 }
 

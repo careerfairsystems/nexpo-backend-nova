@@ -1,0 +1,22 @@
+[
+    {
+        "profile": {
+            "name": "Test2",
+            "weOffer": ["Thesis", "TraineeEmployment", "Internship"],
+            "desiredDegree": ["Ph.D", "Master’s degree (300 ECTS)"],
+            "industry": ["DataIT", "Banking, Finance"],
+            "desiredProgramme": ["Datateknik", "Industriell ekonomi"],
+            "didYouKnow": "We have an amazing work environment!",
+            "aboutUs": "We are a technology firm focused on innovation.",
+            "urlWebsite": "http://company-a.com",
+            "logotype": {
+                "name": "arkad.jpeg"
+            }
+        },
+        "companyHosts": [
+            {
+                "email": "host1@company-a.com"
+            }
+        ]
+    }
+]

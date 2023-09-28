@@ -62,13 +62,16 @@ elif [ "$1" = "-run" ]; then
 elif [ "$1" = "-help" ]; then
     # Print help message
     echo "Usage: ./test.sh [OPTIONS]"
-    echo "Note: Mandatory to use options"
+    echo "Note: Mandatory to use options "
     echo ""
     echo "Options:"
     echo "  -start            Reset the database before running tests"
     echo "                    This needs to be done when the database seeding has changed"
     echo "                    The first time this is done, the tests will fail"
+    echo "                    Ergo, run needs to be run twice"
     echo ""
+    echo "  Run twice after -start:"
+    echo "  -run Run all tests"
     echo "  -run <class_name> Run the specified test class"
     echo "  -run <controller_name> Run the test class for the specified controller"
     echo "  -run <name>       Run the test class for the specified controller"

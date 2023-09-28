@@ -1,0 +1,28 @@
+[
+    [
+        {
+            "name": "VentureLab",
+            "description": "[en]Lunch Event [sv]Lunchevent",
+            "date": "date",
+            "start": "start",
+            "end": "end",
+            "location": "location",
+            "host": "host",
+            "language": "en",
+            "capacity": "capacity"
+        }
+    ],
+    [
+        {
+            "name": "Lime Technologies",
+            "description": "[en]Barstool [sv]Barstol",
+            "date": "date",
+            "start": "start",
+            "end": "end",
+            "location": "location",
+            "host": "host",
+            "language": "en",
+            "capacity": "capacity"
+        }
+    ]
+]

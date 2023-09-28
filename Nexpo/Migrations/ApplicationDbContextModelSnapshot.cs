@@ -164,6 +164,10 @@ namespace Nexpo.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Question")
                         .IsRequired()
                         .HasColumnType("text");

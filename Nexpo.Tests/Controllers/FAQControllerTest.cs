@@ -40,9 +40,16 @@ namespace Nexpo.Tests.Controllers
 
             //Verify all FAQs
             Assert.True(question1.Question.Equals("Frequent Asked Question 1"), "Wrong question Expected: Frequent Asked Question 1. Received: " + question1.Question);
+            Assert.True(question1.Answer.Equals("Gooooddd answerrr!!!"), "Wrong question Expected: Gooooddd answerrr!!!. Received: " + question1.Answer);
+
             Assert.True(question2.Question.Equals("Frequent Asked Question 2"), "Wrong question Expected: Frequent Asked Question 2. Received: " + question2.Question);
+            Assert.True(question2.Answer.Equals("Ye probably"), "Wrong question Expected: Ye probably. Received: " + question3.Answer);
+
             Assert.True(question3.Question.Equals("Frequent Asked Question 3"), "Wrong question Expected: Frequent Asked Question 3. Received: " + question3.Question);
+            Assert.True(question3.Answer.Equals("Hehe nop"), "Wrong question Expected: Hehe nop. Received: " + question4.Answer);
+            
             Assert.True(question4.Question.Equals("Frequent Asked Question 4"), "Wrong question Expected: Frequent Asked Question 4. Received: " + question4.Question);
+            Assert.True(question4.Answer.Equals("ChatGPT says: What is the meaning of life?"), "Wrong question Expected: ChatGPT says: What is the meaning of life?. Received: " + question4.Answer);
 
             Assert.True(question1.Id == -1, "Wrong Id. Expected: -1. Received: " + question1.Id);
             Assert.True(question2.Id == -2, "Wrong Id. Expected: -2. Received: " + question2.Id);
@@ -73,9 +80,16 @@ namespace Nexpo.Tests.Controllers
 
             //Verify all FAQs
             Assert.True(question1.Question.Equals("Frequent Asked Question 1"), "Wrong question Expected: Frequent Asked Question 1. Received: " + question1.Question);
+            Assert.True(question1.Answer.Equals("Gooooddd answerrr!!!"), "Wrong question Expected: Gooooddd answerrr!!!. Received: " + question1.Answer);
+
             Assert.True(question2.Question.Equals("Frequent Asked Question 2"), "Wrong question Expected: Frequent Asked Question 2. Received: " + question2.Question);
+            Assert.True(question2.Answer.Equals("Ye probably"), "Wrong question Expected: Ye probably. Received: " + question3.Answer);
+
             Assert.True(question3.Question.Equals("Frequent Asked Question 3"), "Wrong question Expected: Frequent Asked Question 3. Received: " + question3.Question);
+            Assert.True(question3.Answer.Equals("Hehe nop"), "Wrong question Expected: Hehe nop. Received: " + question4.Answer);
+            
             Assert.True(question4.Question.Equals("Frequent Asked Question 4"), "Wrong question Expected: Frequent Asked Question 4. Received: " + question4.Question);
+            Assert.True(question4.Answer.Equals("ChatGPT says: What is the meaning of life?"), "Wrong question Expected: ChatGPT says: What is the meaning of life?. Received: " + question4.Answer);
 
             Assert.True(question1.Id == -1, "Wrong Id. Expected: -1. Received: " + question1.Id);
             Assert.True(question2.Id == -2, "Wrong Id. Expected: -2. Received: " + question2.Id);
@@ -143,6 +157,8 @@ namespace Nexpo.Tests.Controllers
 
             Assert.True(faq.Id == -1, "Wrong question id. Expected: -1. Received: " + faq.Id.ToString());
             Assert.True(faq.Question.Equals("Frequent Asked Question 1"), "Wrong question. Expected: Frequent Asked Question 1 Received: " + faq.Question.ToString());
+            Assert.True(faq.Answer.Equals("Gooooddd answerrr!!!"), "Wrong question Expected: Gooooddd answerrr!!!. Received: " + faq.Answer);
+
         }
 
         [Fact]
@@ -191,7 +207,8 @@ namespace Nexpo.Tests.Controllers
 
             var updateFAQDto = new UpdateFAQDTO
             {
-                Question = "New Question"
+                Question = "New Question",
+                Answer = "New Answer"
             };
 
             var json = JsonConvert.SerializeObject(updateFAQDto);
@@ -203,10 +220,13 @@ namespace Nexpo.Tests.Controllers
             var faq = JsonConvert.DeserializeObject<FrequentAskedQuestion>(await response.Content.ReadAsStringAsync());
             
             Assert.True(faq.Question.Equals("New Question"), "Wrong Question Expected: New Question. Received: " + faq.Question.ToString());
+            Assert.True(faq.Answer.Equals("New Answer"), "Wrong Question Expected: New Answer. Received: " + faq.Answer.ToString());
+
 
             updateFAQDto = new UpdateFAQDTO
             {
-                Question = "Frequent Asked Question 1"
+                Question = "Frequent Asked Question 1",
+                Answer = "Gooooddd answerrr!!!"
             };
 
             json = JsonConvert.SerializeObject(updateFAQDto);
@@ -218,6 +238,47 @@ namespace Nexpo.Tests.Controllers
             faq = JsonConvert.DeserializeObject<FrequentAskedQuestion>(await response.Content.ReadAsStringAsync());
             
             Assert.True(faq.Question.Equals("Frequent Asked Question 1"), "Wrong Question. Expected: Frequent Asked Question 1. Received: " + faq.Question.ToString());
+            Assert.True(faq.Answer.Equals("Gooooddd answerrr!!!"), "Wrong question Expected: Gooooddd answerrr!!!. Received: " + faq.Answer);
+        }
+
+                [Fact]
+        public async Task PutPartAsAdmin()
+        {
+            //Setup
+            var client = await TestUtils.Login("admin");
+
+            var updateFAQDto = new UpdateFAQDTO
+            {
+                Answer = "New Answer"
+            };
+
+            var json = JsonConvert.SerializeObject(updateFAQDto);
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/faq/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            var faq = JsonConvert.DeserializeObject<FrequentAskedQuestion>(await response.Content.ReadAsStringAsync());
+            
+            Assert.True(faq.Question.Equals("Frequent Asked Question 1"), "Wrong Question. Expected: Frequent Asked Question 1. Received: " + faq.Question.ToString());
+            Assert.True(faq.Answer.Equals("New Answer"), "Wrong Question Expected: New Answer. Received: " + faq.Answer.ToString());
+
+
+            updateFAQDto = new UpdateFAQDTO
+            {
+                Answer = "Gooooddd answerrr!!!"
+            };
+
+            json = JsonConvert.SerializeObject(updateFAQDto);
+            payload = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
+            response = await client.PutAsync("api/faq/-1", payload);
+
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK),"Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            faq = JsonConvert.DeserializeObject<FrequentAskedQuestion>(await response.Content.ReadAsStringAsync());
+            
+            Assert.True(faq.Question.Equals("Frequent Asked Question 1"), "Wrong Question. Expected: Frequent Asked Question 1. Received: " + faq.Question.ToString());
+            Assert.True(faq.Answer.Equals("Gooooddd answerrr!!!"), "Wrong question Expected: Gooooddd answerrr!!!. Received: " + faq.Answer.ToString());
         }
 
         [Fact]
@@ -229,7 +290,8 @@ namespace Nexpo.Tests.Controllers
             //Create DTO
             var updateFAQDto = new UpdateFAQDTO
             {
-                Question = "New Question"
+                Question = "New Question",
+                Answer = "New Answer"
             };
 
             //Serialize DTO
@@ -251,7 +313,8 @@ namespace Nexpo.Tests.Controllers
             //Create DTO
             var updateFAQDto = new UpdateFAQDTO
             {
-                Question = "New Question"
+                Question = "New Question", 
+                Answer = "New Answer"
             };
 
             //Serialize DTO
@@ -272,7 +335,8 @@ namespace Nexpo.Tests.Controllers
             //Create DTO
             var updateFAQDto = new UpdateFAQDTO
             {
-                Question = "New Question"
+                Question = "New Question",
+                Answer = "New Answer"
             };
 
             //Serialize DTO
@@ -299,6 +363,7 @@ namespace Nexpo.Tests.Controllers
             {
                 Id = -5,
                 Question = "Frequent Asked Question 5",
+                Answer = "Answer 5"
             };
 
             //Get nbr of FAQ
@@ -319,6 +384,7 @@ namespace Nexpo.Tests.Controllers
             
             Assert.True(faq.Id == -5, "Wrong Id. Expected: -5. Received: " + faq.Id);
             Assert.True(faq.Question.Equals("Frequent Asked Question 5"), "Wrong Question. Expected: Frequent Asked Question 5. Received: " + faq.Question);
+            Assert.True(faq.Answer.Equals("Answer 5"), "Wrong Answer. Expected: Answer 5. Received: " + faq.Answer);
 
             //Check that the nbr of FAQ has increased
             response = await client.GetAsync("/api/faq/");
@@ -377,6 +443,7 @@ namespace Nexpo.Tests.Controllers
             {
                 Id = -5,
                 Question = "Frequent Asked Question 5",
+                Answer = "Answer 5"
             };
 
             //Serialize DTO
@@ -386,7 +453,7 @@ namespace Nexpo.Tests.Controllers
             //Try to post FAQ
             var response = await client.PostAsync("/api/faq/add", payload);
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong Status Code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
-           
+
             //Try to delete FAQ
             response = await client.DeleteAsync("/api/faq/-1");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized), "Wrong Status Code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
@@ -425,6 +492,7 @@ namespace Nexpo.Tests.Controllers
             {
                 Id = -1,
                 Question = " ",
+                Answer = " "
             };
 
             //Get nbr of FAQ
@@ -445,7 +513,7 @@ namespace Nexpo.Tests.Controllers
             allFAQ = JsonConvert.DeserializeObject<List<FrequentAskedQuestion>>(await response.Content.ReadAsStringAsync());
             
             Assert.True(allFAQ.Count == numberOfFAQ, "Wrong number of faq. Expected: " + numberOfFAQ + ". Received: " + allFAQ.Count);
-                  
+
             //Check that the FAQ with id -1 is unchanged
             response = await client.GetAsync("/api/faq/-1");
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong Status Code. Expected: OK. Received: " + response.StatusCode.ToString());
@@ -454,6 +522,9 @@ namespace Nexpo.Tests.Controllers
 
             Assert.True(faq.Id == -1, "Wrong question id. Expected: -1. Received: " + faq.Id.ToString());
             Assert.True(faq.Question.Equals("Frequent Asked Question 1"), "Wrong question. Expected: Frequent Asked Question 1 Received: " + faq.Question.ToString());
+            Assert.True(faq.Answer.Equals("Gooooddd answerrr!!!"), "Wrong question Expected: Gooooddd answerrr!!!. Received: " + faq.Answer);
         }
+
+
     }
 }

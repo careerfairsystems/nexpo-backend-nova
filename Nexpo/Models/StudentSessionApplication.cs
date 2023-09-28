@@ -13,7 +13,7 @@ namespace Nexpo.Models
         
         public string Motivation { get; set; }
 
-        public StudentSessionApplicationStatus Status { get; set; } = StudentSessionApplicationStatus.NoResponse;
+        public StudentSessionApplicationStatus Status { get; set; } = StudentSessionApplicationStatus.Pending;
 
         public int StudentId { get; set; }
 
@@ -32,7 +32,7 @@ namespace Nexpo.Models
 
     public enum StudentSessionApplicationStatus
     {
-        NoResponse,
+        Pending,
         Accepted,
         Declined
     }
