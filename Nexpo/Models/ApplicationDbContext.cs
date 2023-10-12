@@ -87,8 +87,12 @@ namespace Nexpo.Models
             Students.AddRange(student1, student2, student3);
             SaveChanges();
 
-            // Events
+            // Volunteers
+            var volunteer1 = new Volunteer { Id = -1, Email = "volunteer1@example.com", PasswordHash = _passwordService.HashPassword("password"), Role = Role.Volunteer, FirstName = "Alpha", LastName = "Volunteer" };
+            Volunteers.AddRange(volunteer1);
+            SaveChanges();
 
+            // Events
             var event1 = new Event { Id = -1, Name = "Breakfast Mingle",            Type = EventType.CompanyEvent, Description = "Breakfast with SEB",                                       Date = DateTime.Now.AddDays(10).Date.ToString(), Start = "08:15", End = "10:00", Host = "SEB",           Location = "Cornelis",     Language = "Swedish", Capacity = 30 };
             var event2 = new Event { Id = -2, Name = "Bounce with Uber",            Type = EventType.CompanyEvent, Description = "Day event at Bounce with Uber",                            Date = DateTime.Now.AddDays(11).Date.ToString(), Start = "09:00", End = "16:00", Host = "Uber",          Location = "Bounce Malmö", Language = "English", Capacity = 20 };
             var event3 = new Event { Id = -3, Name = "CV Workshop with Randstad",   Type = EventType.CompanyEvent, Description = "Make your CV look professional with the help of Randstad", Date = DateTime.Now.AddDays(12).Date.ToString(), Start = "13:30", End = "15:00", Host = "Randstad",      Location = "E:A",          Language = "Swedish", Capacity = 3 };
