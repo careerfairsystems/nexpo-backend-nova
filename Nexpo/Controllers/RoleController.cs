@@ -83,6 +83,10 @@ namespace Nexpo.Controllers
                 return BadRequest();
             }
 
+            if((Role)DTO.Role == Role.CompanyRepresentative){
+                return BadRequest();
+            }
+
             // Delete the user from its former repo
 
             var student = _studentRepo.FindByUser((int)user.Id);
