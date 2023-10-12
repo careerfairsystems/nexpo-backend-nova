@@ -30,5 +30,12 @@ namespace Nexpo.Helpers
             var companyId = Convert.ToInt32(claimsPrincipal.FindFirstValue(UserClaims.CompanyId));
             return companyId != 0 ? companyId : null;
         }
+
+        public static int? GetVolunteerId(this ClaimsPrincipal claimsPrincipal)
+        {
+            var volunteerId = Convert.ToInt32(claimsPrincipal.FindFirstValue(UserClaims.VolunteerId));
+            return volunteerId != 0 ? volunteerId : null;
+        }
+
     }
 }

@@ -23,17 +23,20 @@ namespace Nexpo.Controllers
         private readonly IUserRepository _userRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
         private readonly IStudentRepository _studentRepo;
+        private readonly IVolunteerRepository _volunteerRepo;
 
 
         public RoleController(
             IUserRepository iUserRepo,
             IStudentSessionApplicationRepository iApplicationRepo,
-            IStudentRepository iStudentRepository
-            )
+            IStudentRepository iStudentRepository,
+            IVolunteerRepository iVolunteerRepository
+        )
         {
             _userRepo = iUserRepo;
             _applicationRepo = iApplicationRepo;
             _studentRepo = iStudentRepository;
+            _volunteerRepo = iVolunteerRepository;
         }
 
 
@@ -71,11 +74,54 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if (DTO.Role.HasValue)
+            if (!DTO.Role.HasValue)
             {
-                // Cast to Role from Role? is necessesary because Role must be mandatory in User
-                user.Role = (Role)DTO.Role;
+                return BadRequest();
             }
+
+            if(user.Role == (Role)DTO.Role){
+                return BadRequest();
+            }
+
+            if((Role)DTO.Role == Role.CompanyRepresentative){
+                return BadRequest();
+            }
+
+            // Delete the user from its former repo
+
+            var student = _studentRepo.FindByUser((int)user.Id);
+
+            if (student != null)
+                await _studentRepo.Remove(student.Result);
+
+            var volunteer = _volunteerRepo.FindByUser((int)user.Id);
+
+            if (volunteer != null)
+                await _volunteerRepo.Remove(volunteer.Result);
+
+
+            // Put the user in their new repo
+
+            user.Role = (Role)DTO.Role;
+
+            if (user.Role == Role.Student)
+            {
+                var newStudent = new Student
+                {
+                    UserId = user.Id.Value
+                };
+                await _studentRepo.Add(newStudent);
+            }
+            
+            if (user.Role == Role.Volunteer)
+            {
+                var newVolunteer = new Volunteer
+                {
+                    UserId = user.Id.Value
+                };
+                await _volunteerRepo.Add(newVolunteer);
+            }
+
 
             await _userRepo.Update(user);
 

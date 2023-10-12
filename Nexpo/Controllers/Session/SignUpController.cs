@@ -17,6 +17,7 @@ namespace Nexpo.Controllers
     {
         private readonly IUserRepository _userRepo;
         private readonly ICompanyRepository _companyRepo;
+        private readonly IVolunteerRepository _volunteerRepo;
         private readonly IStudentRepository _studentRepo;
         private readonly IEmailService _emailService;
         private readonly TokenService _tokenService;
@@ -24,13 +25,16 @@ namespace Nexpo.Controllers
 
         public SignUpController(IUserRepository iUserRepo, 
             ICompanyRepository iCompanyRepo, 
+            IVolunteerRepository iVolunteerRepo,
             IStudentRepository iStudentRepo, 
             IEmailService emailService,
             TokenService tokenService,
-            PasswordService passwordService)
+            PasswordService passwordService
+            )
         {
             _userRepo        = iUserRepo;
             _companyRepo     = iCompanyRepo;
+            _volunteerRepo   = iVolunteerRepo;
             _studentRepo     = iStudentRepo;
             _emailService    = emailService;
             _tokenService    = tokenService;
@@ -181,6 +185,12 @@ namespace Nexpo.Controllers
             };
             
             await _userRepo.Add(user);
+
+            var volunteer = new Volunteer
+            {
+                UserId = user.Id.Value
+            };
+            await _volunteerRepo.Add(volunteer);
 
             await _emailService.SendVolunteerInviteEmail(user);
 
