@@ -51,7 +51,7 @@ namespace Nexpo.Controllers
         /// Create a new ticket, for the user, to an event
         /// </summary>
         [HttpPost]
-        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
+        [Authorize]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostTicket(CreateTicketDTO DTO)
         {
