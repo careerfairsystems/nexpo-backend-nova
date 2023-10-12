@@ -88,7 +88,7 @@ namespace Nexpo.Models
             SaveChanges();
 
             // Volunteers
-            var volunteer1 = new Volunteer { Id = -1, Programme = Programme.Datateknik, Year = 4, MasterTitle = "Project management in software systems", UserId = user10.Id.Value };
+            var volunteer1 = new Volunteer { Id = -10, Programme = Programme.Datateknik, Year = 4, MasterTitle = "Project management in software systems", UserId = user10.Id.Value };
             Volunteers.AddRange(volunteer1);
             SaveChanges();
 
