@@ -17,6 +17,7 @@ namespace Nexpo.Controllers
     {
         private readonly IUserRepository _userRepo;
         private readonly IStudentRepository _studentRepo;
+        private readonly IVolunteerRepository _volunteerRepo;
         private readonly ICompanyRepository _companyRepo;
         private readonly PasswordService _passwordService;
         private readonly TokenService _tokenService;
@@ -25,6 +26,7 @@ namespace Nexpo.Controllers
         public SessionController(
             IUserRepository iUserRepo, 
             IStudentRepository iStudentRepo, 
+            IVolunteerRepository iVolunteerRepo,
             ICompanyRepository iCompanyRepo, 
             PasswordService passwordService,
             TokenService tokenService,
@@ -32,6 +34,7 @@ namespace Nexpo.Controllers
         {
             _userRepo        = iUserRepo;
             _studentRepo     = iStudentRepo;
+            _volunteerRepo   = iVolunteerRepo;
             _companyRepo     = iCompanyRepo;
             _passwordService = passwordService;
             _tokenService    = tokenService;
@@ -87,8 +90,9 @@ namespace Nexpo.Controllers
 
             if (user.Role == Role.Volunteer)
             {
-                var volunteer = await _userRepo.Get(user.Id.Value);
+                var volunteer = await _volunteerRepo.FindByUser(user.Id.Value);
                 claims.Add(new Claim(UserClaims.VolunteerId, volunteer.Id.ToString()));
+
             }
 
             var jwt = _tokenService.GenerateJWT(claims);
