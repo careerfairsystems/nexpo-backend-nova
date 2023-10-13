@@ -61,6 +61,8 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Update a user's information
+        /// 
+        /// Quite ugly due to time preassure :(   )
         /// </summary>
         [HttpPut]
         [Route("{id}")]
@@ -79,49 +81,94 @@ namespace Nexpo.Controllers
                 return BadRequest();
             }
 
-            if(user.Role == (Role)DTO.Role){
+            if (user.Role == (Role)DTO.Role)
+            {
                 return BadRequest();
             }
 
-            if((Role)DTO.Role == Role.CompanyRepresentative){
+            if ((Role)DTO.Role == Role.CompanyRepresentative)
+            {
                 return BadRequest();
             }
+
+            var student = _studentRepo.FindByUser((int)user.Id).Result;
+
+            var volunteer = _volunteerRepo.FindByUser((int)user.Id).Result;
 
             // Delete the user from its former repo
 
-            var student = _studentRepo.FindByUser((int)user.Id);
-
             if (student != null)
-                await _studentRepo.Remove(student.Result);
+                await _studentRepo.Remove(student);
 
-            var volunteer = _volunteerRepo.FindByUser((int)user.Id);
 
             if (volunteer != null)
-                await _volunteerRepo.Remove(volunteer.Result);
-
+                await _volunteerRepo.Remove(volunteer);
 
             // Put the user in their new repo
 
             user.Role = (Role)DTO.Role;
 
+            // VERY UGLY - FIX
+            // Transfer admin or volunteer to student
             if (user.Role == Role.Student)
             {
-                var newStudent = new Student
+                Student newStudent;
+                if (volunteer != null)
                 {
-                    UserId = user.Id.Value
-                };
+                    newStudent = new Student
+                    {
+                        Programme = volunteer.Programme,
+                        ResumeEnUrl = volunteer.ResumeEnUrl,
+                        ResumeSvUrl = volunteer.ResumeSvUrl,
+                        LinkedIn = volunteer.LinkedIn,
+                        MasterTitle = volunteer.MasterTitle,
+                        Year = volunteer.Year,
+                        UserId = user.Id.Value,
+                        User = user
+                    };
+                }
+                else
+                {
+                    newStudent = new Student
+                    {
+                        UserId = user.Id.Value,
+                        User = user
+                    };
+                }
+
                 await _studentRepo.Add(newStudent);
             }
-            
+
+            // VERY UGLY - FIX
+            // Transfer admin or student to volunteer
             if (user.Role == Role.Volunteer)
             {
-                var newVolunteer = new Volunteer
+                Volunteer newVolunteer;
+                if (volunteer != null)
                 {
-                    UserId = user.Id.Value
-                };
+                    newVolunteer = new Volunteer
+                    {
+                        Programme = student.Programme,
+                        ResumeEnUrl = student.ResumeEnUrl,
+                        ResumeSvUrl = student.ResumeSvUrl,
+                        LinkedIn = student.LinkedIn,
+                        MasterTitle = student.MasterTitle,
+                        Year = student.Year,
+                        UserId = user.Id.Value,
+                        User = user
+                    };
+                }
+                else
+                {
+                    newVolunteer = new Volunteer
+                    {
+                        UserId = user.Id.Value,
+                        User = user
+                    };
+                }
+
                 await _volunteerRepo.Add(newVolunteer);
             }
-
 
             await _userRepo.Update(user);
 
