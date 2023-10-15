@@ -101,8 +101,6 @@ namespace Nexpo.Controllers
                 ticket.TakeAwayTime = DTO.TakeAwayTime;
             }
 
-
-
             if (!await _ticketRepo.Add(ticket))
             {
                 return Conflict();
