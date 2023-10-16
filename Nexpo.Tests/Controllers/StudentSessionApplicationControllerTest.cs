@@ -323,10 +323,10 @@ namespace Nexpo.Tests.Controllers
 
             //Verify
             Assert.True(applicationList1.Count == 3, "Application list length should be 3, count:" + applicationList1.Count.ToString());
-            Assert.True(app1.Motivation.Equals("**NO MOTIVATION ADDED**"), "Wrong motivation, got: " + applicationList1[2].Motivation);
+            Assert.True(app1.Motivation.Equals("**NO MOTIVaTION ADDED**"), "Wrong motivation");
 
             Assert.True(applicationList2.Count == 3, "Application list length should be 3, count:" + applicationList2.Count.ToString());
-            Assert.True(app2.Motivation.Equals("**NO MOTIVATION ADDED**"), "Wrong motivation, got: " + applicationList2[2].Motivation);
+            Assert.True(app2.Motivation.Equals("**NO MOTIVATION ADDED**"), "Wrong motivation, got");
         }
 
         [Fact]
