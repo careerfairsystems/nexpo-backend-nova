@@ -99,7 +99,7 @@ namespace Nexpo.Controllers
         [ProducesResponseType(typeof(StudentSessionApplication), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostApplication(int id, UpdateStudentSessionApplicationStudentDTO DTO)
         {
-            var motivation = DTO?.Motivation ?? "**NO MOTIVATION ADDED**";
+            var motivation = string.IsNullOrEmpty(DTO?.Motivation) ? "**NO MOTIVATION ADDED**" : DTO.Motivation;
 
             // Check that the company accepts applications
             var company = await _companyRepo.GetWithChildren(id);
