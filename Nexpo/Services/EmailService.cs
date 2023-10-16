@@ -45,13 +45,13 @@ namespace Nexpo.Services
             }; 
             var signedToken = _tokenService.SignToken(signUpDTO, DateTime.Now.AddDays(7)); // SignUp link is valid for a week
             var tokenString = Uri.EscapeDataString(signedToken);
-            var content =   $"Join your company on the Arkad fair by finalizing your account.<br><br>" 
-                            + "This is needed to be able to connect with the studends during the fair, through the Arkad student sessions website or Arkad app<br>" 
+            var content =   $"Join your company on the ARKAD fair by finalizing your account.<br><br>" 
+                            + "This is needed to be able to connect with the studends during the fair, through the ARKAD student sessions website or ARKAD app<br>" 
                             + $"Click on the following link and set a password and you are good to go: {baseUrl}/finalize_signup/{tokenString}" 
                             + "<br><br> After finalizing your account, you have access to log into https://nexpo-web.arkadtlth.se"
                             + "The same log in also works in the ARKAD app: search for \"arkad tlth\" in your app store." 
                             + "<br><br>Should you have any further questions regarding this, the app or how to connect with students, feel free to contact us at it.arkad@tlth.se";
-            return SendEmail(user.Email, "Join your company in the Arkad Website And App", content, content);
+            return SendEmail(user.Email, "Join your company in the ARKAD Website And App", content, content);
         }
 
         public Task SendVolunteerInviteEmail(User user)
@@ -63,12 +63,12 @@ namespace Nexpo.Services
 
             var signedToken = _tokenService.SignToken(signUpDTO, DateTime.Now.AddDays(7));
             var tokenString = Uri.EscapeDataString(signedToken);
-            var content =   $"Join your other ARKAD volunteers in the Arkad app by finalizing your account.<br><br>" 
-                            + "This is needed to be able to connect with the studends during the fair with the Arkad-app<br>" 
+            var content =   $"Join your other ARKAD volunteers in the ARKAD app by finalizing your account.<br><br>" 
+                            + "This is needed to be able to connect with the studends during the fair with the ARKAD-app<br>" 
                             + $"Click on the following link and set a password and you are good to go: {baseUrl}/finalize_signup/{tokenString}" 
                             + "<br><br>After you have finalized your account you need to download the app from the app store, search for \"arkad tlth\" and it should appear." 
                             + "<br><br>Should you have any further questions regarding this, feel free to contact us at it.arkad@tlth.se";
-            return SendEmail(user.Email, "Join the Arkad App", content, content);
+            return SendEmail(user.Email, "Join the ARKAD App", content, content);
         }
 
         public Task SendApplicationPendingEmail(Company company, User user)
@@ -125,7 +125,7 @@ namespace Nexpo.Services
             //    $"Please show the QR-code below at the entrance to get in.<br><br>" +
             //    $"<img src=\"{qrImage}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
 
-            return SendEmail(targetMail, $"Arkad Ticket for {name}", content, content);
+            return SendEmail(targetMail, $"ARKAD Ticket for {name}", content, content);
 
         }
 
@@ -152,7 +152,7 @@ namespace Nexpo.Services
                 //content += $"<img src=\"{qrImage}{ticket.Code}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
             }
 
-            return SendEmail(targetMail, $"Arkad Tickets for {name}", content, content);
+            return SendEmail(targetMail, $"ARKAD Tickets for {name}", content, content);
         }
         
     }
