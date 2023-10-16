@@ -99,6 +99,8 @@ namespace Nexpo.Controllers
         [ProducesResponseType(typeof(StudentSessionApplication), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostApplication(int id, UpdateStudentSessionApplicationStudentDTO DTO)
         {
+            var motivation = DTO?.Motivation ?? "**NO MOTIVATION ADDED**";
+
             // Check that the company accepts applications
             var company = await _companyRepo.GetWithChildren(id);
             if (company.StudentSessionTimeslots.Count() == 0)
@@ -111,7 +113,7 @@ namespace Nexpo.Controllers
             if (await _applicationRepo.ApplicationExists(studentId, id))
             {
                 var current = await _applicationRepo.GetByCompanyAndStudent(studentId, id);
-                current.Motivation = DTO.Motivation;
+                current.Motivation = motivation;
                 await _applicationRepo.Update(current);
                 return CreatedAtAction(nameof(GetApplicationStudent), new { id = current.Id }, current);
             }
@@ -119,7 +121,7 @@ namespace Nexpo.Controllers
             {
                 var application = new StudentSessionApplication
                 {
-                    Motivation = DTO.Motivation,
+                    Motivation = motivation,
                     CompanyId = id,
                     StudentId = studentId
                 };
