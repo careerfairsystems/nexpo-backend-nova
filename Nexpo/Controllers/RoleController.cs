@@ -115,6 +115,7 @@ namespace Nexpo.Controllers
                 Student newStudent;
                 if (volunteer != null)
                 {
+                    // should probably put id = volunteer.id here too
                     newStudent = new Student
                     {
                         Programme = volunteer.Programme,
@@ -146,6 +147,7 @@ namespace Nexpo.Controllers
                 Volunteer newVolunteer;
                 if (volunteer != null)
                 {
+                    // should probably put id = student.id here too
                     newVolunteer = new Volunteer
                     {
                         Programme = student.Programme,
