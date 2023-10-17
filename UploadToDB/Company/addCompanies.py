@@ -56,17 +56,19 @@ for row in range(len(df)):
             positions = set()
 
         if 'desiredDegree' in prof:
-            desiredDegree = prof['desiredDegree']
-            for degree in range(len(desiredDegree)):
-                if desiredDegree[degree] == 'Ph.D':
-                    desiredDegree[degree] = 2
-                elif desiredDegree[degree] == 'Master’s degree (300 ECTS)':
-                    desiredDegree[degree] = 1
-                elif desiredDegree[degree] == 'Bachelor’s degree (180 ECTS)':
-                    desiredDegree[degree] = 0
+            desiredDegrees = prof['desiredDegree']
+            desiredDegree = []
+            for degree in desiredDegrees:
+                if degree == 'Ph.D':
+                    desiredDegree.append(2)
+                elif degree == 'Master’s degree (300 ECTS)':
+                    desiredDegree.append(1)
+                elif degree == 'Bachelor’s degree (180 ECTS)':
+                    desiredDegree.append(0)
         else:
             print("desiredDegree", name)
             desiredDegree = [0]
+
 
         #missing Industries: strategy, consumer goods
         if 'industry' in prof:
@@ -192,13 +194,16 @@ for row in range(len(df)):
         else:
             website = '"' +"" + '"' 
 
-        if 'logotype' in prof and prof['logotype'] != None:
-            logoUrl  = prof['logotype']['name']        
-            logoUrl: str  = '"' + s3BucketUrl + logoUrl.replace('eps','jpg') + '"'
+        if 'logotype' in prof and isinstance(prof['logotype'], dict):
+            logoUrl = prof['logotype']['name']
+            logoUrl = '"' + s3BucketUrl + logoUrl.replace('eps', 'jpg') + '"'
             print("found logotype of url: ")
             print(logoUrl)
         else:
-            logoUrl  =  '"' +""+ '"' 
+            # Handle the case where 'logotype' is not a dictionary.
+            # You can set logoUrl to a default value or handle the case as needed.
+            logoUrl = '"' + "" + '"'
+
 
         if 'daysAtArkad' in prof and prof['daysAtArkad'] != None:
             daysAtArkad = prof['daysAtArkad']

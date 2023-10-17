@@ -64,7 +64,7 @@ def parse_json_file(input_file, output_file):
                 {
                     "profile": {
                         "name": name,
-                        "weOffer": we_Offer,
+                        "weOffer": [we_Offer],
                         "desiredDegree": desiredDegree,
                         "industry": industry,
                         "desiredProgramme": desiredProgramme,
