@@ -11,7 +11,7 @@ Add a one or several companies to the database, using JSON
 - It is reccomended to export this data from Jexpo
 """
 
-jsonfile = '../jsonTemplate/arkadCompany.json'
+jsonfile = './parsedCompany.json'
 url = 'https://www.nexpo.arkadtlth.se/api/companies'
 s3BucketUrl = 'https://nexpo-bucket.s3.eu-north-1.amazonaws.com/'
 
@@ -66,7 +66,7 @@ for row in range(len(df)):
                     desiredDegree[degree] = 0
         else:
             print("desiredDegree", name)
-            desiredDegree = []
+            desiredDegree = [0]
 
         #missing Industries: strategy, consumer goods
         if 'industry' in prof:
