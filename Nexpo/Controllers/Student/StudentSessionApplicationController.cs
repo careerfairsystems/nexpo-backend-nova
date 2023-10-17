@@ -18,6 +18,7 @@ namespace Nexpo.Controllers
     {
         private readonly ICompanyRepository _companyRepo;
         private readonly IStudentRepository _studentRepository;
+        private readonly IVolunteerRepository _volunteerRepository;
         private readonly IStudentSessionTimeslotRepository _timeslotRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
         private readonly IUserRepository _userRepository;
@@ -29,15 +30,17 @@ namespace Nexpo.Controllers
             IStudentSessionTimeslotRepository iStudentSessionTimeslotRepository,
             IStudentSessionApplicationRepository iStudentSessionApplicationRepository,
             IStudentRepository iStudentRepository,
+            IVolunteerRepository iVolunteerRepository,
             IUserRepository iUserRepository,
             IEmailService iEmailService)
         {
-            _companyRepo       = iCompanyRepository;
-            _timeslotRepo      = iStudentSessionTimeslotRepository;
-            _applicationRepo   = iStudentSessionApplicationRepository;
+            _companyRepo = iCompanyRepository;
+            _timeslotRepo = iStudentSessionTimeslotRepository;
+            _applicationRepo = iStudentSessionApplicationRepository;
             _studentRepository = iStudentRepository;
-            _userRepository    = iUserRepository;
-            _emailService      = iEmailService;
+            _volunteerRepository = iVolunteerRepository;
+            _userRepository = iUserRepository;
+            _emailService = iEmailService;
         }
 
         /// <summary>
@@ -69,7 +72,11 @@ namespace Nexpo.Controllers
             {
                 var company = await _companyRepo.Get(companyId);
                 var student = await _studentRepository.Get(application.StudentId);
-                var user = await _userRepository.Get(student.UserId);
+                var volunteer = await _volunteerRepository.Get(application.StudentId);
+
+                int userId = student?.UserId ?? volunteer?.UserId ?? -1;
+
+                var user = await _userRepository.Get(userId);
 
                 switch (application.Status)
                 {
@@ -95,7 +102,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpPost]
         [Route("company/{id}")]
-        [Authorize(Roles = nameof(Role.Student))]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.Volunteer))]
         [ProducesResponseType(typeof(StudentSessionApplication), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostApplication(int id, UpdateStudentSessionApplicationStudentDTO DTO)
         {
@@ -108,11 +115,22 @@ namespace Nexpo.Controllers
                 return Conflict();
             }
 
-            var studentId = HttpContext.User.GetStudentId().Value;
+            var userRole = HttpContext.User.GetRole();
+            var applierId = -1;
 
-            if (await _applicationRepo.ApplicationExists(studentId, id))
+            if (userRole == Role.Student)
             {
-                var current = await _applicationRepo.GetByCompanyAndStudent(studentId, id);
+                applierId = HttpContext.User.GetStudentId().Value;
+            }
+
+            if (userRole == Role.Volunteer)
+            {
+                applierId = HttpContext.User.GetVolunteerId().Value;
+            }
+
+            if (await _applicationRepo.ApplicationExists(applierId, id))
+            {
+                var current = await _applicationRepo.GetByCompanyAndStudent(applierId, id);
                 current.Motivation = motivation;
                 await _applicationRepo.Update(current);
                 return CreatedAtAction(nameof(GetApplicationStudent), new { id = current.Id }, current);
@@ -123,7 +141,7 @@ namespace Nexpo.Controllers
                 {
                     Motivation = motivation,
                     CompanyId = id,
-                    StudentId = studentId
+                    StudentId = applierId
                 };
                 await _applicationRepo.Add(application);
                 return CreatedAtAction(nameof(GetApplicationStudent), new { id = application.Id }, application);
@@ -135,7 +153,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}")]
-        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative) + "," + nameof(Role.Volunteer))]
         [ProducesResponseType(typeof(StudentSessionApplication), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetApplicationStudent(int id)
         {
@@ -154,6 +172,16 @@ namespace Nexpo.Controllers
                     return Forbid();
                 }
             }
+
+            if (userRole == Role.Volunteer)
+            {
+                var volunteerId = HttpContext.User.GetVolunteerId().Value;
+                if (application.StudentId != volunteerId)
+                {
+                    return Forbid();
+                }
+            }
+
             if (userRole == Role.CompanyRepresentative)
             {
                 var companyId = HttpContext.User.GetCompanyId().Value;
@@ -179,22 +207,30 @@ namespace Nexpo.Controllers
             var applications = await _applicationRepo.GetAllForCompany(companyId);
             var studentApplications = new List<StudentSessionApplicationDTO>();
 
-            foreach (var application in applications){
+            foreach (var application in applications)
+            {
                 var student = await _studentRepository.Get(application.StudentId);
-                var user = await _userRepository.Get(student.UserId);
+                var volunteer = await _volunteerRepository.Get(application.StudentId);
+
+                int userId = student?.UserId ?? volunteer?.UserId ?? -1;
+                var user = await _userRepository.Get(userId);
+
+                int? studentYear = student?.Year ?? volunteer?.Year;
+                Programme? studentProgramme = student?.Programme ?? volunteer?.Programme;
+
 
                 var DTO = new StudentSessionApplicationDTO
                 {
-                    Id               = application.Id,
-                    Motivation       = application.Motivation,
-                    Status           = application.Status,
-                    StudentId        = application.StudentId,
-                    CompanyId        = application.CompanyId,
-                    Booked           = application.Booked,
+                    Id = application.Id,
+                    Motivation = application.Motivation,
+                    Status = application.Status,
+                    StudentId = application.StudentId,
+                    CompanyId = application.CompanyId,
+                    Booked = application.Booked,
                     StudentFirstName = user.FirstName,
-                    StudentLastName  = user.LastName,
-                    StudentYear      = student.Year,
-                    StudentProgramme = student.Programme
+                    StudentLastName = user.LastName,
+                    StudentYear = studentYear,
+                    StudentProgramme = studentProgramme
                 };
 
                 studentApplications.Add(DTO);
@@ -203,16 +239,28 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
-        /// Get all applications made by the signed in Student
+        /// Get all applications made by the signed in Student or Volunteer
         /// </summary>
         [HttpGet]
         [Route("my/student")]
-        [Authorize(Roles = nameof(Role.Student))]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.Volunteer))]
         [ProducesResponseType(typeof(IEnumerable<StudentSessionApplication>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetApplicationsFromStudent()
         {
-            var studentId = HttpContext.User.GetStudentId().Value;
-            var applications = await _applicationRepo.GetAllForStudent(studentId);
+            var userRole = HttpContext.User.GetRole();
+            var applierId = -1;
+
+            if (userRole == Role.Student)
+            {
+                applierId = HttpContext.User.GetStudentId().Value;
+            }
+
+            if (userRole == Role.Volunteer)
+            {
+                applierId = HttpContext.User.GetVolunteerId().Value;
+            }
+
+            var applications = await _applicationRepo.GetAllForApplier(applierId);
 
             return Ok(applications);
         }
@@ -223,20 +271,32 @@ namespace Nexpo.Controllers
         /// <param name="id">Company Id</param>
         [HttpGet]
         [Route("accepted/{id}")]
-        [Authorize(Roles = nameof(Role.Student))]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.Volunteer))]
         [ProducesResponseType(typeof(ApplicationStatusDTO), StatusCodes.Status200OK)]
         public async Task<ActionResult> applicationAccepted(int id)
         {
-            var studentId = HttpContext.User.GetStudentId().Value;
-            var applicationExists = await _applicationRepo.ApplicationExists(studentId, id);
+            var userRole = HttpContext.User.GetRole();
+            var applierId = -1;
+
+            if (userRole == Role.Student)
+            {
+                applierId = HttpContext.User.GetStudentId().Value;
+            }
+
+            if (userRole == Role.Volunteer)
+            {
+                applierId = HttpContext.User.GetVolunteerId().Value;
+            }
+
+            var applicationExists = await _applicationRepo.ApplicationExists(applierId, id);
 
             if (!applicationExists)
             {
                 return BadRequest();
             }
 
-            var application = await _applicationRepo.GetByCompanyAndStudent(studentId, id);
-            if(application.Status != StudentSessionApplicationStatus.Accepted)
+            var application = await _applicationRepo.GetByCompanyAndStudent(applierId, id);
+            if (application.Status != StudentSessionApplicationStatus.Accepted)
             {
                 return Ok(new ApplicationStatusDTO
                 {
@@ -246,8 +306,8 @@ namespace Nexpo.Controllers
             }
             return Ok(new ApplicationStatusDTO
             {
-                accepted=true,
-                booked=application.Booked
+                accepted = true,
+                booked = application.Booked
             });
         }
 
@@ -257,7 +317,7 @@ namespace Nexpo.Controllers
         /// <param name="id">Application Id</param>
         [HttpDelete]
         [Route("{id}")]
-        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative) + "," + nameof(Role.Volunteer))]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult> DeleteApplication(int id)
         {
@@ -276,6 +336,17 @@ namespace Nexpo.Controllers
                     return Forbid();
                 }
             }
+
+            if (userRole == Role.Volunteer)
+            {
+                var volunteer = HttpContext.User.GetStudentId().Value;
+                if (application.StudentId != volunteer)
+                {
+                    return Forbid();
+                }
+            }
+
+
             if (userRole == Role.CompanyRepresentative)
             {
                 var companyId = HttpContext.User.GetCompanyId().Value;

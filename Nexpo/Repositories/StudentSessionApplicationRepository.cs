@@ -8,9 +8,9 @@ namespace Nexpo.Repositories
 {
     public interface IStudentSessionApplicationRepository
     {
-        public Task<bool> ApplicationExists(int studentId, int companyId);
-        public Task<StudentSessionApplication> GetByCompanyAndStudent(int studentId, int companyId);
-        public Task<IEnumerable<StudentSessionApplication>> GetAllForStudent(int studentId);
+        public Task<bool> ApplicationExists(int applierId, int companyId);
+        public Task<StudentSessionApplication> GetByCompanyAndStudent(int applierId, int companyId);
+        public Task<IEnumerable<StudentSessionApplication>> GetAllForApplier(int applierId);
         public Task<IEnumerable<StudentSessionApplication>> GetAllForCompany(int companyId);
         public Task<StudentSessionApplication> Get(int id);
         public Task Add(StudentSessionApplication application);
@@ -27,19 +27,19 @@ namespace Nexpo.Repositories
             _context = context;
         }
 
-        public async Task<bool> ApplicationExists(int studentId, int companyId)
+        public async Task<bool> ApplicationExists(int applierId, int companyId)
         {
-            return await _context.StudentSessionApplications.AnyAsync(a => a.StudentId == studentId && a.CompanyId == companyId);
+            return await _context.StudentSessionApplications.AnyAsync(a => a.StudentId == applierId && a.CompanyId == companyId);
         }
 
-        public async Task<StudentSessionApplication> GetByCompanyAndStudent(int studentId, int companyId)
+        public async Task<StudentSessionApplication> GetByCompanyAndStudent(int applierId, int companyId)
         {
-            return await _context.StudentSessionApplications.Where(a => a.StudentId == studentId && a.CompanyId == companyId).FirstOrDefaultAsync();
+            return await _context.StudentSessionApplications.Where(a => a.StudentId == applierId && a.CompanyId == companyId).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<StudentSessionApplication>> GetAllForStudent(int studentId)
+        public async Task<IEnumerable<StudentSessionApplication>> GetAllForApplier(int applierId)
         {
-            return await _context.StudentSessionApplications.Where(a => a.StudentId == studentId).ToListAsync();
+            return await _context.StudentSessionApplications.Where(a => a.StudentId == applierId).ToListAsync();
         }
 
         public async Task<IEnumerable<StudentSessionApplication>> GetAllForCompany(int companyId)
