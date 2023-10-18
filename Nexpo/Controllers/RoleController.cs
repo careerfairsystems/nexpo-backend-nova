@@ -63,6 +63,7 @@ namespace Nexpo.Controllers
         /// Update a user's information
         /// 
         /// Quite ugly due to time preassure :(   )
+        /// Also DANGEROUS. If the app crashes while method is running.
         /// </summary>
         [HttpPut]
         [Route("{id}")]
@@ -115,8 +116,10 @@ namespace Nexpo.Controllers
                 Student newStudent;
                 if (volunteer != null)
                 {
+                    
                     newStudent = new Student
                     {
+                        Id = volunteer.Id,
                         Programme = volunteer.Programme,
                         ResumeEnUrl = volunteer.ResumeEnUrl,
                         ResumeSvUrl = volunteer.ResumeSvUrl,
@@ -146,8 +149,10 @@ namespace Nexpo.Controllers
                 Volunteer newVolunteer;
                 if (volunteer != null)
                 {
+                    // should probably put id = student.id here too
                     newVolunteer = new Volunteer
                     {
+                        Id = student.Id,
                         Programme = student.Programme,
                         ResumeEnUrl = student.ResumeEnUrl,
                         ResumeSvUrl = student.ResumeSvUrl,
