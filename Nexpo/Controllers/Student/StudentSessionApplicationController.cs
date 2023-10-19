@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -72,10 +71,11 @@ namespace Nexpo.Controllers
             if (application.Status != oldStatus)
             {
                 var company = await _companyRepo.Get(companyId);
-                var student = await _studentRepository.FindByUser(application.StudentId);
-                var volunteer = await _volunteerRepository.FindByUser(application.StudentId);
+                var student = await _studentRepository.Get(application.StudentId);
+                var volunteer = await _volunteerRepository.Get(application.StudentId);
 
                 int userId = student?.UserId ?? volunteer?.UserId ?? -1;
+
                 var user = await _userRepository.Get(userId);
 
                 switch (application.Status)
@@ -116,7 +116,17 @@ namespace Nexpo.Controllers
             }
 
             var userRole = HttpContext.User.GetRole();
-            var applierId = HttpContext.User.GetId();
+            var applierId = -1;
+
+            if (userRole == Role.Student)
+            {
+                applierId = HttpContext.User.GetStudentId().Value;
+            }
+
+            if (userRole == Role.Volunteer)
+            {
+                applierId = HttpContext.User.GetVolunteerId().Value;
+            }
 
             if (await _applicationRepo.ApplicationExists(applierId, id))
             {
@@ -154,10 +164,22 @@ namespace Nexpo.Controllers
             }
 
             var userRole = HttpContext.User.GetRole();
-            var userId = HttpContext.User.GetId();
-            if (application.StudentId != userId)
+            if (userRole == Role.Student)
             {
-                return Forbid();
+                var studentId = HttpContext.User.GetStudentId().Value;
+                if (application.StudentId != studentId)
+                {
+                    return Forbid();
+                }
+            }
+
+            if (userRole == Role.Volunteer)
+            {
+                var volunteerId = HttpContext.User.GetVolunteerId().Value;
+                if (application.StudentId != volunteerId)
+                {
+                    return Forbid();
+                }
             }
 
             if (userRole == Role.CompanyRepresentative)
@@ -187,12 +209,11 @@ namespace Nexpo.Controllers
 
             foreach (var application in applications)
             {
+                var student = await _studentRepository.Get(application.StudentId);
+                var volunteer = await _volunteerRepository.Get(application.StudentId);
 
-                int userId = application.StudentId;
+                int userId = student?.UserId ?? volunteer?.UserId ?? -1;
                 var user = await _userRepository.Get(userId);
-
-                var student = await _studentRepository.FindByUser(userId);
-                var volunteer = await _volunteerRepository.FindByUser(userId);
 
                 int? studentYear = student?.Year ?? volunteer?.Year;
                 Programme? studentProgramme = student?.Programme ?? volunteer?.Programme;
@@ -226,7 +247,18 @@ namespace Nexpo.Controllers
         [ProducesResponseType(typeof(IEnumerable<StudentSessionApplication>), StatusCodes.Status200OK)]
         public async Task<ActionResult> GetApplicationsFromStudent()
         {
-            var applierId = HttpContext.User.GetId();
+            var userRole = HttpContext.User.GetRole();
+            var applierId = -1;
+
+            if (userRole == Role.Student)
+            {
+                applierId = HttpContext.User.GetStudentId().Value;
+            }
+
+            if (userRole == Role.Volunteer)
+            {
+                applierId = HttpContext.User.GetVolunteerId().Value;
+            }
 
             var applications = await _applicationRepo.GetAllForApplier(applierId);
 
@@ -243,7 +275,18 @@ namespace Nexpo.Controllers
         [ProducesResponseType(typeof(ApplicationStatusDTO), StatusCodes.Status200OK)]
         public async Task<ActionResult> applicationAccepted(int id)
         {
-            var applierId = HttpContext.User.GetId();
+            var userRole = HttpContext.User.GetRole();
+            var applierId = -1;
+
+            if (userRole == Role.Student)
+            {
+                applierId = HttpContext.User.GetStudentId().Value;
+            }
+
+            if (userRole == Role.Volunteer)
+            {
+                applierId = HttpContext.User.GetVolunteerId().Value;
+            }
 
             var applicationExists = await _applicationRepo.ApplicationExists(applierId, id);
 
@@ -285,12 +328,25 @@ namespace Nexpo.Controllers
             }
 
             var userRole = HttpContext.User.GetRole();
-            var studentId = HttpContext.User.GetId();
-            if (application.StudentId != studentId)
+            if (userRole == Role.Student)
             {
-                return Forbid();
+                var studentId = HttpContext.User.GetStudentId().Value;
+                if (application.StudentId != studentId)
+                {
+                    return Forbid();
+                }
             }
-            
+
+            if (userRole == Role.Volunteer)
+            {
+                var volunteer = HttpContext.User.GetStudentId().Value;
+                if (application.StudentId != volunteer)
+                {
+                    return Forbid();
+                }
+            }
+
+
             if (userRole == Role.CompanyRepresentative)
             {
                 var companyId = HttpContext.User.GetCompanyId().Value;
