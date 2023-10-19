@@ -40,7 +40,7 @@ with open(jsonfile, encoding="utf-8") as d:
     for entry in data:
         info = entry['tickets']
         
-        send(info['mail'], 31, info['lunch_tickets_day1'])
+        send(info['mail'], info['eventid'], info['numberOfTickets'])
         #send(info['mail'], 22, info['lunch_tickets_day2'])
         #send(info['mail'], 22, info['banquet_tickets'])
 

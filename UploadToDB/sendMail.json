@@ -1,18 +1,16 @@
 [
     {
         "tickets": {
-            "lunch_tickets_day1": 2,
-            "lunch_tickets_day2": null,
-            "banquet_tickets": null,
-            "mail": "nils.alexander.hansson@gmail.com"
+            "mail": "nils.alexander.hansson@gmail.com",
+            "eventid": 34,
+            "numberOfTickets": 1
         }
     },
     {
         "tickets": {
-            "lunch_tickets_day1": 2,
-            "lunch_tickets_day2": null,
-            "banquet_tickets": null,
-            "mail": "frontend.arkad@box.tlth.se"
+            "mail": "frontend.arkad@box.tlth.se",
+            "eventid": 34,
+            "numberOfTickets": 1
         }
     }
 ]
