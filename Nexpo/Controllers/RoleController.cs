@@ -119,23 +119,20 @@ namespace Nexpo.Controllers
                     
                     newStudent = new Student
                     {
-                        Id = volunteer.Id,
                         Programme = volunteer.Programme,
                         ResumeEnUrl = volunteer.ResumeEnUrl,
                         ResumeSvUrl = volunteer.ResumeSvUrl,
                         LinkedIn = volunteer.LinkedIn,
                         MasterTitle = volunteer.MasterTitle,
                         Year = volunteer.Year,
-                        UserId = user.Id.Value,
-                        User = user
+                        UserId = user.Id.Value
                     };
                 }
                 else
                 {
                     newStudent = new Student
                     {
-                        UserId = user.Id.Value,
-                        User = user
+                        UserId = user.Id.Value
                     };
                 }
 
@@ -152,15 +149,13 @@ namespace Nexpo.Controllers
                     // should probably put id = student.id here too
                     newVolunteer = new Volunteer
                     {
-                        Id = student.Id,
                         Programme = student.Programme,
                         ResumeEnUrl = student.ResumeEnUrl,
                         ResumeSvUrl = student.ResumeSvUrl,
                         LinkedIn = student.LinkedIn,
                         MasterTitle = student.MasterTitle,
                         Year = student.Year,
-                        UserId = user.Id.Value,
-                        User = user
+                        UserId = user.Id.Value
                     };
                 }
                 else
@@ -168,7 +163,6 @@ namespace Nexpo.Controllers
                     newVolunteer = new Volunteer
                     {
                         UserId = user.Id.Value,
-                        User = user
                     };
                 }
 
