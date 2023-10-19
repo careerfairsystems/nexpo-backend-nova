@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
+using System;
 using System.Text.Json.Serialization;
 
 namespace Nexpo.Models
@@ -8,8 +8,7 @@ namespace Nexpo.Models
     /// </summary>
     public class Volunteer
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int? Id { get; set; }
+        public int? Id { get; set; } = BitConverter.ToInt32(Guid.NewGuid().ToByteArray(), 0);
 
         public Programme? Programme { get; set; }
 
