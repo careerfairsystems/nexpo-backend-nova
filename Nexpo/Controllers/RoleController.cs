@@ -125,16 +125,14 @@ namespace Nexpo.Controllers
                         LinkedIn = volunteer.LinkedIn,
                         MasterTitle = volunteer.MasterTitle,
                         Year = volunteer.Year,
-                        UserId = user.Id.Value,
-                        User = user
+                        UserId = user.Id.Value
                     };
                 }
                 else
                 {
                     newStudent = new Student
                     {
-                        UserId = user.Id.Value,
-                        User = user
+                        UserId = user.Id.Value
                     };
                 }
 
@@ -157,8 +155,7 @@ namespace Nexpo.Controllers
                         LinkedIn = student.LinkedIn,
                         MasterTitle = student.MasterTitle,
                         Year = student.Year,
-                        UserId = user.Id.Value,
-                        User = user
+                        UserId = user.Id.Value
                     };
                 }
                 else
@@ -166,7 +163,6 @@ namespace Nexpo.Controllers
                     newVolunteer = new Volunteer
                     {
                         UserId = user.Id.Value,
-                        User = user
                     };
                 }
 

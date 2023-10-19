@@ -15,6 +15,7 @@ namespace Nexpo.Models
 
         public StudentSessionApplicationStatus Status { get; set; } = StudentSessionApplicationStatus.Pending;
 
+        // NOTE: THIS IS THE USER GUID "ID"
         public int StudentId { get; set; }
 
         //TRAP
