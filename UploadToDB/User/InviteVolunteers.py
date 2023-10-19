@@ -13,9 +13,9 @@ Invite volunteers to the Arkad App
 auth_token = login.get_token()
 
 # Hardcoded JSON file path
-jsonfile = '../jsonTemplate/InviteVolunteers.json'
+jsonfile = '../jsonTemplate/inviteVolunteers.json'
 
-url = "https://www.nexpo.arkadtlth.se/api/session/volunteer"
+url = "https://www.nexpo.arkadtlth.se/api/signup/volunteer"
 
 with open(jsonfile, 'r') as json_file:
     data = json.load(json_file)
