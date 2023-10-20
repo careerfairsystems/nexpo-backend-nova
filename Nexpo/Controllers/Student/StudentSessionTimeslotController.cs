@@ -100,7 +100,7 @@ namespace Nexpo.Controllers
         /// <param name="id">The id of the timeslot</param>
         [HttpPut]
         [Route("book/{id}")]
-        [Authorize(Roles = nameof(Role.Student))]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.Volunteer))]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status200OK)]
         public async Task<ActionResult> BookTimeslot(int id)
         {
@@ -110,8 +110,21 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
             var companyId = timeslot.CompanyId;
-            var studentId = HttpContext.User.GetStudentId().Value;
-            var application = await _applicationRepo.GetByCompanyAndStudent(studentId, companyId);
+            
+            var userRole = HttpContext.User.GetRole();
+            var applierId = -1;
+
+            if (userRole == Role.Student)
+            {
+                applierId = HttpContext.User.GetStudentId().Value;
+            }
+
+            if (userRole == Role.Volunteer)
+            {
+                applierId = HttpContext.User.GetVolunteerId().Value;
+            }
+
+            var application = await _applicationRepo.GetByCompanyAndStudent(applierId, companyId);
             
             if(application == null)
             {
@@ -133,7 +146,7 @@ namespace Nexpo.Controllers
                 return BadRequest();
             }
 
-            timeslot.StudentId = studentId;
+            timeslot.StudentId = applierId;
             application.Booked = true;
 
             await _applicationRepo.Update(application);
@@ -148,7 +161,7 @@ namespace Nexpo.Controllers
         /// <param name="id">The id of the timeslot</param>
         [HttpPut]
         [Route("unbook/{id}")]
-        [Authorize(Roles = nameof(Role.Student))]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.Volunteer))]
         [ProducesResponseType(typeof(StudentSessionTimeslot), StatusCodes.Status200OK)]
         public async Task<ActionResult> UnbookTimeslot(int id)
         {
@@ -158,8 +171,20 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
             var companyId = timeslot.CompanyId;
-            var studentId = HttpContext.User.GetStudentId().Value;
-            var application = await _applicationRepo.GetByCompanyAndStudent(studentId, companyId);
+
+            var userRole = HttpContext.User.GetRole();
+            var applierId = -1;
+
+            if (userRole == Role.Student)
+            {
+                applierId = HttpContext.User.GetStudentId().Value;
+            }
+
+            if (userRole == Role.Volunteer)
+            {
+                applierId = HttpContext.User.GetVolunteerId().Value;
+            }
+            var application = await _applicationRepo.GetByCompanyAndStudent(applierId, companyId);
 
             if (application == null)
             {
