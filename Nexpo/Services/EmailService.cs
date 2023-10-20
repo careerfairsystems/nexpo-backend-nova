@@ -92,7 +92,7 @@ namespace Nexpo.Services
             var content =   "Congrats!<br>" 
                             + $"{company.Name} has just accepted your student session application!<br>" 
                             + $"Log in to the app and choose {company.Name} in Student Sessions to pick a timeslot";
-            return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
+            return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
         }
 
         public Task SendPasswordResetEmail(User user)
@@ -120,7 +120,8 @@ namespace Nexpo.Services
             string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + ticketId;
 
             var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
-                $"Please show the QR-code below at the entrance to get in.<br><br>" + qrImage;
+                $"Please show the QR-code below at the entrance to get in." +
+                $"If this email is connected to the app, the QR will aslo be visible there:<br><br>" + qrImage;
             //var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
             //    $"Please show the QR-code below at the entrance to get in.<br><br>" +
             //    $"<img src=\"{qrImage}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
