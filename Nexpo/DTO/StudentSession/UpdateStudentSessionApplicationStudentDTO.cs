@@ -8,7 +8,6 @@ namespace Nexpo.DTO
     /// </summary>
     public class UpdateStudentSessionApplicationStudentDTO
     {
-        [Required]
         public string Motivation { get; set; }
     }
 }
