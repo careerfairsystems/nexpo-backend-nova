@@ -17,5 +17,7 @@ namespace Nexpo.DTO
         [Required]
         public int numberOfTickets { get; set; }
 
+        public string appearAt  { get; set; }
+
     }
 }

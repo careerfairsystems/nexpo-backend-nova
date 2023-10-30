@@ -337,6 +337,8 @@ namespace Nexpo.Controllers
             
             int userID = user?.Id ?? -1;
 
+            string appearAt = DTO.appearAt ?? string.Empty;
+
             var _event = await _eventRepo.Get(eventId);
             if (_event == null)
             {
@@ -358,7 +360,7 @@ namespace Nexpo.Controllers
 
                 await _ticketRepo.Add(ticket);
 
-                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, ticket.Code, _event);
+                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, ticket.Code, _event, appearAt);
                 return Ok();
 
             }
@@ -379,7 +381,7 @@ namespace Nexpo.Controllers
                     tickets.Add(ticket);
                     
                 }
-                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, tickets, _event);
+                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, tickets, _event, appearAt);
 
                 return Ok();
             }
