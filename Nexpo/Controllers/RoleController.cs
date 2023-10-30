@@ -119,7 +119,6 @@ namespace Nexpo.Controllers
                     
                     newStudent = new Student
                     {
-                        Id = volunteer.Id,
                         Programme = volunteer.Programme,
                         ResumeEnUrl = volunteer.ResumeEnUrl,
                         ResumeSvUrl = volunteer.ResumeSvUrl,
@@ -152,7 +151,6 @@ namespace Nexpo.Controllers
                     // should probably put id = student.id here too
                     newVolunteer = new Volunteer
                     {
-                        Id = student.Id,
                         Programme = student.Programme,
                         ResumeEnUrl = student.ResumeEnUrl,
                         ResumeSvUrl = student.ResumeSvUrl,
