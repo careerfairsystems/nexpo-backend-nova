@@ -107,7 +107,8 @@ namespace Nexpo.Services
             return SendEmail(user.Email, "Reset your password", content, content);
         }
 
-        public Task SendTicketAsQRViaEmail(string targetMail, Guid ticketId, Event _event)
+
+        public Task SendTicketAsQRViaEmail(string targetMail, Guid ticketId, Event _event, string appearAt)
         {
             var name = _event.Name;
             var location = _event.Location;
@@ -119,17 +120,23 @@ namespace Nexpo.Services
 
             string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + ticketId;
 
-            var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
-                $"Please show the QR-code below at the entrance to get in.<br><br>" + qrImage;
-            //var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
-            //    $"Please show the QR-code below at the entrance to get in.<br><br>" +
-            //    $"<img src=\"{qrImage}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
+            var content = $"You have received an invitation for the event: {name}, located at {location}, scheduled for {date}";
+            
+            if(string.IsNullOrEmpty(appearAt)){
+                content += $", between {start} and {end}.<br><br>";
+            }else{
+                content += ". ";
+                content += appearAt;
+                content += "<br><br>";
+            }
+            
+            content += $"Please show the QR-code below at the entrance to get in.<br><br>" + qrImage;
 
-            return SendEmail(targetMail, $"ARKAD Ticket for {name}", content, content);
+            return SendEmail(targetMail, $"Arkad Ticket for {name}", content, content);
 
         }
 
-        public Task SendTicketAsQRViaEmail(string targetMail, List<Ticket> tickets, Event _event)
+        public Task SendTicketAsQRViaEmail(string targetMail, List<Ticket> tickets, Event _event, string appearAt)
         {
             var name = _event.Name;
             var location = _event.Location;
@@ -143,8 +150,17 @@ namespace Nexpo.Services
 
             string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=";
 
-            var content = $"You and your {numberOfTickets-1} collegue(s) have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
-                $"Please show the QR-codes below at the entrance to get in.<br><br>";
+            var content = $"You and your {numberOfTickets-1} collegue(s) have received an invitation for the event: {name}, located at {location}, scheduled for {date}";
+            
+            if(string.IsNullOrEmpty(appearAt)){
+                content += $", between {start} and {end}.<br><br>";
+            }else{
+                content += ". ";
+                content += appearAt;
+                content += "<br><br>";
+            }
+        
+            content += $"Please show the QR-codes below at the entrance to get in.<br><br>";
 
             foreach (var ticket in tickets)
             {
