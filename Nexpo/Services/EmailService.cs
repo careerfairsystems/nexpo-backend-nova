@@ -92,7 +92,7 @@ namespace Nexpo.Services
             var content =   "Congrats!<br>" 
                             + $"{company.Name} has just accepted your student session application!<br>" 
                             + $"Log in to the app and choose {company.Name} in Student Sessions to pick a timeslot";
-            return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
+            return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
         }
 
         public Task SendPasswordResetEmail(User user)
@@ -132,7 +132,7 @@ namespace Nexpo.Services
             
             content += $"Please show the QR-code below at the entrance to get in.<br><br>" + qrImage;
 
-            return SendEmail(targetMail, $"Arkad Ticket for {name}", content, content);
+            return SendEmail(targetMail, $"ARKAD Ticket for {name}", content, content);
 
         }
 
