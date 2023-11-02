@@ -73,11 +73,11 @@ namespace Nexpo.Services
                             + " * Student application window: 23rd October to 5th November.<br>"
                             + " * Company selection timeframe: 6th November to 10th November.<br><br>"
                             + "An attached map, included in this email, marks your company's designated location within E-house for the Student Sessions. The room designated for you will be ready and set upon your arrival."
-                            + " If you have any specific room requirements or requests, please contact adam.shafiei@users.tlth.se."
+                            + " If you have any specific room requirements or requests, please contact adam.shafiei@users.tlth.se. "
                             + "Hosts will routinely check to determine if you require any water or food from the lounge.<br>"
                             + "Please be advised, this is a no-reply email. For any inquiries or further details, reach out to company.arkad@tlth.se.<br><br>"
                             + "Warm regards, <br>"
-                            + "Niklas Ku, Business Manager 2023";
+                            + "Niklas Ku, Business Manager 2023 <br><br>";
             
             content += "<img src=\"https://cvfiler.s3.eu-north-1.amazonaws.com/SSMap.png\" alt=\"map\" width=\"300\" height=\"300\">";
 
@@ -122,9 +122,9 @@ namespace Nexpo.Services
             var content =   "Congrats!<br>" 
                             + $"{company.Name} has just accepted your student session application!<br>" 
                             + $"Log in to the app and choose {company.Name} in Student Sessions to pick a timeslot"
-                            + "The company's location is specified in the attached map.";
+                            + "The company's location is specified in the attached map. <br><br>";
 
-            content += $"<img src=\"file://./SSMap.png\" alt=\"map\" width=\"300\" height=\"300\">";
+            content += "<img src=\"https://cvfiler.s3.eu-north-1.amazonaws.com/SSMap.png\" alt=\"map\" width=\"300\" height=\"300\">";
             return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
         }
 
