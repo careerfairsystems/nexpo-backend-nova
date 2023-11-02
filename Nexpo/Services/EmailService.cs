@@ -37,6 +37,24 @@ namespace Nexpo.Services
             return SendEmail(user.Email, "Complete the signup", content, content);
         }
 
+        // public Task SendCompanyInviteEmail(Company company, User user)
+        // {
+        //     var signUpDTO = new FinalizeSignUpTokenDTO
+        //     {
+        //         UserId = user.Id.Value
+        //     }; 
+        //     var signedToken = _tokenService.SignToken(signUpDTO, DateTime.Now.AddDays(7)); // SignUp link is valid for a week
+        //     var tokenString = Uri.EscapeDataString(signedToken);
+        //     var content =   $"Join your company on the ARKAD fair by finalizing your account.<br><br>" 
+        //                     + "This is needed to be able to connect with the studends during the fair, through the ARKAD student sessions website or ARKAD app<br>" 
+        //                     + $"Click on the following link and set a password and you are good to go: {baseUrl}/finalize_signup/{tokenString}" 
+        //                     + "<br><br> After finalizing your account, you have access to log into https://nexpo-web.arkadtlth.se"
+        //                     + "The same log in also works in the ARKAD app: search for \"arkad tlth\" in your app store." 
+        //                     + "<br><br>Should you have any further questions regarding this, the app or how to connect with students, feel free to contact us at it.arkad@tlth.se";
+        //     return SendEmail(user.Email, "Join your company in the ARKAD Website And App", content, content);
+        // }
+
+
         public Task SendCompanyInviteEmail(Company company, User user)
         {
             var signUpDTO = new FinalizeSignUpTokenDTO
@@ -45,13 +63,21 @@ namespace Nexpo.Services
             }; 
             var signedToken = _tokenService.SignToken(signUpDTO, DateTime.Now.AddDays(7)); // SignUp link is valid for a week
             var tokenString = Uri.EscapeDataString(signedToken);
-            var content =   $"Join your company on the ARKAD fair by finalizing your account.<br><br>" 
-                            + "This is needed to be able to connect with the studends during the fair, through the ARKAD student sessions website or ARKAD app<br>" 
-                            + $"Click on the following link and set a password and you are good to go: {baseUrl}/finalize_signup/{tokenString}" 
-                            + "<br><br> After finalizing your account, you have access to log into https://nexpo-web.arkadtlth.se"
-                            + "The same log in also works in the ARKAD app: search for \"arkad tlth\" in your app store." 
-                            + "<br><br>Should you have any further questions regarding this, the app or how to connect with students, feel free to contact us at it.arkad@tlth.se";
-            return SendEmail(user.Email, "Join your company in the ARKAD Website And App", content, content);
+            var content =   $"Dear {company.Name},<br>" 
+                            + $"Thank you for choosing to participate in the Student Sessions. This email aims to furnish you with essential details concerning your preparation and engagement"
+                            + $"To begin, please create your account via the following link: {baseUrl}/finalize_signup/{tokenString}. <br><br>"
+                            + "The primary step will be to set your password. Once your account is established, kindly log into the Student Sessions portal at https://nexpo-web.arkadtlth.se"
+                            + " Ensure you use the same email address to which this message was sent. Within the portal, you'll have the capability to view, approve, or reject applications."
+                            + "Upon approval, the schedule for your confirmed meetings will be accessible. If needed, a video tutorial within the portal is available for your assistance.<br><br>"
+                            + "Key Dates to Remember:<br>" 
+                            + " * Student application window: 23rd October to 5th November.<br>"
+                            + " * Company selection timeframe: 6th November to 10th November.<br><br>"
+                            + "An attached map, included in this email, marks your company's designated location within E-house for the Student Sessions. The room designated for you will be ready and set upon your arrival."
+                            + " If you have any specific room requirements or requests, please contact adam.shafiei@users.tlth.se."
+                            + "Hosts will routinely check to determine if you require any water or food from the lounge.<br>"
+                            + "Please be advised, this is a no-reply email. For any inquiries or further details, reach out to company.arkad@tlth.se.Warm regards,<br><br>"
+                            + "Niklas Ku, Business Manager 2023";
+            return SendEmail(user.Email, "ARKAD Student Sessions Instructions", content, content);
         }
 
         public Task SendVolunteerInviteEmail(User user)
