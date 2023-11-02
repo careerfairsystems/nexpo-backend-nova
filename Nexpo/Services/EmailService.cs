@@ -79,7 +79,8 @@ namespace Nexpo.Services
                             + "Warm regards, <br>"
                             + "Niklas Ku, Business Manager 2023";
             
-            content += $"<img src=\"file://./SSMap.png\" alt=\"map\" width=\"300\" height=\"300\">";
+            content += "<img src=\"https://cvfiler.s3.eu-north-1.amazonaws.com/SSMap.png\" alt=\"map\" width=\"300\" height=\"300\">";
+
             return SendEmail(user.Email, "ARKAD Student Sessions Instructions", content, content);
         }
 
