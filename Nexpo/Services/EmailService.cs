@@ -77,7 +77,7 @@ namespace Nexpo.Services
                             + "Hosts will routinely check to determine if you require any water or food from the lounge.<br>"
                             + "Please be advised, this is a no-reply email. For any inquiries or further details, reach out to company.arkad@tlth.se.Warm regards,<br><br>"
                             + "Niklas Ku, Business Manager 2023";
-            return SendEmail(user.Email, "Join your company in the ARKAD Student Sessions", content, content);
+            return SendEmail(user.Email, "ARKAD Student Sessions Instructions", content, content);
         }
 
         public Task SendVolunteerInviteEmail(User user)
