@@ -64,10 +64,10 @@ namespace Nexpo.Services
             var signedToken = _tokenService.SignToken(signUpDTO, DateTime.Now.AddDays(7)); // SignUp link is valid for a week
             var tokenString = Uri.EscapeDataString(signedToken);
             var content =   $"Dear {company.Name},<br>" 
-                            + $"Thank you for choosing to participate in the Student Sessions. This email aims to furnish you with essential details concerning your preparation and engagement"
+                            + $"Thank you for choosing to participate in the Student Sessions. This email aims to furnish you with essential details concerning your preparation and engagement. "
                             + $"To begin, please create your account via the following link: {baseUrl}/finalize_signup/{tokenString}. <br><br>"
                             + "The primary step will be to set your password. Once your account is established, kindly log into the Student Sessions portal at https://nexpo-web.arkadtlth.se"
-                            + " Ensure you use the same email address to which this message was sent. Within the portal, you'll have the capability to view, approve, or reject applications."
+                            + " Ensure you use the same email address to which this message was sent. Within the portal, you'll have the capability to view, approve, or reject applications. "
                             + "Upon approval, the schedule for your confirmed meetings will be accessible. If needed, a video tutorial within the portal is available for your assistance.<br><br>"
                             + "Key Dates to Remember:<br>" 
                             + " * Student application window: 23rd October to 5th November.<br>"
@@ -75,7 +75,8 @@ namespace Nexpo.Services
                             + "An attached map, included in this email, marks your company's designated location within E-house for the Student Sessions. The room designated for you will be ready and set upon your arrival."
                             + " If you have any specific room requirements or requests, please contact adam.shafiei@users.tlth.se."
                             + "Hosts will routinely check to determine if you require any water or food from the lounge.<br>"
-                            + "Please be advised, this is a no-reply email. For any inquiries or further details, reach out to company.arkad@tlth.se.Warm regards,<br><br>"
+                            + "Please be advised, this is a no-reply email. For any inquiries or further details, reach out to company.arkad@tlth.se.<br><br>"
+                            + "Warm regards, <br>"
                             + "Niklas Ku, Business Manager 2023";
             return SendEmail(user.Email, "ARKAD Student Sessions Instructions", content, content);
         }
