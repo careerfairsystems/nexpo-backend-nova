@@ -78,6 +78,8 @@ namespace Nexpo.Services
                             + "Please be advised, this is a no-reply email. For any inquiries or further details, reach out to company.arkad@tlth.se.<br><br>"
                             + "Warm regards, <br>"
                             + "Niklas Ku, Business Manager 2023";
+            
+            content += $"<img src=\"file://./SSMap.png\" alt=\"map\" width=\"300\" height=\"300\">";
             return SendEmail(user.Email, "ARKAD Student Sessions Instructions", content, content);
         }
 
@@ -119,6 +121,8 @@ namespace Nexpo.Services
             var content =   "Congrats!<br>" 
                             + $"{company.Name} has just accepted your student session application!<br>" 
                             + $"Log in to the app and choose {company.Name} in Student Sessions to pick a timeslot";
+                            
+            content += $"<img src=\"file://./SSMap.png\" alt=\"map\" width=\"300\" height=\"300\">";
             return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
         }
 
