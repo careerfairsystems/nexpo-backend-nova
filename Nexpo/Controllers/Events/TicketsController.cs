@@ -333,7 +333,7 @@ namespace Nexpo.Controllers
 
             var user = await _userRepo.FindByEmail(DTO.mail);
             
-            int userID = user?.Id ?? -1;
+            int userID = user?.Id ?? 2754; // GUEST USER
 
             string appearAt = DTO.appearAt ?? string.Empty;
 
