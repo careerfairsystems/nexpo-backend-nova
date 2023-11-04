@@ -15,12 +15,12 @@ headers = {
     "Content-Type": "application/json"
 }
 
-def send(mail, eventID, numberOfTickets):
+def send(mail, eventID, numberOfTickets, appearAt):
     payload = {
         "mail": mail,
         "eventid": eventID,
-        "numberOfTickets": numberOfTickets
-        
+        "numberOfTickets": numberOfTickets,
+        "appearAt": appearAt
     }
     
     response = requests.post(api_endpoint, json=payload, headers=headers)
@@ -40,7 +40,7 @@ with open(jsonfile, encoding="utf-8") as d:
     for entry in data:
         info = entry['tickets']
         
-        send(info['mail'], info['eventid'], info['numberOfTickets'])
+        send(info['mail'], info['eventid'], info['numberOfTickets'], info['appearAt'])
         #send(info['mail'], 22, info['lunch_tickets_day2'])
         #send(info['mail'], 22, info['banquet_tickets'])
 
