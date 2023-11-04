@@ -121,7 +121,7 @@ namespace Nexpo.Services
         {
             var content =   "Congrats!<br>" 
                             + $"{company.Name} has just accepted your student session application!<br>" 
-                            + $"Log in to the app and choose {company.Name} in Student Sessions to pick a timeslot"
+                            + $"Log in to the app and choose {company.Name} in Student Sessions to pick a timeslot. <br><br>"
                             + "The company's location is specified in the attached map. <br><br>";
 
             content += "<img src=\"https://cvfiler.s3.eu-north-1.amazonaws.com/SSMap.png\" alt=\"map\" width=\"300\" height=\"300\">";
