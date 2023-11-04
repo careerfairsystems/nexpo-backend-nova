@@ -125,7 +125,7 @@ namespace Nexpo.Services
                             + "The company's location is specified in the attached map. <br><br>";
 
             content += "<img src=\"https://cvfiler.s3.eu-north-1.amazonaws.com/SSMap.png\" alt=\"map\" width=\"300\" height=\"300\">";
-            return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
+            return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
         }
 
         public Task SendPasswordResetEmail(User user)
