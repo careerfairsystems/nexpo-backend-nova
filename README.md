@@ -408,6 +408,6 @@ docker-compose -p nexpo build
 docker-compose -p nexpo up -d
 ```
 
-* This should create three docker containers (docker ps)
+* This should create three docker containers ```docker ps```
 
 
