@@ -248,7 +248,8 @@ Responsible for download and uploading files to the database.
 - The tests are located in the Nexpo.Tests project. They currently only test the controller and services, and assumes that everything else (which is dependent) works as intended. 
 - There is a TestUtils available, which is helper class for logging in to the system while testing. These are dependent on the mockdata in ApplicationDBContext
 
-There are currently more than 200 tests, which might be demanding for the computer. Therefore the ```./runTest.sh -help``` decalres ways to minimize this issue. Namely: 
+There are currently more than 200 tests, which might be demanding for the computer. Therefore the ```./runTest.sh -help``` decalres ways to minimize this issue. Namely, by only running a fraction of the tests:
+
 ```
 Options:
   -start            Reset the database before running tests
