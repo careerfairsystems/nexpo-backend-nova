@@ -238,7 +238,7 @@ Responsible for download and uploading files to the database.
 
 **2. Scripts:**
 - The project has Bash and Bat scripts for running the backend. The scripts are located in the root folder of the project. 
-- There are also Bash and Bat scripts for running the tests. (More information regarding is given when running the corresponding help command, eg: ./runTest.sh -h)These scripts have the ability to:
+- There are also Bash and Bat scripts for running the tests. (More information regarding is given when running the corresponding help command, eg: ```./runTest.sh -help``` These scripts have the ability to:
   1. Start the database in a docker container
     - This also creates or updates the mock data in the database
   2. Run all tests
@@ -247,6 +247,21 @@ Responsible for download and uploading files to the database.
 **3. Tests**
 - The tests are located in the Nexpo.Tests project. They currently only test the controller and services, and assumes that everything else (which is dependent) works as intended. 
 - There is a TestUtils available, which is helper class for logging in to the system while testing. These are dependent on the mockdata in ApplicationDBContext
+
+There are currently more than 200 tests, which might be demanding for the computer. Therefore the ```./runTest.sh -help``` decalres ways to minimize this issue. Namely: 
+```
+Options:
+  -start            Reset the database before running tests
+                    This needs to be done when the database seeding has changed
+                    The first time this is done, the tests will fail
+                    Ergo, run needs to be run twice
+
+  Run twice after -start:
+  -run Run all tests
+  -run <class_name> Run the specified test class
+  -run <controller_name> Run the test class for the specified controller
+  -run <name>       Run the test class for the specified controller
+```
 
 ## More in-depth resources:
 
