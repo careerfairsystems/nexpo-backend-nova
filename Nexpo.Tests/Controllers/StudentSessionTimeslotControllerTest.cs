@@ -14,6 +14,7 @@ namespace Nexpo.Tests.Controllers
 {
     public class StudentSessionTimeslotControllerTest
     {
+        private int currentYear = DateTime.Now.Year + 1;
         [Fact]
         public async Task GetAllByCompanyId()
         {
@@ -47,7 +48,7 @@ namespace Nexpo.Tests.Controllers
             var app = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response.Content.ReadAsStringAsync());
 
             Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
-            Assert.True(app.Start.Equals(DateTime.Parse("2021-11-21 10:00")), "Wrong time. Expected: 2021-11-21 10:00. Received: " + app.Start);
+            Assert.True(app.Start.Equals(DateTime.Parse($"{currentYear}-11-21 10:00")), $"Wrong time. Expected: {currentYear}-11-21 10:00. Received: " + app.Start);
         }
 
         [Fact]
@@ -500,13 +501,13 @@ namespace Nexpo.Tests.Controllers
 
             Assert.True(responseObject1.Location.Equals("E:A"), "Wrong location. Expected: E:A. Received: " + responseObject1.Location.ToString());
             Assert.True(responseObject1.CompanyId == -3, "Wrong CompandyId. Expected: -3. Received: " + responseObject1.CompanyId.ToString());
-            Assert.True(responseObject1.Start.Equals(DateTime.Parse("2021-11-23 12:00")), "Wrong start time. Expected: 2021-11-23 12:00. Received: " + responseObject1.Start);
+            Assert.True(responseObject1.Start.Equals(DateTime.Parse($"{currentYear}-11-23 12:00")), $"Wrong start time. Expected: {currentYear}-11-23 12:00. Received: " + responseObject1.Start);
 
             var responseObject2 = JsonConvert.DeserializeObject<StudentSessionTimeslot>(await response2.Content.ReadAsStringAsync());
 
             Assert.True(responseObject2.Location.Equals("Zoom"), "Wrong location. Expected: Zoom. Received: " + responseObject2.Location.ToString());
             Assert.True(responseObject2.CompanyId == -3, "Wrong CompandyId. Expected: -3. Received: " + responseObject2.CompanyId.ToString());
-            Assert.True(responseObject2.Start.Equals(DateTime.Parse("2021-11-23 12:00")), "Wrong start time. Expected: 2021-11-23 12:00. Received: " + responseObject2.Start);
+            Assert.True(responseObject2.Start.Equals(DateTime.Parse($"{currentYear}-11-23 12:00")), $"Wrong start time. Expected: {currentYear}-11-23 12:00. Received: " + responseObject2.Start);
         }
 
         [Fact]
@@ -566,6 +567,14 @@ namespace Nexpo.Tests.Controllers
 
             var responseList2 = JsonConvert.DeserializeObject<List<StudentSessionTimeslot>>(await response4.Content.ReadAsStringAsync());
             Assert.True(responseList2.Count == 2, "Wrong number of timeslots. Expected: 1. Received: " + responseList2.Count.ToString());
+        }
+        [Fact]
+        
+        public async Task TestTimedOut()
+        {
+            var client = await TestUtils.Login("student1");
+            var response = await client.GetAsync("/api/timeslots/-8");
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.NotFound), "Timed out test should not be returned " + response.ToString());
         }
     }
 }

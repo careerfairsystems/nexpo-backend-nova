@@ -124,16 +124,20 @@ namespace Nexpo.Models
             SaveChanges();
 
             // StudentSessionTimeslots
-            var session1 = new StudentSessionTimeslot { Id = -1, Start = DateTime.Parse("2021-11-21 10:00"), End = DateTime.Parse("2021-11-21 10:15"), Location = "Zoom", CompanyId = company1.Id.Value };
-            var session2 = new StudentSessionTimeslot { Id = -2, Start = DateTime.Parse("2021-11-21 10:15"), End = DateTime.Parse("2021-11-21 10:30"), Location = "Zoom", CompanyId = company1.Id.Value };
-            var session3 = new StudentSessionTimeslot { Id = -3, Start = DateTime.Parse("2021-11-21 10:30"), End = DateTime.Parse("2021-11-21 10:45"), Location = "Zoom", CompanyId = company1.Id.Value };
+            int currentYear = DateTime.Now.Year;
+            var session1 = new StudentSessionTimeslot { Id = -1, Start = DateTime.Parse($"{currentYear+1}-11-21 10:00"), End = DateTime.Parse($"{currentYear+1}-11-21 10:15"), Location = "Zoom", CompanyId = company1.Id.Value };
+            var session2 = new StudentSessionTimeslot { Id = -2, Start = DateTime.Parse($"{currentYear+1}-11-21 10:15"), End = DateTime.Parse($"{currentYear+1}-11-21 10:30"), Location = "Zoom", CompanyId = company1.Id.Value };
+            var session3 = new StudentSessionTimeslot { Id = -3, Start = DateTime.Parse($"{currentYear+1}-11-21 10:30"), End = DateTime.Parse($"{currentYear+1}-11-21 10:45"), Location = "Zoom", CompanyId = company1.Id.Value };
 
-            var session4 = new StudentSessionTimeslot { Id = -4, Start = DateTime.Parse("2021-11-22 11:00"), End = DateTime.Parse("2021-11-22 11:15"), Location = "Zoom", CompanyId = company2.Id.Value };
-            var session5 = new StudentSessionTimeslot { Id = -5, Start = DateTime.Parse("2021-11-22 11:15"), End = DateTime.Parse("2021-11-22 11:30"), Location = "Zoom", CompanyId = company2.Id.Value };
+            var session4 = new StudentSessionTimeslot { Id = -4, Start = DateTime.Parse($"{currentYear+1}-11-22 11:00"), End = DateTime.Parse($"{currentYear+1}-11-22 11:15"), Location = "Zoom", CompanyId = company2.Id.Value };
+            var session5 = new StudentSessionTimeslot { Id = -5, Start = DateTime.Parse($"{currentYear+1}-11-22 11:15"), End = DateTime.Parse($"{currentYear+1}-11-22 11:30"), Location = "Zoom", CompanyId = company2.Id.Value };
 
-            var session6 = new StudentSessionTimeslot { Id = -6, Start = DateTime.Parse("2021-11-23 12:00"), End = DateTime.Parse("2021-11-22 12:15"), Location = "Zoom", CompanyId = company3.Id.Value };
-            var session7 = new StudentSessionTimeslot { Id = -7, Start = DateTime.Parse("2025-11-23 12:15"), End = DateTime.Parse("2025-11-22 12:30"), Location = "Zoom", CompanyId = company3.Id.Value };
-            StudentSessionTimeslots.AddRange(session1, session2, session3, session4, session5, session6, session7);
+            var session6 = new StudentSessionTimeslot { Id = -6, Start = DateTime.Parse($"{currentYear+1}-11-23 12:00"), End = DateTime.Parse($"{currentYear+1}-11-22 12:15"), Location = "Zoom", CompanyId = company3.Id.Value };
+            var session7 = new StudentSessionTimeslot { Id = -7, Start = DateTime.Parse($"{currentYear+1}-11-23 12:15"), End = DateTime.Parse($"{currentYear+1}-11-22 12:30"), Location = "Zoom", CompanyId = company3.Id.Value };
+            
+            var session8 = new StudentSessionTimeslot { Id = -8, Start = DateTime.Parse($"{currentYear-1}-11-21 10:00"), End = DateTime.Parse($"{currentYear-1}-11-21 10:15"), Location = "Zoom", CompanyId = company1.Id.Value };
+
+            StudentSessionTimeslots.AddRange(session1, session2, session3, session4, session5, session6, session7, session8);
             SaveChanges();
 
             // StudentSessionApplications
