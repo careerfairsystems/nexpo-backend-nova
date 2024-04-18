@@ -63,6 +63,12 @@ namespace Nexpo.Controllers
             {
                 student.Programme = DTO.Programme.Value;
             }
+
+            if (DTO.LinkedIn.Contains(".."))
+            {
+                return new BadRequestResult();
+            }
+            
             if (DTO.LinkedIn != null && (DTO.LinkedIn.StartsWith("https://www.linkedin.com/in/") || DTO.LinkedIn.Equals("")))
             {
                 student.LinkedIn = DTO.LinkedIn;
