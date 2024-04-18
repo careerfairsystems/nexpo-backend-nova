@@ -132,7 +132,7 @@ namespace Nexpo.Models
             var session5 = new StudentSessionTimeslot { Id = -5, Start = DateTime.Parse("2021-11-22 11:15"), End = DateTime.Parse("2021-11-22 11:30"), Location = "Zoom", CompanyId = company2.Id.Value };
 
             var session6 = new StudentSessionTimeslot { Id = -6, Start = DateTime.Parse("2021-11-23 12:00"), End = DateTime.Parse("2021-11-22 12:15"), Location = "Zoom", CompanyId = company3.Id.Value };
-            var session7 = new StudentSessionTimeslot { Id = -7, Start = DateTime.Parse("2021-11-23 12:15"), End = DateTime.Parse("2021-11-22 12:30"), Location = "Zoom", CompanyId = company3.Id.Value };
+            var session7 = new StudentSessionTimeslot { Id = -7, Start = DateTime.Parse("2025-11-23 12:15"), End = DateTime.Parse("2025-11-22 12:30"), Location = "Zoom", CompanyId = company3.Id.Value };
             StudentSessionTimeslots.AddRange(session1, session2, session3, session4, session5, session6, session7);
             SaveChanges();
 
