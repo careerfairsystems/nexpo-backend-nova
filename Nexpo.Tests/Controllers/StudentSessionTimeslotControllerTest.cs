@@ -428,8 +428,8 @@ namespace Nexpo.Tests.Controllers
             //Add new timeslot
             var json = new JsonObject
             {
-                { "start", DateTime.Parse("2021-11-15 12:45") },
-                { "end", DateTime.Parse("2021-11-15 13:15") },
+                { "start", DateTime.Parse($"{currentYear}-11-15 12:45") },
+                { "end", DateTime.Parse($"{currentYear}-11-15 13:15") },
                 { "companyid", "-3" },
                 { "location", "At home" }
             };
@@ -534,8 +534,8 @@ namespace Nexpo.Tests.Controllers
             //Add new timeslot
             var json = new JsonObject
             {
-                { "start", DateTime.Parse("2021-11-15 12:45") },
-                { "end", DateTime.Parse("2021-11-15 13:15") },
+                { "start", DateTime.Parse($"{currentYear}-11-15 12:45") },
+                { "end", DateTime.Parse($"{currentYear}-11-15 13:15") },
                 { "companyid", "-3" },
                 { "location", "At home" }
             };
