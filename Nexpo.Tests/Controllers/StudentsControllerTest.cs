@@ -363,6 +363,24 @@ namespace Nexpo.Tests.Controllers
             // Verify response - Forbidden because company1 is not a student
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden), "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
         }
+        
+        [Fact]
+        public async Task LinkedInTest()
+        {
+            // Tests if rejected when LinkedIn link contains ".." 
+            var client = await TestUtils.Login("student1");
+            var json = new JsonObject
+            {
+                { "linkedIn", "linkedin.com/in/.." },
+            };
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync("api/students/-1", payload);
+            
+            // Verify response - Forbidden because links containing ".." are not allowed.
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Forbidden),
+                "Wrong status code. Expected: Forbidden. Received: " + response.StatusCode.ToString());
+        }
 
 
     }
