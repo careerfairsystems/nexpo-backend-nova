@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -72,6 +73,15 @@ namespace Nexpo.Controllers
             {
                 return Conflict();
             }
+            
+            // Check for max number of registrations
+            int max = 5;
+            int noTickets = (await _ticketRepo.GetAllForUser(userId)).Count();
+            if (noTickets  >= max)
+            {
+                return StatusCode(429, "Too many tickets");
+            }
+            
 
             var ticket = new Ticket
             {
