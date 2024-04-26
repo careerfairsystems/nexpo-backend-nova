@@ -75,9 +75,23 @@ namespace Nexpo.Controllers
             }
             
             // Check for max number of registrations
-            int max = 5;
-            int noTickets = (await _ticketRepo.GetAllForUser(userId)).Count();
-            if (noTickets  >= max)
+            int maxNoTickets = 5;
+            // Assmues no event found or faulty format of date should not be counted
+            int noTickets = (await _ticketRepo.GetAllForUser(userId)).Count(ticket =>
+                {
+                    var foundEvent = _eventRepo.Get(ticket.EventId);
+                    if (foundEvent.Result == null)
+                    {
+                        return false;
+                    }
+                    bool isSuccess = DateTime.TryParse(foundEvent.Result.Start, out var eventDateTime);
+                    if (isSuccess)
+                    {
+                        return eventDateTime > DateTime.Now;
+                    }
+                    return false;
+                });
+            if (noTickets  >= maxNoTickets)
             {
                 return StatusCode(429, "Too many tickets");
             }

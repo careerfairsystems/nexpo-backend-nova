@@ -1103,18 +1103,18 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task TooManyTickets()
         {
-            // Student2 already has 5 tickets
+            // Student2 already has 5 tickets but not -7
             var client = await TestUtils.Login("student2");
             var json = new JsonObject
             {
-                { "eventid", -2 },
+                { "eventid", -7 },
                 { "photook", true }
             };
             var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             var response = await client.PostAsync("api/tickets", payload);
             // Verify response - Conflict because the student already has a ticket for the event
             Assert.True(response.StatusCode.Equals(HttpStatusCode.TooManyRequests),
-                "Wrong status code. Expected: TooManyRequests. Received: " + response.ToString());
+                "Wrong status code. Expected: TooManyRequests. Received: " + response);
         }
     } 
 }
