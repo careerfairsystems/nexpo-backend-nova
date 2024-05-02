@@ -1,43 +1,45 @@
 # nexpo-backend-nova
+
 A rebuild of the nexpo backend with C#, currently in use for the ARKAD career fair as of 2023.
 
 This is the backend that supports the [Nexpo app](https://github.com/careerfairsystems/nexpo-app) and in the future hopefully the new nexpo website.
 
 # Introduction
-## Project Navigation: 
 
-[Google Drive](https://drive.google.com/drive/u/4/folders/1jfxYhCdO21Vysh60JyGSvvSZEn65fIn5): Stores meeting protocols and image source files of the figures used in the wiki. 
-(Requires a tlth google account to access) 
+## Project Navigation:
 
-[Trello Board](https://trello.com/b/Mo2cpo31/backend): Provides an overview of all issues, their progress and who's responsible. 
+[Google Drive](https://drive.google.com/drive/u/4/folders/1jfxYhCdO21Vysh60JyGSvvSZEn65fIn5): Stores meeting protocols and image source files of the figures used in the wiki.
+(Requires a tlth google account to access)
+
+[Trello Board](https://trello.com/b/Mo2cpo31/backend): Provides an overview of all issues, their progress and who's responsible.
 (Requires access)
 
-
 ## Getting started
-1. Download the required development tools 
-    1. Download Docker
-    2. Download the .NET SDK
+
+1. Download the required development tools
+   1. Download Docker
+   2. Download the .NET SDK
 2. Start the backend, using the method that fits you best
-* see [Setup development environment](https://github.com/careerfairsystems/nexpo-backend-nova/wiki/1.-Setup-development-environment) for options and tutorials
+
+- see [Setup development environment](https://github.com/careerfairsystems/nexpo-backend-nova/wiki/1.-Setup-development-environment) for options and tutorials
+
 3. Start developing! See [System Overview](https://github.com/careerfairsystems/nexpo-backend-nova/wiki/2.-System-Overview) for additional help
 
-
-
 ## Table of Contents
+
 - [Introduction](#introduction)
   - [Project Navigation:](#project-navigation)
   - [Getting started](#getting-started)
   - [Table of Contents](#table-of-contents)
-  
----
 
+---
 
 - [Setup development environment](#setup-development-environment)
   - [**runBackend.sh**](#runbackendsh)
     - [Common causes of errors with ./runBackend.sh](#common-causes-of-errors-with-runbackendsh)
   - [Stand Alone](#stand-alone)
   - [Docker \& Visual Studio](#docker--visual-studio)
-  
+
 ---
 
 - [System Overview](#system-overview)
@@ -45,18 +47,18 @@ This is the backend that supports the [Nexpo app](https://github.com/careerfairs
   - [Relations between Model tables](#relations-between-model-tables)
     - [ER-Diagram](#er-diagram)
     - [Relations](#relations)
-  
+
 ---
 
 - [Testing and developing tools](#testing-and-developing-tools)
   - [Setup Test Environment](#setup-test-environment)
-  
+
 ---
 
 - [Setting up production server](#setting-up-production-server)
   - [View endpoints in swagger](#view-endpoints-in-swagger)
   - [Install docker on amazon linux 2 (a lot of issues)](#install-docker-on-amazon-linux-2-a-lot-of-issues)
-  
+
 ---
 
 - [Update Database models](#update-database-models)
@@ -65,87 +67,102 @@ This is the backend that supports the [Nexpo app](https://github.com/careerfairs
   - [Restore db from backup](#restore-db-from-backup)
   - [Generate migration-script](#generate-migration-script)
   - [Apply migration to db](#apply-migration-to-db)
-  
+
 ---
 
+\*\*Small footnote to whoever is updating this table of contents:
 
-**Small footnote to whoever is updating this table of contents:
--  get "All in one markdown -> ctrl + shift + p -> update table of contents**
-
+- get "All in one markdown -> ctrl + shift + p -> update table of contents\*\*
 
 # Setup development environment
 
-The main configuration methods for setting up the development environment   
- * Choose a method that suits you best:
+The main configuration methods for setting up the development environment
 
+- Choose a method that suits you best:
 
 1. [runBackend.sh](https://github.com/careerfairsystems/nexpo-backend-nova/wiki/1.-Setup-development-environment#runbackendsh)
-   * (Recommended for Unix systems - also works for WSL)
-2. [Docker & Visual Studio](https://github.com/careerfairsystems/nexpo-backend-nova/wiki/1.-Setup-development-environment#docker--visual-studio)  
-   * (Recommended for Unix systems)
+   - (Recommended for Unix systems - also works for WSL)
+2. [Docker & Visual Studio](https://github.com/careerfairsystems/nexpo-backend-nova/wiki/1.-Setup-development-environment#docker--visual-studio)
+   - (Recommended for Unix systems)
 3. [Stand Alone](https://github.com/careerfairsystems/nexpo-backend-nova/wiki/1.-Setup-development-environment#stand-alone)
-    * (Recommended for Unix systems, if the the bash script does not work - for example due to issues with WSL)
-    * (no Docker, and you can choose any IDE you like, for example Visual Studio Code) 
+   - (Recommended for Unix systems, if the the bash script does not work - for example due to issues with WSL)
+   - (no Docker, and you can choose any IDE you like, for example Visual Studio Code)
 
 ## **runBackend.sh**
-* Recommended for Unix systems
-1. **Install Docker**  
 
-2. **Install .NET SDK**  
-   1. It is available [here](https://dotnet.microsoft.com/download)
-3. **Give the script execution permissions**  
+- Recommended for Unix systems
+
+1. **Install Docker**
+
+2. **Install .NET SDK**
+   1. It is available [here](https://versionsof.net/core/7.0/7.0.0/)
+3. **Give the script execution permissions**
    1. Run the following command to give the script execution permissions:
- ```
- chmod +x runBackend.sh
- ```
+
+```
+chmod +x runBackend.sh
+```
+
 1. **Run the script:**
+
 ```
 sudo ./runBackend.sh
 ```
 
 ### Common causes of errors with ./runBackend.sh
-(Note, much of these solutions are also relevant to the standalone solution
-* You are not using `sudo` in front of `sudo ./runBackend.sh`
-    * Alternativly you are not using `sudo` in front of docker commands
-* Dotnet or Docker is not installed (correctly)
-    * To test this, try if the following commands give a version
+
+(Note, much of these solutions are also relevant to the standalone solution)
+
+- You are not using `sudo` in front of `sudo ./runBackend.sh`
+  - Alternativly you are not using `sudo` in front of docker commands
+- Controll center uses port 5000 on MacOS
+  - Verify this with `lsof -iTCP -sTCP:LISTEN -n -P`
+  - To take controll over the port, run `pkill ControlCenter; nc -l 5000`, and kill the command after a few seconds
+- Dotnet or Docker is not installed (correctly)
+  - To test this, try if the following commands give a version
+
 ```
 docker -v
 dotnet --version
 ```
 
-* The configured dotnet version of the backend is not the same as your downloaded dotnet version
-    * A quick way to temporarily fix this is to simply change what version the backend uses:
-    1. Run the following command and note your dotnet version:
-    ```
-    dotnet --version
-    ``` 
+- The configured dotnet version of the backend is not the same as your downloaded dotnet version
 
-    2. Change the TargetFramework in Nexpo/Nexpo.csproj to match your dotnet version
-        * For example if you have dotnet version 7.0.105, change to dotnet 7 in Nexpo/Nexpo.csproj, meaning replace with the following line:
+  - A quick way to temporarily fix this is to simply change what version the backend uses:
 
-    ```
-    <TargetFramework>net7.0</TargetFramework>
-    ```
-    3. WSL1 causes some complications with docker. Use the following command to test your WSL version, and update if you still can not get Docker to work
-    ```
-    wsl -v
-    ```
-* If none if the above fixes the problem try making an standalone launch using the following command:
-    ```
-    sudo ./runBackend -s
-    ```
-    <summary>Help regarding runBackend.sh</summary>
-    <div class="markdown">
+  1. Run the following command and note your dotnet version:
+
+  ```
+  dotnet --version
+  ```
+
+  2. Change the TargetFramework in Nexpo/Nexpo.csproj to match your dotnet version
+     - For example if you have dotnet version 7.0.105, change to dotnet 7 in Nexpo/Nexpo.csproj, meaning replace with the following line:
+
+  ```
+  <TargetFramework>net7.0</TargetFramework>
+  ```
+
+  3. WSL1 causes some complications with docker. Use the following command to test your WSL version, and update if you still can not get Docker to work
+
+  ```
+  wsl -v
+  ```
+
+- If none if the above fixes the problem try making an standalone launch using the following command:
+`sudo ./runBackend -s`
+<summary>Help regarding runBackend.sh</summary>
+<div class="markdown">
 The command ./runBackend -h is useful for receiving help regarding the bash script.
-    </div>
+</div>
 </details>
 
 ## Stand Alone
 
-1. **Install Docker Desktop**  
+1. **Install Docker Desktop**
    1. You can get it for Windows and Mac [here](https://www.docker.com/products/docker-desktop/)
 2. **Containerize the database, by running:**
+
 ```
 sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
 ```
@@ -153,19 +170,21 @@ sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e 
 <details>
     <summary>Click to Expand for additional information</summary>
     <div class="markdown">
-       1. Note: On windows, simply skip using sudo <br> 
-       2. The default development database connection tries to access the database nexpo on localhost:5432 using the credentials nexpo:nexpo. The nexpo user of course needs the correct permissions on the database and if you change anything in the setup make sure to update the connection string as well. <br> 
+       1. Note: On windows, simply skip using sudo <br>
+       2. The default development database connection tries to access the database nexpo on localhost:5432 using the credentials nexpo:nexpo. The nexpo user of course needs the correct permissions on the database and if you change anything in the setup make sure to update the connection string as well. <br>
        3. It will pull down the correct PostgreSQL server and set it up as we want it. Keep in mind though that no persistent volume is added to the container so don't do this in production.
     </div>
 </details>
 
-3. **Install .NET SDK**  
+3. **Install .NET SDK**
    1. It is available [here](https://dotnet.microsoft.com/download)
-4. **Run the backend**  
-    1. Run the following command to run:
- ```
- dotnet run --project Nexpo
- ```
+4. **Run the backend**
+   1. Run the following command to run:
+
+```
+dotnet run --project Nexpo
+```
+
 <details>
     <summary>Click to Expand for additional information</summary>
     <div class="markdown">
@@ -184,71 +203,78 @@ sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e 
     </div>
 </details>
 
-## Docker & Visual Studio 
-* Recommended for Windows
+## Docker & Visual Studio
 
-1. **Install Docker Desktop**  
+- Recommended for Windows
+
+1. **Install Docker Desktop**
    1. You can get it for Windows and Mac [here](https://www.docker.com/products/docker-desktop/)
-2. **Install Visual Studio**   
+2. **Install Visual Studio**
    1. Use the Community Edition if you don't have a license. During installation, select the "ASP.NET and web development" toolbox when given the choice to enable good support for Docker and the application.
 3. **Open the solution (the code) in Visual Studio**
-    1. Open Visual Studio and open the solution file `Nexpo.sln`.
-   
+
+   1. Open Visual Studio and open the solution file `Nexpo.sln`.
+
 4. **Make sure the `docker-compose` "project" is selected as the startup project**
-    1. If not already selected as the startup project, right click `docker-compose` in the Solution Explorer and select "Set as Startup Project".
+   1. If not already selected as the startup project, right click `docker-compose` in the Solution Explorer and select "Set as Startup Project".
 5. **Run the backend**
-    1. A database with automatically be created
+   1. A database with automatically be created
 
-
-
-
-
-   
-----
+---
 
 # System Overview
+
 ## Central Architecture
 
-The overall architecture can currently be split into 6 components with different responsibilities. They are as follows: 
+The overall architecture can currently be split into 6 components with different responsibilities. They are as follows:
 
 **1. Controller:** \\
-Receives and responds to http-requests by calling on appropriate methods in the other components to generate the desired outcome. To control the format of the input and output, may requests and db responses be converted to DTO:s before being forwarded to repositories or sent as a response.   
+Receives and responds to http-requests by calling on appropriate methods in the other components to generate the desired outcome. To control the format of the input and output, may requests and db responses be converted to DTO:s before being forwarded to repositories or sent as a response.
 
 **2. Repository:** \\
- Responsible for translating requests into queries against the model and converting query results to relevant data objects before returning them. 
+Responsible for translating requests into queries against the model and converting query results to relevant data objects before returning them.
 
 **3. Model:** \\
-C# representation of the the database tables. 
+C# representation of the the database tables.
 
 **4. DTO:** \\
- Data Transfer Object that converts data to an object consisting of only relevant data. Can be used to prevent data leakage in http-responses or as an simplified method of moving data between different components.  
+Data Transfer Object that converts data to an object consisting of only relevant data. Can be used to prevent data leakage in http-responses or as an simplified method of moving data between different components.
 
 **5. Services:** \\
 Responsible for functionality outside the manipulation and gathering of data in the database. This entails token & file management, password validation and email services.
 
 **6. Helpers:** \\
-Consists of helper functions for the controller. Currently only converts claims to intelligible data. 
+Consists of helper functions for the controller. Currently only converts claims to intelligible data.
 
 ![Overall_Architecture drawio (4)](https://user-images.githubusercontent.com/47223000/191040681-7c0c9409-48ca-4187-8ee0-023d1d1fc913.png)
 
 ## Other resources
+
 **1. UploadToDB:**
 Responsible for download and uploading files to the database.
+
 - More documentation to come
 
 **2. Scripts:**
-- The project has Bash and Bat scripts for running the backend. The scripts are located in the root folder of the project. 
-- There are also Bash and Bat scripts for running the tests. (More information regarding is given when running the corresponding help command, eg: ```./runTest.sh -help``` These scripts have the ability to:
+
+- The project has Bash and Bat scripts for running the backend. The scripts are located in the root folder of the project.
+- There are also Bash and Bat scripts for running the tests. (More information regarding is given when running the corresponding help command, eg: `./runTest.sh -help` These scripts have the ability to:
+
   1. Start the database in a docker container
-    - This also creates or updates the mock data in the database
+
+     - This also creates or updates the mock data in the database
+
   2. Run all tests
-    - Note that the tests will fail during the first run of the tests, since the container has likely not had time to start up completly. Simply run the tests again.
-  3. Run some of the tests, by specifing the class or controller to test. 
-**3. Tests**
-- The tests are located in the Nexpo.Tests project. They currently only test the controller and services, and assumes that everything else (which is dependent) works as intended. 
+
+     - Note that the tests will fail during the first run of the tests, since the container has likely not had time to start up completly. Simply run the tests again.
+
+  3. Run some of the tests, by specifing the class or controller to test.
+     **3. Tests**
+
+- The tests are located in the Nexpo.Tests project. They currently only test the controller and services, and assumes that everything else (which is dependent) works as intended.
 - There is a TestUtils available, which is helper class for logging in to the system while testing. These are dependent on the mockdata in ApplicationDBContext
 
-There are currently more than 200 tests, which might be demanding for the computer. Therefore the ```./runTest.sh -help``` decalres ways to minimize this issue. Namely, by only running a fraction of the tests:
+There are currently more than 200 tests, which might be demanding for the computer. Therefore the `./runTest.sh -help` decalres ways to minimize this issue. Namely, by only running a fraction of the tests:
 
 ```
 Options:
@@ -273,10 +299,12 @@ Options:
 ## Relations between Model tables
 
 ### ER-Diagram
+
 ![ER-backend drawio (2)](https://user-images.githubusercontent.com/47223000/208705255-17f30d38-a4d5-4702-bd65-6c4a2a48e657.png)
 
 ### Relations
-Current relations between the tables in the model: 
+
+Current relations between the tables in the model:
 
 > User(**Id**, Email, PasswordHash, Role, FirstName, LastName, PhoneNr, FoodPreferences, hasProfilePicture, hasCV, ProfilePictureUrl, _CompanyId_)
 
@@ -292,17 +320,20 @@ Current relations between the tables in the model:
 
 > Ticket(**Id**, Code, PhotoOk, isConsumed, _EventId_, _UserId_)
 
-
-
 ---
-  1.  
+
+1.
+
 ```
 sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
 ```
-  2.  
+
+2.
+
 ```
 sudo dotnet test Nexpo.Tests/
 ```
+
 # Testing and developing tools
 
 ## Setup Test Environment
@@ -310,13 +341,16 @@ sudo dotnet test Nexpo.Tests/
 No matter the chosen setup method, it´s required to start an external database server before running the tests for them to pass. This is due to some tests utilizing black-box testing through testing against the controllers. It may take a while for the container to populate the tables with the example data, so if most controller-tests fail during the first run try to run them again.
 
 **NOTE:** Running docker-compose in Visual Studio and then the tests do for some reason not work.
-To run the tests:  
+To run the tests:
 
-  1.  
+1.
+
 ```
 sudo docker run -d --name nexpo_database -p 5432:5432 -e POSTGRES_USER=nexpo -e POSTGRES_PASSWORD=nexpo postgres:14
 ```
-  2.  
+
+2.
+
 ```
 sudo dotnet test Nexpo.Tests/
 ```
@@ -324,18 +358,20 @@ sudo dotnet test Nexpo.Tests/
 # Setting up production server
 
 ## View endpoints in swagger
+
 Swagger allows you to see the specifications of an API, including the endpoints, request parameters, response formats, and authentication methods. It provides an user interface for interacting with the API and testing its functionality. With Swagger, you can visualize and document your API in a standardized way, making it easier for developers to understand and use your API.
 
 To open the application in swagger:
+
 1. Start the backend
 2. Go to [http://localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
 
 ## Install docker on amazon linux 2 (a lot of issues)
+
 ![fc51af68f30228cf2bc666bbe4496087](https://user-images.githubusercontent.com/66833685/195836015-1fa2bb35-aa31-4240-8869-6dd39415b43f.png)
 
 port 80 being used...
 service nginx stop
-
 
 # Update Database models
 
@@ -358,57 +394,71 @@ dotnet ef database update
 ```
 
 ## Create backup of the db
-To create a backup dump of the Postgres database, run the following shell command: 
+
+To create a backup dump of the Postgres database, run the following shell command:
+
 ```shell
 docker exec -t name_of_db_container pg_dumpall -c -U nexpo > name_of_dump.sql
 ```
 
-**NOTE:** Store the dump file on a secure and private instance as it contains sensitive data about the content of the db. 
+**NOTE:** Store the dump file on a secure and private instance as it contains sensitive data about the content of the db.
 
 ## Restore db from backup
-To restore the db from a backup dump, run the following shell command: 
+
+To restore the db from a backup dump, run the following shell command:
+
 ```shell
 cat name_of_dump.sql | docker exec -i name_of_db_container psql -U nexpo
 ```
 
 ## Generate migration-script
-To generate a script that applies generated migrations to the db, run the following shell command: 
+
+To generate a script that applies generated migrations to the db, run the following shell command:
+
 ```shell
 dotnet ef migrations script --idempotent > name_of_migration.sql
 ```
 
-**NOTE**: Remove the two first lines in the generated script as they are simply just output from the build-process. 
+**NOTE**: Remove the two first lines in the generated script as they are simply just output from the build-process.
 
 ## Apply migration to db
-To apply the migration to the production db, use the generated script and run the following shell command: 
+
+To apply the migration to the production db, use the generated script and run the following shell command:
+
 ```shell
 cat name_of_migration.sql | docker exec -i name_of_db_container psql -U nexpo
 ```
 
-
 # Deploying and updating the Backend
-The backend is currently hosted on AWS EC2 as three docker containers. Additionally, profile pictures and CVs are stored in AWS S3. 
+
+The backend is currently hosted on AWS EC2 as three docker containers. Additionally, profile pictures and CVs are stored in AWS S3.
 
 ## Updating the Database
+
 There are several ways that the database can be updated.
 
 ### Uploading via EC2
+
 The most straightforward one being simply doing it in the EC2 instance. Since the database is hosted in EC2, PostgreSQLcommands can be used to update the database. If you have found the database… good. If not, go to EC2 and enter
 
 ```shell
 docker exec -it <CONTAINER ID OF postgres:14> bash
 ```
+
 ```shell
 psql -W nexpo -U nexpo
 ```
-* Enter the password
-  
-### Uploading via python scripts
-* In the folder ‘UploadToDB’ with a collection of python scripts and parsers that can be used to automate meticulous tasks. Note that some of them do not currently work, or work badly, as of IT22. (sorry)
 
+- Enter the password
+
+### Uploading via python scripts
+
+- In the folder ‘UploadToDB’ with a collection of python scripts and parsers that can be used to automate meticulous tasks. Note that some of them do not currently work, or work badly, as of IT22. (sorry)
 
 ## Updating the Backend
+
 ### Updating the backend endpoints
+
 The backend currently running is available in Github at `/home/ec2-user/nexpo/nexpo-backend-nova`
 It is updated by pulling the updated Github repo. The keys are (obviously) not in the Github repo, but should automatically be filled in. Make sure that this is the case. Also remember to migrate:
 
@@ -424,6 +474,4 @@ docker-compose -p nexpo build
 docker-compose -p nexpo up -d
 ```
 
-* This should create three docker containers ```docker ps```
-
-
+- This should create three docker containers `docker ps`
