@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -167,7 +168,42 @@ namespace Nexpo.Controllers
             
             return BadRequest();
         }
+
+
+        [HttpPost]
+        [Route("bookbymail")]
+
+        public async Task<ActionResult> BookByMail(BookByMailDTO DTO)
+        {
+            string email = DTO.Email;
+            int eventId = DTO.Id;
+            
+            var users = (await _userRepository.GetAll()).Where(user => user.Email == email);
+            var _event = await _eventRepo.Get(eventId);
+            if (_event!=null && users.Count() == 1 && users.First().Id.HasValue)
+            {
+                var ticket = new Ticket
+                {
+                    EventId = DTO.Id,
+                    UserId  = users.First().Id.Value,
+                    PhotoOk = true
+                };
+                
+                bool result = await _ticketRepo.Add(ticket);
+                if (result)
+                {
+                    return Ok();
+                }
+
+                return NotFound();
+            }
+            return BadRequest();
+        }
     }
+
+    
+    
+
 
 
 }
