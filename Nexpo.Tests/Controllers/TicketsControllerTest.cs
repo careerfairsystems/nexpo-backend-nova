@@ -1103,7 +1103,8 @@ namespace Nexpo.Tests.Controllers
         [Fact]
         public async Task TooManyTickets()
         {
-            // Student2 already has 5 tickets but not -7
+            // Student2 has 5 tickets already but not for the event with the id -7,
+            // Therefore booking event -7 should return "too many requests" because the user has too many tickets
             var client = await TestUtils.Login("student2");
             var json = new JsonObject
             {
