@@ -1100,5 +1100,22 @@ namespace Nexpo.Tests.Controllers
             Assert.True(response.StatusCode.Equals(HttpStatusCode.Unauthorized),"Wrong status code. Expected: Unauthorized. Received: " + response.StatusCode.ToString());
         }
 
+        [Fact]
+        public async Task TooManyTickets()
+        {
+            // Student2 has 5 tickets already but not for the event with the id -7,
+            // Therefore booking event -7 should return "too many requests" because the user has too many tickets
+            var client = await TestUtils.Login("student2");
+            var json = new JsonObject
+            {
+                { "eventid", -7 },
+                { "photook", true }
+            };
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/tickets", payload);
+            // Verify response - Conflict because the student already has a ticket for the event
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.TooManyRequests),
+                "Wrong status code. Expected: TooManyRequests. Received: " + response);
+        }
     } 
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -72,6 +73,29 @@ namespace Nexpo.Controllers
             {
                 return Conflict();
             }
+            
+            // Check for max number of registrations
+            int maxNoTickets = 5;
+            // Assmues no event found or faulty format of date should not be counted
+            int noTickets = (await _ticketRepo.GetAllForUser(userId)).Count(ticket =>
+                {
+                    var foundEvent = _eventRepo.Get(ticket.EventId);
+                    if (foundEvent.Result == null)
+                    {
+                        return false;
+                    }
+                    bool isSuccess = DateTime.TryParse(foundEvent.Result.Start, out var eventDateTime);
+                    if (isSuccess)
+                    {
+                        return eventDateTime > DateTime.Now;
+                    }
+                    return false;
+                });
+            if (noTickets  >= maxNoTickets)
+            {
+                return StatusCode(429, "Too many tickets");
+            }
+            
 
             var ticket = new Ticket
             {
