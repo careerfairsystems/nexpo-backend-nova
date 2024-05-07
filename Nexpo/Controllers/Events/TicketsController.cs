@@ -84,7 +84,7 @@ namespace Nexpo.Controllers
                     {
                         return false;
                     }
-                    bool isSuccess = DateTime.TryParse(foundEvent.Result.Start, out var eventDateTime);
+                    bool isSuccess = DateTime.TryParse(foundEvent.Result.Date, out var eventDateTime);
                     if (isSuccess)
                     {
                         return eventDateTime > DateTime.Now;
