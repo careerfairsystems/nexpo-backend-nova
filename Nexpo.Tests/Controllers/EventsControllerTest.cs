@@ -204,5 +204,47 @@ namespace Nexpo.Tests.Controllers
             Assert.True(responseObject.Location.Equals("MA:3"), $"Wrong location. Expected: MA:3. Received: {responseObject.Location}");
             Assert.True(responseObject.Type == EventType.CompanyEvent, $"Wrong type. Expected: CompanyEvent. Received: {responseObject.Type}");
         }
+        
+        [Fact]
+        public async Task BookByMailConflict()
+        {
+            var client = await TestUtils.Login("student1");
+            var json = new JsonObject
+            {
+                { "email", "student1@example.com" },
+                { "id", -7}
+            };
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/events/bookbymail", payload);
+
+            // First time booking an event, should pass
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.OK), "Wrong status code. Expected: OK. Received: " + response.StatusCode.ToString());
+
+            response = await client.PostAsync("api/events/bookbymail", payload);
+            
+            // Second time booking same event for same individual, should result in conflict.
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.Conflict), "Wrong status code. Expected: Conflict. Received: " + response.StatusCode.ToString());
+            
+        }
+        
+        [Fact]
+        public async Task BookByMailTooMany()
+        {
+            // Note: Student2 has already 5+ tickets according to ApplicationDbContext
+            var client = await TestUtils.Login("student2");
+            var json = new JsonObject
+            {
+                { "email", "student2@example.com" },
+                { "id", -7}
+            };
+
+            var payload = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/events/bookbymail", payload);
+
+            // Book event whilst user has too many tickets, should result in TooManyRequests
+            Assert.True(response.StatusCode.Equals(HttpStatusCode.TooManyRequests), "Wrong status code. Expected: TooManyRequests. Received: " + response.StatusCode.ToString());
+            
+        }
     }
 }
