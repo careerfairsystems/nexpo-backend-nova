@@ -29,29 +29,23 @@ namespace Nexpo.AWS
         /// <param name="name">The name of the file</param>
         public async Task<bool> UploadFileAsync(IFormFile file, string name)
         {
-            try
+            using (var newMemoryStream = new MemoryStream())
             {
-                using (var newMemoryStream = new MemoryStream())
+                file.CopyTo(newMemoryStream);
+                var uploadRequest = new TransferUtilityUploadRequest
                 {
-                    file.CopyTo(newMemoryStream);
-                    var uploadRequest = new TransferUtilityUploadRequest
-                    {
-                        InputStream = newMemoryStream,
-                        Key         = name,
-                        BucketName  = _bucketName,
-                        ContentType = file.ContentType
-                    };
+                    InputStream = newMemoryStream,
+                    Key         = name,
+                    BucketName  = _bucketName,
+                    ContentType = file.ContentType
+                };
 
-                    var fileTransferUtility = new TransferUtility(_awsS3Client);
-                    await fileTransferUtility.UploadAsync(uploadRequest);
-                    return true;
-                }
-            }
-            catch (Exception)
-            {
-                throw;
+                var fileTransferUtility = new TransferUtility(_awsS3Client);
+                await fileTransferUtility.UploadAsync(uploadRequest);
+                return true;
             }
         }
+
 
         /// <summary>
         /// Downloads a file from AWS S3
@@ -59,34 +53,28 @@ namespace Nexpo.AWS
         /// <param name="file">The name of the file to download</param>
         public async Task<byte[]> DownloadFileAsync(string file)
         {
-            MemoryStream ms = null;
-            try
-            {
-                GetObjectRequest getObjectRequest = new GetObjectRequest
-                {
-                    BucketName = _bucketName,
-                    Key = file
-                };
+        MemoryStream ms = null;
 
-                using (var response = await _awsS3Client.GetObjectAsync(getObjectRequest))
+            GetObjectRequest getObjectRequest = new GetObjectRequest
+            {
+                BucketName = _bucketName,
+                Key = file
+            };
+
+            using (var response = await _awsS3Client.GetObjectAsync(getObjectRequest))
+            {
+                if (response.HttpStatusCode == HttpStatusCode.OK)
                 {
-                    if (response.HttpStatusCode == HttpStatusCode.OK)
+                    using (ms = new MemoryStream())
                     {
-                        using (ms = new MemoryStream())
-                        {
-                            await response.ResponseStream.CopyToAsync(ms);
-                        }
+                        await response.ResponseStream.CopyToAsync(ms);
                     }
                 }
+            }
 
-                if (ms is null || ms.ToArray().Length < 1)
-                    throw new FileNotFoundException(string.Format("The document '{0}' is not found", file));
-                return ms.ToArray();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            if (ms is null || ms.ToArray().Length < 1)
+                throw new FileNotFoundException(string.Format("The document '{0}' is not found", file));
+            return ms.ToArray();
         }
 
         /// <summary>
@@ -116,21 +104,12 @@ namespace Nexpo.AWS
                 };
 
                 var response = _awsS3Client.GetObjectMetadataAsync(request).Result;
-
                 return true;
             }
             catch (Exception ex)
             {
-                if (ex.InnerException != null && ex.InnerException is AmazonS3Exception awsEx)
-                {
-                    if (string.Equals(awsEx.ErrorCode, "NoSuchBucket"))
-                        return false;
+                return ex.InnerException != null && ex.InnerException is AmazonS3Exception awsEx && (string.Equals(awsEx.ErrorCode, "NoSuchBucket") || string.Equals(awsEx.ErrorCode, "NotFound"));
 
-                    else if (string.Equals(awsEx.ErrorCode, "NotFound"))
-                        return false;
-                }
-                return false;
-                throw;
             }
         }
     }
