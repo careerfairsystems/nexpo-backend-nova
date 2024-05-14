@@ -7,29 +7,18 @@ namespace Nexpo.Models
     /// <summary>
     /// Represents a notification topic
     /// </summary>
-    public class NotificationTopic
+    public class UserNotification
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int? Id { get; set; }
-
-        [Required]
-        public TopicType Topic { get; set; }
-
+        public int UserId { get; set; }
         [Required]
         [JsonIgnore]
         public User User { get; set; }
-
-
-
-        public enum TopicType
-        {
-            All,
-            Administratior,
-            CompanyRepresentative,
-            Student,
-
-            Volunteer,
-        }
+        [Required]
+        public int NotificationId { get; set; }
+        [Required]
+        [JsonIgnore]
+        public Notification Notification { get; set; }
 
     }
 }

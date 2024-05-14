@@ -15,6 +15,7 @@ namespace Nexpo.Repositories
         public Task Add(User user);
         public Task Remove(User user);
         public Task Update(User user);
+        public Task AddToken(string Token, User user);
     }
 
     public class UserRepository : IUserRepository
@@ -65,6 +66,12 @@ namespace Nexpo.Repositories
         {
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task AddToken(string Token, User user)
+        {
+            user.notificationToken = Token;
+            await Update(user);
         }
     }
 }

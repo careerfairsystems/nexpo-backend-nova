@@ -19,8 +19,8 @@ namespace Nexpo.Models
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<FrequentAskedQuestion> FrequentAskedQuestion { get; set; }
 
-        public DbSet<NotificationTopic> NotificationTopic { get; set; }
-
+        public DbSet<Notification> Notification { get; set; }
+        public DbSet<UserNotification> UserNotification { get; set; }
 #pragma warning restore format
 
         private readonly PasswordService _passwordService;

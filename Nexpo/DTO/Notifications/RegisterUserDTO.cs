@@ -7,5 +7,5 @@ public class RegisterUserDTO
     public string Token { get; set; }
 
     [Required]
-    public string Topic { get; set; }
+    public int UserId { get; set; }
 }

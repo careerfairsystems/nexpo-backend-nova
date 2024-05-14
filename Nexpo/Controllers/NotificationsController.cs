@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Nexpo.DTO;
 using Nexpo.Models;
+using Nexpo.Repositories;
 
 namespace Nexpo.Controllers
 {
@@ -16,7 +17,18 @@ namespace Nexpo.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
+        private readonly INotificationRepository _notificationRepo;
+        private readonly IUserRepository _userRepo;
 
+        public NotificationController(
+            INotificationRepository iNotificationRepo,
+            IUserRepository iUserRepo
+            )
+        {
+            _notificationRepo = iNotificationRepo;
+            _userRepo = iUserRepo;
+        }
+        
         private static Queue<NotificationDTO> history;
 
         static NotificationController()
@@ -42,13 +54,11 @@ namespace Nexpo.Controllers
 
             try
             {
-                var messaging = FirebaseMessaging.DefaultInstance;
-
-                var registrationTokens = new List<string> { dto.Token };
-
-                TopicManagementResponse response = await messaging.SubscribeToTopicAsync(registrationTokens, dto.Topic);
-
+                
+                await _userRepo.AddToken(dto.Token, await _userRepo.Get(dto.UserId));
+            
                 return Ok(new { success = true, detail = "Successfully registered for topic" });
+                
             }
             catch (Exception)
             {
