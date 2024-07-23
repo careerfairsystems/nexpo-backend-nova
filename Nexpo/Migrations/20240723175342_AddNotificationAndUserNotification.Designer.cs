@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nexpo.Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -10,9 +11,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240723175342_AddNotificationAndUserNotification")]
+    partial class AddNotificationAndUserNotification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,9 +28,6 @@ namespace Nexpo.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<List<DateTime>>("DaysAtArkad")
-                        .HasColumnType("timestamp without time zone[]");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -149,9 +148,6 @@ namespace Nexpo.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.ToTable("Events");
@@ -179,26 +175,6 @@ namespace Nexpo.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Notifications");
-                });
-
-            modelBuilder.Entity("Nexpo.Models.FrequentAskedQuestion", b =>
-                {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Answer")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FrequentAskedQuestion");
                 });
 
             modelBuilder.Entity("Nexpo.Models.Student", b =>
@@ -313,12 +289,6 @@ namespace Nexpo.Migrations
                     b.Property<bool>("PhotoOk")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("TakeAway")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("TakeAwayTime")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
@@ -368,9 +338,6 @@ namespace Nexpo.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("Uuid")
-                        .HasColumnType("uuid");
-
                     b.Property<bool>("hasCv")
                         .HasColumnType("boolean");
 
@@ -388,41 +355,6 @@ namespace Nexpo.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Nexpo.Models.Volunteer", b =>
-                {
-                    b.Property<int?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("LinkedIn")
-                        .HasColumnType("text");
-
-                    b.Property<string>("MasterTitle")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("Programme")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ResumeEnUrl")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ResumeSvUrl")
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("Year")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Volunteers");
                 });
 
             modelBuilder.Entity("Nexpo.Models.UserNotification", b =>
@@ -507,17 +439,6 @@ namespace Nexpo.Migrations
                         .HasForeignKey("CompanyId");
 
                     b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("Nexpo.Models.Volunteer", b =>
-                {
-                    b.HasOne("Nexpo.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Nexpo.Models.UserNotification", b =>
