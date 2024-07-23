@@ -18,6 +18,8 @@ namespace Nexpo.Models
         public DbSet<StudentSessionApplication> StudentSessionApplications { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<FrequentAskedQuestion> FrequentAskedQuestion { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<UserNotification> UserNotifications { get; set; }
 
 #pragma warning restore format
 
@@ -32,10 +34,25 @@ namespace Nexpo.Models
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             builder.Entity<User>(entity =>
             {
                 entity.HasIndex(u => u.Email).IsUnique();
             });
+
+            builder.Entity<UserNotification>()
+                .HasKey(un => new { un.UserId, un.NotificationId });
+
+            builder.Entity<UserNotification>()
+                .HasOne(un => un.User)
+                .WithMany(u => u.UserNotifications)
+                .HasForeignKey(un => un.UserId);
+
+            builder.Entity<UserNotification>()
+                .HasOne(un => un.Notification)
+                .WithMany(n => n.UserNotifications)
+                .HasForeignKey(un => un.NotificationId);
         }
 
         /// <summary>
