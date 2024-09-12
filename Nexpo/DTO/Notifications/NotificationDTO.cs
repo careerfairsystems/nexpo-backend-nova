@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Nexpo.DTO
@@ -8,10 +9,11 @@ namespace Nexpo.DTO
         public string Title { get; set; }
 
         [Required]
-        public string Message { get; set; }
+        public string Token { get; set; }
 
         [Required]
-        public string Topic { get; set; }
+        public string Message { get; set; }
+
 
         
     }
