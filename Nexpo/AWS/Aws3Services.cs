@@ -27,22 +27,62 @@ namespace Nexpo.AWS
         /// </summary>
         /// <param name="file">The file to upload</param>
         /// <param name="name">The name of the file</param>
+        /// 
+        public string SanitizeFileName(string fileName)
+        {
+            return Path.GetFileNameWithoutExtension(fileName)
+                .Replace(" ", "_")  
+                .Replace("-", "_") 
+                .Replace(".", "") 
+                + Path.GetExtension(fileName);
+        }
+
+        public bool ValidateFileSize(IFormFile file, long maxSizeInBytes)
+        {
+            return file.Length <= maxSizeInBytes;
+        }
+
+        public bool ValidateFileType(IFormFile file, List<string> allowedTypes)
+        {
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+            return allowedTypes.Contains(extension);
+        }
+
         public async Task<bool> UploadFileAsync(IFormFile file, string name)
         {
-            using (var newMemoryStream = new MemoryStream())
-            {
-                file.CopyTo(newMemoryStream);
-                var uploadRequest = new TransferUtilityUploadRequest
-                {
-                    InputStream = newMemoryStream,
-                    Key         = name,
-                    BucketName  = _bucketName,
-                    ContentType = file.ContentType
-                };
+            String sanitizedFileName = SanitizeFileName(name);
 
-                var fileTransferUtility = new TransferUtility(_awsS3Client);
-                await fileTransferUtility.UploadAsync(uploadRequest);
-                return true;
+            if (!ValidateFileSize(file, 10 * 1024 * 1024))
+            {
+                throw new Exception("File size is too large");
+            }
+
+            if (!ValidateFileType(file, new List<string> { ".pdf", ".doc", ".docx", ".txt", ".rtf" }))
+            {
+                throw new Exception("File type is not allowed");
+            }
+
+            try
+            {
+                using (var newMemoryStream = new MemoryStream())
+                {
+                    file.CopyTo(newMemoryStream);
+                    var uploadRequest = new TransferUtilityUploadRequest
+                    {
+                        InputStream = newMemoryStream,
+                        Key = sanitizedFileName,
+                        BucketName = _bucketName,
+                        ContentType = file.ContentType
+                    };
+
+                    var fileTransferUtility = new TransferUtility(_awsS3Client);
+                    await fileTransferUtility.UploadAsync(uploadRequest);
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
@@ -53,12 +93,14 @@ namespace Nexpo.AWS
         /// <param name="file">The name of the file to download</param>
         public async Task<byte[]> DownloadFileAsync(string file)
         {
-        MemoryStream ms = null;
+
+            string sanitizedFileName = SanitizeFileName(file);
+            MemoryStream ms = null;
 
             GetObjectRequest getObjectRequest = new GetObjectRequest
             {
                 BucketName = _bucketName,
-                Key = file
+                Key = sanitizedFileName
             };
 
             using (var response = await _awsS3Client.GetObjectAsync(getObjectRequest))
@@ -84,10 +126,11 @@ namespace Nexpo.AWS
         [HttpDelete("{documentName}")]
         public async Task<bool> DeleteFileAsync(string fileName)
         {
+            string sanitizedFileName = SanitizeFileName(file);
             DeleteObjectRequest request = new DeleteObjectRequest
             {
                 BucketName = _bucketName,
-                Key = fileName
+                Key = sanitizedFileName
             };
             await _awsS3Client.DeleteObjectAsync(request);
             return true;
@@ -97,10 +140,11 @@ namespace Nexpo.AWS
         {
             try
             {
+                string sanitizedFileName = SanitizeFileName(file);
                 GetObjectMetadataRequest request = new GetObjectMetadataRequest()
                 {
                     BucketName = _bucketName,
-                    Key = fileName
+                    Key = sanitizedFileName
                 };
 
                 var response = _awsS3Client.GetObjectMetadataAsync(request).Result;
