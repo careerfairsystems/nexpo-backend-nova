@@ -104,10 +104,11 @@ namespace Nexpo.Controllers
                 {
                     user = new User
                     {
-                        Role = Role.Student,
-                        Email = email,
+                        Role      = Role.Student,
+                        Email     = email,
                         FirstName = firstname,
-                        LastName = lastname,
+                        LastName  = lastname,
+                        Uuid      = Guid.NewGuid(),
                     };
 
                     await _userRepo.Add(user);
@@ -125,6 +126,7 @@ namespace Nexpo.Controllers
                 {
                     new Claim(UserClaims.Id, user.Id.ToString()),
                     new Claim(UserClaims.Role, user.Role.ToString()),
+                    new Claim(UserClaims.Uuid, user.Uuid.ToString())
                 };
 
                 if (user.Role == Role.Student)
