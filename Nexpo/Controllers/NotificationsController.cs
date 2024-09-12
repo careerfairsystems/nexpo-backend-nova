@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Http;
 using Nexpo.DTO;
 using Nexpo.Models;
 using Nexpo.Repositories;
-
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 namespace Nexpo.Controllers
 {
     [Route("api/[controller]")]
@@ -34,7 +36,7 @@ namespace Nexpo.Controllers
         static NotificationController()
         {
             history = new Queue<NotificationDTO>(10);
-            history.Enqueue(new NotificationDTO { Title = "Welcome", Message = "Welcome to the app", Topic = "all" });
+            history.Enqueue(new NotificationDTO { Title = "Welcome", Message = "Welcome to the app"});
         }
 
         /// <summary>
@@ -45,7 +47,7 @@ namespace Nexpo.Controllers
         [HttpPost("register")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> RegisterUser(RegisterUserDTO dto)
+        public async Task<IActionResult> RegisterUser(int id, RegisterUserDTO dto)
         {
             if (string.IsNullOrEmpty(dto.Token))
             {
@@ -55,7 +57,7 @@ namespace Nexpo.Controllers
             try
             {
                 
-                await _userRepo.AddToken(dto.Token, await _userRepo.Get(dto.UserId));
+                await _userRepo.AddToken(dto.Token, await _userRepo.Get(id));
             
                 return Ok(new { success = true, detail = "Successfully registered for topic" });
                 
@@ -75,42 +77,48 @@ namespace Nexpo.Controllers
         [HttpPut]
         [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> NotifyAll(NotificationDTO dto)
+public async Task<IActionResult> Notify(NotificationDTO dto, Role role)
+{
+
+    if (string.IsNullOrEmpty(dto.Message))
+    {
+        return BadRequest("Message is required input.");
+    }
+
+    try
+    {
+        var client = new HttpClient();
+        var payload = new
         {
-            if (string.IsNullOrEmpty(dto.Topic))
-            {
-                return BadRequest("Topic is required input.");
-            }
+            to = dto.Token,
+            title = dto.Title,
+            body = dto.Message,
+        };
 
-            if (string.IsNullOrEmpty(dto.Message))
-            {
-                return BadRequest("Message is required input.");
-            }
+        var jsonPayload = JsonSerializer.Serialize(payload);
+        var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            try
-            {
-                var messaging = FirebaseMessaging.DefaultInstance;
-                var message = new Message
-                {
-                    Notification = new Notification { Title = dto.Title, Body = dto.Message },
-                    Topic = dto.Topic
-                };
+        var response = await client.PostAsync("https://exp.host/--/api/v2/push/send", content);
 
-                var result = await messaging.SendAsync(message);
-
-                if (history.Count >= 10)
-                {
-                    history.Dequeue(); 
-                }
-                history.Enqueue(dto);
-
-                return Ok(new { success = true, detail = "Successfully sent notification" });
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, detail = "An error occurred while sending notification" });
-            }
+        if (!response.IsSuccessStatusCode)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, detail = "An error occurred while sending notification" });
         }
+
+        if (history.Count >= 10)
+        {
+            history.Dequeue();
+        }
+        history.Enqueue(dto);
+
+        return Ok(new { success = true, detail = "Successfully sent notification" });
+        
+    }
+    catch (Exception)
+    {
+        return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, detail = "An error occurred while sending notification" });
+    }
+}
 
         /// <summary>
         /// Returns the past few notifications
