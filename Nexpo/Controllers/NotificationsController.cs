@@ -1,119 +1,120 @@
-using FirebaseAdmin.Messaging;
-using Google.Apis.Auth.OAuth2;
-using FirebaseAdmin;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Nexpo.DTO;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Nexpo.Models;
+using Nexpo.Services;
 
 namespace Nexpo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotificationController : ControllerBase
+    public class NotificationsController : ControllerBase
     {
+        private readonly NotificationService _notificationService;
 
-        private static Queue<NotificationDTO> history;
-
-        static NotificationController()
+        public NotificationsController(NotificationService notificationService)
         {
-            history = new Queue<NotificationDTO>(10);
-            history.Enqueue(new NotificationDTO { Title = "Welcome", Message = "Welcome to the app", Topic = "all" });
+            _notificationService = notificationService;
         }
 
-        /// <summary>
-        /// Register a token to receive notifications of a specific topic
-        /// 
-        /// The standard topics are current "All" and "Volunteer"
-        /// </summary>
-        [HttpPost("register")]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> RegisterUser(RegisterUserDTO dto)
-        {
-            if (string.IsNullOrEmpty(dto.Token))
-            {
-                return BadRequest("Token is required.");
-            }
-
-            try
-            {
-                var messaging = FirebaseMessaging.DefaultInstance;
-
-                var registrationTokens = new List<string> { dto.Token };
-
-                TopicManagementResponse response = await messaging.SubscribeToTopicAsync(registrationTokens, dto.Topic);
-
-                return Ok(new { success = true, detail = "Successfully registered for topic" });
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, detail = "An error occurred while registering for topic" });
-            }
-        }
-
-        /// <summary>
-        /// The api that the admin can use to send notifications to all users, 
-        /// registerred to a specific topic
-        /// 
-        /// The standard topics are current "All" and "Volunteer"
-        /// </summary>
-        [HttpPut]
-        [Authorize(Roles = nameof(Role.Administrator))]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> NotifyAll(NotificationDTO dto)
-        {
-            if (string.IsNullOrEmpty(dto.Topic))
-            {
-                return BadRequest("Topic is required input.");
-            }
-
-            if (string.IsNullOrEmpty(dto.Message))
-            {
-                return BadRequest("Message is required input.");
-            }
-
-            try
-            {
-                var messaging = FirebaseMessaging.DefaultInstance;
-                var message = new Message
-                {
-                    Notification = new Notification { Title = dto.Title, Body = dto.Message },
-                    Topic = dto.Topic
-                };
-
-                var result = await messaging.SendAsync(message);
-
-                if (history.Count >= 10)
-                {
-                    history.Dequeue(); 
-                }
-                history.Enqueue(dto);
-
-                return Ok(new { success = true, detail = "Successfully sent notification" });
-            }
-            catch (Exception)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { success = false, detail = "An error occurred while sending notification" });
-            }
-        }
-
-        /// <summary>
-        /// Returns the past few notifications
-        /// At most 10 notifications will be stored at once
-        /// </summary>
+        // GET: api/Notifications
         [HttpGet]
-        [Authorize]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetLastNotifications()
+        public async Task<ActionResult<IEnumerable<Notification>>> GetNotifications()
         {
-            return Ok(history); 
+            return Ok(await _notificationService.GetAllNotificationsAsync());
         }
 
-    }
+        // GET: api/Notifications/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Notification>> GetNotification(int id)
+        {
+            var notification = await _notificationService.GetNotificationByIdAsync(id);
 
+            if (notification == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(notification);
+        }
+
+        // POST: api/Notifications
+        [HttpPost]
+        public async Task<ActionResult<Notification>> PostNotification(Notification notification)
+        {
+            await _notificationService.CreateNotificationAsync(notification);
+            return CreatedAtAction(nameof(GetNotification), new { id = notification.Id }, notification);
+        }
+
+        // PUT: api/Notifications/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutNotification(int id, Notification notification)
+        {
+            if (id != notification.Id)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _notificationService.UpdateNotificationAsync(notification);
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (await _notificationService.GetNotificationByIdAsync(id) == null)
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+
+            return NoContent();
+        }
+
+        // DELETE: api/Notifications/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteNotification(int id)
+        {
+            var success = await _notificationService.DeleteNotificationAsync(id);
+            if (!success)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+
+        // GET: api/Notifications/User/5
+        [HttpGet("User/{userId}")]
+        public async Task<ActionResult<IEnumerable<Notification>>> GetUserNotifications(int userId)
+        {
+            return Ok(await _notificationService.GetUserNotificationsAsync(userId));
+        }
+
+        // POST: api/Notifications/Subscribe
+        [HttpPost("Subscribe")]
+        public async Task<IActionResult> SubscribeUserToNotification(int userId, int notificationId)
+        {
+            await _notificationService.SubscribeUserToNotificationAsync(userId, notificationId);
+            return NoContent();
+        }
+
+        // POST: api/Notifications/Unsubscribe
+        [HttpPost("Unsubscribe")]
+        public async Task<IActionResult> UnsubscribeUserFromNotification(int userId, int notificationId)
+        {
+            await _notificationService.UnsubscribeUserFromNotificationAsync(userId, notificationId);
+            return NoContent();
+        }
+
+        // POST: api/Notifications/Schedule
+        [HttpPost("Schedule")]
+        public async Task<IActionResult> ScheduleNotification(Notification notification, DateTime scheduledTime)
+        {
+            await _notificationService.ScheduleNotificationAsync(notification, scheduledTime);
+            return NoContent();
+        }
+    }
 }
