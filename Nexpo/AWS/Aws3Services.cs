@@ -19,7 +19,6 @@ namespace Nexpo.AWS
     {
         private readonly string _bucketName;
         private readonly IAmazonS3 _awsS3Client;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public Aws3Services(string awsAccessKeyId, string awsSecretAccessKey, string region, string bucketName)
         {
