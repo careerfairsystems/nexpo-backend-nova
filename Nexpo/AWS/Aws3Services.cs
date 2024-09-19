@@ -8,6 +8,8 @@ using Amazon;
 using Amazon.S3.Model;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+
 
 namespace Nexpo.AWS
 {
@@ -126,7 +128,7 @@ namespace Nexpo.AWS
         [HttpDelete("{documentName}")]
         public async Task<bool> DeleteFileAsync(string fileName)
         {
-            string sanitizedFileName = SanitizeFileName(file);
+            string sanitizedFileName = SanitizeFileName(fileName);
             DeleteObjectRequest request = new DeleteObjectRequest
             {
                 BucketName = _bucketName,
@@ -140,7 +142,7 @@ namespace Nexpo.AWS
         {
             try
             {
-                string sanitizedFileName = SanitizeFileName(file);
+                string sanitizedFileName = SanitizeFileName(fileName);
                 GetObjectMetadataRequest request = new GetObjectMetadataRequest()
                 {
                     BucketName = _bucketName,
