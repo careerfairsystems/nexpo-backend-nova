@@ -39,16 +39,7 @@ namespace Nexpo.Models
 
             builder.Entity<UserNotification>()
                 .HasKey(un => new { un.UserId, un.NotificationId });
-
-            builder.Entity<UserNotification>()
-                .HasOne(un => un.User)
-                .WithMany(u => u.UserNotifications)
-                .HasForeignKey(un => un.UserId);
-
-            builder.Entity<UserNotification>()
-                .HasOne(un => un.Notification)
-                .WithMany(n => n.UserNotifications)
-                .HasForeignKey(un => un.NotificationId);
+            
         }
 
         /// <summary>

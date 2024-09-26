@@ -55,10 +55,15 @@ namespace Nexpo.Services
 
         public async Task<IEnumerable<Notification>> GetUserNotificationsAsync(int userId)
         {
-            return await _context.UserNotifications
+            IEnumerable<int> joins =  await _context.UserNotifications
                 .Where(un => un.UserId == userId)
-                .Select(un => un.Notification)
+                .Select(un => un.NotificationId)
                 .ToListAsync();
+
+            return await _context.Notifications.Where(
+                n => joins.Contains(n.Id) 
+                ).ToListAsync();
+            
         }
 
         public async Task SubscribeUserToNotificationAsync(int userId, int notificationId)

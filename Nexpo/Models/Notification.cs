@@ -10,6 +10,5 @@ namespace Nexpo.Models
         public DateTime? ScheduledTime { get; set; }
         public NotificationType NotificationType { get; set; }
         public int? EventId { get; set; }
-        public ICollection<UserNotification> UserNotifications { get; set; }
     }
 }
