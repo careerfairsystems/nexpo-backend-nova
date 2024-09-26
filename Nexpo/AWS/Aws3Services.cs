@@ -7,9 +7,12 @@ using System;
 using Amazon;
 using Amazon.S3.Model;
 using System.Net;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-
+using Nexpo.Controllers;
+using Nexpo.Models;
 
 namespace Nexpo.AWS
 {
@@ -89,6 +92,38 @@ namespace Nexpo.AWS
         }
 
 
+        /// <summary>
+        /// Uploads a user's resume to AWS S3
+        /// </summary>
+        /// <param name="resume"> The resume file </param>
+        
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.Volunteer))]
+        public async Task<bool> UploadResume(IFormFile resume, string uuid)
+        {
+            try
+            {
+                using (var newMemoryStream = new MemoryStream())
+                {
+                    await resume.CopyToAsync(newMemoryStream);
+                    var uploadRequest = new TransferUtilityUploadRequest
+                    {
+                        InputStream = newMemoryStream,
+                        Key = $"{uuid}.pdf",
+                        BucketName = _bucketName,
+                        ContentType = resume.ContentType
+                    };
+
+                    var fileTransferUtility = new TransferUtility(_awsS3Client);
+                    await fileTransferUtility.UploadAsync(uploadRequest);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        
         /// <summary>
         /// Downloads a file from AWS S3
         /// </summary>

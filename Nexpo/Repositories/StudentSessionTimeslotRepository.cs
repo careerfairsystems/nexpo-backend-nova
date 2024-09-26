@@ -1,4 +1,5 @@
-﻿using Nexpo.Models;
+﻿using System;
+using Nexpo.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,12 +28,12 @@ namespace Nexpo.Repositories
 
         public async Task<IEnumerable<StudentSessionTimeslot>> GetAllForCompany(int companyId)
         {
-            return await _context.StudentSessionTimeslots.Where(timeslot => timeslot.CompanyId == companyId).ToListAsync();
+            return await _context.StudentSessionTimeslots.Where(timeslot => timeslot.CompanyId == companyId && timeslot.Start > DateTime.Now).ToListAsync();
         }
 
         public async Task<StudentSessionTimeslot> Get(int id)
         {
-            return await _context.StudentSessionTimeslots.Where(timeslot => timeslot.Id == id).FirstOrDefaultAsync();
+            return await _context.StudentSessionTimeslots.Where(timeslot => timeslot.Id == id  && timeslot.Start > DateTime.Now).FirstOrDefaultAsync();
         }
 
         public async Task Add(StudentSessionTimeslot timeslot)

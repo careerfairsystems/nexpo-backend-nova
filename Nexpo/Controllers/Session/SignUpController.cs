@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -58,13 +59,14 @@ namespace Nexpo.Controllers
             {
                 return Conflict();
             }
-
+            
             user = new User
             {
                 Role      = Role.Student,
                 Email     = DTO.Email,
                 FirstName = DTO.FirstName,
-                LastName  = DTO.LastName
+                LastName  = DTO.LastName,
+                Uuid      = Guid.NewGuid(),
             };
             await _userRepo.Add(user);
 
