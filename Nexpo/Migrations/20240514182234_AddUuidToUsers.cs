@@ -13,9 +13,9 @@ namespace Nexpo.Migrations
                 type: "uuid",
                 nullable: false,
                 defaultValueSql: "gen_random_uuid()");  // Assign a new UUID by default
-            
+
             // Update existing records with new UUIDs
-            migrationBuilder.Sql("UPDATE Users SET Uuid = gen_random_uuid() WHERE Uuid IS NULL");
+            migrationBuilder.Sql("UPDATE \"Users\" SET \"Uuid\" = gen_random_uuid() WHERE \"Uuid\" IS NULL");
         }
         
         
