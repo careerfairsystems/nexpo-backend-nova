@@ -36,7 +36,7 @@ namespace Nexpo.Models
         public bool hasCv { get; set; }
 
         public string profilePictureUrl { get; set; }
-        public Guid Uuid { get; set; }
+        public Guid Uuid { get; set; } = Guid.NewGuid();
     }
 
     public enum Role
