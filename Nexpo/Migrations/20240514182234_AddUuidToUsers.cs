@@ -7,6 +7,8 @@ namespace Nexpo.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("CREATE EXTENSION IF NOT EXISTS \"pgcrypto\";");
+
             migrationBuilder.AddColumn<Guid>(
                 name: "Uuid",
                 table: "Users",
@@ -16,6 +18,7 @@ namespace Nexpo.Migrations
 
             // Update existing records with new UUIDs
             migrationBuilder.Sql("UPDATE \"Users\" SET \"Uuid\" = gen_random_uuid() WHERE \"Uuid\" IS NULL");
+            migrationBuilder.Sql("UPDATE \"Users\" SET \"Uuid\" = gen_random_uuid() WHERE \"Uuid\" = '00000000-0000-0000-0000-000000000000';");
         }
         
         
