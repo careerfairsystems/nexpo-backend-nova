@@ -15,6 +15,7 @@ namespace Nexpo.Repositories
         public Task Add(User user);
         public Task Remove(User user);
         public Task Update(User user);
+        public Task<IEnumerable<User>> GetUsersByRole(Role role);
     }
 
     public class UserRepository : IUserRepository
@@ -65,6 +66,11 @@ namespace Nexpo.Repositories
         {
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<User>> GetUsersByRole(Role role)
+        {
+            return await _context.Users.Where(user => user.Role == role).ToListAsync();
         }
     }
 }

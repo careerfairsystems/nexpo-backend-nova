@@ -19,6 +19,7 @@ namespace Nexpo.Repositories
         public Task Update(Ticket ticket);
         public Task Remove(Ticket ticket);
         public Task<EventType> GetEventType(int ticketId);
+        public Task<IEnumerable<User>> GetAllUsersForEvent(int eventId);
 
     }
 
@@ -52,6 +53,14 @@ namespace Nexpo.Repositories
             return await    _context.Tickets.Where(ticket => ticket.EventId == eventId)
                                             .OrderBy(ticket => ticket.User.FirstName)
                                             .ThenBy(ticket => ticket.User.LastName)
+                                            .ToListAsync();
+        }
+
+        public async Task<IEnumerable<User>> GetAllUsersForEvent(int eventId)
+        {
+            return await    _context.Tickets.Include(ticket => ticket.User)
+                                            .Where(ticket => ticket.EventId == eventId)
+                                            .Select(ticket => ticket.User)
                                             .ToListAsync();
         }
 
