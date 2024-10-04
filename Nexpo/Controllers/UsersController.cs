@@ -173,7 +173,7 @@ namespace Nexpo.Controllers
             var user = await _userRepo.Get(userId);
             _aws3Services = new Aws3Services(_appConfiguration.AwsAccessKey, _appConfiguration.AwsSecretAccessKey, _appConfiguration.Region, _appConfiguration.BucketName);
 
-            var responseCV = _aws3Services.IfFileExists(user.Id.ToString() + ".pdf");
+            var responseCV = _aws3Services.IfFileExists(user.Uuid + ".pdf");
             user.hasCv = responseCV;
 
             var responseProfilePicture = _aws3Services.IfFileExists(user.Id.ToString() + ".jpg");

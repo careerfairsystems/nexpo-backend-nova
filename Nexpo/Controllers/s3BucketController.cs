@@ -2,7 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using Microsoft.AspNetCore.Http;
 using System.Net;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Nexpo.AWS;
+using Nexpo.Models;
 
 namespace Nexpo.Controllers
 {
@@ -42,7 +45,9 @@ namespace Nexpo.Controllers
                     _appConfiguration.AwsSecretAccessKey,
                     _appConfiguration.Region, 
                     _appConfiguration.BucketName
-                );
+                ); // Att skapa en ny instans i varje metod är väl redundant ? 
+                
+                
 
                 var document = _aws3Services.DownloadFileAsync(documentName).Result;
 
@@ -51,6 +56,44 @@ namespace Nexpo.Controllers
             catch (Exception ex)
             {
                 return StatusCode( (int) HttpStatusCode.InternalServerError, ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Downloads a resume from S3
+        /// </summary>
+        [HttpGet]
+        [Route("download_resume")]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.Volunteer))]
+        public async Task<IActionResult> DownloadResumeFromS3()
+        {
+            try
+            {
+                // Tries to find uuid, and handles the case when it cannot be found.
+                var uuidClaim = HttpContext.User.FindFirst(UserClaims.Uuid);
+                if (uuidClaim == null)
+                {
+                    return NotFound("Uuid could not be found.");
+                }
+
+                var uuid = uuidClaim.Value;
+
+                var resumeName = $"{uuid}.pdf";
+
+                var resume = await _aws3Services.DownloadFileAsync(resumeName);
+
+                // If document was not found
+                if (resume == null)
+                {
+                    return NotFound("The resume could not be found");
+                }
+
+                return File(resume, "application/octet-stream", "cv.pdf");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An unexpected error occurred"); // 500 Internal Server Error
             }
         }
 
@@ -88,10 +131,56 @@ namespace Nexpo.Controllers
         }
 
         /// <summary>
+        /// Uploads a resume to S3
+        /// </summary>
+        /// <param name="resume">The resume to upload</param>
+        [HttpPost]
+        [Route("upload_resume")]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.Volunteer))]
+        public async Task<IActionResult> UploadResumeToS3(IFormFile resume)
+        {
+            try
+            {
+                // In case no file is given.
+                if (resume == null || resume.Length == 0) 
+                {
+                    return BadRequest("File is required to upload."); 
+                }
+                
+                // If file is not a pdf.
+                if (resume.ContentType != "application/pdf")
+                {
+                    return BadRequest("File is required to be a PDF");
+                }
+                
+                // Tries to find uuid, and handles the case when it cannot be found.
+                var uuidClaim = HttpContext.User.FindFirst(UserClaims.Uuid);
+                if (uuidClaim == null)
+                {
+                    return NotFound("Uuid could not be found."); 
+                }
+                
+                // Tries to upload resume
+                bool result = await _aws3Services.UploadResume(resume, uuidClaim.Value);
+                if (result)
+                {
+                    return Ok("Resume uploaded successfully."); 
+                }
+
+                return StatusCode(500, "Resume could not be uploaded."); // 500 Internal Server Error
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, "An unexpected error occurred"); // 500 Internal Server Error
+            }
+        }
+        
+
+        /// <summary>
         /// Delete a document from S3 using its name
         /// </summary>
         [HttpDelete("{documentName}")]
-        public IActionResult DeletetDocumentFromS3(string documentName)
+        public IActionResult DeleteDocumentFromS3(string documentName)
         {
             try
             {

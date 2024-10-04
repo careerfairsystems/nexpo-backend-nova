@@ -73,6 +73,7 @@ namespace Nexpo.Controllers
             {
                 new Claim(UserClaims.Id, user.Id.ToString()),
                 new Claim(UserClaims.Role, user.Role.ToString()),
+                new Claim(UserClaims.Uuid, user.Uuid.ToString())
             };
 
             if (user.Role == Role.Student)
@@ -153,6 +154,7 @@ namespace Nexpo.Controllers
         public static readonly string CompanyId = nameof(CompanyId);
         public static readonly string StudentId = nameof(StudentId);
         public static readonly string VolunteerId = nameof(VolunteerId);
+        public static readonly string Uuid = nameof(Uuid);
     }
 }
 

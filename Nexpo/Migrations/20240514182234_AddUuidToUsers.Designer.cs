@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nexpo.Models;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -10,9 +11,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Nexpo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240514182234_AddUuidToUsers")]
+    partial class AddUuidToUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,30 +157,6 @@ namespace Nexpo.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("Nexpo.Models.Notification", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int?>("EventId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("text");
-
-                    b.Property<int>("NotificationType")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("ScheduledTime")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Nexpo.Models.FrequentAskedQuestion", b =>
@@ -425,21 +403,6 @@ namespace Nexpo.Migrations
                     b.ToTable("Volunteers");
                 });
 
-            modelBuilder.Entity("Nexpo.Models.UserNotification", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("NotificationId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("UserId", "NotificationId");
-
-                    b.HasIndex("NotificationId");
-
-                    b.ToTable("UserNotifications");
-                });
-
             modelBuilder.Entity("Nexpo.Models.Student", b =>
                 {
                     b.HasOne("Nexpo.Models.User", "User")
@@ -520,25 +483,6 @@ namespace Nexpo.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Nexpo.Models.UserNotification", b =>
-                {
-                    b.HasOne("Nexpo.Models.Notification", "Notification")
-                        .WithMany("UserNotifications")
-                        .HasForeignKey("NotificationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Nexpo.Models.User", "User")
-                        .WithMany("UserNotifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Notification");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Nexpo.Models.Company", b =>
                 {
                     b.Navigation("Representatives");
@@ -549,16 +493,6 @@ namespace Nexpo.Migrations
             modelBuilder.Entity("Nexpo.Models.Event", b =>
                 {
                     b.Navigation("Tickets");
-                });
-
-            modelBuilder.Entity("Nexpo.Models.Notification", b =>
-                {
-                    b.Navigation("UserNotifications");
-                });
-
-            modelBuilder.Entity("Nexpo.Models.User", b =>
-                {
-                    b.Navigation("UserNotifications");
                 });
 #pragma warning restore 612, 618
         }

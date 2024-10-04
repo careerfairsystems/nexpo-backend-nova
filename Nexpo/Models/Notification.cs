@@ -1,24 +1,15 @@
-using System.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
-using Nexpo.Models;
 
-namespace Nexpo.DTO.Notifications
+namespace Nexpo.Models
 {
-    public class NotificationDTO
+    public class Notification
     {
         public int Id { get; set; }
-        [Required]
         public string Message { get; set; }
-
         public DateTime? ScheduledTime { get; set; }
-
-        [Required]
         public NotificationType NotificationType { get; set; }
-
         public int? EventId { get; set; }
-
-        [Required]
-        public List<int> UserIds { get; set; }
+        public ICollection<UserNotification> UserNotifications { get; set; }
     }
 }

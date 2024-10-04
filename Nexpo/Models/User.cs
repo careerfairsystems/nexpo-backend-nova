@@ -1,4 +1,6 @@
 ﻿
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -35,6 +37,9 @@ namespace Nexpo.Models
         public bool hasCv { get; set; }
 
         public string profilePictureUrl { get; set; }
+
+        public ICollection<UserNotification> UserNotifications { get; set; }
+        public Guid Uuid { get; set; } = Guid.NewGuid();
     }
 
     public enum Role
