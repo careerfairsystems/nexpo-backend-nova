@@ -15,6 +15,24 @@ namespace Nexpo.Services
         {
             _context = context;
         }
+        public async Task<Notification> CreateNotificationAsync(Notification notification)
+        {
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+            return notification;
+        }
+
+        public async Task SendNotificationToUser(int notificationId, int userId)
+        {
+            var userNotification = new UserNotification
+            {
+                NotificationId = notificationId,
+                UserId = userId
+            };
+
+            _context.UserNotifications.Add(userNotification);
+            await _context.SaveChangesAsync();
+        }
 
         public async Task<IEnumerable<Notification>> GetAllNotificationsAsync()
         {
@@ -24,13 +42,6 @@ namespace Nexpo.Services
         public async Task<Notification> GetNotificationByIdAsync(int id)
         {
             return await _context.Notifications.FindAsync(id);
-        }
-
-        public async Task<Notification> CreateNotificationAsync(Notification notification)
-        {
-            _context.Notifications.Add(notification);
-            await _context.SaveChangesAsync();
-            return notification;
         }
 
         public async Task<Notification> UpdateNotificationAsync(Notification notification)
@@ -53,30 +64,22 @@ namespace Nexpo.Services
             return true;
         }
 
-        public async Task<IEnumerable<Notification>> GetUserNotificationsAsync(int userId)
-        {
-            return await _context.UserNotifications
-                .Where(un => un.UserId == userId)
-                .Select(un => un.Notification)
-                .ToListAsync();
-        }
-
-        public async Task SubscribeUserToNotificationAsync(int userId, int notificationId)
+        public async Task SubscribeUserToEventAsync(int userId, int eventId)
         {
             var userNotification = new UserNotification
             {
                 UserId = userId,
-                NotificationId = notificationId
+                NotificationId = eventId
             };
 
             _context.UserNotifications.Add(userNotification);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UnsubscribeUserFromNotificationAsync(int userId, int notificationId)
+        public async Task UnsubscribeUserFromEventAsync(int userId, int eventId)
         {
             var userNotification = await _context.UserNotifications
-                .FirstOrDefaultAsync(un => un.UserId == userId && un.NotificationId == notificationId);
+                .FirstOrDefaultAsync(un => un.UserId == userId && un.NotificationId == eventId);
 
             if (userNotification != null)
             {
@@ -85,9 +88,12 @@ namespace Nexpo.Services
             }
         }
 
-        public async Task ScheduleNotificationAsync(Notification notification, DateTime scheduledTime)
+        public async Task<IEnumerable<Notification>> GetNotificationsForUserAsync(int userId)
         {
-            // Logic to schedule notification, e.g., using a background task or external service
+            return await _context.UserNotifications
+                .Where(un => un.UserId == userId)
+                .Select(un => un.Notification)
+                .ToListAsync();
         }
     }
 }

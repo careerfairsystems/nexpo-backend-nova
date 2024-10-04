@@ -38,8 +38,15 @@ namespace Nexpo
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
-            
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    // Traps for circular references of json
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.MaxDepth = 64;
+                });
+
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;
@@ -98,7 +105,7 @@ namespace Nexpo
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IFAQRepository, FAQRepository>();
 
-
+            services.AddScoped<NotificationService, NotificationService>();
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
