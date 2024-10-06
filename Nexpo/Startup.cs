@@ -38,14 +38,7 @@ namespace Nexpo
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    // Traps for circular references of json
-                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-                    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-                    options.JsonSerializerOptions.MaxDepth = 64;
-                });
+            services.AddControllers();
 
             services.AddRouting(options =>
             {

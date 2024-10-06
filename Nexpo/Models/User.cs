@@ -38,6 +38,7 @@ namespace Nexpo.Models
 
         public string profilePictureUrl { get; set; }
 
+        [JsonIgnore]
         public ICollection<UserNotification> UserNotifications { get; set; }
         public Guid Uuid { get; set; } = Guid.NewGuid();
         public string ExpoPushToken { get; set; }

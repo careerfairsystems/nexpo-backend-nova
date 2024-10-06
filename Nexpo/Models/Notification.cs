@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Nexpo.Models
 {
@@ -10,6 +11,7 @@ namespace Nexpo.Models
         public DateTime? ScheduledTime { get; set; }
         public NotificationType NotificationType { get; set; }
         public int? EventId { get; set; }
+        [JsonIgnore]
         public ICollection<UserNotification> UserNotifications { get; set; }
     }
 }
