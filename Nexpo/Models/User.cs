@@ -40,6 +40,7 @@ namespace Nexpo.Models
 
         public ICollection<UserNotification> UserNotifications { get; set; }
         public Guid Uuid { get; set; } = Guid.NewGuid();
+        public string ExpoPushToken { get; set; }
     }
 
     public enum Role
