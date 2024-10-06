@@ -110,6 +110,8 @@ namespace Nexpo
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
 
+            services.AddHttpClient();
+
             if (Environment.IsDevelopment())
             {
                 services.AddScoped<IEmailService, DevEmailService>();
