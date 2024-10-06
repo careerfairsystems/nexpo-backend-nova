@@ -16,5 +16,7 @@ namespace Nexpo.DTO
         
         [Required]
         public string LastName { get; set; }
+
+        public string ExpoPushToken { get; set; }
     }
 }

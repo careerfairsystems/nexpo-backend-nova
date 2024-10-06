@@ -9,5 +9,7 @@ namespace Nexpo.DTO
         
         [Required]
         public string Password { get; set; }
+
+        public string ExpoPushToken { get; set; }
     }
 }

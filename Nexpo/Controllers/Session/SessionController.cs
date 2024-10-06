@@ -68,6 +68,13 @@ namespace Nexpo.Controllers
                 return BadRequest();
             }
 
+            // Update ExpoPushToken if it is provided
+            if (!string.IsNullOrEmpty(credentials.ExpoPushToken))
+            {
+                user.ExpoPushToken = credentials.ExpoPushToken;
+                await _userRepo.Update(user);
+            }
+
             // Common claims
             var claims = new List<Claim>
             {

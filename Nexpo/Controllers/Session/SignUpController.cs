@@ -59,14 +59,15 @@ namespace Nexpo.Controllers
             {
                 return Conflict();
             }
-            
+
             user = new User
             {
-                Role      = Role.Student,
-                Email     = DTO.Email,
+                Role = Role.Student,
+                Email = DTO.Email,
                 FirstName = DTO.FirstName,
-                LastName  = DTO.LastName,
-                Uuid      = Guid.NewGuid(),
+                LastName = DTO.LastName,
+                Uuid = Guid.NewGuid(),
+                ExpoPushToken = DTO.ExpoPushToken,
             };
             await _userRepo.Add(user);
 
