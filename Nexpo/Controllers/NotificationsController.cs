@@ -31,6 +31,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpPost]
         [Route("create")]
+        [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> CreateNotification(AddNotificationDTO dto)
         {
@@ -58,6 +59,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpPost]
         [Route("send/{id}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> SendNotification(int id, [FromBody] NotificationDTO dto)
         {
