@@ -102,7 +102,7 @@ namespace Nexpo.Controllers
         /// </summary>
         [HttpPost]
         [Route("company/{id}")]
-        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.Volunteer) + "," + nameof(Role.Admin))]
+        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.Volunteer) + "," + nameof(Role.Administrator))]
         [ProducesResponseType(typeof(StudentSessionApplication), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostApplication(int id, UpdateStudentSessionApplicationStudentDTO DTO)
         {
