@@ -84,7 +84,7 @@ namespace Nexpo.Services
             var content =   "Your application have been rejected.<br>" 
                             + $"{company.Name} has just rejected your student session application.<br>" 
                             + "Better luck next time!";
-            return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
+            return SendEmail(user.Email, $"{company.Name} has rejected your application.", content, content);
         }
 
         public Task SendApplicationAcceptedEmail(Company company, User user)
@@ -92,7 +92,7 @@ namespace Nexpo.Services
             var content =   "Congrats!<br>" 
                             + $"{company.Name} has just accepted your student session application!<br>" 
                             + $"Log in to the app and choose {company.Name} in Student Sessions to pick a timeslot";
-            return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
+            return SendEmail(user.Email, $"{company.Name} has accepted your application!", content, content);
         }
 
         public Task SendPasswordResetEmail(User user)
