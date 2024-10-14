@@ -126,7 +126,11 @@ namespace Nexpo.Controllers
             {
                 company.StudentSessionMotivation = DTO.StudentSessionMotivation;
             }
-            
+            if (!string.IsNullOrEmpty(DTO.LogoUrl))
+            {
+                company.LogoUrl = DTO.LogoUrl;
+            }
+
             if (DTO.DaysAtArkad != null)
             {
                 company.DaysAtArkad = new List<DateTime>(DTO.DaysAtArkad);
@@ -136,7 +140,65 @@ namespace Nexpo.Controllers
 
             return Ok(company);
         }
-        
+
+        /// <summary>
+        /// Update a company's information, getting that compnay by name. Useful for updating from jexpo
+        /// </summary>
+        [HttpPut]
+        [Route("update/{name}")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(typeof(Company), StatusCodes.Status200OK)]
+        public async Task<ActionResult> PutCompanyByName(string name, UpdateCompanyAdminDTO DTO)
+        {
+            var company = await _companyRepo.FindByName(name);
+            if (company == null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrEmpty(DTO.Description))
+            {
+                company.Description = DTO.Description;
+            }
+            if (!string.IsNullOrEmpty(DTO.DidYouKnow))
+            {
+                company.DidYouKnow = DTO.DidYouKnow;
+            }
+            if (!string.IsNullOrEmpty(DTO.Website))
+            {
+                company.Website = DTO.Website;
+            }
+            if (!string.IsNullOrEmpty(DTO.HostEmail))
+            {
+                company.HostEmail = DTO.HostEmail;
+            }
+            if (!string.IsNullOrEmpty(DTO.HostName))
+            {
+                company.HostName = DTO.HostName;
+            }
+            if (!string.IsNullOrEmpty(DTO.HostPhone))
+            {
+                company.HostPhone = DTO.HostPhone;
+            }
+            if (!string.IsNullOrEmpty(DTO.StudentSessionMotivation))
+            {
+                company.StudentSessionMotivation = DTO.StudentSessionMotivation;
+            }
+            if (!string.IsNullOrEmpty(DTO.LogoUrl))
+            {
+                company.LogoUrl = DTO.LogoUrl;
+            }
+
+            if (DTO.DaysAtArkad != null)
+            {
+                company.DaysAtArkad = new List<DateTime>(DTO.DaysAtArkad);
+            }
+
+            await _companyRepo.Update(company);
+
+            return Ok(company);
+        }
+
         /// <summary>
         /// Get the company currently signed in
         /// </summary>

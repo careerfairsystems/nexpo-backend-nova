@@ -25,6 +25,8 @@ namespace Nexpo.DTO
 
         public string StudentSessionMotivation { get; set; }
 
+        public string LogoUrl { get; set; }
+
         public List<DateTime> DaysAtArkad { get; set;}
     }
 }
