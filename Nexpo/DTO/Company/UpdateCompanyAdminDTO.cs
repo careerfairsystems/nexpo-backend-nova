@@ -28,5 +28,7 @@ namespace Nexpo.DTO
         public string LogoUrl { get; set; }
 
         public List<DateTime> DaysAtArkad { get; set;}
+
+        public List<int> DesiredCompetences { get; set; }
     }
 }

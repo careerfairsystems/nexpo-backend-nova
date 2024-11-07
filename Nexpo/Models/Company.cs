@@ -36,6 +36,8 @@ namespace Nexpo.Models
 
         public List<int> DesiredProgramme { get; set;}
 
+        public List<int> DesiredCompetences { get; set; }
+
         public List<int> Positions { get; set;}
 
         public List<int> Industries { get; set;}
@@ -62,5 +64,49 @@ namespace Nexpo.Models
         GraphicDesign, DataIT, FinanceConsultancy, Telecommunication, Consulting, Management, Media, Industry, NuclearPower, LifeScience, 
         MedicalTechniques, PropertyInfrastructure, Research, Coaching
     }
+
+    public enum Competences
+    {
+        Architecture,
+        ArtificialIntelligence,
+        Usability,
+        Applications,
+        Automation,
+        Computation,
+        FireSafety,
+        ComputerSecurity,
+        Design,
+        EHealth,
+        Electronics,
+        EnergySystems,
+        Law,
+        Finance,
+        Geography,
+        Sustainability,
+        IndustrialProcesses,
+        Interactivity,
+        Chemistry,
+        Communications,
+        Construction,
+        FoodTechnology,
+        PharmaceuticalTechnology,
+        MathematicalModelling,
+        MaterialsEngineering,
+        LifeScience,
+        Mechatronics,
+        AccidentPrevention,
+        ProductDevelopment,
+        Programming,
+        Planning,
+        ProjectManagement,
+        RiskManagement,
+        TechnologyAndSociety,
+        CivilEngineering,
+        Simulations,
+        Manufacturing,
+        InterdisciplinaryCompetences,
+        Physics
+    }
+
 }
 

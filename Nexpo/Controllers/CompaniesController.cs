@@ -42,6 +42,7 @@ namespace Nexpo.Controllers
                 DaysAtArkad              = company.DaysAtArkad,
                 DesiredDegrees           = company.DesiredDegrees,
                 DesiredProgramme         = company.DesiredProgramme,
+                DesiredCompetences       = company.DesiredCompetences,
                 Positions                = company.Positions,
                 Industries               = company.Industries,
                 StudentSessionMotivation = company.StudentSessionMotivation
@@ -75,6 +76,7 @@ namespace Nexpo.Controllers
                 DaysAtArkad              = company.DaysAtArkad,
                 DesiredDegrees           = company.DesiredDegrees,
                 DesiredProgramme         = company.DesiredProgramme,
+                DesiredCompetences       = company.DesiredCompetences,
                 Positions                = company.Positions,
                 Industries               = company.Industries,
                 StudentSessionMotivation = company.StudentSessionMotivation
@@ -130,7 +132,10 @@ namespace Nexpo.Controllers
             {
                 company.LogoUrl = DTO.LogoUrl;
             }
-
+            if (DTO.DesiredCompetences != null)
+            {
+                company.DesiredCompetences = DTO.DesiredCompetences;
+            }
             if (DTO.DaysAtArkad != null)
             {
                 company.DaysAtArkad = new List<DateTime>(DTO.DaysAtArkad);
@@ -188,7 +193,10 @@ namespace Nexpo.Controllers
             {
                 company.LogoUrl = DTO.LogoUrl;
             }
-
+            if (DTO.DesiredCompetences != null)
+            {
+                company.DesiredCompetences = DTO.DesiredCompetences;
+            }
             if (DTO.DaysAtArkad != null)
             {
                 company.DaysAtArkad = new List<DateTime>(DTO.DaysAtArkad);
@@ -266,6 +274,7 @@ namespace Nexpo.Controllers
                 DaysAtArkad              = DTO.DaysAtArkad,
                 DesiredDegrees           = DTO.DesiredDegrees,
                 DesiredProgramme         = DTO.DesiredProgramme,
+                DesiredCompetences       = DTO.DesiredCompetences,
                 Positions                = DTO.Positions,
                 Industries               = DTO.Industries,
                 HostName                 = DTO.HostName,
