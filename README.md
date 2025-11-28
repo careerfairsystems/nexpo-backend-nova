@@ -238,7 +238,7 @@ Responsible for download and uploading files to the database.
 
 **2. Scripts:**
 - The project has Bash and Bat scripts for running the backend. The scripts are located in the root folder of the project. 
-- There are also Bash and Bat scripts for running the tests. (More information regarding is given when running the corresponding help command, eg: ./runTest.sh -h)These scripts have the ability to:
+- There are also Bash and Bat scripts for running the tests. (More information regarding is given when running the corresponding help command, eg: ```./runTest.sh -help``` These scripts have the ability to:
   1. Start the database in a docker container
     - This also creates or updates the mock data in the database
   2. Run all tests
@@ -247,6 +247,22 @@ Responsible for download and uploading files to the database.
 **3. Tests**
 - The tests are located in the Nexpo.Tests project. They currently only test the controller and services, and assumes that everything else (which is dependent) works as intended. 
 - There is a TestUtils available, which is helper class for logging in to the system while testing. These are dependent on the mockdata in ApplicationDBContext
+
+There are currently more than 200 tests, which might be demanding for the computer. Therefore the ```./runTest.sh -help``` decalres ways to minimize this issue. Namely, by only running a fraction of the tests:
+
+```
+Options:
+  -start            Reset the database before running tests
+                    This needs to be done when the database seeding has changed
+                    The first time this is done, the tests will fail
+                    Ergo, run needs to be run twice
+
+  Run twice after -start:
+  -run Run all tests
+  -run <class_name> Run the specified test class
+  -run <controller_name> Run the test class for the specified controller
+  -run <name>       Run the test class for the specified controller
+```
 
 ## More in-depth resources:
 
@@ -321,9 +337,6 @@ port 80 being used...
 service nginx stop
 
 
-
-
-
 # Update Database models
 
 The classes stored in the `Models` directory are the skeleton for the database. We use something called Code First to define our database structure in code relationships and then generate the database modifications automatically.
@@ -372,5 +385,45 @@ To apply the migration to the production db, use the generated script and run th
 cat name_of_migration.sql | docker exec -i name_of_db_container psql -U nexpo
 ```
 
+
+# Deploying and updating the Backend
+The backend is currently hosted on AWS EC2 as three docker containers. Additionally, profile pictures and CVs are stored in AWS S3. 
+
+## Updating the Database
+There are several ways that the database can be updated.
+
+### Uploading via EC2
+The most straightforward one being simply doing it in the EC2 instance. Since the database is hosted in EC2, PostgreSQLcommands can be used to update the database. If you have found the database… good. If not, go to EC2 and enter
+
+```shell
+docker exec -it <CONTAINER ID OF postgres:14> bash
+```
+```shell
+psql -W nexpo -U nexpo
+```
+* Enter the password
+  
+### Uploading via python scripts
+* In the folder ‘UploadToDB’ with a collection of python scripts and parsers that can be used to automate meticulous tasks. Note that some of them do not currently work, or work badly, as of IT22. (sorry)
+
+
+## Updating the Backend
+### Updating the backend endpoints
+The backend currently running is available in Github at `/home/ec2-user/nexpo/nexpo-backend-nova`
+It is updated by pulling the updated Github repo. The keys are (obviously) not in the Github repo, but should automatically be filled in. Make sure that this is the case. Also remember to migrate:
+
+```shell
+dotnet ef migrations script
+dotnet ef database update
+```
+
+Then update the containers:
+
+```shell
+docker-compose -p nexpo build
+docker-compose -p nexpo up -d
+```
+
+* This should create three docker containers ```docker ps```
 
 

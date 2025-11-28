@@ -45,20 +45,54 @@ namespace Nexpo.Services
             }; 
             var signedToken = _tokenService.SignToken(signUpDTO, DateTime.Now.AddDays(7)); // SignUp link is valid for a week
             var tokenString = Uri.EscapeDataString(signedToken);
-            var content =   $"Join your company on the Arkad fair by finalizing your account.<br><br>" 
-                            + "This is needed to be able to connect with the studends during the fair with the Arkad-app<br>" 
+            var content =   $"Join your company on the ARKAD fair by finalizing your account.<br><br>" 
+                            + "This is needed to be able to connect with the studends during the fair, through the ARKAD student sessions website or ARKAD app<br>" 
+                            + $"Click on the following link and set a password and you are good to go: {baseUrl}/finalize_signup/{tokenString}" 
+                            + "<br><br> After finalizing your account, you have access to log into https://nexpo-web.arkadtlth.se"
+                            + "The same log in also works in the ARKAD app: search for \"arkad tlth\" in your app store." 
+                            + "<br><br>Should you have any further questions regarding this, the app or how to connect with students, feel free to contact us at it.arkad@tlth.se";
+            return SendEmail(user.Email, "Join your company in the ARKAD Website And App", content, content);
+        }
+
+        public Task SendVolunteerInviteEmail(User user)
+        {
+            var signUpDTO = new FinalizeSignUpTokenDTO
+            {
+                UserId = user.Id.Value
+            }; 
+
+            var signedToken = _tokenService.SignToken(signUpDTO, DateTime.Now.AddDays(7));
+            var tokenString = Uri.EscapeDataString(signedToken);
+            var content =   $"Join your other ARKAD volunteers in the ARKAD app by finalizing your account.<br><br>" 
+                            + "This is needed to be able to connect with the studends during the fair with the ARKAD-app<br>" 
                             + $"Click on the following link and set a password and you are good to go: {baseUrl}/finalize_signup/{tokenString}" 
                             + "<br><br>After you have finalized your account you need to download the app from the app store, search for \"arkad tlth\" and it should appear." 
-                            + "<br><br>Should you have any further questions regarding this, the app or how to connect with students, feel free to contact us at it.arkad@tlth.se";
-            return SendEmail(user.Email, "Join your company in the Arkad App", content, content);
+                            + "<br><br>Should you have any further questions regarding this, feel free to contact us at it.arkad@tlth.se";
+            return SendEmail(user.Email, "Join the ARKAD App", content, content);
+        }
+
+        public Task SendApplicationPendingEmail(Company company, User user)
+        {
+            var content =   "Application successfully sent in!<br>" 
+                            + $"{company.Name} has received your student session application!<br>" 
+                            + "You will receive an email when your application has been accepted or rejected.";
+            return SendEmail(user.Email, $"{company.Name} have received your application!", content, content);
+        }
+
+        public Task SendApplicationRejectedEmail(Company company, User user)
+        {
+            var content =   "Your application have been rejected.<br>" 
+                            + $"{company.Name} has just rejected your student session application.<br>" 
+                            + "Better luck next time!";
+            return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
         }
 
         public Task SendApplicationAcceptedEmail(Company company, User user)
         {
             var content =   "Congrats!<br>" 
                             + $"{company.Name} has just accepted your student session application!<br>" 
-                            + "Log in to the app to pick a timeslot";
-            return SendEmail(user.Email, $"{company.Name} accepted your application!", content, content);
+                            + $"Log in to the app and choose {company.Name} in Student Sessions to pick a timeslot";
+            return SendEmail(user.Email, $"{company.Name} rejected your application!", content, content);
         }
 
         public Task SendPasswordResetEmail(User user)
@@ -73,7 +107,8 @@ namespace Nexpo.Services
             return SendEmail(user.Email, "Reset your password", content, content);
         }
 
-        public Task SendTicketAsQRViaEmail(string targetMail, Guid ticketId, Event _event)
+
+        public Task SendTicketAsQRViaEmail(string targetMail, Guid ticketId, Event _event, string appearAt)
         {
             var name = _event.Name;
             var location = _event.Location;
@@ -85,17 +120,23 @@ namespace Nexpo.Services
 
             string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + ticketId;
 
-            var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
-                $"Please show the QR-code below at the entrance to get in.<br><br>" + qrImage;
-            //var content = $"You have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
-            //    $"Please show the QR-code below at the entrance to get in.<br><br>" +
-            //    $"<img src=\"{qrImage}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
+            var content = $"You have received an invitation for the event: {name}, located at {location}, scheduled for {date}";
+            
+            if(string.IsNullOrEmpty(appearAt)){
+                content += $", between {start} and {end}.<br><br>";
+            }else{
+                content += ". ";
+                content += appearAt;
+                content += "<br><br>";
+            }
+            
+            content += $"Please show the QR-code below at the entrance to get in.<br><br>" + qrImage;
 
             return SendEmail(targetMail, $"Arkad Ticket for {name}", content, content);
 
         }
 
-        public Task SendTicketAsQRViaEmail(string targetMail, List<Ticket> tickets, Event _event)
+        public Task SendTicketAsQRViaEmail(string targetMail, List<Ticket> tickets, Event _event, string appearAt)
         {
             var name = _event.Name;
             var location = _event.Location;
@@ -109,8 +150,17 @@ namespace Nexpo.Services
 
             string qrImage = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=";
 
-            var content = $"You and your {numberOfTickets-1} collegue(s) have been invited to: {name}, at {location}, on {date} between {start} and {end}.<br><br>" +
-                $"Please show the QR-codes below at the entrance to get in.<br><br>";
+            var content = $"You and your {numberOfTickets-1} collegue(s) have received an invitation for the event: {name}, located at {location}, scheduled for {date}";
+            
+            if(string.IsNullOrEmpty(appearAt)){
+                content += $", between {start} and {end}.<br><br>";
+            }else{
+                content += ". ";
+                content += appearAt;
+                content += "<br><br>";
+            }
+        
+            content += $"Please show the QR-codes below at the entrance to get in.<br><br>";
 
             foreach (var ticket in tickets)
             {
@@ -118,7 +168,7 @@ namespace Nexpo.Services
                 //content += $"<img src=\"{qrImage}{ticket.Code}\" alt=\"QR-code\" width=\"300\" height=\"300\">";
             }
 
-            return SendEmail(targetMail, $"Arkad Tickets for {name}", content, content);
+            return SendEmail(targetMail, $"ARKAD Tickets for {name}", content, content);
         }
         
     }

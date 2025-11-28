@@ -17,6 +17,7 @@ namespace Nexpo.Controllers
     {
         private readonly IUserRepository _userRepo;
         private readonly ICompanyRepository _companyRepo;
+        private readonly IVolunteerRepository _volunteerRepo;
         private readonly IStudentRepository _studentRepo;
         private readonly IEmailService _emailService;
         private readonly TokenService _tokenService;
@@ -24,13 +25,16 @@ namespace Nexpo.Controllers
 
         public SignUpController(IUserRepository iUserRepo, 
             ICompanyRepository iCompanyRepo, 
+            IVolunteerRepository iVolunteerRepo,
             IStudentRepository iStudentRepo, 
             IEmailService emailService,
             TokenService tokenService,
-            PasswordService passwordService)
+            PasswordService passwordService
+            )
         {
             _userRepo        = iUserRepo;
             _companyRepo     = iCompanyRepo;
+            _volunteerRepo   = iVolunteerRepo;
             _studentRepo     = iStudentRepo;
             _emailService    = emailService;
             _tokenService    = tokenService;
@@ -39,6 +43,7 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Initiate a student signup.
+        /// As a futher development - I would also log in the current user.
         /// </summary>
         [HttpPost]
         [Route("initial")]
@@ -105,6 +110,7 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Invite a representative to become a new user (connected to a company)
+        /// </summary>
         [HttpPost]
         [Route("representative")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.CompanyRepresentative))]
@@ -145,6 +151,48 @@ namespace Nexpo.Controllers
             await _userRepo.Add(user);
 
             await _emailService.SendCompanyInviteEmail(company, user);
+
+            return NoContent();
+        }
+        
+    
+
+        /// <summary>
+        /// Invite a volunteer to become a new user
+        /// Bit funky that you need to give firstname and lastname as arguments,
+        /// but alot is built around that requirement - better than nothing
+        /// </summary>
+        [HttpPost]
+        [Route("volunteer")]
+        [Authorize(Roles = nameof(Role.Administrator))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult> PostInviteVolunteer(InviteRepresentativeDTO DTO)
+        {
+
+            var user = await _userRepo.FindByEmail(DTO.Email);
+            
+            if (user != null)
+            {
+                return Conflict();
+            }
+
+            user = new User
+            {
+                Role      = Role.Volunteer,
+                Email     = DTO.Email,
+                FirstName = DTO.FirstName,
+                LastName  = DTO.LastName,
+            };
+            
+            await _userRepo.Add(user);
+
+            var volunteer = new Volunteer
+            {
+                UserId = user.Id.Value
+            };
+            await _volunteerRepo.Add(volunteer);
+
+            await _emailService.SendVolunteerInviteEmail(user);
 
             return NoContent();
         }

@@ -363,6 +363,41 @@ namespace Nexpo.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Nexpo.Models.Volunteer", b =>
+                {
+                    b.Property<int?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("LinkedIn")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MasterTitle")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Programme")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ResumeEnUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResumeSvUrl")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Volunteers");
+                });
+
             modelBuilder.Entity("Nexpo.Models.Student", b =>
                 {
                     b.HasOne("Nexpo.Models.User", "User")
@@ -430,6 +465,17 @@ namespace Nexpo.Migrations
                         .HasForeignKey("CompanyId");
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("Nexpo.Models.Volunteer", b =>
+                {
+                    b.HasOne("Nexpo.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Nexpo.Models.Company", b =>

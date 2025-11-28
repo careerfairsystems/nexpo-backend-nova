@@ -35,6 +35,8 @@ namespace Nexpo.Models
         public bool hasCv { get; set; }
 
         public string profilePictureUrl { get; set; }
+
+        public string notificationToken { get; set; }
     }
 
     public enum Role

@@ -2,7 +2,11 @@ import requests
 import json
 import pandas as pd
 from collections import Counter
-from login import get_token
+
+import sys
+sys.path.append("..")
+import login
+
 HEADER = {
     "accept": "application/json",
     "Content-Type": "application/json",
@@ -40,7 +44,7 @@ def get_food_pref(event_id: int):
 
 if __name__ == "__main__":
     # Get prefs by event_id: 
-    get_food_pref(3)
+    # get_food_pref(3)
 
     # Get all prefs on available events:
-    #all_events()
+    all_events()

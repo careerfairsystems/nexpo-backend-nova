@@ -1,0 +1,18 @@
+[
+    {
+        "tickets": {
+            "lunch_tickets_day1": 2,
+            "lunch_tickets_day2": 2,
+            "banquet_tickets": null,
+            "email": "rebecca.mattsoff@venturelab.lu.se"
+        }
+    },
+    {
+        "tickets": {
+            "lunch_tickets_day1": 3,
+            "lunch_tickets_day2": 3,
+            "banquet_tickets": 2,
+            "email": "sara.akesson@lime.tech"
+        }
+    }
+]

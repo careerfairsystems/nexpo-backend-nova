@@ -51,7 +51,7 @@ namespace Nexpo.Controllers
         /// Create a new ticket, for the user, to an event
         /// </summary>
         [HttpPost]
-        [Authorize(Roles = nameof(Role.Student) + "," + nameof(Role.CompanyRepresentative))]
+        [Authorize]
         [ProducesResponseType(typeof(Ticket), StatusCodes.Status201Created)]
         public async Task<ActionResult> PostTicket(CreateTicketDTO DTO)
         {
@@ -321,6 +321,9 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Send many QR code interpretations of the tickets to a event to mail
+        /// 
+        /// The ticket is connected to a user if they can be found.
+        /// Otherwise the ticket is just given to user -1
         /// </summary>
         [HttpPost]
         [Route("send")]
@@ -329,6 +332,12 @@ namespace Nexpo.Controllers
         public async Task<ActionResult> SendManyTicketsToMailAsync(SendTicketViaMailDTO DTO)
         {
             var eventId = DTO.eventId;
+
+            var user = await _userRepo.FindByEmail(DTO.mail);
+            
+            int userID = user?.Id ?? -1;
+
+            string appearAt = DTO.appearAt ?? string.Empty;
 
             var _event = await _eventRepo.Get(eventId);
             if (_event == null)
@@ -346,10 +355,12 @@ namespace Nexpo.Controllers
                 {
                     PhotoOk = true,
                     EventId = eventId,
-                    UserId = -1,
+                    UserId = userID
                 };
 
-                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, ticket.Code, _event);
+                await _ticketRepo.Add(ticket);
+
+                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, ticket.Code, _event, appearAt);
                 return Ok();
 
             }
@@ -362,13 +373,15 @@ namespace Nexpo.Controllers
                     {
                         PhotoOk = true,
                         EventId = eventId,
-                        UserId = -1,
+                        UserId = userID,
                     };
+
+                    await _ticketRepo.Add(ticket);
 
                     tickets.Add(ticket);
                     
                 }
-                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, tickets, _event);
+                _ = _emailService.SendTicketAsQRViaEmail(DTO.mail, tickets, _event, appearAt);
 
                 return Ok();
             }

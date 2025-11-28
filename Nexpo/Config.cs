@@ -15,6 +15,8 @@ namespace Nexpo
         public string JWTAudience { get; set; }
         public string JWTExpires { get; set; }
         public string ConnectionString { get; set; }
+        public string AwsAccessKey { get; set; }
+        public string AwsSecretAccessKey { get; set; }
     }
 
     public class Config : IConfig
@@ -29,6 +31,8 @@ namespace Nexpo
             JWTAudience = config["JWT:Audience"];
             JWTExpires = config["JWT:Expires"];
             ConnectionString = config["ConnectionString"];
+            AwsAccessKey = config["AwsAccessKey"];
+            AwsSecretAccessKey = config["AwsSecretAccessKey"];
         }
 
         public string BaseUrl { get; set; }
@@ -38,6 +42,8 @@ namespace Nexpo
         public string JWTAudience { get; set; }
         public string JWTExpires { get; set; }
         public string ConnectionString { get; set; }
+        public string AwsAccessKey { get; set; }
+        public string AwsSecretAccessKey { get; set; }
 
     }
 }
