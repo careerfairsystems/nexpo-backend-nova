@@ -23,17 +23,20 @@ namespace Nexpo.Controllers
         private readonly IUserRepository _userRepo;
         private readonly IStudentSessionApplicationRepository _applicationRepo;
         private readonly IStudentRepository _studentRepo;
+        private readonly IVolunteerRepository _volunteerRepo;
 
 
         public RoleController(
             IUserRepository iUserRepo,
             IStudentSessionApplicationRepository iApplicationRepo,
-            IStudentRepository iStudentRepository
-            )
+            IStudentRepository iStudentRepository,
+            IVolunteerRepository iVolunteerRepository
+        )
         {
             _userRepo = iUserRepo;
             _applicationRepo = iApplicationRepo;
             _studentRepo = iStudentRepository;
+            _volunteerRepo = iVolunteerRepository;
         }
 
 
@@ -58,6 +61,9 @@ namespace Nexpo.Controllers
 
         /// <summary>
         /// Update a user's information
+        /// 
+        /// Quite ugly due to time preassure :(   )
+        /// Also DANGEROUS. If the app crashes while method is running.
         /// </summary>
         [HttpPut]
         [Route("{id}")]
@@ -71,10 +77,102 @@ namespace Nexpo.Controllers
                 return NotFound();
             }
 
-            if (DTO.Role.HasValue)
+            if (!DTO.Role.HasValue)
             {
-                // Cast to Role from Role? is necessesary because Role must be mandatory in User
-                user.Role = (Role)DTO.Role;
+                return BadRequest();
+            }
+
+            if (user.Role == (Role)DTO.Role)
+            {
+                return BadRequest();
+            }
+
+            if ((Role)DTO.Role == Role.CompanyRepresentative)
+            {
+                return BadRequest();
+            }
+
+            var student = _studentRepo.FindByUser((int)user.Id).Result;
+
+            var volunteer = _volunteerRepo.FindByUser((int)user.Id).Result;
+
+            // Delete the user from its former repo
+
+            if (student != null)
+                await _studentRepo.Remove(student);
+
+
+            if (volunteer != null)
+                await _volunteerRepo.Remove(volunteer);
+
+            // Put the user in their new repo
+
+            user.Role = (Role)DTO.Role;
+
+            // VERY UGLY - FIX
+            // Transfer admin or volunteer to student
+            if (user.Role == Role.Student)
+            {
+                Student newStudent;
+                if (volunteer != null)
+                {
+                    
+                    newStudent = new Student
+                    {
+                        Id = volunteer.Id,
+                        Programme = volunteer.Programme,
+                        ResumeEnUrl = volunteer.ResumeEnUrl,
+                        ResumeSvUrl = volunteer.ResumeSvUrl,
+                        LinkedIn = volunteer.LinkedIn,
+                        MasterTitle = volunteer.MasterTitle,
+                        Year = volunteer.Year,
+                        UserId = user.Id.Value,
+                        User = user
+                    };
+                }
+                else
+                {
+                    newStudent = new Student
+                    {
+                        UserId = user.Id.Value,
+                        User = user
+                    };
+                }
+
+                await _studentRepo.Add(newStudent);
+            }
+
+            // VERY UGLY - FIX
+            // Transfer admin or student to volunteer
+            if (user.Role == Role.Volunteer)
+            {
+                Volunteer newVolunteer;
+                if (volunteer != null)
+                {
+                    // should probably put id = student.id here too
+                    newVolunteer = new Volunteer
+                    {
+                        Id = student.Id,
+                        Programme = student.Programme,
+                        ResumeEnUrl = student.ResumeEnUrl,
+                        ResumeSvUrl = student.ResumeSvUrl,
+                        LinkedIn = student.LinkedIn,
+                        MasterTitle = student.MasterTitle,
+                        Year = student.Year,
+                        UserId = user.Id.Value,
+                        User = user
+                    };
+                }
+                else
+                {
+                    newVolunteer = new Volunteer
+                    {
+                        UserId = user.Id.Value,
+                        User = user
+                    };
+                }
+
+                await _volunteerRepo.Add(newVolunteer);
             }
 
             await _userRepo.Update(user);

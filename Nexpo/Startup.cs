@@ -12,6 +12,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using Nexpo.AWS;
+using FirebaseAdmin;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Nexpo
 {
@@ -33,8 +39,7 @@ namespace Nexpo
         {
 
             services.AddControllers();
-            services.AddSingleton<IS3Configuration, S3Config>();
-            services.AddScoped  <IAws3Services> (_ => new Aws3Services("AKIAX3BYI22ZD733TJZ3","Zz6i8UUK3FH003JjnvzqtQTjb7SMg9qxV2CSCfBK","eu-north-1","cvfiler")) ;
+            
             services.AddRouting(options =>
             {
                 options.LowercaseUrls = true;
@@ -58,10 +63,33 @@ namespace Nexpo
                 };
             });
 
-            services.AddScoped<IConfig>(_ => Config);
+            services.AddSingleton<IS3Configuration, S3Config>();
+
+            // These keys are read from user secrets. The "secrets.json" file is not included in the repository.
+            // It has to be added manually to the project (in the same level as startup.cs, ergo in the Nexpo folder). 
+            // It is currently available via bitwarden.
+            var AWSAccessKey = Config.AwsAccessKey;
+            var AwsSecretAccessKey = Config.AwsSecretAccessKey;
+            services.AddScoped<IAws3Services> (_ => new Aws3Services(AWSAccessKey,AwsSecretAccessKey,"eu-north-1","cvfiler")) ;
+            
+            services.AddSingleton<IConfig>(_ => Config);
+            if (!Environment.IsDevelopment())
+            {
+                if (FirebaseApp.DefaultInstance == null)
+                {
+                    FirebaseApp.Create(new AppOptions()
+                    {
+                        Credential = GoogleCredential.FromFile("./nexpo-backend-nova-firebase-adminsdk-htt81-ef3542f973.json"),
+                    });
+                }
+            }
+
             services.AddDbContext<ApplicationDbContext>(opt => opt.UseNpgsql(Config.ConnectionString));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
+            services.AddScoped<IVolunteerRepository, VolunteerRepository>();
+
+            
             services.AddScoped<ICompanyRepository, CompanyRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<ITicketRepository, TicketRepository>();
@@ -69,11 +97,12 @@ namespace Nexpo
             services.AddScoped<IStudentSessionApplicationRepository, StudentSessionApplicationRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IFAQRepository, FAQRepository>();
-            
+
+
             services.AddScoped<PasswordService, PasswordService>();
             services.AddScoped<TokenService, TokenService>();
             services.AddScoped<FileService, FileService>();
-            
+
             if (Environment.IsDevelopment())
             {
                 services.AddScoped<IEmailService, DevEmailService>();
@@ -95,7 +124,35 @@ namespace Nexpo
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Nexpo", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Nexpo API", Version = "v1" });
+
+                // Add security definition for JWT
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    },
+                    Scheme = "oauth2",
+                    Name = "Bearer",
+                    In = ParameterLocation.Header
+                },
+                new List<string>()
+            }
+        });
             });
 
         }

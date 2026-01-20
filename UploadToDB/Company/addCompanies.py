@@ -1,18 +1,29 @@
 import json
 import pandas as pd
 import requests
+
+import sys
+sys.path.append("..")
 import login
 
-jsonfile = 'example.json'
-url = 'http://{url}/api/companies'
-s3BucketUrl = '{s3BucketUrl}'
+"""
+Add a one or several companies to the database, using JSON
+- It is reccomended to export this data from Jexpo
+"""
+
+jsonfile = '../jsonTemplate/arkadCompany.json'
+url = 'https://www.nexpo.arkadtlth.se/api/companies'
+s3BucketUrl = 'https://nexpo-bucket.s3.eu-north-1.amazonaws.com/'
+
 
 token = login.get_token()
 
 with open(jsonfile, encoding="utf-8") as d:
     dictData = json.load(d)
 df = pd.DataFrame(dictData)
+print(len(df))
 for row in range(len(df)):
+    # print:
     pr = df.iloc[row]
     prof = pr['profile']
     companyHost = pr['companyHosts']
@@ -182,9 +193,10 @@ for row in range(len(df)):
             website = '"' +"" + '"' 
 
         if 'logotype' in prof and prof['logotype'] != None:
-
-            logoUrl  = prof['logotype']['name']
+            logoUrl  = prof['logotype']['name']        
             logoUrl: str  = '"' + s3BucketUrl + logoUrl.replace('eps','jpg') + '"'
+            print("found logotype of url: ")
+            print(logoUrl)
         else:
             logoUrl  =  '"' +""+ '"' 
 
@@ -197,7 +209,7 @@ for row in range(len(df)):
         else:
             companyHostsEmail:str = '"' +""+ '"' 
             print(name + "comapnyHost")
-   
+
         headers = {
             'accept': 'text/plain',
             'Content-Type': 'application/json',
@@ -206,5 +218,5 @@ for row in range(len(df)):
         data = '{ "name":' + name + ', "description":' + description +', "didYouKnow":' + didYouKnow + ', "website":' + website + ', "logoUrl":' + logoUrl + ',"desiredDegrees":' + json.dumps(desiredDegree) + ',"desiredProgramme":' + json.dumps(list(desiredProgrammeResult)) + ',"positions":' + json.dumps(list(positions)) + ',"industries":' + json.dumps(list(industryResult)) + ',"hostEmail":' + companyHostsEmail + '}'
         r = requests.post(url, data=data.encode('utf-8'), headers=headers)
         print(r)
-        #print(r.content)
+        print(r.content)
         
