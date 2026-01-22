@@ -33,6 +33,7 @@ namespace Nexpo.Repositories
                                             Name = _event.Name,
                                             Description = _event.Description,
                                             Date = _event.Date,
+                                            Type = _event.Type,
                                             Start = _event.Start,
                                             End = _event.End,
                                             Location = _event.Location,
